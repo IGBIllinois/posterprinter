@@ -10,15 +10,15 @@ if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
 	$startDate = $_GET['startDate'];
 	$endDate = $_GET['endDate'];
 	$stats = new statistics($mysqlSettings);
-	$paperTypesData = $stats->popularPaperTypes($startDate,$endDate);
+	$paperTypesData = $stats->paperTypesTotalInches($startDate,$endDate);
 	
 	$data_legend;
 	$data;
 	
 	if (count($paperTypesData) > 0) {
 		foreach($paperTypesData as $row) {
-			$data_legend[] = $row['paperTypes_name'] . " - " . $row['count'];
-			$data[] = $row['count'];
+			$data_legend[] = $row['paperTypes_name'] . " - " . $row['totalLength'] . "\"";
+			$data[] = $row['totalLength'];
 		}
 	}
 	else{
@@ -33,7 +33,7 @@ if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
 	$graph->SetColor('#d3d1d2');
 	$graph->SetMarginColor('#ffffff');
 	$graph->SetFrame(false,'#d3d1d2');
-	$graph->title->Set("Paper Types Usage By Orders - " . $startDate . "-" . $endDate);
+	$graph->title->Set("Paper Types Usage By Inches- " . $startDate . "-" . $endDate);
 	$graph->title->SetFont(FF_ARIAL,FS_BOLD,12);
 	$p1 = new PiePlot($data);
 	$p1->SetTheme("earth");
