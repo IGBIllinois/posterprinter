@@ -429,6 +429,15 @@ elseif (isset($_POST['step3'])) {
 			</center>";
 					
 }
+
+elseif ($enable == FALSE) {
+	$formHTML = "<br>
+			<center>The poster printer is currently broken, soon maintenance should arrive to take care of the problem.  In the mean time, we are not accepting any new poster orders.  Please accept our apologies.</center>";
+
+
+
+
+}
 else {
 
 	
