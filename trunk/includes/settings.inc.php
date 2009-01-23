@@ -43,7 +43,7 @@ $authenticationSettings = array(
 					);
 			
 
-
+$enable = TRUE;
 
 
 
