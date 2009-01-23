@@ -37,12 +37,9 @@ $nextEndDate =  date('Y/m/d',strtotime('-1 second',strtotime('+1 month',strtotim
 $stats = new statistics($mysqlSettings);
 $monthlyTotal = $stats->cost($startDate,$endDate);
 
-$rushOrderPercent = $stats->percentRushOrder($startDate,$endDate);
-$posterTubePercent = $stats->percentPosterTube($startDate,$endDate);
-$averagePosterCost = $stats->averagePosterCost($startDate,$endDate);
-$totalOrders = $stats->orders($startDate,$endDate);
+$totalInches = $stats->totalInches($startDate,$endDate);
 
-$url = "stats_monthly.php";
+$url = "stats_monthly_inches.php";
 $backUrl = $url . "?startDate=" . htmlspecialchars($previousStartDate,ENT_QUOTES) . "&endDate=" . htmlspecialchars($previousEndDate,ENT_QUOTES);
 $forwardUrl = $url . "?startDate=" . htmlspecialchars($nextStartDate,ENT_QUOTES) . "&endDate=" . htmlspecialchars($nextEndDate,ENT_QUOTES);
 
@@ -55,18 +52,13 @@ $forwardUrl = $url . "?startDate=" . htmlspecialchars($nextStartDate,ENT_QUOTES)
         
         <th align='right'><a href='<?php echo $forwardUrl; ?>'>Next</a></th>
     </tr>
-  	<tr><td>Monthly Total:</td><td>$<?php echo $monthlyTotal; ?></td></tr>
-    <tr><td>Total Orders:</td><td><?php echo $totalOrders; ?></td></tr>
-    <tr><td>Rush Order Percentage:</td><td><?php echo $rushOrderPercent; ?>%</td></tr>
-    <tr><td>Poster Tube Percentage:</td><td><?php echo $posterTubePercent; ?>%</td></tr>
-    <tr><td>Average Poster Cost:</td><td>$<?php echo $averagePosterCost; ?></td></tr>
-	
+    <tr><td>Total Inches:</td><td><?php echo $totalInches; ?></td></tr>
+   
     <tr>
-    	<td colspan='2'><img src='graphs/graph_paperTypes.php?startDate=<?php echo $startDate; ?>&endDate=<?php echo $endDate; ?>' /></td>
+    	<td colspan='2'><img src='graphs/graph_paperTypes_totalInches.php?startDate=<?php echo $startDate; ?>&endDate=<?php echo $endDate; ?>' /></td>
     </tr>
-    <tr>
-    	<td colspan='2'><img src='graphs/graph_finishOptions.php?startDate=<?php echo $startDate; ?>&endDate=<?php echo $endDate; ?>' /></td>
-	</tr>
+    
+
 </table>
 </center>
 

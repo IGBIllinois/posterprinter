@@ -47,6 +47,19 @@ class statistics {
 		return $this->query($paperTypesSql);
 	
 	}
+	
+	public function paperTypesTotalInches($startDate,$endDate) {
+		
+		$paperTypesSql = "SELECT paperTypes_name,SUM(tbl_orders.orders_length) AS totalLength 
+			FROM tbl_orders LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id
+			LEFT JOIN tbl_paperTypes ON tbl_orders.orders_paperTypesId=tbl_paperTypes.paperTypes_id
+			WHERE (orders_timeCreated >= '$startDate' AND orders_timeCreated <= '$endDate')
+			AND status_name='Completed'
+			GROUP BY paperTypes_name";
+		return $this->query($paperTypesSql);
+	
+	}
+	
 	public function popularFinishOptions($startDate,$endDate) {
 		
 		$finishOptionsSql = "SELECT finishOptions_id,finishOptions_name,COUNT(*) AS count 
@@ -59,6 +72,20 @@ class statistics {
 	
 	}
 	
+	public function totalInches($startDate,$endDate) {
+		$sql = "SELECT SUM(tbl_orders.orders_length) AS total 
+			FROM tbl_orders LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id
+			WHERE (orders_timeCreated >= '$startDate' AND orders_timeCreated <= '$endDate')
+			AND status_name='Completed'";
+		$result = $this->query($sql);
+		$total = $result[0]['total'];
+		if ($total == "") {
+			$total = 0;
+		}
+		return $total;
+	
+	
+	}
 	public function orders($startDate,$endDate) {
 		//$ordersSql = "SELECT COUNT(1) AS count 
 		//	FROM tbl_orders LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id
