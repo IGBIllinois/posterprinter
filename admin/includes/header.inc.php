@@ -25,6 +25,7 @@ include '../includes/settings.inc.php';
 		<li><a href='finishOptions.php'>Finish Options</a></li>
 		<li><a href='otherOptions.php'>Other Options</a></li>
         <li><a href='stats_monthly.php'>Monthly Statistics</a></li>
+        <li><a href='stats_OrdersPerMonth.php'>Orders Per Month Statistics</a></li>
         <li><a href='stats_yearly.php'>Yearly Statistics</a></li>	
 		<li><a href='logout.php'>Log Out</a></li>
 	</ul>
