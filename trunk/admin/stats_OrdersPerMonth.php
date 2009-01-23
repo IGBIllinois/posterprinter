@@ -29,25 +29,27 @@ $posterTubePercent = $stats->percentPosterTube($startDate,$endDate);
 $averagePosterCost = $stats->averagePosterCost($startDate,$endDate);
 $totalOrders = $stats->orders($startDate,$endDate);
 
+
 ?>
 <center>
 <table class='table_2'>
-	<tr><th colspan='2'>Yearly Statistics - <?php echo $year; ?></th></tr>
-    <tr>
-    	<th align='left'><a href='stats_yearly.php?year=<?php echo $previousYear; ?>'>Previous</a></td>
-        <th align='right'><a href='stats_yearly.php?year=<?php echo $nextYear;?>'>Next</a></td>
+	<tr>
+    	<th colspan='2'>Yearly Stats - <?php echo $year; ?></th>
+    
     </tr>
-  	<tr><td>Yearly Total:</td><td>$<?php echo $yearlyTotal; ?></td></tr>
+    
+	<tr>
+    	<th align='left'><a href='stats_OrdersPerMonth.php?year=<?php echo $previousYear; ?>'>Previous</a></td>
+        <th align='right'><a href='stats_OrdersPerMonth.php?year=<?php echo $nextYear;?>'>Next</a></td>
+    </tr>
+    <tr><td>Yearly Total:</td><td>$<?php echo $yearlyTotal; ?></td></tr>
     <tr><td>Total Orders:</td><td><?php echo $totalOrders; ?></td></tr>
     <tr><td>Rush Order Percentage:</td><td><?php echo $rushOrderPercent; ?>%</td></tr>
     <tr><td>Poster Tube Percentage:</td><td><?php echo $posterTubePercent; ?>%</td></tr>
     <tr><td>Average Poster Cost:</td><td>$<?php echo $averagePosterCost; ?></td></tr>
-	
     <tr>
-    	<td colspan='2'><img src='graphs/graph_paperTypes.php?startDate=<?php echo $startDate; ?>&endDate=<?php echo $endDate; ?>' /></td>
+    	<td colspan='2'><img src='graphs/graph_ordersPerMonth.php?year=<?php echo $year; ?>' /></td>
     </tr>
-    <tr>
-    	<td colspan='2'><img src='graphs/graph_finishOptions.php?startDate=<?php echo $startDate; ?>&endDate=<?php echo $endDate; ?>' /></td>
 </table>
 </center>
 
