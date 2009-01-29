@@ -34,7 +34,7 @@ if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
 	$graph->SetColor('#d3d1d2');
 	$graph->SetMarginColor('#ffffff');
 	$graph->SetFrame(false,'#ffffff');
-	$graph->title->Set("Finish Options - " . $startDate . "-" . $endDate);
+	$graph->title->Set("Finish Options");
 	$graph->title->SetFont(FF_ARIAL,FS_BOLD,12);
 	$p1 = new PiePlot($data);
 	$p1->SetTheme("earth");

@@ -55,7 +55,7 @@ $forwardUrl = $url . "?startDate=" . htmlspecialchars($nextStartDate,ENT_QUOTES)
     <tr><td>Total Inches:</td><td><?php echo $totalInches; ?></td></tr>
    
     <tr>
-    	<td colspan='2'><img src='graphs/graph_paperTypes_totalInches.php?startDate=<?php echo $startDate; ?>&endDate=<?php echo $endDate; ?>' /></td>
+    	<td colspan='2'><img src='graphs/graph_inchesPerPaperType.php?startDate=<?php echo $startDate; ?>&endDate=<?php echo $endDate; ?>' /></td>
     </tr>
     
 

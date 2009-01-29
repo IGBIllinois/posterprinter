@@ -22,17 +22,14 @@ $startDate = $year . "/01/01";
 $endDate = $year . "/12/31";
 
 $stats = new statistics($mysqlSettings);
-$yearlyTotal = $stats->cost($startDate,$endDate);
 
-$rushOrderPercent = $stats->percentRushOrder($startDate,$endDate);
-$posterTubePercent = $stats->percentPosterTube($startDate,$endDate);
-$averagePosterCost = $stats->averagePosterCost($startDate,$endDate);
+$yearlyTotal = $stats->cost($startDate,$endDate);
 $totalOrders = $stats->orders($startDate,$endDate);
 
 
 ?>
 <center>
-<table class='table_2'>
+<table class='table_4'>
 	<tr>
     	<th colspan='2'>Yearly Stats - <?php echo $year; ?></th>
     
@@ -44,12 +41,7 @@ $totalOrders = $stats->orders($startDate,$endDate);
     </tr>
     <tr><td>Yearly Total:</td><td>$<?php echo $yearlyTotal; ?></td></tr>
     <tr><td>Total Orders:</td><td><?php echo $totalOrders; ?></td></tr>
-    <tr><td>Rush Order Percentage:</td><td><?php echo $rushOrderPercent; ?>%</td></tr>
-    <tr><td>Poster Tube Percentage:</td><td><?php echo $posterTubePercent; ?>%</td></tr>
-    <tr><td>Average Poster Cost:</td><td>$<?php echo $averagePosterCost; ?></td></tr>
-    <tr>
-    	<td colspan='2'><img src='graphs/graph_ordersPerMonth.php?year=<?php echo $year; ?>' /></td>
-    </tr>
+    <tr><td colspan='2'><img src='graphs/graph_ordersPerMonth.php?year=<?php echo $year; ?>' /></td></tr>
 </table>
 </center>
 

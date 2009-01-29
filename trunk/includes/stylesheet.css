@@ -357,6 +357,18 @@ background-color:#f4f4f4;
 text-align: left;
 }
 
+table.table_4 {
+border:1px solid black;
+border-style: solid;
+border-spacing:5px;
+border-collapse:collapse;
+background-color: white;
+width:600px;
+}
+table.table_4 th {
+background-color:#f4f4f4;
+padding:5px 20px 10px 5px;
+}
 #footer {
 width:748px; 
 height:18px; 
