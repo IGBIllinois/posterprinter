@@ -30,8 +30,8 @@ if (isset($_GET['year'])) {
 	
 	$graph->yaxis->scale->SetGrace(20);
 	$graph->SetMarginColor('#ffffff');
-	$graph->title->Set("Orders Per Month - " . $year);
-	$graph->title->SetFont(FF_ARIAL,FS_BOLD,14);
+	$graph->title->Set("Orders Per Month");
+	$graph->title->SetFont(FF_ARIAL,FS_BOLD,12);
 	$graph->SetFrame(false,'#ffffff');
 	$graph->xaxis->SetTickLabels($datax);
 	$graph->xaxis->SetFont(FF_ARIAL,FS_NORMAL,10);
