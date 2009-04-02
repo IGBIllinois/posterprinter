@@ -89,6 +89,7 @@ $stats = new statistics($mysqlSettings);
 $startDate = $year . "/" . $month . "/01";
 
 $endDate =  date('Y/m/d',strtotime('-1 second',strtotime('+1 month',strtotime($startDate))));
+echo $endDate;
 
 $monthlyTotal = $stats->cost($startDate,$endDate);
 

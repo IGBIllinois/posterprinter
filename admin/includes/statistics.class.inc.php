@@ -22,8 +22,7 @@ class statistics {
 		
 		$totalCostSql = "SELECT SUM(orders_totalCost) AS totalCost
 		FROM tbl_orders LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id
-		WHERE orders_timeCreated >= '$startDate' 
-		AND orders_timeCreated <= '$endDate'
+		WHERE DATE(orders_timeCreated) BETWEEN '$startDate' AND '$endDate' 
 		AND status_name='Completed' 
 		GROUP BY status_name";
 		
