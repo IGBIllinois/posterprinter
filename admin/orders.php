@@ -15,8 +15,10 @@ if (isset($_POST['changeStatus'])) {
 	//connects to the database.  Pulls the mysql settings from the file includes/settings.inc.php.
 	$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
 	mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
+	$timeFinished = date( 'Y-m-d H:i:s');
+
 	//updates the order to the new status
-	$updateStatusSql = "UPDATE tbl_orders SET orders_statusId=" . $statusId . " WHERE orders_id= " . $orderId;
+	$updateStatusSql = "UPDATE tbl_orders SET orders_statusId='" . $statusId . "',orders_timeFinished='" . $timeFinished . "' WHERE orders_id= " . $orderId;
 	$updateResult = mysql_query($updateStatusSql,$db);
 	
 	//if status is set to "Complete", then it will email the user saying to come pick up the poster

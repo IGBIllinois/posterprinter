@@ -14,6 +14,7 @@
 //Include files for the script to run
 include 'includes/settings.inc.php';
 include 'includes/mail.inc.php';
+include_once 'includes/functions.inc.php';
 
 //poster width and length submission
 if (isset($_POST['step1'])) {
@@ -92,7 +93,7 @@ if (isset($_POST['step1'])) {
 		<input type='hidden' name='posterWidth' value='$posterWidth'>
 		<input type='hidden' name='posterLength' value='$posterLength'>
 	<table class='table_1'>
-		<tr><th colspan='3'>Paper Type</th></tr>
+		<tr><th colspan='3'>Paper Types</th></tr>
 		<tr><td class='td_1' colspan='3'>Please choose a paper type for your poster.  The cost is per an inch</td></tr>
 		<input type='hidden' name='paperTypesId' value='none'>" . $paperTypesHTML . "
 	</table>
@@ -440,7 +441,21 @@ elseif ($enable == FALSE) {
 }
 else {
 
+	$paperTypes = getPaperTypes($mysqlSettings);
+
+	$paperTypesHTML;
+        for ($i=0;$i < count($paperTypes);$i++) {
+        	$cost = $paperTypes[$i]['paperTypes_cost'];
+		$name = $paperTypes[$i]['paperTypes_name'];
+		$maxWidth = $paperTypes[$i]['paperTypes_width'];
+                $paperTypesHtml .= "<tr>";
+		$paperTypesHtml .= "<td class='td_2'>$" . $cost . "</td>";
+		$paperTypesHtml .= "<td class='td_2'>" .  $name . "</td>";
+		$paperTypesHtml .= "<td class='td_2'>" . $maxWidth . "''</td>";
+                $paperTypesHtml .= "</tr>";
+        }
 	
+		
 	$formHTML = "<br>
 				
 	<center>
@@ -461,17 +476,26 @@ else {
 	
 	<br>
 	
+
+	<table class='table_1'>
+	<tr><th colspan='3'>Available Paper Types</th></tr>
+	<tr><td class='td_1' colspan='3'>Below are the available paper types along with the maximum width for that type of paper. The cost is per an inch.</td></tr>
+	$paperTypesHtml	
+	</table>
+
+
 	<table>
-	<tr>
+		<tr>
 			<td style='padding:5px 0px 10px 0px;'>
-				<button class='button_1' onclick='window.location.href=window.location.href'>Cancel</button>
-			</td>
-			<td style='padding:5px 0px 10px 0px;'>
-				<input class='button_1' type='submit'  value='Next' name='step1'>
-			</td>
+			<button class='button_1' onclick='window.location.href=window.location.href'>Cancel</button>
+		</td>
+		<td style='padding:5px 0px 10px 0px;'>
+			<input class='button_1' type='submit'  value='Next' name='step1'>
+		</td>
 		</tr>
 	</table>
 	</form>
+	
 	</center>
 	<div id='widthWarning' class='error'></div>
 	<div id='lengthWarning' class='error'></div>";
