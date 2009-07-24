@@ -24,14 +24,13 @@ function getValidPaperTypes($width,$length,$mysqlSettings) {
 
 }
 
-function getValidFinishOptions($width,$lenght,$mysqlSettings) {
+function getValidFinishOptions($width,$length,$mysqlSettings) {
 
 	$db = new db($mysqlSettings['host'],$mysqlSettings['database'],$mysqlSettings['username'],$mysqlSettings['password']);
 	$sql = "SELECT * FROM tbl_finishOptions ";
 	$sql .= "WHERE finishOptions_available=1 ";
 	$sql .= "AND finishOptions_maxLength>=$length ";
-	$sql .= "AND (finishOptions_maxWidth>=$width ";
-	$sql .= "OR finishOptions_maxWidth>=$length) ";
+	$sql .= "AND (finishOptions_maxWidth>=$width OR finishOptions_maxWidth>=$length) ";
 	$sql .= "ORDER BY finishOptions_name ASC";
 	return $db->query($sql);
 
