@@ -15,21 +15,21 @@
 $adminEmail = "dslater@igb.uiuc.edu";
 
 $maxPrinterWidth = 44;
-$mysqlSettings = array(
+/*$mysqlSettings = array(
 		'host' => 'localhost',
 		'username' => 'posteruser',
 		'password' => 'm5qEGaQacAsp',
 		'database' => 'posterprinter'
 		);
 
-
-/*$mysqlSettings = array(
+*/
+$mysqlSettings = array(
 		'host' => 'www-app.igb.uiuc.edu',
 		'username' => 'posterremote',
 		'password' => 'goillini',
 		'database' => 'posterprinter'
 		);
-*/
+
 $posterDirectory = "posterfiles";
 
 $authenticationSettings = array(
@@ -44,7 +44,7 @@ $authenticationSettings = array(
 			
 
 $enable = TRUE;
-$version = "1.0.5";
+$version = "1.0.6";
 
 
 ?>

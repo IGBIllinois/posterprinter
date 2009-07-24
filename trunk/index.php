@@ -28,44 +28,48 @@ if (isset($_POST['step1'])) {
 	//Connects to database.  mysql settings are pulled from includes/settings.inc.php
 	$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
 	@mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
-	//sql statement to get the available paper types.
-	$paperTypesSql = "SELECT * FROM tbl_paperTypes WHERE paperTypes_available=1 AND (paperTypes_width>=$posterWidth OR paperTypes_width>=$posterLength) ORDER BY paperTypes_name ASC";
 	
-	//runs the query.
-	$paperTypesResult = mysql_query($paperTypesSql,$db);
+
+	$paperTypes = getValidPaperTypes($posterWidth,$posterLength,$mysqlSettings);
 	//takes the result and formats it into html into the paperTypeHTML variable.
 	$paperTypesHTML;
-	for ($i=0;$i < mysql_num_rows($paperTypesResult);$i++) {
-	
-		$paperTypesHTML .= "<tr><td class='td_2'>$" . mysql_result($paperTypesResult,$i,"paperTypes_cost") . "</td>" .
-						"<td class='td_2'>" .  mysql_result($paperTypesResult,$i,"paperTypes_name") . "</td>";
-		if (mysql_result($paperTypesResult,$i,"paperTypes_default") == 1) {
-			$paperTypesHTML .= "<td class='form'><input type='radio' name='paperTypesId' checked='true' value='" . mysql_result($paperTypesResult,$i,"paperTypes_id") . "'></td></tr>";
+	for ($i=0;$i < count($paperTypes);$i++) {
+		$paperType_cost = $paperTypes[$i]['paperTypes_cost'];
+		$paperType_name = $paperTypes[$i]['paperTypes_name'];
+		$paperType_id = $paperTypes[$i]['paperTypes_id'];
+		$paperType_default = $paperTypes[$i]['paperTypes_default'];
+
+		$paperTypesHTML .= "<tr><td class='td_2'>$" . $paperType_cost . "</td>" .
+						"<td class='td_2'>" .  $paperType_name . "</td>";
+		if ($paperType_default == 1) {
+			$paperTypesHTML .= "<td class='form'><input type='radio' name='paperTypesId' checked='true' value='" . $paperType_id . "'></td></tr>";
 		}
 		else {
-			$paperTypesHTML .= "<td class='form'><input type='radio' name='paperTypesId' value='" . mysql_result($paperTypesResult,$i,"paperTypes_id") . "'></td></tr>";
+			$paperTypesHTML .= "<td class='form'><input type='radio' name='paperTypesId' value='" . $paperType_id . "'></td></tr>";
 		}
 						
 	
 	}
 	
-	//sql statment to get the available finishOptions.
-	$finishOptionsSql = "SELECT * FROM tbl_finishOptions WHERE finishOptions_available=1 AND finishOptions_maxLength>=$posterLength AND" . 
-						"(finishOptions_maxWidth>=$posterWidth OR finishOptions_maxWidth>=$posterLength) ORDER BY finishOptions_name ASC";
-	$finishOptionsResult = mysql_query($finishOptionsSql,$db);
+
+	$finishOptions = getValidFinishOptions($posterWidth,$posterLength,$mysqlSettings);
 	//takes the result and formats it into html into the finishOptionsHTML variable.
 	$finishOptionsHTML;
-	for ($i=0; $i < mysql_num_rows($finishOptionsResult); $i++) {
+	for ($i=0; $i < count($finishOptions); $i++) {
+		$finishOption_id = $finishOptions[$i]['finishOptions_id'];
+		$finishOption_name = $finishOptions[$i]['finishOptions_name'];
+		$finishOption_cost = $finishOptions[$i]['finishOptions_cost'];
+		$finishOption_default = $finishOptions[$i]['finishOptions_default'];
+
+		$finishOptionsHTML .= "<tr><td class='td_2'>$" . $finishOption_cost . "</td>" .
+				"<td class='td_2'>" . $finishOption_name . "</td>";
 		
-		$finishOptionsHTML .= "<tr><td class='td_2'>$" . mysql_result($finishOptionsResult,$i,"finishOptions_cost") . "</td>" .
-				"<td class='td_2'>" . mysql_result($finishOptionsResult,$i,"finishOptions_name") . "</td>";
-		
-		if (mysql_result($finishOptionsResult,$i,"finishOptions_default") == 1) {
-			$finishOptionsHTML .= "<td class='form'> <input type='radio' name='finishOptionsId' checked='true' value='" . mysql_result($finishOptionsResult,$i,"finishOptions_id") . "'></td>" .
+		if ($finishOption_default == 1) {
+			$finishOptionsHTML .= "<td class='form'> <input type='radio' name='finishOptionsId' checked='true' value='" . $finishOption_id . "'></td>" .
 							"</tr>";
 		}
 		else {
-			$finishOptionsHTML .= "<td class='form'> <input type='radio' name='finishOptionsId' value='" . mysql_result($finishOptionsResult,$i,"finishOptions_id") . "'></td>" .
+			$finishOptionsHTML .= "<td class='form'> <input type='radio' name='finishOptionsId' value='" . $finishOption_id . "'></td>" .
 							"</tr>";
 		
 		}
@@ -73,14 +77,10 @@ if (isset($_POST['step1'])) {
 	
 	}
 	
-	$posterTubeSql = "SELECT * FROM tbl_posterTube WHERE posterTube_available=1 AND posterTube_name='Yes'";
-	$posterTubeResult = mysql_query($posterTubeSql,$db);
-	$posterTubeHTML = "<tr><td class='td_2'>Poster Tube</td><td class='td_2'>$" . mysql_result($posterTubeResult,0,"posterTube_cost") ."</td>" .
+	$posterTubeHTML = "<tr><td class='td_2'>Poster Tube</td><td class='td_2'>$" . getPosterTubeCost($mysqlSettings) ."</td>" .
 					"<td class='form'><input type='checkbox' name='posterTube' value='1'></td></tr>";
 
-	$rushOrderSql = "SELECT * FROM tbl_rushOrder WHERE rushOrder_available=1 AND rushOrder_name='Yes'";
-	$rushOrderResult = mysql_query($rushOrderSql,$db);
-	$rushOrderHTML = "<tr><td class='td_2'>Rush Order</td><td class='td_2'>$" . mysql_result($rushOrderResult,0,"rushOrder_cost") ."</td>" .
+	$rushOrderHTML = "<tr><td class='td_2'>Rush Order</td><td class='td_2'>$" . getRushOrderCost($mysqlSettings) ."</td>" .
 					"<td class='form'><input type='checkbox' name='rushOrder' value='1'></td></tr>";
 	
 	$formHTML = "<br \>
