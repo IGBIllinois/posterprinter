@@ -59,6 +59,7 @@ if (isset($_POST['login'])) {
 <TITLE>IGB Poster Printer Admin Login</TITLE>
 </HEAD>
 <BODY OnLoad="document.login.username.focus();">
+<div id='container'>
 <div id="content_center">
 
 <h2>Poster Printer Admin Login</h2>
@@ -83,7 +84,7 @@ if (isset($_POST['login'])) {
 
 </form>
 </center>
-
+</div>
 </div>
 </BODY>
 </HTML>
