@@ -24,11 +24,6 @@ if (isset($_POST['step1'])) {
 	$posterWidth = trim(rtrim($posterWidth));
 	$posterLength = trim(rtrim($posterLength));
 	
-	
-	//Connects to database.  mysql settings are pulled from includes/settings.inc.php
-	$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
-	@mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
-	
 
 	$paperTypes = getValidPaperTypes($posterWidth,$posterLength,$mysqlSettings);
 	//takes the result and formats it into html into the paperTypeHTML variable.
