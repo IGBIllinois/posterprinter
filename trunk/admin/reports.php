@@ -42,10 +42,10 @@ if (isset($_POST['createReport'])) {
 	else {
 		//sets the location and file name of the report
 		$reportFileName = "PosterReport-" . $month . "-" . $year . ".xls";
-		$reportFileLink = "cache/" . $reportFileName;
+		$reportFileLink = sys_get_temp_dir() . "/" . $reportFileName;
 		$report = new ExcelWriter($reportFileLink);
 		//sets the column headings for the report
-		$headings = array("<b>Order Number</b>","<b>Email</b>","<b>Full Name</b>","<b>Date</b>","<b>Cost</b>","<b>CFOP</b>");
+		$headings = array("<b>Order Number</b>","<b>Email</b>","<b>Full Name</b>","<b>Date</b>","<b>Cost</b>","<b>CFOP</b>","<b>Activity Code</b>");
 		$report->writeLine($headings);
 		for ($i=0; $i<mysql_numrows($ordersResult); $i++) {
 			
@@ -55,8 +55,9 @@ if (isset($_POST['createReport'])) {
 			$orderCost = mysql_result($ordersResult,$i,"orders_totalCost");
 			$orderCFOP = mysql_result($ordersResult,$i,"orders_cfop");
 			$orderDate = mysql_result($ordersResult,$i,"orders_timeCreated");
+			$orderActivityCode = mysql_result($ordersResult,$i,"orders_activityCode");
 			//sets the new row to write
-			$row = array($orderId,$orderEmail,$orderName,$orderDate,"$" . $orderCost,$orderCFOP);
+			$row = array($orderId,$orderEmail,$orderName,$orderDate,"$" . $orderCost,$orderCFOP,$orderActivityCode);
 			//writes the new row into the report file
 			$report->writeLine($row);
 		}
