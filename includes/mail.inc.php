@@ -29,6 +29,7 @@ function mailAdminsNewOrder($orderInfo) {
 			"<br>Poster Length: " . $orderInfo['posterLength'] . " inches \r\n" .
 			"<br>Poster Width: " . $orderInfo['posterWidth'] . " inches \r\n" .
 			"<br>CFOP: " . $orderInfo['cfop'] . "\r\n" .
+			"<br>Activity Code: " . $orderInfo['activityCode'] . "\r\n" .
 			"<br>Paper Type: " . $orderInfo['paperType'] . "\r\n" .
 			"<br>Finish Option: " . $orderInfo['finishOption'] . "\r\n" .
 			"<br>Poster Tube: " . $orderInfo['posterTube'] . "\r\n" .
@@ -56,6 +57,7 @@ function mailUserNewOrder($orderInfo) {
 			"<br>Poster Length: " . $orderInfo['posterLength'] . " inches \r\n" .
 			"<br>Poster Width: " . $orderInfo['posterWidth'] . " inches \r\n" .
 			"<br>CFOP: " . $orderInfo['cfop'] . "\r\n" .
+			"<br>Activity Code: " . $orderInfo['activityCode'] . "\r\n" .
 			"<br>Paper Type: " . $orderInfo['paperType'] . "\r\n" .
 			"<br>Finish Option: " . $orderInfo['finishOption'] . "\r\n" .
 			"<br>Poster Tube: " . $orderInfo['posterTube'] . "\r\n" .
@@ -80,6 +82,7 @@ function mailUserOrderComplete($orderInfo) {
 			"<br>Poster Length: " . $orderInfo['posterLength'] . " inches \r\n" .
 			"<br>Poster Width: " . $orderInfo['posterWidth'] . " inches \r\n" .
 			"<br>CFOP: " . $orderInfo['cfop'] . "\r\n" .
+			"<br>Activity Code: " . $orderInfo['activityCode'] . "\r\n" .
 			"<br>Paper Type: " . $orderInfo['paperType'] . "\r\n" .
 			"<br>Finish Option: " . $orderInfo['finishOption'] . "\r\n" . 
 			"<br>Poster Tube: " . $orderInfo['posterTube'] . "\r\n" .

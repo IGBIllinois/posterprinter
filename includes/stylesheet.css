@@ -203,7 +203,8 @@ padding-left:10px;
 }
 
 .form {
-padding-left:10px; 
+padding-left:10px;
+padding-right:10px;
 }
 
 .error {
@@ -276,7 +277,7 @@ border-collapse:collapse;
 background-color: white;
 border: 1px solid black;
 border-style: solid;
-width:400px;
+width:450px;
 
 }
 table.table_1 td.td_1 {
@@ -295,6 +296,10 @@ text-align:right;
 table.table_1 td.td_3 {
 text-align:left;
 
+}
+table.table_1 td.td_4 {
+padding-left:10px;
+padding-right:10px;
 }
 
 table.table_1 th {

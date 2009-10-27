@@ -14,12 +14,15 @@ function validateStep2() {
 	var cfop3 = frm.cfop3.value;
 	var cfop4 = frm.cfop4.value;
 	var cfop = cfop1 + "-" + cfop2 + "-" + cfop3 + "-" + cfop4;
+	var activityCode = frm.activityCode.value;
 	var posterFile = frm.posterFile.value;
 	var email = frm.email.value;
 	var name = frm.name.value;
 	var valid = true;
 	
 	if (validateCFOP(cfop) == false) 
+		valid = false;
+	if (validateActivityCode(activityCode) == false)
 		valid = false;
 	if (validatePaperTypes() == false)
 		valid = false;
@@ -52,11 +55,11 @@ function validateDimensions(width,length,maxPrinterWidth) {
 	}
 	
 	if ((length == "") || (length % 1 != 0) || (length <=0)){
-		document.getElementById('lengthWarning').innerHTML = "Please enter a valid poster length";
+		document.getElementById('lengthWarning').innerHTML = "Please enter a valid poster length.";
 		lengthValid = false;
 	}
 	else if (length > 200) {
-		document.getElementById('lengthWarning').innerHTML = "Length can't be greater than 200 inches";
+		document.getElementById('lengthWarning').innerHTML = "Length can't be greater than 200 inches.";
 		lengthValid = false;
 	}
 	else {
@@ -75,11 +78,11 @@ function validateDimensions(width,length,maxPrinterWidth) {
 function validateCFOP(cfop) {
 	var cfopRegex = /^1-\d{6}-\d{6}-\d{6}$/;
 	if (cfop == "") {
-		document.getElementById('cfopWarning').innerHTML = "Please enter a valid CFOP number";
+		document.getElementById('cfopWarning').innerHTML = "Please enter a valid CFOP number.";
 		return false;
 	}
 	else if (!cfop.match(cfopRegex)) {
-		document.getElementById('cfopWarning').innerHTML = "Please enter a valid CFOP number";
+		document.getElementById('cfopWarning').innerHTML = "Please enter a valid CFOP number.";
 		return false;
 	}
 	else {
@@ -88,6 +91,19 @@ function validateCFOP(cfop) {
 	}
 }
 
+function validateActivityCode(activityCode) {
+	var activityCodeRegex = /^[a-zA-Z0-9]{6}/;
+	if ((activityCode != "") && (!activityCode.match(activityCodeRegex))) {
+		document.getElementById('activityCodeWarning').innerHTML = "Please enter a valid activity code.";
+		return false;
+	}
+	else {
+		document.getElementById('activityCodeWarning').innerHTML = "&nbsp";
+		return true;
+	}
+	
+	
+}
 function validatePaperTypes() {
 	var frm = document.forms["posterInfo"];
 	
@@ -97,7 +113,7 @@ function validatePaperTypes() {
 			return true;
 		}
 	}
-	document.getElementById('paperTypesWarning').innerHTML = "Please select a Paper Type";
+	document.getElementById('paperTypesWarning').innerHTML = "Please select a Paper Type.";
 	return false;
 	
 }
@@ -110,14 +126,14 @@ function validateFinishOptions() {
 			return true;
 		}
 	}
-	document.getElementById('finishOptionsWarning').innerHTML = "Please select a Finish Option";
+	document.getElementById('finishOptionsWarning').innerHTML = "Please select a Finish Option.";
 	return false;
 	
 }
 
 function validatePosterFile(posterFile) {
 	if (posterFile.length == 0){
-		document.getElementById('posterFileWarning').innerHTML = "Please select a poster file";
+		document.getElementById('posterFileWarning').innerHTML = "Please select a poster file.";
 		return false;
 	}
 	else {
@@ -129,7 +145,7 @@ function validatePosterFile(posterFile) {
 function validateEmail(email) {
 	var emailRegex = /^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/;
 	if (!email.match(emailRegex)) {
-		document.getElementById('emailWarning').innerHTML = "Please enter your email";
+		document.getElementById('emailWarning').innerHTML = "Please enter your email.";
 		return false;
 	}
 	else {
@@ -144,7 +160,7 @@ function validateName(name) {
 		return true;
 	}
 	else {
-		document.getElementById('nameWarning').innerHTML = "Please enter your full name";
+		document.getElementById('nameWarning').innerHTML = "Please enter your full name.";
 		return false;
 	}
 
