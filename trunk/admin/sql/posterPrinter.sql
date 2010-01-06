@@ -36,7 +36,7 @@ CREATE TABLE tbl_rushOrder (
 	rushOrder_name VARCHAR(40),
 	rushOrder_cost DECIMAL(5,2),
 	rushOrder_available BOOLEAN,
-	rushOrder_default BOOLEAN DEFAULT 0
+	rushOrder_default BOOLEAN DEFAULT 0,
 	PRIMARY KEY (rushOrder_id)
 );
 

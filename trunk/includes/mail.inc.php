@@ -1,17 +1,17 @@
 <?php
-//////////////////////////////////////////////////////////////////////////////
-//																			//
-//	Poster Printer Order Submittion											//
-//	mail.inc.php															//
-//																			//
-//	Functions to mail the user the order information when order is 			//
-//	submitted and completed and email admins when a new order is 			//
-//	submitted																//
-//																			//
-//	David Slater															//
-//	April 2007																//
-//																			//
-//////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+//
+//	Poster Printer Order Submittion
+//	mail.inc.php
+//
+//	Functions to mail the user the order information when order is
+//	submitted and completed and email admins when a new order is
+//	submitted
+//
+//	David Slater
+//	April 2007
+//
+////////////////////////////////////////////////////////
 
 
 
@@ -40,7 +40,7 @@ function mailAdminsNewOrder($orderInfo) {
 	
 	$headers = "From: " . $orderInfo['email'] . "\r\n" .
 				"Content-Type: text/html; charset=iso-8859-1" . "\r\n";
-	mail($to,$subject,$message,$headers);
+	mail($to,$subject,$message,$headers," -f " . $orderInfo['email']);
 
 }
 
@@ -67,7 +67,7 @@ function mailUserNewOrder($orderInfo) {
 	
 	$headers = "From: " . $orderInfo['adminEmail'] . "\r\n" .
 				"Content-Type: text/html; charset=iso-8859-1" . "\r\n";
-	mail($to,$subject,$message,$headers);
+	mail($to,$subject,$message,$headers, " -f " . $orderInfo['adminEmail']);
 }
 
 function mailUserOrderComplete($orderInfo) {
@@ -93,7 +93,7 @@ function mailUserOrderComplete($orderInfo) {
 	$headers = "From: " . $orderInfo['adminEmail'] . "\r\n" .
 				"Cc: " . $orderInfo['adminEmail'] . "\r\n" .
 				"Content-Type: text/html; charset=iso-8859-1" . "\r\n";
-	mail($to,$subject,$message,$headers);
+	mail($to,$subject,$message,$headers, " -f " . $orderInfo['adminEmail']);
 
 }
 ?>

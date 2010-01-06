@@ -22,8 +22,8 @@ $mysqlSettings = array(
 		'database' => 'posterprinter'
 		);
 
-/*
-$mysqlSettings = array(
+
+/*$mysqlSettings = array(
 		'host' => 'www-app.igb.uiuc.edu',
 		'username' => 'posterremote',
 		'password' => 'goillini',
@@ -44,7 +44,7 @@ $authenticationSettings = array(
 			
 
 $enable = TRUE;
-$version = "1.1.0";
+$version = "1.1.1";
 
 
 ?>
