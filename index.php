@@ -24,6 +24,11 @@ if (isset($_POST['step1'])) {
 	$posterWidth = trim(rtrim($posterWidth));
 	$posterLength = trim(rtrim($posterLength));
 	
+	
+	//Connects to database.  mysql settings are pulled from includes/settings.inc.php
+	$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
+	@mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
+	
 
 	$paperTypes = getValidPaperTypes($posterWidth,$posterLength,$mysqlSettings);
 	//takes the result and formats it into html into the paperTypeHTML variable.
@@ -37,10 +42,10 @@ if (isset($_POST['step1'])) {
 		$paperTypesHTML .= "<tr><td class='td_2'>$" . $paperType_cost . "</td>" .
 						"<td class='td_2'>" .  $paperType_name . "</td>";
 		if ($paperType_default == 1) {
-			$paperTypesHTML .= "<td class='td_4'><input type='radio' name='paperTypesId' checked='true' value='" . $paperType_id . "'></td></tr>";
+			$paperTypesHTML .= "<td class='form'><input type='radio' name='paperTypesId' checked='true' value='" . $paperType_id . "'></td></tr>";
 		}
 		else {
-			$paperTypesHTML .= "<td class='td_4'><input type='radio' name='paperTypesId' value='" . $paperType_id . "'></td></tr>";
+			$paperTypesHTML .= "<td class='form'><input type='radio' name='paperTypesId' value='" . $paperType_id . "'></td></tr>";
 		}
 						
 	
@@ -60,10 +65,12 @@ if (isset($_POST['step1'])) {
 				"<td class='td_2'>" . $finishOption_name . "</td>";
 		
 		if ($finishOption_default == 1) {
-			$finishOptionsHTML .= "<td class='td_4'> <input type='radio' name='finishOptionsId' checked='true' value='" . $finishOption_id . "'></td></tr>";
+			$finishOptionsHTML .= "<td class='form'> <input type='radio' name='finishOptionsId' checked='true' value='" . $finishOption_id . "'></td>" .
+							"</tr>";
 		}
 		else {
-			$finishOptionsHTML .= "<td class='td_4'> <input type='radio' name='finishOptionsId' value='" . $finishOption_id . "'></td></tr>";
+			$finishOptionsHTML .= "<td class='form'> <input type='radio' name='finishOptionsId' value='" . $finishOption_id . "'></td>" .
+							"</tr>";
 		
 		}
 							
@@ -71,10 +78,10 @@ if (isset($_POST['step1'])) {
 	}
 	
 	$posterTubeHTML = "<tr><td class='td_2'>Poster Tube</td><td class='td_2'>$" . getPosterTubeCost($mysqlSettings) ."</td>" .
-					"<td class='td_4'><input type='checkbox' name='posterTube' value='1'></td></tr>";
+					"<td class='form'><input type='checkbox' name='posterTube' value='1'></td></tr>";
 
 	$rushOrderHTML = "<tr><td class='td_2'>Rush Order</td><td class='td_2'>$" . getRushOrderCost($mysqlSettings) ."</td>" .
-					"<td class='td_4'><input type='checkbox' name='rushOrder' value='1'></td></tr>";
+					"<td class='form'><input type='checkbox' name='rushOrder' value='1'></td></tr>";
 	
 	$formHTML = "<br \>
 			
@@ -87,26 +94,28 @@ if (isset($_POST['step1'])) {
 		<input type='hidden' name='posterLength' value='$posterLength'>
 	<table class='table_1'>
 		<tr><th colspan='3'>Paper Types</th></tr>
-		<tr><td class='td_1' colspan='3'>Please choose a paper type for your poster.  The cost is per an inch.</td></tr>" . $paperTypesHTML . "
+		<tr><td class='td_1' colspan='3'>Please choose a paper type for your poster.  The cost is per an inch</td></tr>
+		<input type='hidden' name='paperTypesId' value='none'>" . $paperTypesHTML . "
 	</table>
 	
 	<br>
 	<table class='table_1'>
 		<tr><th colspan='3'>Finish Options</th></tr>
-		<tr><td class='td_1' colspan='3'>Please choose a finish option for your poster.  The cost is a flat rate.</td></tr>" . $finishOptionsHTML . "
+		<tr><td class='td_1' colspan='3'>Please choose a finish option for your poster.  The cost is a flat rate</td></tr>
+		<input type='hidden' name='finishOptionsId' value='none'>" . $finishOptionsHTML . "
 	</table>
 	
 	<br>
 	<table class='table_1'>
 		<tr><th colspan='3'>Other Options</th></tr>
-		<tr><td class='td_1' colspan='3'>Please select any additional options.  Rush order will be done within 24 hours during the business week only.</td></tr>" . 
+		<tr><td class='td_1' colspan='3'>Please select any additional options.  Rush order will be done within 24 hours during the business week only</td></tr>" . 
 		$posterTubeHTML .
 		$rushOrderHTML . "</table>
 	
 	<br>
 	<table class='table_1'>
 		<tr><th colspan='3'>Required Information</th></tr>
-		<tr><td class='td_1' colspan='3'>Please fill in the following information.</td></tr>
+		<tr><td class='td_1' colspan='3'>Please fill in the following information</td></tr>
 		<tr>
 			<td class='td_2'>Full Name:</td>
 			<td class='td_3'><input type='text' size='29' name='name' id='name'></td>
@@ -121,10 +130,6 @@ if (isset($_POST['step1'])) {
 				<input type='text' name='cfop1' id='cfop1' maxlength='1' class='input_3' onKeyUp='cfopAdvance1()'> - <input type='text' name='cfop2' id='cfop2' maxlength='6' size='6' class='input_4' onKeyUp='cfopAdvance2()'> - 
 				<input type='text' name='cfop3' id='cfop3' maxlength='6' class='input_4' onKeyUp='cfopAdvance3()'> - <input type='text' name='cfop4' id='cfop4' maxlength='6' class='input_4'>
 			</td>
-		</tr>
-		<tr>
-			<td class='td_2'>Activity Code (optional):</td>
-			<td class='td_3'><input type='text' size='6' name='activityCode' id='activityCode' maxlength='6'></td>
 		</tr>
 		<tr>
 			<td class='td_2'>File:</td>
@@ -155,7 +160,6 @@ if (isset($_POST['step1'])) {
 	<div id='nameWarning' class='error'></div>
 	<div id='emailWarning' class='error'></div>
 	<div id='cfopWarning' class='error'></div>
-	<div id='activityCodeWarning' class='error'></div>
 	<div id='posterFileWarning' class='error'></div>";
 
 
@@ -171,7 +175,6 @@ elseif (isset($_POST['step2'])) {
 	$cfop2 = $_POST['cfop2'];
 	$cfop3 = $_POST['cfop3'];
 	$cfop4 = $_POST['cfop4'];
-	$activityCode = $_POST['activityCode'];
 	$posterFileName = $_FILES['posterFile']['name'];
 	$email = $_POST['email'];
 	$name = stripslashes($_POST['name']);
@@ -291,7 +294,6 @@ elseif (isset($_POST['step2'])) {
 					<tr><td class='td_2'>Rush Order:</td><td>" . $rushOrderName . "</td></tr>
 					<tr><td class='td_2'>Total Cost:</td><td>$" . $totalCost . "</td></tr>
 					<tr><td class='td_2'>CFOP:</td><td>" . $cfop . "</td></tr>
-					<tr><td class='td_2'>Activity Code:</td><td>" . $activityCode . "</td></tr>
 					<tr><td class='td_2'>Email:</td><td>" . $email . "</td></tr>
 					<tr><td class='td_2'>Full Name:</td><td>" . stripslashes($name) . "</td></tr>
 					<tr><td class='td_2' valign='top'>Comments:</td><td>" . stripslashes($comments) . "</td></tr>
@@ -314,7 +316,6 @@ elseif (isset($_POST['step2'])) {
 								<input type='hidden' name='finishOptionName' value='$finishOptionName'>
 								<input type='hidden' name='totalCost' value='$totalCost'>
 								<input type='hidden' name='cfop' value='$cfop'>
-								<input type='hidden' name='activityCode' value='$activityCode'>
 								<input type='hidden' name='email' value='$email'>
 								<input type='hidden' name='name' value='" . htmlspecialchars($name,ENT_QUOTES) . "'>
 								<input type='hidden' name='comments' value='" . htmlspecialchars($comments,ENT_QUOTES) . "'>
@@ -350,7 +351,6 @@ elseif (isset($_POST['step3'])) {
 	$rushOrderName = $_POST['rushOrderName'];
 	$rushOrderId = $_POST['rushOrderId'];
 	$cfop = $_POST['cfop'];
-	$activityCode = $_POST['activityCode'];
 	$totalCost = $_POST['totalCost'];
 	$posterFileName = $_POST['posterFileName'];
 	$posterFileTmpName = $_POST['posterFileTmpName'];
@@ -364,35 +364,8 @@ elseif (isset($_POST['step3'])) {
 	mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
 
 	//sql string to insert order into database.
-	$ordersSql = "INSERT INTO tbl_orders(orders_email,
-	orders_name,
-	orders_fileName,
-	orders_totalCost,
-	orders_cfop,
-	orders_activityCode,
-	orders_width,
-	orders_length,
-	orders_statusId,
-	orders_paperTypesId,
-	orders_finishOptionsId,
-	orders_comments,
-	orders_posterTubeId,
-	orders_rushOrderId,
-	orders_widthSwitched) 
-	VALUES('" . $email . "','" .  
-	mysql_real_escape_string($name) . "','" . 
-	$posterFileName . "'," . 
-	$totalCost . ",'" . 
-	$cfop . "','" . 
-	$activityCode . "'," . 
-	$posterWidth . "," . 
-	$posterLength . ",'1'," . 
-	$paperTypesId . "," . 
-	$finishOptionsId . ",'" . 
-	mysql_real_escape_string($comments) . "'," . 
-	$posterTubeId . "," .
-	$rushOrderId . "," . 
-	$widthSwitched . ")";
+	$ordersSql = "INSERT INTO tbl_orders(orders_email,orders_name,orders_fileName,orders_totalCost,orders_cfop,orders_width,orders_length,orders_statusId,orders_paperTypesId,orders_finishOptionsId,orders_comments,orders_posterTubeId,orders_rushOrderId,orders_widthSwitched) VALUES('" . $email . "','" .  mysql_real_escape_string($name) . "','" . $posterFileName . "'," . $totalCost . ",'" . $cfop . "'," . $posterWidth . "," . 
+				$posterLength . ",'1'," . $paperTypesId . "," . $finishOptionsId . ",'" . mysql_real_escape_string($comments) . "'," . $posterTubeId . "," . $rushOrderId . "," . $widthSwitched . ")";
 				
 	//runs query and gets the order_id
 	mysql_query($ordersSql,$db);
@@ -415,7 +388,6 @@ elseif (isset($_POST['step3'])) {
 					'posterLength' => $posterLength,
 					'posterWidth' => $posterWidth,
 					'cfop' => $cfop,
-					'activityCode' => $activityCode,
 					'paperType' => $paperTypeName,
 					'finishOption' => $finishOptionName,
 					'posterTube' => $posterTubeName,
@@ -452,7 +424,6 @@ elseif (isset($_POST['step3'])) {
 					<tr><td class='td_2'>Rush Order:</td><td>" . $rushOrderName . "</td></tr>
 					<tr><td class='td_2' valign='top'>Comments:</td><td>" . $comments . "</td>
 					<tr><td class='td_2'>CFOP:</td><td>" . $cfop . "</td></tr>
-					<tr><td class='td_2'>Activity Code:</td><td>" . $activityCode . "</td></tr>
 					<tr><td class='td_2'>Total Cost:</td><td>$" . $totalCost . "</td></tr>
 					<tr><td class='td_1' colspan='2'>If you have any questions please contact us at " . $adminEmail ."</td></tr>
 			</table>
@@ -480,7 +451,7 @@ else {
                 $paperTypesHtml .= "<tr>";
 		$paperTypesHtml .= "<td class='td_2'>$" . $cost . "</td>";
 		$paperTypesHtml .= "<td class='td_2'>" .  $name . "</td>";
-		$paperTypesHtml .= "<td class='td_4'>" . $maxWidth . "''</td>";
+		$paperTypesHtml .= "<td class='td_2'>" . $maxWidth . "''</td>";
                 $paperTypesHtml .= "</tr>";
         }
 	
@@ -532,8 +503,7 @@ else {
 }
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
@@ -545,13 +515,11 @@ else {
 </head>
 
 <body OnLoad="document.posterInfo.posterWidth.focus();">
-<div id='container'>
 <div id="content_center">
 <h2>Poster Printer Order Submit Form</h2>
 
 <?php echo $formHTML; ?>
 
-</div>
 </div>
 </body>
 

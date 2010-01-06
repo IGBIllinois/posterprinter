@@ -10,7 +10,6 @@ if (isset($_POST['editOrder'])) {
 	$cfop2 = $_POST['cfop2'];
 	$cfop3 = $_POST['cfop3'];
 	$cfop4 = $_POST['cfop4'];
-	$activityCode = $_POST['activityCode'];
 	$finishOptionsId = $_POST['finishOption'];
 	$paperTypesId = $_POST['paperType'];
 	$posterTubeId = $_POST['posterTube'];
@@ -20,19 +19,16 @@ if (isset($_POST['editOrder'])) {
 	$posterLength = $_POST['posterLength'];
 	
 	$cfop = $cfop1 . "-" . $cfop2 . "-" . $cfop3 . "-" . $cfop4;
-	//trims activity code and upper cases the letter
-	$activityCode = strtoupper(trim(rtrim($activityCode)));
-	
+	$newcfop = $cfop1 . "-" . $cfop2;
 	$error = false;
+	//if (!eregi('^1-\d{6}-\d{6}-\d{6}$',$cfop)) {
+	//	$error = true;
+	//	$cfopErrorMsg = "<br><b class='error'>Invalid CFOP Number</b>";
+	//}
 	if (!eregi('^1-[0-9]{6}-[0-9]{6}-[0-9]{6}$',$cfop)) {
 		$error = true;
-		$cfopMsg = "<br><b class='error'>Invalid CFOP Number</b>";
+		$cfopErrorMsg = "<br><b class='error'>Invalid CFOP Number</b>";
 	}
-	elseif (!eregi('^[a-zA-Z0-9]{6}',$activityCode) && (strlen($activityCode) > 0)) {
-		$error = true;
-		$activityCodeMsg = 	"<b><b class='error'>Invalid Activity Code</b>";
-	}
-	
 	if ($error == false) {
 		//connects to the database.  Pulls the mysql settings from the file includes/settings.inc.php.
 		$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
@@ -85,7 +81,7 @@ if (isset($_POST['editOrder'])) {
 		//Calculates Total Cost
 		$totalCost = ($posterLength * $paperTypeCost) + $finishOptionCost + $posterTubeCost + $rushOrderCost;
 		
-		$editOrderSql = "UPDATE tbl_orders SET orders_cfop='$cfop', orders_activityCode='" . $activityCode . "',orders_width=$posterWidth, orders_length=$posterLength, orders_finishOptionsId=$finishOptionsId, orders_paperTypesId=$paperTypesId,";
+		$editOrderSql = "UPDATE tbl_orders SET orders_cfop='$cfop', orders_width=$posterWidth, orders_length=$posterLength, orders_finishOptionsId=$finishOptionsId, orders_paperTypesId=$paperTypesId,";
 		$editOrderSql .= "orders_posterTubeId=$posterTubeId,orders_rushOrderId=$rushOrderId,orders_widthSwitched=$widthSwitched,orders_totalCost=$totalCost ";
 		$editOrderSql .= "WHERE orders_id=$orderId";
 	
@@ -99,7 +95,7 @@ if (isset($_POST['editOrder'])) {
 }
 
 
-if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
+if (isset($_GET['orderId'])) {
 
 	include 'includes/header.inc.php';
 	//gets order id
@@ -128,7 +124,6 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 	$orderName = mysql_result($orderResult,0,"orders_name");
 	$orderFileName = mysql_result($orderResult,0,"orders_fileName");
 	$orderCFOP = mysql_result($orderResult,0,"orders_cfop");
-	$orderActivityCode = mysql_result($orderResult,0,"orders_activityCode");
 	$orderTimeCreated = mysql_result($orderResult,0,"orders_timeCreated");
 	$orderTotalCost = mysql_result($orderResult,0,"orders_totalCost");
 	$orderWidth = mysql_result($orderResult,0,"orders_width");
@@ -237,12 +232,26 @@ else
 }
 </script>
 <form method='post' action='editOrder.php?orderId=<?php echo $orderId; ?>'><table class='table_1'>
-				<tr><th colspan='2'>Edit Order Information</th></tr>
-				<tr><td class='td_2'>Order Number:</td><td><?php echo $orderId; ?></td></tr>
-				<tr><td class='td_2'>Email: </td><td><?php echo $orderEmail; ?></td></tr>
-				<tr><td class='td_2'>Full Name: </td><td><?php echo $orderName; ?></td></tr>
-				<tr><td class='td_2'>File:</td><td><a href='download.php?orderId=<?php echo $orderId; ?>'><?php echo $orderFileName;  ?></a></td></tr>
-				<tr><td class='td_2'>CFOP:</td>
+				<tr>
+					<th colspan='2'>Edit Order Information</th>
+				<tr>
+					<td class='td_2'>Order Number:</td>
+					<td><?php echo $orderId; ?></td>
+				</tr>
+				<tr>
+					<td class='td_2'>Email: </td>
+					<td><?php echo $orderEmail; ?></td>
+				</tr>
+				<tr>
+					<td class='td_2'>Full Name: </td>
+					<td><?php echo $orderName; ?></td>
+				</tr>
+				<tr>
+					<td class='td_2'>File:</td>
+					<td><a href='download.php?orderId=<?php echo $orderId; ?>'><?php echo $orderFileName;  ?></a></td>
+				</tr>
+				<tr>
+					<td class='td_2'>CFOP:</td>
 					<td>
 						<input type='text' name='cfop1' id='cfop1' maxlength='1' class='input_3' onKeyUp='cfopAdvance1()' value='<?php echo $cfop1; ?>'> - 
 						<input type='text' name='cfop2' id='cfop2' maxlength='6' size='6' class='input_4' onKeyUp='cfopAdvance2()' value='<?php echo $cfop2; ?>'> - 
@@ -250,16 +259,42 @@ else
 						<input type='text' name='cfop4' id='cfop4' maxlength='6' class='input_4' value='<?php echo $cfop4; ?>'>
 					</td>
 				</tr>
-				<tr><td class='td_2'>Activity Code:</td><td><input type='text' name='activityCode' maxlength='6' size='6' value='<?php echo $orderActivityCode; ?>'></td></tr>
-				<tr><td class='td_2'>Time Created:</td><td><?php echo $orderTimeCreated; ?></td></tr>
-				<tr><td class='td_2'>Total Cost:</td><td><?php echo $orderTotalCost; ?></td></tr>
-				<tr><td class='td_2'>Width:</td><td><?php echo $orderWidth; ?>"</td></tr>
-				<tr><td class='td_2'>Length:</td><td><?php echo $orderLength; ?>"</td></tr>
-				<tr><td class='td_2'>Paper Type:</td><td><?php echo $paperTypesHTML; ?></td></tr>
-				<tr><td class='td_2'>Finish Option:</td><td><?php echo $finishOptionsHTML;  ?></td></tr>
-				<tr><td class='td_2'>Poster Tube:</td><td><?php echo $posterTubeHTML; ?></td></tr>
-				<tr><td class='td_2'>Rush Order:</td><td><?php echo $rushOrderHTML; ?></td></tr>
-				<tr><td class='td_2' valign='top'>Comments:</td><td><?php echo $orderComments; ?></td></tr>
+				<tr>
+					<td class='td_2'>Time Created:</td>
+					<td><?php echo $orderTimeCreated; ?></td>
+				</tr>
+				<tr>
+					<td class='td_2'>Total Cost:</td>
+					<td><?php echo $orderTotalCost; ?></td>
+				</tr>
+				<tr>
+					<td class='td_2'>Width:</td>
+					<td><?php echo $orderWidth; ?>"</td>
+				</tr>
+				<tr>
+					<td class='td_2'>Length:</td>
+					<td><?php echo $orderLength; ?>"</td>
+				</tr>
+				<tr>
+					<td class='td_2'>Paper Type:</td>
+					<td><?php echo $paperTypesHTML; ?></td>
+				</tr>
+				<tr>
+					<td class='td_2'>Finish Option:</td>
+					<td><?php echo $finishOptionsHTML;  ?></td>
+				</tr>
+				<tr>
+					<td class='td_2'>Poster Tube:</td>
+					<td><?php echo $posterTubeHTML; ?></td>
+				</tr>
+				<tr>
+					<td class='td_2'>Rush Order:</td>
+					<td><?php echo $rushOrderHTML; ?></td>
+				</tr>
+				<tr>
+					<td class='td_2' valign='top'>Comments:</td>
+					<td><?php echo $orderComments; ?></td>
+				</tr>
 			</table>
 			<br>
 			<input type='hidden' name='orderId' value='<?php echo $orderId; ?>'>
@@ -268,6 +303,6 @@ else
 			<input type='submit' name='editOrder' value='Edit Order' onClick='return confirmUpdate()'>
 			</form>
 
-<?php if (isset($cfopMsg)){echo $cfopMsg; } ?>
-<?php if (isset($activityCodeMsg)){echo $activityCodeMsg; } ?>
+<?php if (isset($cfopErrorMsg)){echo $cfopErrorMsg; } ?>
+
 <?php include 'includes/footer.inc.php'; ?>

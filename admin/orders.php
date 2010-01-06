@@ -45,7 +45,6 @@ if (isset($_POST['changeStatus'])) {
 					'posterLength' =>  mysql_result($orderResult,0,'orders_length'),
 					'posterWidth' =>  mysql_result($orderResult,0,'orders_width'),
 					'cfop' =>  mysql_result($orderResult,0,'orders_cfop'),
-					'activityCode' =>  mysql_result($orderResult,0,'orders_activityCode'),
 					'paperType' =>  mysql_result($orderResult,0,"paperTypes_name"),
 					'finishOption' =>  mysql_result($orderResult,0,"finishOptions_name"),
 					'posterTube' => mysql_result($orderResult,0,"posterTube_name"),
@@ -99,7 +98,6 @@ if (isset($_GET['orderId'])) {
 	$orderName = mysql_result($orderResult,0,"orders_name");
 	$orderFileName = mysql_result($orderResult,0,"orders_fileName");
 	$orderCFOP = mysql_result($orderResult,0,"orders_cfop");
-	$orderActivityCode = mysql_result($orderResult,0,"orders_activityCode");
 	$orderTimeCreated = mysql_result($orderResult,0,"orders_timeCreated");
 	$orderTotalCost = mysql_result($orderResult,0,"orders_totalCost");
 	$orderWidth = mysql_result($orderResult,0,"orders_width");
@@ -137,23 +135,68 @@ if (isset($_GET['orderId'])) {
 
 
 	$ordersHTML = "<table class='table_1'>
-				<tr><th colspan='2'>Order Information</th></tr>
-				<tr><td class='td_2'>Order Number:</td><td>" . $orderId . "</td></tr>
-				<tr><td class='td_2'>Email: </td><td>" . $orderEmail . "</td></tr>
-				<tr><td class='td_2'>Full Name: </td><td>" . $orderName . "</td></tr>
-				<tr><td class='td_2'>File:</td><td><a href='download.php?orderId=" . $orderId . "'>" . $orderFileName . "</a></td></tr>
-				<tr><td class='td_2'>CFOP:</td><td>" . $orderCFOP . "</td></tr>
-				<tr><td class='td_2'>Activity Code:</td><td>" . $orderActivityCode . "</td></tr>
-				<tr><td class='td_2'>Time Created:</td><td>" . $orderTimeCreated . "</td></tr>
-				<tr><td class='td_2'>Total Cost:</td><td>$" . $orderTotalCost . "</td></tr>
-				<tr><td class='td_2'>Width:</td><td>" . $orderWidth . "\"</td></tr>
-				<tr><td class='td_2'>Length:</td><td>" . $orderLength . "\"</td></tr>
-				<tr><td class='td_2'>Paper Type:</td><td>" . $orderPaperType . "</td></tr>
-				<tr><td class='td_2'>Finish Option:</td><td>" . $orderFinishOption . "</td></tr>
-				<tr><td class='td_2'>Poster Tube:</td><td>" . $posterTube . "</td></tr>
-				<tr><td class='td_2'>Rush Order:</td><td>" . $rushOrder . "</td></tr>
-				<tr><td class='td_2' valign='top'>Comments:</td><td>" . $orderComments . "</td></tr>
-				<tr><td class='td_2'>Status:</td><td>" . $statusHTML . "</td></tr>
+				<tr>
+					<th colspan='2'>Order Information</th>
+				<tr>
+					<td class='td_2'>Order Number:</td>
+					<td>" . $orderId . "</td>
+				</tr>
+				<tr>
+					<td class='td_2'>Email: </td>
+					<td>" . $orderEmail . "</td>
+				</tr>
+				<tr>
+					<td class='td_2'>Full Name: </td>
+					<td>" . $orderName . "</td>
+				</tr>
+				<tr>
+					<td class='td_2'>File:</td>
+					<td><a href='download.php?orderId=" . $orderId . "'>" . $orderFileName . "</a></td>
+				</tr>
+				<tr>
+					<td class='td_2'>CFOP:</td>
+					<td>" . $orderCFOP . "</td>
+				</tr>
+				<tr>
+					<td class='td_2'>Time Created:</td>
+					<td>" . $orderTimeCreated . "</td>
+				</tr>
+				<tr>
+					<td class='td_2'>Total Cost:</td>
+					<td>$" . $orderTotalCost . "</td>
+				</tr>
+				<tr>
+					<td class='td_2'>Width:</td>
+					<td>" . $orderWidth . "\"</td>
+				</tr>
+				<tr>
+					<td class='td_2'>Length:</td>
+					<td>" . $orderLength . "\"</td>
+				</tr>
+				<tr>
+					<td class='td_2'>Paper Type:</td>
+					<td>" . $orderPaperType . "</td>
+				</tr>
+				<tr>
+					<td class='td_2'>Finish Option:</td>
+					<td>" . $orderFinishOption . "</td>
+				</tr>
+				<tr>
+					<td class='td_2'>Poster Tube:</td>
+					<td>" . $posterTube . "</td>
+				</tr>
+				<tr>
+					<td class='td_2'>Rush Order:</td>
+					<td>" . $rushOrder . "</td>
+				</tr>
+				<tr>
+					<td class='td_2' valign='top'>Comments:</td>
+					<td>" . $orderComments . "</td>
+				</tr>
+				<tr>
+					<td class='td_2'>Status:</td>
+					<td>" . $statusHTML . "</td>
+				</tr>
 			</table>
 			<br>";
 

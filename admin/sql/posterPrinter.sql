@@ -58,7 +58,6 @@ CREATE TABLE tbl_orders (
 	orders_fileName VARCHAR(100),
 	orders_totalCost DECIMAL(6,2),
 	orders_cfop VARCHAR(22),
-	orders_activityCode VARCHAR(6),
 	orders_width INT,
 	orders_length INT,
 	orders_statusId INT REFERENCES tbl_status(status_id),
@@ -89,7 +88,6 @@ INSERT INTO tbl_status(status_name) VALUES("New");
 INSERT INTO tbl_status(status_name) VALUES("In Progress");
 INSERT INTO tbl_status(status_name) VALUES("Completed");
 INSERT INTO tbl_status(status_name) VALUES("Cancel");
-INSERT INTO tbl_status(status_name) VALUES("On Hold");
 
 INSERT INTO tbl_posterTube(posterTube_name,posterTube_cost,posterTube_available) VALUES("Yes",5.00,True);
 INSERT INTO tbl_posterTube(posterTube_name,posterTube_cost,posterTube_available,posterTube_default) VALUES("No",0.00,True,True);

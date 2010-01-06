@@ -1,8 +1,12 @@
 body {
+width:825px; 
 background-color:#B5B5B5;
+margin:auto; /*Centers window*/
+padding:0px; 
 font-size:12px; 
 font-family:"Comic Sans MS"; 
 color:#333333;
+line-height:16px; 
 }
 
 br {
@@ -29,7 +33,6 @@ line-height:20px;
 
 .ul_2 {
 line-height:30px; 
-list-style: none;
 }
 
 .ul_nopadding {/*Removes padding from UL list and changes line height*/
@@ -167,11 +170,7 @@ padding-top:0px;
 padding-bottom:0px;
 }
 
-#container {
-margin: 0px auto;
-width: 850px;
 
-}
 
 #header{
 width:800px;
@@ -203,8 +202,7 @@ padding-left:10px;
 }
 
 .form {
-padding-left:10px;
-padding-right:10px;
+padding-left:10px; 
 }
 
 .error {
@@ -223,7 +221,7 @@ border-color:gray;
 border-right-color:#31436A;
 font-family:Verdana, Arial, Helvetica, sans-serif;
 font-weight:600; 
-min-height:800px;
+height:800px;
 }
 
 
@@ -231,13 +229,13 @@ min-height:800px;
 float: left;
 width: 625px;
 background-color:#F2F4F3;
-padding:20px 10px 10px 15px; 
-line-height: 16px;
+padding:20px 10px 0px 15px; 
+margin-bottom:10px; 
 border-color:gray;
 border-style:solid;
 border-width:1px 1px 0px 1px;
 font-family:Arial, Helvetica, sans-serif;
-min-height:770px;
+height:780px;
 }
 /*
 #content_center a {
@@ -265,19 +263,24 @@ font-size:12px;
 margin:0px;  
 }
 
-
-#footer {
-min-height:50px;
-width:800px;
+#content_right {
+float: left;
+width: 188px;
+background-color:#e1e1e1;
+border-width:0px 1px 0px 1px; 
+border-style:solid; 
+border-color:gray;
+padding-left:10px;
 
 }
+
 table.table_1 {
 border-spacing:0px;
 border-collapse:collapse;
 background-color: white;
 border: 1px solid black;
 border-style: solid;
-width:450px;
+width:400px;
 
 }
 table.table_1 td.td_1 {
@@ -296,10 +299,6 @@ text-align:right;
 table.table_1 td.td_3 {
 text-align:left;
 
-}
-table.table_1 td.td_4 {
-padding-left:10px;
-padding-right:10px;
 }
 
 table.table_1 th {
