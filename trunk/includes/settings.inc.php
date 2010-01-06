@@ -44,7 +44,7 @@ $authenticationSettings = array(
 			
 
 $enable = TRUE;
-$version = "1.1.1";
+$version = "1.1.0";
 
 
 ?>

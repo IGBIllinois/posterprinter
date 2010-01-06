@@ -1,7 +1,7 @@
 Install Howto for Poster Printer.
 
 1.  Move the files into the a directory the webserver can see.
-2.  Run the posterPrinter.sql on the mysql server.
+2.  Run the /admin/sql/posterprinter.sql on the mysql server.
 3.  Create a user/password on the mysql server which has select/insert/delete/update permissions on the posterprinter database.
 4.  Edit /includes/settings.inc.php to reflect your settings.
 5.  Set the permissions on /posterfiles so the user running the apache server has write permissions.
