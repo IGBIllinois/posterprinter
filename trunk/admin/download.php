@@ -1,7 +1,7 @@
 <?php
 //////////////////////////////////////////////////////////////////////////////
 //																			//
-//	Poster Printer Order Submittion											//
+//	Poster Printer Order Submission											//
 //	download.php															//
 //																			//
 //	Downloads the poster file that is to be printed							//

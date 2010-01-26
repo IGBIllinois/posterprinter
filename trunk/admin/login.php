@@ -1,10 +1,10 @@
 <?php
 //////////////////////////////////////////////////////////////////////////////
 //																			//
-//	Poster Printer Order Submittion											//
+//	Poster Printer Order Submission											//
 //	adminlogin.php															//
 //																			//
-//	Logges in the admin users so they can view orders and download			//
+//	Logs in the admin users so they can view orders and download			//
 //	the poster files														//
 //																			//
 //	David Slater															//

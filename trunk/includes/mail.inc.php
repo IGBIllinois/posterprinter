@@ -1,7 +1,7 @@
 <?php
 /////////////////////////////////////////////////////////
 //
-//	Poster Printer Order Submittion
+//	Poster Printer Order Submission
 //	mail.inc.php
 //
 //	Functions to mail the user the order information when order is

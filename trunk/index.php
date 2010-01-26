@@ -1,7 +1,7 @@
 <?php
 //////////////////////////////////////////////////////
 //													//
-//	Poster Printer Order Submittion					//
+//	Poster Printer Order Submission					//
 //	index.php										//
 //													//
 //	Page to allow the user to submit poster files 	//

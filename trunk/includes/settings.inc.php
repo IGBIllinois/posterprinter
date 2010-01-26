@@ -1,7 +1,7 @@
 <?php
 //////////////////////////////////////////////////////////
 //														//
-//	Poster Printer Order Submittion						//
+//	Poster Printer Order Submission						//
 //	settings.inc.php									//
 //														//
 //	Settings for the scripts.							//
