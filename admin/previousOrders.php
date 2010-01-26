@@ -59,8 +59,6 @@ else {
 	}
 }
 
-//$dateSql = "SELECT DISTINCT month(orders_timeCreated),year(orders_timeCreated) FROM tbl_orders";
-//$dateResult = mysql_query($dateSql,$db);
 $yearHTML = "<select name='year'>";
 $monthHTML = "<select name='month'>";
 
