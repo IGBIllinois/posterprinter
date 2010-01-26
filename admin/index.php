@@ -1,16 +1,16 @@
 <?php
-//////////////////////////////////////////////////////////////////////////////
-//																			//
-//	Poster Printer Order Submittion											//
-//	index.php																//
-//																			//
-//	Views the current orders that need to be processed and					//
-//	changes the status from New,In Progress, and Completed					//
-//																			//
-//	David Slater															//
-//	April 2007																//
-//																			//
-////////////////////////////////////////////////////////////////////////////// 
+/////////////////////////////////////////////
+//
+//	Poster Printer Order Submission
+//	index.php
+//
+//	Views the current orders that need to be processed and
+//	changes the status from New,In Progress, and Completed
+//
+//	David Slater
+//	April 2007
+//
+///////////////////////////////////////////////
 //Include files for the script to run
 
 include 'includes/session.inc.php';

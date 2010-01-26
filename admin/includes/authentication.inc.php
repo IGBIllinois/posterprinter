@@ -1,15 +1,15 @@
 <?php
-//////////////////////////////////////////////////////////////////////////////
-//																			//
-//	Poster Printer Order Submittion											//
-//	authentication.inc.php													//
-//																			//
-//	Functions to verify IGB users											//
-//																			//
-//	David Slater															//
-//	April 2007																//
-//																			//
-//////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////
+//
+//	Poster Printer Order Submission		
+//	authentication.inc.php
+//
+//	Functions to verify IGB users
+//
+//	David Slater
+//	April 2007
+//
+/////////////////////////////////////////////////
 
 function authenticate($username,$password,$authenticationSettings) {
 
