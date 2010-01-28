@@ -15,19 +15,19 @@ if (isset($_POST['create_report'])) {
 	$filename = "PosterReport-" . $month . "-" . $year;
 	if ($type == 'csv') {
 		$filename .=  ".csv";
-		create_csv_report($data,$filename);
+		create_csv_report($data,$month,$year);
 	}
 	elseif ($type == 'excel2003') {
 		$filename .= ".xls";
-		create_excel_2003_report($data,$filename);
+		create_excel_2003_report($data,$month,$year);
 	}
 	elseif ($type == 'excel2007') {
 		$filename .= ".xlsx";
-		create_excel_2007_report($data,$filename);
+		create_excel_2007_report($data,$month,$year);
 	}
 	elseif ($type == 'pdf') {
 		$filename .= ".pdf";
-		create_pdf_report($data,$filename);
+		create_pdf_report($data,$month,$year);
 
 	}
 }

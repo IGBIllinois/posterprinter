@@ -1,14 +1,14 @@
 <?php
 include_once 'PHPExcel.php';
-//include_once 'PHPExcel/IOFactory.php';
+include_once 'PHPExcel/IOFactory.php';
 
 //create_excel_2003_report()
 //$data - double array - data values
 //$file_name - string - name of the file to create
 //prompts to save an xml excel file with the data
-function create_excel_2003_report($data,$filename) {
-
-	$excel_file = create_generic_excel($data);
+function create_excel_2003_report($data,$month,$year) {
+	$filename = get_filename($month,$year,'xls');
+	$excel_file = create_generic_excel($data,$month,$year);
 	header('Content-Type: application/vnd.ms-excel');
 	header("Content-Disposition: attachment;filename=" . $filename);
 	header('Cache-Control: max-age=0');
@@ -17,10 +17,10 @@ function create_excel_2003_report($data,$filename) {
 
 }
 
-function create_excel_2007_report($data,$filename) {
+function create_excel_2007_report($data,$month,$year) {
 
-
-	$excel_file = create_generic_excel($data);
+	$filename = get_filename($month,$year,'xlsx');
+	$excel_file = create_generic_excel($data,$month,$year);
 	header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 	header("Content-Disposition: attachment;filename=" . $filename);
 	header('Cache-Control: max-age=0');
@@ -30,9 +30,9 @@ function create_excel_2007_report($data,$filename) {
 }
 
 
-function create_pdf_report($data,$filename) {
+function create_pdf_report($data,$month,$year) {
 
-        $excel_file = create_generic_excel($data);
+        $excel_file = create_generic_excel($data,$month,$year);
 	header('Content-Type: application/pdf');
         header("Content-Disposition: attachment;filename=" . $filename);
         header('Cache-Control: max-age=0');
@@ -40,7 +40,7 @@ function create_pdf_report($data,$filename) {
 	$writer->save('php://output');
 }
 
-function create_generic_excel($data) {
+function create_generic_excel($data,$month,$year) {
 
 	$excel_file = new PHPExcel();
 	$excel_file->setActiveSheetIndex(0);
@@ -72,10 +72,14 @@ function create_generic_excel($data) {
 
 	$excel_file->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
 	$excel_file->getActiveSheet()->getPageSetup()->setFitToPage(true);
+	$month_name = date('F', mktime(0,0,0,$month,1));
+	$excel_file->getActiveSheet()->getHeaderFooter()->setOddHeader($month_name . " " . $year . "\n\rPoster Printing");
+	
 	return $excel_file;
 
 }
-function create_csv_report($data,$filename) {
+function create_csv_report($data,$month,$year) {
+	$filename = get_filename($month,$year,'csv');
 	$delimiter = ",";
         $file_link = sys_get_temp_dir() . "/" . $filename;
 	@unlink($file_link);
@@ -97,4 +101,6 @@ function create_csv_report($data,$filename) {
         unlink($file_link);
 
 }
+
+function get_filename($month,$year,$ext) { return "PosterReport-" . $month . "-" . $year . "." . $ext; }
 ?>
