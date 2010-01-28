@@ -12,8 +12,8 @@
 //																			//
 //////////////////////////////////////////////////////////////////////////////
 
-include 'includes/authentication.inc.php';
-include '../includes/settings.inc.php';
+include_once 'includes/main.inc.php';
+include_once 'authentication.inc.php';
 session_start();
 
 if (isset($_SESSION['webpage'])) {

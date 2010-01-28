@@ -10,7 +10,13 @@
 //	April 2007
 //
 //////////////////////////////////////////////////////
+
+include_once '../includes/settings.inc.php';
+set_include_path(get_include_path() . ':../libs');
+include_once 'db.class.inc.php';
 session_start();
+
+$db = new db($mysqlSettings['host'],$mysqlSettings['database'],$mysqlSettings['username'],$mysqlSettings['password']);
 
 if (isset($_SESSION['admin'])) {
 	

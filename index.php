@@ -12,9 +12,11 @@
 //////////////////////////////////////////////////////
 
 //Include files for the script to run
-include 'includes/settings.inc.php';
-include 'includes/mail.inc.php';
-include_once 'includes/functions.inc.php';
+include_once 'includes/settings.inc.php';
+set_include_path(get_include_path() . ':libs');
+include_once 'db.class.inc.php';
+include_once 'mail.inc.php';
+include_once 'functions.inc.php';
 
 //poster width and length submission
 if (isset($_POST['step1'])) {

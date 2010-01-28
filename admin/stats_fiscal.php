@@ -1,7 +1,7 @@
 <?php
-include 'includes/session.inc.php';
-include 'includes/header.inc.php';
-include 'includes/statistics.class.inc.php';
+include_once 'includes/main.inc.php';
+include_once 'includes/header.inc.php';
+include_once 'statistics.class.inc.php';
 
 $month = date('m');
 if (isset($_GET['year'])) {
@@ -35,14 +35,14 @@ else {
 	$graphType = "finishOptions";
 }
 
-$stats = new statistics($mysqlSettings);
-$yearlyTotal = $stats->cost($startDate,$endDate);
+$stats = new statistics($db,$startDate,$endDate);
+$yearlyTotal = $stats->cost();
 
-$rushOrderPercent = $stats->percentRushOrder($startDate,$endDate);
-$posterTubePercent = $stats->percentPosterTube($startDate,$endDate);
-$averagePosterCost = $stats->averagePosterCost($startDate,$endDate);
-$totalInches = $stats->totalInches($startDate,$endDate);
-$totalOrders = $stats->orders($startDate,$endDate);
+$rushOrderPercent = $stats->percentRushOrder();
+$posterTubePercent = $stats->percentPosterTube();
+$averagePosterCost = $stats->averagePosterCost();
+$totalInches = $stats->totalInches();
+$totalOrders = $stats->orders();
 
 $graphForm = "<form name='selectGraph' id='selectGraph' method='post' action='stats_fiscal.php?year=" . $year . "'>";
 $graphForm .= "<select name='graphType' onChange='document.selectGraph.submit();'>";

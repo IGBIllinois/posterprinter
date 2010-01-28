@@ -1,7 +1,6 @@
 <?php
-include 'includes/session.inc.php';
-include '../includes/mail.inc.php';
-include '../includes/settings.inc.php';
+include_once 'includes/main.inc.php';
+include_once 'mail.inc.php';
 
 if (isset($_POST['editOrder'])) {
 

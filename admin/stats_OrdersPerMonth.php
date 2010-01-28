@@ -1,7 +1,7 @@
 <?php
-include 'includes/session.inc.php';
-include 'includes/header.inc.php';
-include 'includes/statistics.class.inc.php';
+include_once 'includes/main.inc.php';
+include_once 'includes/header.inc.php';
+include_once 'statistics.class.inc.php';
 
 
 if (isset($_GET['year'])) {
@@ -21,10 +21,10 @@ $nextYear =$year +1;
 $startDate = $year . "/01/01";
 $endDate = $year . "/12/31";
 
-$stats = new statistics($mysqlSettings);
+$stats = new statistics($db,$startDate,$endDate);
 
-$yearlyTotal = $stats->cost($startDate,$endDate);
-$totalOrders = $stats->orders($startDate,$endDate);
+$yearlyTotal = $stats->cost();
+$totalOrders = $stats->orders();
 
 
 ?>

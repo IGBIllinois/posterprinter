@@ -13,8 +13,7 @@
 
 //Include files for the script to run
 
-//include 'includes/session.inc.php';
-include '../includes/settings.inc.php';
+include 'includes/main.inc.php';
 
 if (isset($_GET['orderId'])) {
 
