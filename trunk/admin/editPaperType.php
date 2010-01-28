@@ -1,6 +1,5 @@
 <?php
-include 'includes/session.inc.php';
-include '../includes/settings.inc.php';
+include_once 'includes/main.inc.php';
 
 //connects to the database.  Pulls the mysql settings from the file includes/settings.inc.php.
 $db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);

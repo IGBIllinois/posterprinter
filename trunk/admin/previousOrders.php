@@ -1,7 +1,7 @@
 <?php
-include 'includes/session.inc.php';
-include 'includes/header.inc.php';
-include 'includes/statistics.class.inc.php';
+include_once 'includes/main.inc.php';
+include_once 'includes/header.inc.php';
+include_once 'statistics.class.inc.php';
 
 if (isset($_POST['selectedDate'])) {
 	$year = $_POST['year'];
@@ -83,12 +83,12 @@ for ($i=1;$i<=12;$i++) {
 }
 $monthHTML .= "</select>";
 
-$stats = new statistics($mysqlSettings);
+$stats = new statistics($db,$startDate,$endDate);
 $startDate = $year . "/" . $month . "/01";
 
 $endDate =  date('Y/m/d',strtotime('-1 second',strtotime('+1 month',strtotime($startDate))));
 
-$monthlyTotal = $stats->cost($startDate,$endDate);
+$monthlyTotal = $stats->cost();
 
 ?>
 

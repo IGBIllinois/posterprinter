@@ -1,7 +1,7 @@
 <?php
-include 'includes/session.inc.php';
-include 'includes/header.inc.php';
-include 'includes/statistics.class.inc.php';
+include_once 'includes/main.inc.php';
+include_once 'includes/header.inc.php';
+include_once 'statistics.class.inc.php';
 
 
 if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
@@ -70,13 +70,13 @@ else {
 $graphForm .= "</select>";
 $graphForm .= "</form>";
 
-$stats = new statistics($mysqlSettings);
-$monthlyTotal = $stats->cost($startDate,$endDate);
-$rushOrderPercent = $stats->percentRushOrder($startDate,$endDate);
-$posterTubePercent = $stats->percentPosterTube($startDate,$endDate);
-$averagePosterCost = $stats->averagePosterCost($startDate,$endDate);
-$totalInches = $stats->totalInches($startDate,$endDate);
-$totalOrders = $stats->orders($startDate,$endDate);
+$stats = new statistics($db,$startDate,$endDate);
+$monthlyTotal = $stats->cost();
+$rushOrderPercent = $stats->percentRushOrder();
+$posterTubePercent = $stats->percentPosterTube();
+$averagePosterCost = $stats->averagePosterCost();
+$totalInches = $stats->totalInches();
+$totalOrders = $stats->orders();
 
 $url = "stats_monthly.php";
 $backUrl = $url . "?startDate=" . htmlspecialchars($previousStartDate,ENT_QUOTES) . "&endDate=" . htmlspecialchars($previousEndDate,ENT_QUOTES);

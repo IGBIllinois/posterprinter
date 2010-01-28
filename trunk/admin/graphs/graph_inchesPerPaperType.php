@@ -1,16 +1,20 @@
 <?php
-include '../includes/statistics.class.inc.php';
-include '../../includes/settings.inc.php';
-include 'jpgraph.php';
-include 'jpgraph_pie.php';
-include 'jpgraph_pie3d.php';
+
+include_once '../../includes/settings.inc.php';
+set_include_path(get_include_path() . ':../../libs');
+include_once 'db.class.inc.php';
+include_once 'statistics.class.inc.php';
+include_once 'jpgraph.php';
+include_once 'jpgraph_pie.php';
+include_once 'jpgraph_pie3d.php';
+$db = new db($mysqlSettings['host'],$mysqlSettings['database'],$mysqlSettings['username'],$mysqlSettings['password']);
 
 if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
 
 	$startDate = $_GET['startDate'];
 	$endDate = $_GET['endDate'];
-	$stats = new statistics($mysqlSettings);
-	$paperTypesData = $stats->paperTypesTotalInches($startDate,$endDate);
+	$stats = new statistics($db,$startDate,$endDate);
+	$paperTypesData = $stats->paperTypesTotalInches();
 	
 	$data_legend;
 	$data;

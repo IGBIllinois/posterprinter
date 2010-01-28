@@ -1,15 +1,17 @@
 <?php
-include '../includes/statistics.class.inc.php';
-include '../../includes/settings.inc.php';
-include 'jpgraph.php';
-
-include 'jpgraph_bar.php';
+include_once '../../includes/settings.inc.php';
+set_include_path(get_include_path() . ':../../libs');
+include_once 'db.class.inc.php';
+include_once 'statistics.class.inc.php';
+include_once 'jpgraph.php';
+include_once 'jpgraph_bar.php';
+$db = new db($mysqlSettings['host'],$mysqlSettings['database'],$mysqlSettings['username'],$mysqlSettings['password']);
 
 
 if (isset($_GET['year'])) {
 
 	$year = $_GET['year'];
-	$stats = new statistics($mysqlSettings);
+	$stats = new statistics($db,'','');
 	$ordersPerMonthData = $stats->ordersPerMonth($year);
 	
 	$data_legend;

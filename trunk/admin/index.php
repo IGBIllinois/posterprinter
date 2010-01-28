@@ -13,7 +13,7 @@
 ///////////////////////////////////////////////
 //Include files for the script to run
 
-include 'includes/session.inc.php';
+include 'includes/main.inc.php';
 include 'includes/header.inc.php';
 
 

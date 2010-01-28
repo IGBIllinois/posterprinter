@@ -21,8 +21,8 @@ $maxPrinterWidth = 44;
 		'password' => 'm5qEGaQacAsp',
 		'database' => 'posterprinter'
 		);
-*/
 
+*/
 $mysqlSettings = array(
 		'host' => 'www-app.igb.uiuc.edu',
 		'username' => 'posterremote',

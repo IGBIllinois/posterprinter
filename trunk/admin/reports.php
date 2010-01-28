@@ -1,8 +1,7 @@
 <?php
-include_once '../includes/settings.inc.php';
+include_once 'includes/main.inc.php';
 include_once 'includes/functions.inc.php';
-include_once 'includes/reports.inc.php';
-include_once '../includes/db.class.inc.php';
+include_once 'reports.inc.php';
 
 if (isset($_POST['create_report'])) {
 
