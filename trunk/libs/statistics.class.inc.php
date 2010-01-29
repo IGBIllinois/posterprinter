@@ -10,6 +10,7 @@ class statistics {
 		$this->db = $db;
 		$this->startDate = $startDate;
 		$this->endDate = $endDate;
+		
 	}
 
 	public function __destruct() {
@@ -24,7 +25,6 @@ class statistics {
 		$sql .= "WHERE DATE(orders_timeCreated) BETWEEN '" . $this->startDate . "' AND '" . $this->endDate . "' ";
 		$sql .= "AND status_name='Completed' ";
 		$sql .= "GROUP BY status_name";
-
 		$result = $this->db->query($sql);
 		if (count($result) > 0) { return $result[0]['totalCost']; }
 		else { return 0; }

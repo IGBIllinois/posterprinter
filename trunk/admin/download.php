@@ -27,7 +27,7 @@ if (isset($_GET['orderId'])) {
 	//gets the file type
 	$fileType = end(explode(".",$filename));
 	//creates the link to the stored file
-	$linkToFile = "../" . $posterDirectory . "/" . $orderId . "." . $fileType;
+	$linkToFile = "../" . poster_dir . "/" . $orderId . "." . $fileType;
 	
 	//creates the html header that is used to download the file.
 	header('Pragma: public');

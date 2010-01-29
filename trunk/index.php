@@ -16,9 +16,12 @@ include_once 'includes/settings.inc.php';
 set_include_path(get_include_path() . ':libs');
 include_once 'db.class.inc.php';
 include_once 'mail.inc.php';
-include_once 'functions.inc.php';
+include_once 'orders.inc.php';
 include_once 'paperTypes.inc.php';
 include_once 'finishOptions.inc.php';
+include_once 'posterTube.inc.php';
+include_once 'rushOrder.inc.php';
+
 
 $db = new db(mysql_host,mysql_database,mysql_user,mysql_password);
 
@@ -39,9 +42,9 @@ if (isset($_POST['step1'])) {
 		$paperType_name = $paperTypes[$i]['paperTypes_name'];
 		$paperType_id = $paperTypes[$i]['paperTypes_id'];
 		$paperType_default = $paperTypes[$i]['paperTypes_default'];
-
-		$paperTypesHTML .= "<tr><td class='td_2'>$" . $paperType_cost . "</td>" .
-						"<td class='td_2'>" .  $paperType_name . "</td>";
+		$paperTypesHTML .= "<tr>";
+		$paperTypesHTML .= "<td class='td_2'>$" . $paperType_cost . "</td>";
+		$paperTypesHTML .= "<td class='td_2'>" .  $paperType_name . "</td>";
 		if ($paperType_default == 1) {
 			$paperTypesHTML .= "<td class='td_4'><input type='radio' name='paperTypesId' checked='true' value='" . $paperType_id . "'></td></tr>";
 		}
@@ -61,10 +64,9 @@ if (isset($_POST['step1'])) {
 		$finishOption_name = $finishOptions[$i]['finishOptions_name'];
 		$finishOption_cost = $finishOptions[$i]['finishOptions_cost'];
 		$finishOption_default = $finishOptions[$i]['finishOptions_default'];
-
-		$finishOptionsHTML .= "<tr><td class='td_2'>$" . $finishOption_cost . "</td>" .
-				"<td class='td_2'>" . $finishOption_name . "</td>";
-		
+		$finishOptionsHTML .= "<tr>";
+		$finishOptionsHTML .= "<td class='td_2'>$" . $finishOption_cost . "</td>";
+		$finishOptionsHTML .= "<td class='td_2'>" . $finishOption_name . "</td>";
 		if ($finishOption_default == 1) {
 			$finishOptionsHTML .= "<td class='td_4'> <input type='radio' name='finishOptionsId' checked='true' value='" . $finishOption_id . "'></td></tr>";
 		}
@@ -88,7 +90,7 @@ if (isset($_POST['step1'])) {
 	<center>
 	
 	<form action='index.php' method='post' id='posterInfo' enctype='multipart/form-data' onsubmit='return validateStep2()'>
-	 	<input type='hidden' name='MAX_FILE_SIZE' value='134217728'>
+	 	<input type='hidden' name='MAX_FILE_SIZE' value='209715200'>
 		<input type='hidden' name='posterWidth' value='$posterWidth'>
 		<input type='hidden' name='posterLength' value='$posterLength'>
 	<table class='table_1'>
@@ -133,7 +135,7 @@ if (isset($_POST['step1'])) {
 			<td class='td_3'><input type='text' size='6' name='activityCode' id='activityCode' maxlength='6'></td>
 		</tr>
 		<tr>
-			<td class='td_2'>File:</td>
+			<td class='td_2'>File (Max " . ini_get('post_max_size') . "):</td>
 			<td class='td_3'><input type='file' size='25' name='posterFile' id='posterFile'></td>
 		</tr>
 		<tr>
@@ -184,12 +186,11 @@ elseif (isset($_POST['step2'])) {
 	$comments = stripslashes($_POST['comments']);
 	$posterTube = $_POST['posterTube'];
 	$rushOrder = $_POST['rushOrder'];
-	
 	$email = trim(rtrim($email));
 	$name = trim(rtrim($name));
 	$comments = trim(rtrim($comments));
 	
-	
+
 	//gets the file type (ie .jpg, .bmp) of the uploaded poster file.
 	$fileType = end(explode(".",$_FILES['posterFile']['name']));
 	//creates a temp file name for the file
@@ -209,12 +210,12 @@ elseif (isset($_POST['step2'])) {
 	
 	
 	//Gets Paper Type Information
-	$paperTypesResult = getPaperType($db,$paperTypesId);
-	$paperTypeCost = $paperTypesResult[0]['paperTypes_cost'];
-	$paperTypeName = $paperTypesResult[0]['paperTypes_name'];
-	$paperTypeWidth = $paperTypesResult[0]['paperTypes_width'];
+	$paperType = getPaperType($db,$paperTypesId);
+	$paperTypeCost = $paperType[0]['paperTypes_cost'];
+	$paperTypeName = $paperTypet[0]['paperTypes_name'];
+	$paperTypeWidth = $paperType[0]['paperTypes_width'];
 	$widthSwitched;
-	
+ 
 	//Switches around the poster width and length to make the length the shortest possible to save money.
 	if (($posterWidth <= $paperTypeWidth) && ($posterLength <= $paperTypeWidth) && ($posterWidth < $posterLength)) {
 		$tempPosterWidth = $posterWidth;
@@ -232,9 +233,8 @@ elseif (isset($_POST['step2'])) {
 		$widthSwitched = 0;
 	}
 	
-	
 	//Gets Power Tube Information
-	if ($posterTube ==1) {
+	if ($posterTube == 1) {
 		$posterTubeSql = "SELECT * FROM tbl_posterTube WHERE posterTube_available=1 AND posterTube_name='Yes' LIMIT 1";
 	}
 	else {
@@ -281,8 +281,8 @@ elseif (isset($_POST['step2'])) {
 	
 	}
 	$formHTML .=	"<tr><td class='td_2'>Poster File:</td><td>" . $posterFileName . "</td></tr>
-					<tr><td class='td_2'>Length:</td><td>" . $posterLength . "\"</td></tr>
 					<tr><td class='td_2'>Width:</td><td>" . $posterWidth . "\"</td></tr>
+					<tr><td class='td_2'>Length:</td><td>" . $posterLength . "\"</td></tr>
 					<tr><td class='td_2'>Paper Type:</td><td>" . $paperTypeName . "</td></tr>
 					<tr><td class='td_2'>Finish Option:</td><td>" . $finishOptionName . "</td></tr>
 					<tr><td class='td_2'>Poster Tube:</td><td>" . $posterTubeName . "</td></tr>
@@ -348,7 +348,7 @@ elseif (isset($_POST['step3'])) {
 	$rushOrderName = $_POST['rushOrderName'];
 	$rushOrderId = $_POST['rushOrderId'];
 	$cfop = $_POST['cfop'];
-	$activityCode = $_POST['activityCode'];
+	$activityCode = strtoupper($_POST['activityCode']);
 	$totalCost = $_POST['totalCost'];
 	$posterFileName = $_POST['posterFileName'];
 	$posterFileTmpName = $_POST['posterFileTmpName'];
@@ -360,68 +360,29 @@ elseif (isset($_POST['step3'])) {
 
 	//sql string to insert order into database.
 	$ordersSql = "INSERT INTO tbl_orders(orders_email,
-	orders_name,
-	orders_fileName,
-	orders_totalCost,
-	orders_cfop,
-	orders_activityCode,
-	orders_width,
-	orders_length,
-	orders_statusId,
-	orders_paperTypesId,
-	orders_finishOptionsId,
-	orders_comments,
-	orders_posterTubeId,
-	orders_rushOrderId,
-	orders_widthSwitched) 
-	VALUES('" . $email . "','" .  
-	mysql_real_escape_string($name) . "','" . 
-	$posterFileName . "'," . 
-	$totalCost . ",'" . 
-	$cfop . "','" . 
-	$activityCode . "'," . 
-	$posterWidth . "," . 
-	$posterLength . ",'1'," . 
-	$paperTypesId . "," . 
-	$finishOptionsId . ",'" . 
-	mysql_real_escape_string($comments) . "'," . 
-	$posterTubeId . "," .
-	$rushOrderId . "," . 
-	$widthSwitched . ")";
+	orders_name, orders_fileName, orders_totalCost,
+	orders_cfop, orders_activityCode, orders_width,
+	orders_length, orders_statusId, orders_paperTypesId,
+	orders_finishOptionsId, orders_comments, orders_posterTubeId,
+	orders_rushOrderId, orders_widthSwitched) 
+	VALUES('" . $email . "','" . mysql_real_escape_string($name) . "','" . 
+	$posterFileName . "'," . $totalCost . ",'" . $cfop . "','" . 
+	$activityCode . "'," . $posterWidth . "," . $posterLength . ",'1'," . 
+	$paperTypesId . "," . $finishOptionsId . ",'" . mysql_real_escape_string($comments) . "'," . 
+	$posterTubeId . "," .$rushOrderId . "," . $widthSwitched . ")";
 				
 	//runs query and gets the order_id
-	$orderID = $db->insert_query($ordersSql);
+	$orderId = $db->insert_query($ordersSql);
 	//gets the file type (ie .jpg, .bmp) of the uploaded poster file.
 	$fileType = end(explode(".",$posterFileName));
 	//sets the path to where the file will be saved.
-	$targetPath = poster_dir . "/" . $orderID . "." . $fileType;
+	$targetPath = poster_dir . "/" . $orderId . "." . $fileType;
 	
-	//renames the temporary file to its permanent file name which is the orderID number plus the filetype extensions.
-	rename($posterDirectory . "/" . $posterFileTmpName,$targetPath);
-
-	//sets an array with order information.
-	$orderInfo = array(
-					'email' => $email,
-					'name' => $name,
-					'orderID' => $orderID,
-					'fileName' => $posterFileName,
-					'totalCost' => $totalCost,
-					'posterLength' => $posterLength,
-					'posterWidth' => $posterWidth,
-					'cfop' => $cfop,
-					'activityCode' => $activityCode,
-					'paperType' => $paperTypeName,
-					'finishOption' => $finishOptionName,
-					'posterTube' => $posterTubeName,
-					'rushOrder' => $rushOrderName,
-					'comments' => $comments,
-					'adminEmail' => admin_email,
-				);
+	//renames the temporary file to its permanent file name which is the orderId number plus the filetype extensions.
+	rename(poster_dir . "/" . $posterFileTmpName,$targetPath);
 				
-	//mails admins that there is a new poster to be printed.
-	mailAdminsNewOrder($orderInfo);
-	//mails user with poster order information
-	mailUserNewOrder($orderInfo);
+	//mail new order to users and admins
+	mailNewOrder($db,$orderId,admin_email);
 	
 	$formHTML = "<center>
 				<table class='table_1'>
@@ -436,7 +397,7 @@ elseif (isset($_POST['step3'])) {
 	}
 	
 	$formHTML .= "	<tr><td class='td_2'>Full Name:</td><td>" . $name . "</td></tr>
-					<tr><td class='td_2'>Order Number:</td><td>" . $orderID . "</td></tr>
+					<tr><td class='td_2'>Order Number:</td><td>" . $orderId . "</td></tr>
 					<tr><td class='td_2'>File:</td><td>" . $posterFileName . "</td></tr>
 					<tr><td class='td_2'>Length:</td><td>" . $posterLength . "\"</td></tr>
 					<tr><td class='td_2'>Width:</td><td>" . $posterWidth . "\"</td></tr>
@@ -457,9 +418,6 @@ elseif (isset($_POST['step3'])) {
 elseif (enable == FALSE) {
 	$formHTML = "<br>
 			<center>The poster printer is currently broken, soon maintenance should arrive to take care of the problem.  In the mean time, we are not accepting any new poster orders.  Please accept our apologies.</center>";
-
-
-
 
 }
 else {
@@ -486,7 +444,7 @@ else {
 	<input type='hidden' name='maxPrinterWidth' value='" . max_printer_width . "'>
 	<table class='table_1'>
 		<tr><th colspan='2'>Paper Size</th></tr>
-		<tr><td colspan='2' class='td_1' width='400'>Please choose a width and length for your poster.  The width maximum is " . max_printer_width . " inches</td></tr>
+		<tr><td colspan='2' class='td_1' width='400'>Please choose a width and length for your poster.  The width maximum is " . max_printer_width . " inches.</td></tr>
 		<tr>
 			<td class='td_2'>Width:</td>
 			<td class='td_3'><input type='text' name='posterWidth' id='posterWidth' maxlength='6' class='input_1'>\"</td>

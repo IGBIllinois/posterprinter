@@ -51,10 +51,7 @@ function deletePaperType($db,$paperTypeId) {
 function getPaperType($db,$paperTypeId) {
 	$sql = "SELECT * FROM tbl_paperTypes WHERE paperTypes_id='" . $paperTypeId . "' LIMIT 1";
 	return $db->query($sql);
-
-
-
-
+	
 }
 function removeDefaultPaperType($db) {
 	$sql = "UPDATE tbl_paperTypes SET paperTypes_default=0";

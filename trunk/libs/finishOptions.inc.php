@@ -53,8 +53,8 @@ function setDefaultFinishOption($db,$finishOptionId) {
 }
 
 function updateFinishOption($db,$finishOptionId,$name,$cost,$maxWidth,$maxLength,$default) {
-	deleteFinishOption($db,$finsihOptionId);
-	return addFinishOption($db,$name,$cost,$maxWidth,$maxLengh,$default);
+	deleteFinishOption($db,$finishOptionId);
+	return addFinishOption($db,$name,$cost,$maxWidth,$maxLength,$default);
 }
 
 function getFinishOption($db,$finishOptionId) {

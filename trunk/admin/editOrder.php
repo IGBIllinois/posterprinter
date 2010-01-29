@@ -1,6 +1,7 @@
 <?php
 include_once 'includes/main.inc.php';
 include_once 'mail.inc.php';
+include_once 'order.class.inc.php';
 include_once 'orders.inc.php';
 include_once 'paperTypes.inc.php';
 include_once 'finishOptions.inc.php';
@@ -14,14 +15,13 @@ if (isset($_POST['editOrder'])) {
 	$cfop3 = $_POST['cfop3'];
 	$cfop4 = $_POST['cfop4'];
 	$activityCode = $_POST['activityCode'];
-	$finishOptionsId = $_POST['finishOption'];
-	$paperTypesId = $_POST['paperType'];
+	$finishOptionId = $_POST['finishOption'];
+	$paperTypeId = $_POST['paperType'];
 	$posterTubeId = $_POST['posterTube'];
 	$rushOrderId = $_POST['rushOrder'];
 	$orderId = $_POST['orderId'];
 	$posterWidth = $_POST['posterWidth'];
 	$posterLength = $_POST['posterLength'];
-	
 	$cfop = $cfop1 . "-" . $cfop2 . "-" . $cfop3 . "-" . $cfop4;
 	//trims activity code and upper cases the letter
 	$activityCode = strtoupper(trim(rtrim($activityCode)));
@@ -41,23 +41,20 @@ if (isset($_POST['editOrder'])) {
 	
 		//Gets Finish Options Information
 		$finishOption = getFinishOption($db,$finishOptionId);
-		$finishOptionCost = $finishOptions[0]['finishOptions_cost'];
+		$finishOptionCost = $finishOption[0]['finishOptions_cost'];
 	
 		//Gets Paper Type Information
 		$paperType = getPaperType($db,$paperTypeId);
-		$paperTypeCost = $paperTypes[0]['paperTypes_cost'];
-		$paperTypeWidth = $paperTypes[0]['paperTypes_width'];
+		$paperTypeCost = $paperType[0]['paperTypes_cost'];
+		$paperTypeWidth = $paperType[0]['paperTypes_width'];
 		$widthSwitched;
 	
 		//Gets Power Tube Information
-		$posterTubeSql = "SELECT * FROM tbl_posterTube WHERE posterTube_id='" . $posterTubeId . "' LIMIT 1"; 
-		$posterTubeResult = $db->query($posterTubeSql);
+		$posterTubeResult = getPosterTube($db,$posterTubeId);
 		$posterTubeCost =  $posterTubeResult[0]["posterTube_cost"];
 		
-		
 		//Gets Rush Order Information
-		$rushOrderSql = "SELECT * FROM tbl_rushOrder WHERE rushOrder_id=$rushOrderId";
-		$rushOrderResult = $db->query($rushOrderSql);
+		$rushOrderResult = getRushOrder($db,$rushOrderId);
 		$rushOrderCost = $rushOrderResult[0]["rushOrder_cost"];
 		
 		//Switches around the poster width and length to make the length the shortest possible to save money.
@@ -79,15 +76,21 @@ if (isset($_POST['editOrder'])) {
 	
 		//Calculates Total Cost
 		$totalCost = ($posterLength * $paperTypeCost) + $finishOptionCost + $posterTubeCost + $rushOrderCost;
-		
-		$editOrderSql = "UPDATE tbl_orders SET orders_cfop='$cfop', orders_activityCode='" . $activityCode . "',orders_width=$posterWidth, orders_length=$posterLength, orders_finishOptionsId=$finishOptionsId, orders_paperTypesId=$paperTypesId,";
-		$editOrderSql .= "orders_posterTubeId=$posterTubeId,orders_rushOrderId=$rushOrderId,orders_widthSwitched=$widthSwitched,orders_totalCost=$totalCost ";
-		$editOrderSql .= "WHERE orders_id=$orderId";
-	
+		$editOrderSql = "UPDATE tbl_orders SET orders_cfop='" . $cfop . "', ";
+		$editOrderSql .= "orders_activityCode='" . $activityCode . "', ";
+		$editOrderSql .= "orders_width='" . $posterWidth . "', ";
+		$editOrderSql .= "orders_length='" . $posterLength . "', ";
+		$editOrderSql .= "orders_finishOptionsId='" . $finishOptionId . "', ";
+		$editOrderSql .= "orders_paperTypesId='" . $paperTypeId . "', ";
+		$editOrderSql .= "orders_posterTubeId='" . $posterTubeId . "', ";
+		$editOrderSql .= "orders_rushOrderId='" . $rushOrderId . "', ";
+		$editOrderSql .= "orders_widthSwitched='" . $widthSwitched . "', ";
+		$editOrderSql .= "orders_totalCost='" . $totalCost . "' ";
+		$editOrderSql .= "WHERE orders_id='" . $orderId . "' LIMIT 1 ";
 		//runs query and gets the order_id
 		$db->non_select_query($editOrderSql);
 	
-		header("Location: orders.php?orderId=$orderId");
+		header("Location: orders.php?orderId=" . $orderId);
 	}
 
 	
@@ -96,72 +99,33 @@ if (isset($_POST['editOrder'])) {
 
 if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 
-	include 'includes/header.inc.php';
+	
 	//gets order id
 	$orderId = $_GET['orderId'];
 	
-	//sql string to get order information
-	$orderSql = "SELECT tbl_orders.*, tbl_status.*,tbl_paperTypes.*,tbl_finishOptions.*,tbl_posterTube.*,tbl_rushOrder.* FROM tbl_orders 
-			LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id
-			LEFT JOIN tbl_paperTypes ON tbl_orders.orders_paperTypesId=tbl_paperTypes.paperTypes_id
-			LEFT JOIN tbl_finishOptions ON tbl_orders.orders_finishOptionsId=tbl_finishOptions.finishOptions_id 
-			LEFT JOIN tbl_posterTube ON tbl_orders.orders_posterTubeId=tbl_posterTube.posterTube_id
-			LEFT JOIN tbl_rushOrder ON tbl_orders.orders_rushOrderId=tbl_rushOrder.rushOrder_id
-			WHERE orders_id=" . $orderId;
-	
-
-	//runs query	
-	$orderResult = $db->query($orderSql);
-	
-	//sets order information to variables
-	$orderEmail = $orderResult[0]["orders_email"];
-	$orderName = $orderResult[0]["orders_name"];
-	$orderFileName = $orderResult[0]["orders_fileName"];
-	$orderCFOP = $orderResult[0]["orders_cfop"];
-	$orderActivityCode = $orderResult[0]["orders_activityCode"];
-	$orderTimeCreated = $orderResult[0]["orders_timeCreated"];
-	$orderTotalCost = $orderResult[0]["orders_totalCost"];
-	$orderWidth = $orderResult[0]["orders_width"];
-	$orderLength =  $orderResult[0]["orders_length"];
-	$orderPaperTypeId = $orderResult[0]["paperTypes_id"];
-	$orderFinishOptionId = $orderResult[0]["finishOptions_id"];
-	$orderPosterTubeName = $orderResult[0]["posterTube_name"];
-	$orderPosterTubeId = $orderResult[0]["posterTube_id"];
-	$orderRushOrderName = $orderResult[0]["rushOrder_name"];
-	$orderRushOrderId = $orderResult[0]["rushOrder_id"];
-	$orderComments = $orderResult[0]["orders_comments"];
-	$orderStatusId = $orderResult[0]["orders_statusId"];
-	
-	$cfop1 = substr($orderCFOP,0,1);
-	$cfop2 = substr($orderCFOP,2,6);
-	$cfop3 = substr($orderCFOP,9,6);
-	$cfop4 = substr($orderCFOP,16,6);
-	
-	
+	$order = new order($db,$orderId);
+		
 	////////////////Paper Types////////////
-	$paperTypes = getValidPaperTypes($db,$orderWith,$orderLength);
+	$paperTypes = getValidPaperTypes($db,$order->get_width(),$order->get_length());
 	$paperTypesHTML = "<select name='paperType'>";
 	for ($i=0;$i < count($paperTypes);$i++) {
 		$paperTypeId = $paperTypes[$i]["paperTypes_id"];
 		$paperTypeName = $paperTypes[$i]["paperTypes_name"];
-		if ($orderPaperTypeId == $paperTypeId) {
-		$paperTypesHTML .= "<option selected='true' value='" . $paperTypeId . "'>" . $paperTypeName . "</option>";
-		
+		if ($order->get_paper_type_id() == $paperTypeId) {
+			$paperTypesHTML .= "<option selected='true' value='" . $paperTypeId . "'>" . $paperTypeName . "</option>";
 		}
-		else {
-			$paperTypesHTML .= "<option value='" . $paperTypeId . "'>" . $paperTypeName . "</option>";
-		}
+		else { $paperTypesHTML .= "<option value='" . $paperTypeId . "'>" . $paperTypeName . "</option>"; }
 	}
 	$paperTypesHTML .= "</select>";
 	
 	///////////////////Finish Options//////////////
-	$finishOptions = getValidFinishOptions($db,$orderWidth,$orderLength);
+	$finishOptions = getValidFinishOptions($db,$order->get_width(),$order->get_length());
 	$finishOptionsHTML = "<select name='finishOption'>";
 	for ($i=0; $i < count($finishOptions); $i++) {
 		$finishOptionName = $finishOptions[$i]["finishOptions_name"];
 		$finishOptionId = $finishOptions[$i]["finishOptions_id"];
 		
-		if ($orderFinishOptionId == $finishOptionId) {
+		if ($order->get_finish_option_id() == $finishOptionId) {
 			$finishOptionsHTML .= "<option selected='true' value='" . $finishOptionId . "'>" . $finishOptionName . "</option>";
 		
 		}
@@ -172,13 +136,13 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 	$finishOptionsHTML .= "</select>";
 	
 	////////////////////Poster Tube////////////////////
-	$posterTube = getPosterTube($db);	
+	$posterTube = getPosterTubes($db);	
 	$posterTubeHTML = "<select name='posterTube'>";
 	for($i=0;$i<count($posterTube);$i++) {
 		$posterTubeId = $posterTube[$i]['posterTube_id'];
 		$posterTubeName = $posterTube[$i]['posterTube_name'];
 		
-		if ($posterTubeName == $orderPosterTubeName) {
+		if ($posterTubeId == $order->get_poster_tube_id()) {
 			$posterTubeHTML .= "<option selected='true' value='" . $posterTubeId . "'>" . $posterTubeName . "</option>";
 		}
 		else {
@@ -191,13 +155,13 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 	
 	
 	/////////////////Rush Order//////////////
-	$rushOrder = getRushOrder($db);
+	$rushOrder = getRushOrders($db);
 	$rushOrderHTML = "<select name='rushOrder'>";
 	for($i=0;$i<count($rushOrder);$i++) {
 		$rushOrderId = $rushOrder[$i]['rushOrder_id'];
 		$rushOrderName = $rushOrder[$i]['rushOrder_name'];
 		
-		if ($rushOrderName == $orderRushOrderName) {
+		if ($rushOrderId == $order->get_rush_order_id()) {
 			$rushOrderHTML .= "<option selected value='" . $rushOrderId . "'>" . $rushOrderName . "</option>";
 		}
 		else {
@@ -210,6 +174,9 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 	
 				
 }
+
+include_once 'includes/header.inc.php';
+
 ?>
 <script language="JavaScript">
 function confirmUpdate()
@@ -221,37 +188,38 @@ else
 	return false ;
 }
 </script>
-<form method='post' action='editOrder.php?orderId=<?php echo $orderId; ?>'><table class='table_1'>
-				<tr><th colspan='2'>Edit Order Information</th></tr>
-				<tr><td class='td_2'>Order Number:</td><td><?php echo $orderId; ?></td></tr>
-				<tr><td class='td_2'>Email: </td><td><?php echo $orderEmail; ?></td></tr>
-				<tr><td class='td_2'>Full Name: </td><td><?php echo $orderName; ?></td></tr>
-				<tr><td class='td_2'>File:</td><td><a href='download.php?orderId=<?php echo $orderId; ?>'><?php echo $orderFileName;  ?></a></td></tr>
-				<tr><td class='td_2'>CFOP:</td>
-					<td>
-						<input type='text' name='cfop1' id='cfop1' maxlength='1' class='input_3' onKeyUp='cfopAdvance1()' value='<?php echo $cfop1; ?>'> - 
-						<input type='text' name='cfop2' id='cfop2' maxlength='6' size='6' class='input_4' onKeyUp='cfopAdvance2()' value='<?php echo $cfop2; ?>'> - 
-						<input type='text' name='cfop3' id='cfop3' maxlength='6' class='input_4' onKeyUp='cfopAdvance3()' value='<?php echo $cfop3; ?>'> - 
-						<input type='text' name='cfop4' id='cfop4' maxlength='6' class='input_4' value='<?php echo $cfop4; ?>'>
-					</td>
-				</tr>
-				<tr><td class='td_2'>Activity Code:</td><td><input type='text' name='activityCode' maxlength='6' size='6' value='<?php echo $orderActivityCode; ?>'></td></tr>
-				<tr><td class='td_2'>Time Created:</td><td><?php echo $orderTimeCreated; ?></td></tr>
-				<tr><td class='td_2'>Total Cost:</td><td><?php echo $orderTotalCost; ?></td></tr>
-				<tr><td class='td_2'>Width:</td><td><?php echo $orderWidth; ?>"</td></tr>
-				<tr><td class='td_2'>Length:</td><td><?php echo $orderLength; ?>"</td></tr>
-				<tr><td class='td_2'>Paper Type:</td><td><?php echo $paperTypesHTML; ?></td></tr>
-				<tr><td class='td_2'>Finish Option:</td><td><?php echo $finishOptionsHTML;  ?></td></tr>
-				<tr><td class='td_2'>Poster Tube:</td><td><?php echo $posterTubeHTML; ?></td></tr>
-				<tr><td class='td_2'>Rush Order:</td><td><?php echo $rushOrderHTML; ?></td></tr>
-				<tr><td class='td_2' valign='top'>Comments:</td><td><?php echo $orderComments; ?></td></tr>
-			</table>
-			<br>
-			<input type='hidden' name='orderId' value='<?php echo $orderId; ?>'>
-			<input type='hidden' name='posterWidth' value='<?php echo $orderWidth; ?>'>
-			<input type='hidden' name='posterLength' value='<?php echo $orderLength; ?>'>
-			<input type='submit' name='editOrder' value='Edit Order' onClick='return confirmUpdate()'>
-			</form>
+<form method='post' action='editOrder.php?orderId=<?php echo $orderId; ?>'>
+<table class='table_1'>
+	<tr><th colspan='2'>Edit Order Information</th></tr>
+	<tr><td class='td_2'>Order Number:</td><td><?php echo $order->get_order_id(); ?></td></tr>
+	<tr><td class='td_2'>Email: </td><td><?php echo $order->get_email(); ?></td></tr>
+	<tr><td class='td_2'>Full Name: </td><td><?php echo $order->get_name(); ?></td></tr>
+	<tr><td class='td_2'>File:</td><td><a href='download.php?orderId=<?php echo $order->get_order_id(); ?>'><?php echo $order->get_filename();  ?></a></td></tr>
+	<tr><td class='td_2'>CFOP:</td>
+		<td>
+		<input type='text' name='cfop1' id='cfop1' maxlength='1' class='input_3' onKeyUp='cfopAdvance1()' value='<?php echo $order->get_cfop_college(); ?>'> - 
+		<input type='text' name='cfop2' id='cfop2' maxlength='6' size='6' class='input_4' onKeyUp='cfopAdvance2()' value='<?php echo $order->get_cfop_fund(); ?>'> - 
+		<input type='text' name='cfop3' id='cfop3' maxlength='6' class='input_4' onKeyUp='cfopAdvance3()' value='<?php echo $order->get_cfop_organization(); ?>'> - 
+		<input type='text' name='cfop4' id='cfop4' maxlength='6' class='input_4' value='<?php echo $order->get_cfop_program(); ?>'>
+		</td>
+	</tr>
+	<tr><td class='td_2'>Activity Code:</td><td><input type='text' name='activityCode' maxlength='6' size='6' value='<?php echo $order->get_activity_code(); ?>'></td></tr>
+	<tr><td class='td_2'>Time Created:</td><td><?php echo $order->get_time_created(); ?></td></tr>
+	<tr><td class='td_2'>Total Cost:</td><td><?php echo $order->get_total_cost(); ?></td></tr>
+	<tr><td class='td_2'>Width:</td><td><?php echo $order->get_width(); ?>"</td></tr>
+	<tr><td class='td_2'>Length:</td><td><?php echo $order->get_length(); ?>"</td></tr>
+	<tr><td class='td_2'>Paper Type:</td><td><?php echo $paperTypesHTML; ?></td></tr>
+	<tr><td class='td_2'>Finish Option:</td><td><?php echo $finishOptionsHTML;  ?></td></tr>
+	<tr><td class='td_2'>Poster Tube:</td><td><?php echo $posterTubeHTML; ?></td></tr>
+	<tr><td class='td_2'>Rush Order:</td><td><?php echo $rushOrderHTML; ?></td></tr>
+	<tr><td class='td_2' valign='top'>Comments:</td><td><?php echo $order->get_comments(); ?></td></tr>
+</table>
+<br>
+<input type='hidden' name='orderId' value='<?php echo $order->get_order_id(); ?>'>
+<input type='hidden' name='posterWidth' value='<?php echo $order->get_width(); ?>'>
+<input type='hidden' name='posterLength' value='<?php echo $order->get_length(); ?>'>
+<input type='submit' name='editOrder' value='Edit Order' onClick='return confirmUpdate()'>
+</form>
 
 <?php if (isset($cfopMsg)){echo $cfopMsg; } ?>
 <?php if (isset($activityCodeMsg)){echo $activityCodeMsg; } ?>

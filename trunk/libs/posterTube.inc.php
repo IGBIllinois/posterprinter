@@ -11,12 +11,18 @@ function getPosterTubeCost($db) {
 
 }
 
-function getPosterTube($db) {
+function getPosterTubes($db) {
 	$sql = "SELECT * FROM tbl_posterTube WHERE posterTube_available=1";
 	return $db->query($sql);
 
 }
 
+function getPosterTube($db,$posterTubeId) {
+	$sql = "SELECT * FROM tbl_posterTube WHERE posterTube_id='" . $posterTubeId . "' LIMIT 1"; 
+	return $db->query($sql);
+
+
+}
 function getPosterTubeInfo($db) {
 	
 	$sql = "SELECT posterTube_id as id, posterTube_cost as cost ";

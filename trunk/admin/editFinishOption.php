@@ -5,7 +5,7 @@ include_once 'finishOptions.inc.php';
 	
 if (isset($_POST['removeFinishOption'])) {
 	$finishOptionId = $_POST['finishOptionId'];
-	removeFinishOption($db,$finishOptionId);	
+	deleteFinishOption($db,$finishOptionId);	
 	header("Location: finishOptions.php");
 
 }
@@ -29,20 +29,20 @@ elseif (isset($_POST['editFinishOption'])) {
 	$errors = 0;
 	
 	if ($name == "") {
-		$nameMsg = "<br><b class='error'>Pleae enter finish option name</b>";
+		$nameMsg = "<br><b class='error'>Pleae enter finish option name.</b>";
 		$errors++;
 	}
 	if (($cost == "") || !eregi('^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$',$cost)) {
-		$costMsg = "<br><b class='error'>Please enter a valid cost</b>";
+		$costMsg = "<br><b class='error'>Please enter a valid cost.</b>";
 		$errors++;
 	}
 	
 	if (($maxWidth == "") || ($maxWidth > max_printer_width) || !(eregi("^[0-9]{1,2}$", $maxWidth))) {
-		$maxWidthMsg = "<br><b class='error'>Please enter a valid Max Width. Maximum is " . max_printer_width inches . "</b>";
+		$maxWidthMsg = "<br><b class='error'>Please enter a valid Max Width. Maximum is " . max_printer_width . " inches.</b>";
 		$errors++;
 	}
 	if (($maxLength == "") || !(eregi("^[0-9]{1,3}$", $maxLength))) {
-		$maxLengthMsg = "<br><b class='error'>Please enter a valid Max Length</b>";
+		$maxLengthMsg = "<br><b class='error'>Please enter a valid Max Length.</b>";
 		$errors++;
 	}
 	if ($errors == 0) {

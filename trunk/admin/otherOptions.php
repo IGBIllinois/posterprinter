@@ -9,13 +9,13 @@ if (isset($_POST['updatePosterTube'])) {
 	$posterTubeOldId = $_POST['posterTubeId'];
 	
 	if (($posterTubeCost == "") || !eregi('^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$',$posterTubeCost)) {
-		$posterTubeMsg = "<b class='b'>Please enter a valid cost</b>";
+		$posterTubeMsg = "<b class='b'>Please enter a valid cost.</b>";
 	}
 	else {
-		$posterTubeSql = "UPDATE tbl_posterTube SET posterTube_available=0 WHERE posterTube_id=$posterTubeOldId";
+		$posterTubeSql = "UPDATE tbl_posterTube SET posterTube_available=0 WHERE posterTube_id='" . $posterTubeOldId . "' LIMIT 1";
 		$db->non_select_query($posterTubeSql);
 		$posterTubeSql = "INSERT INTO tbl_posterTube(posterTube_name,posterTube_cost,posterTube_available) VALUES('Yes',$posterTubeCost,1)";
-		$posterTubeId = $db->query($posterTubeSql);
+		$posterTubeId = $db->insert_query($posterTubeSql);
 	}
 	
 
