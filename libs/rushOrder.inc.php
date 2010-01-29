@@ -10,13 +10,18 @@ function getRushOrderCost($db) {
 	return $result[0]['rushOrder_cost'];
 }
 
-function getRushOrder($db) {
+function getRushOrders($db) {
 
 	$sql = "SELECT * FROM tbl_rushOrder WHERE rushOrder_available=1";
 	return $db->query($sql);
 
 }
 
+function getRushOrder($db,$rushOrderId) {
+	$sql = "SELECT * FROM tbl_rushOrder WHERE rushOrder_id='" . $rushOrderId . "' LIMIT 1";
+	return $db->query($sql);
+
+}
 function getRushOrderInfo($db) {
 	
 	$sql = "SELECT rushOrder_id as id, rushOrder_cost as cost ";

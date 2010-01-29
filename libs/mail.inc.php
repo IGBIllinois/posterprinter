@@ -13,87 +13,96 @@
 //
 ////////////////////////////////////////////////////////
 
+include_once 'db.class.inc.php';
+include_once 'order.class.inc.php';
 
+function mailNewOrder($db,$orderId,$adminEmail) {
+	$order = new order($db,$orderId);
+	mailAdminsNewOrder($db,$order,$adminEmail);
+	mailUserNewOrder($db,$order,$adminEmail);
 
-function mailAdminsNewOrder($orderInfo) {
+}
+function mailAdminsNewOrder($db,$order,$adminEmail) {
 
 	$requestUri = substr($_SERVER["REQUEST_URI"],0,strrpos($_SERVER["REQUEST_URI"], "/")+1);
 	$urlAddress = "http://" . $_SERVER["SERVER_NAME"] . $requestUri; 
-	$subject = "New Poster To Print. Order #" . $orderInfo['orderID'];
-	$to = $orderInfo['adminEmail'];
-	$message = "<br>New Poster Printer Order From " . $orderInfo['email'] . "\r\n" .
-			"<p>Full Name: " . $orderInfo['name'] . "\r\n" . 
-			"<p>Order Number: " . $orderInfo['orderID'] . "\r\n" . 
-			"<br>Email: " . $orderInfo['email'] . "\r\n" .
-			"<br>Poster File: " . $orderInfo['fileName'] . "\r\n" .
-			"<br>Poster Length: " . $orderInfo['posterLength'] . " inches \r\n" .
-			"<br>Poster Width: " . $orderInfo['posterWidth'] . " inches \r\n" .
-			"<br>CFOP: " . $orderInfo['cfop'] . "\r\n" .
-			"<br>Activity Code: " . $orderInfo['activityCode'] . "\r\n" .
-			"<br>Paper Type: " . $orderInfo['paperType'] . "\r\n" .
-			"<br>Finish Option: " . $orderInfo['finishOption'] . "\r\n" .
-			"<br>Poster Tube: " . $orderInfo['posterTube'] . "\r\n" .
-			"<br>Rush Order: " . $orderInfo['rushOrder'] . "\r\n" .
-			"<br>Comments: " . $orderInfo['comments'] . "\r\n" .
-			"<br>Total Cost: $" . $orderInfo['totalCost'] . "\r\n" .
-			"<br>To view the order <a href='" . $urlAddress . "admin/orders.php?orderId=" . $orderInfo['orderID'] . "'>click here</a>" . "\r\n";
+	$subject = "New Poster To Print. Order #" . $order->get_order_id();
+	$to = $adminEmail;
+	$message = "<br>New Poster Printer Order From " . $order->get_email() . "\r\n";
+	$message .=	"<p>Full Name: " . $order->get_name() . "\r\n";
+	$message .=	"<p>Order Number: " . $order->get_order_id() . "\r\n"; 
+	$message .=	"<br>Email: " . $order->get_email() . "\r\n";
+	$message .=	"<br>Poster File: " . $order->get_filename() . "\r\n";
+	$message .=	"<br>Poster Length: " . $order->get_length() . " inches \r\n";
+	$message .=	"<br>Poster Width: " . $order->get_width() . " inches \r\n";
+	$message .=	"<br>CFOP: " . $order->get_cfop() . "\r\n";
+	$message .=	"<br>Activity Code: " . $order->get_activity_code() . "\r\n";
+	$message .=	"<br>Paper Type: " . $order->get_paper_type_name() . "\r\n";
+	$message .=	"<br>Finish Option: " . $order->get_finish_option_name() . "\r\n";
+	$message .=	"<br>Poster Tube: " . $order->get_poster_tube_name() . "\r\n";
+	$message .=	"<br>Rush Order: " . $order->get_rush_order_name() . "\r\n";
+	$message .=	"<br>Comments: " . $order->get_comments() . "\r\n";
+	$message .=	"<br>Total Cost: $" . $order->get_total_cost() . "\r\n";
+	$message .=	"<br>To view the order <a href='" . $urlAddress . "admin/orders.php?orderId=" . $order->get_order_id() . "'>click here</a>" . "\r\n";
 	
-	$headers = "From: " . $orderInfo['email'] . "\r\n" .
-				"Content-Type: text/html; charset=iso-8859-1" . "\r\n";
-	mail($to,$subject,$message,$headers," -f " . $orderInfo['email']);
+	$headers = "From: " . $order->get_email() . "\r\n";
+	$headers .=	"Content-Type: text/html; charset=iso-8859-1" . "\r\n";
+	mail($to,$subject,$message,$headers," -f " . $order->get_email());
 
 }
 
-function mailUserNewOrder($orderInfo) {
+function mailUserNewOrder($db,$order,$adminEmail) {
 
-	$to = $orderInfo['email'];
-	$subject = "Poster Order #" . $orderInfo['orderID'];
+	$to = $order->get_email();
+	$subject = "Poster Order #" . $order->get_order_id();
 	
-	$message = "<br>Thank you for your order.  Your order will be processed as soon as possible.   It could take up to three days.  We will email you when the poster is completed printing.\r\n" .
-			"<p>For your reference\r\n" .
-			"<br>Full Name: " . $orderInfo['name'] . "\r\n" .
-			"<br>Order Number: " . $orderInfo['orderID'] . "\r\n" .
-			"<br>Poster File: " . $orderInfo['fileName'] . "\r\n" .
-			"<br>Poster Length: " . $orderInfo['posterLength'] . " inches \r\n" .
-			"<br>Poster Width: " . $orderInfo['posterWidth'] . " inches \r\n" .
-			"<br>CFOP: " . $orderInfo['cfop'] . "\r\n" .
-			"<br>Activity Code: " . $orderInfo['activityCode'] . "\r\n" .
-			"<br>Paper Type: " . $orderInfo['paperType'] . "\r\n" .
-			"<br>Finish Option: " . $orderInfo['finishOption'] . "\r\n" .
-			"<br>Poster Tube: " . $orderInfo['posterTube'] . "\r\n" .
-			"<br>Rush Order: " . $orderInfo['rushOrder'] . "\r\n" .
-			"<br>Comments: " . $orderInfo['comments'] . "\r\n" .
-			"<br>Total Cost: $" . $orderInfo['totalCost'] . "\r\n";
+	$message = "<br>Thank you for your order.  Your order will be processed as soon as possible.   ";
+	$message .= "It could take up to three days.  We will email you when the poster is completed printing.\r\n";
+	$message .= "<p>For your reference\r\n";
+	$message .=	"<br>Full Name: " . $order->get_name() . "\r\n";
+	$message .=	"<br>Order Number: " . $order->get_order_id() . "\r\n";
+	$message .=	"<br>Poster File: " . $order->get_filename() . "\r\n";
+	$message .=	"<br>Poster Length: " . $order->get_length() . " inches \r\n";
+	$message .=	"<br>Poster Width: " . $order->get_width() . " inches \r\n";
+	$message .=	"<br>CFOP: " . $order->get_cfop() . "\r\n";
+	$message .=	"<br>Activity Code: " . $order->get_activity_code() . "\r\n";
+	$message .=	"<br>Paper Type: " . $order->get_paper_type_name() . "\r\n";
+	$message .=	"<br>Finish Option: " . $order->get_finish_option_name() . "\r\n";
+	$message .=	"<br>Poster Tube: " . $order->get_poster_tube_name() . "\r\n";
+	$message .=	"<br>Rush Order: " . $order->get_rush_order_name() . "\r\n";
+	$message .=	"<br>Comments: " . $order->get_comments() . "\r\n";
+	$message .=	"<br>Total Cost: $" . $order->get_total_cost() . "\r\n";
 	
-	$headers = "From: " . $orderInfo['adminEmail'] . "\r\n" .
-				"Content-Type: text/html; charset=iso-8859-1" . "\r\n";
-	mail($to,$subject,$message,$headers, " -f " . $orderInfo['adminEmail']);
+	$headers = "From: " . $adminEmail . "\r\n";
+	$headers .= "Content-Type: text/html; charset=iso-8859-1" . "\r\n";
+	mail($to,$subject,$message,$headers, " -f " . $adminEmail);
 }
 
-function mailUserOrderComplete($orderInfo) {
-
-	$to = $orderInfo['email'];
-	$subject = "Poster Order #" . $orderInfo['orderID'] . " Completed";
+function mailUserOrderComplete($db,$orderId,$adminEmail) {
 	
-	$message = "<br>Your Poster Order #" . $orderInfo['orderID'] . " is now completed.\r\n" .
-			"<br>You can come to Room 2626 to pick up your poster.\r\n" .
-			"<p>Order Number: " . $orderInfo['orderID'] . "\r\n" .
-			"<br>Poster File: " . $orderInfo['fileName'] . "\r\n" .
-			"<br>Poster Length: " . $orderInfo['posterLength'] . " inches \r\n" .
-			"<br>Poster Width: " . $orderInfo['posterWidth'] . " inches \r\n" .
-			"<br>CFOP: " . $orderInfo['cfop'] . "\r\n" .
-			"<br>Activity Code: " . $orderInfo['activityCode'] . "\r\n" .
-			"<br>Paper Type: " . $orderInfo['paperType'] . "\r\n" .
-			"<br>Finish Option: " . $orderInfo['finishOption'] . "\r\n" . 
-			"<br>Poster Tube: " . $orderInfo['posterTube'] . "\r\n" .
-			"<br>Rush Order: " . $orderInfo['rushOrder'] . "\r\n" .
-			"<br>Comments: " . $orderInfo['comments'] . "\r\n" .
-			"<br>Total Cost: $" . $orderInfo['totalCost'] . "\r\n";
+	$order = new order($db,$orderId);
+	$to = $order->get_email();
+	$subject = "Poster Order #" . $order->get_order_id() . " Completed";
+			
+	$message = "<br>Your Poster Order #" . $order->get_order_id() . " is now completed.\r\n";
+	$message .=	"<br>You can come to Room 2626 to pick up your poster.\r\n";
+	$message .=	"<p>Order Number: " . $order->get_order_id() . "\r\n";
+	$message .=	"<br>Poster File: " . $order->get_filename() . "\r\n";
+	$message .=	"<br>Poster Length: " . $order->get_length() . " inches \r\n";
+	$message .=	"<br>Poster Width: " . $order->get_width() . " inches \r\n";
+	$message .=	"<br>CFOP: " .  $order->get_cfop() . "\r\n";
+	$message .=	"<br>Activity Code: " . $order->get_activity_code() . "\r\n";
+	$message .=	"<br>Paper Type: " . $order->get_paper_type_name() . "\r\n";
+	$message .=	"<br>Finish Option: " . $order->get_finish_option_name() . "\r\n"; 
+	$message .=	"<br>Poster Tube: " . $order->get_poster_tube_name() . "\r\n";
+	$message .=	"<br>Rush Order: " . $order->get_rush_order_name() . "\r\n";
+	$message .=	"<br>Comments: " . $order->get_comments() . "\r\n";
+	$message .=	"<br>Total Cost: $" . $order->get_total_cost() . "\r\n";
 	
-	$headers = "From: " . $orderInfo['adminEmail'] . "\r\n" .
-				"Cc: " . $orderInfo['adminEmail'] . "\r\n" .
-				"Content-Type: text/html; charset=iso-8859-1" . "\r\n";
-	mail($to,$subject,$message,$headers, " -f " . $orderInfo['adminEmail']);
+	$headers = "From: " . $adminEmail . "\r\n";
+	$headers .=	"Cc: " . $adminEmail . "\r\n";
+	$headers .= "Content-Type: text/html; charset=iso-8859-1" . "\r\n";
+	mail($to,$subject,$message,$headers, " -f " . $adminEmail);
 
 }
 ?>

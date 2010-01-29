@@ -8,8 +8,7 @@ if (isset($_POST['create_report'])) {
 	$year = $_POST['year'];
 	$month = $_POST['month'];
 	$type = $_POST['report_type'];
-	$db = new db(mysql_host,mysql_database,mysql_user,mysql_password);
-	$data = getReportData($db,$month,$year);
+	$data = getOrdersReport($db,$month,$year);
 	
 	$filename = "PosterReport-" . $month . "-" . $year;
 	if ($type == 'csv') {

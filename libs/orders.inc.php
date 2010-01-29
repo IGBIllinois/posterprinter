@@ -39,4 +39,18 @@ function getOrdersReport($db,$month,$year) {
 	$sql .= "ORDER BY orders_id ASC";
 	return $db->query($sql);
 }
+
+function getAllStatus($db) {
+	$sql = "SELECT * FROM tbl_status";
+	return $db->query($sql);
+}
+
+function getStatusName($db,$status_id) {
+	$sql = "SELECT status_name FROM tbl_status ";
+	$sql .= "WHERE status_id='" . $status_id . "' LIMIT 1";
+	$result = $db->query($sql);
+	return $result[0]['status_name'];
+
+
+}
 ?>
