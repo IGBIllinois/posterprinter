@@ -12,10 +12,14 @@
 //																			//
 //////////////////////////////////////////////////////////////////////////////
 
-include_once 'includes/main.inc.php';
+include_once '../includes/settings.inc.php';
+set_include_path(get_include_path() . ':../libs');
+include_once 'db.class.inc.php';
 include_once 'authentication.inc.php';
-session_start();
 
+$db = new db(mysql_host,mysql_database,mysql_user,mysql_password);
+
+session_start();
 if (isset($_SESSION['webpage'])) {
 	$webpage = $_SESSION['webpage'];
 }
@@ -29,7 +33,7 @@ if (isset($_POST['login'])) {
 	$password = $_POST['password'];
 	
 	
-	$success = authenticate($username,$password,$authenticationSettings);
+	$success = authenticate($username,$password,ldap_host,ldap_base_dn,ldap_people_ou,ldap_group_ou,ldap_group,ldap_ssl,ldap_port);
 	
 	if ($success == "1") {
 		
@@ -42,7 +46,7 @@ if (isset($_POST['login'])) {
 	}
 	elseif ($success != "1") {
 	
-		echo "<b class='error'>Invalid Login</b><br />";
+		$login_msg = "<b class='error'>Invalid Login</b><br />";
 	
 	}
 	
@@ -83,6 +87,7 @@ if (isset($_POST['login'])) {
 	</table>
 
 </form>
+<?php if (isset($login_msg)) { echo $login_msg; } ?>
 </center>
 </div>
 </div>

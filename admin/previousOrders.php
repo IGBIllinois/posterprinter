@@ -2,6 +2,7 @@
 include_once 'includes/main.inc.php';
 include_once 'includes/header.inc.php';
 include_once 'statistics.class.inc.php';
+include_once 'functions.inc.php';
 
 if (isset($_POST['selectedDate'])) {
 	$year = $_POST['year'];
@@ -13,24 +14,12 @@ else {
 	$month = date("m");
 }
 
-$ordersSql = "SELECT tbl_orders.*, tbl_status.*,tbl_paperTypes.*,tbl_finishOptions.* 
-	FROM tbl_orders LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id
-	LEFT JOIN tbl_paperTypes ON tbl_orders.orders_paperTypesId=tbl_paperTypes.paperTypes_id
-	LEFT JOIN tbl_finishOptions ON tbl_orders.orders_finishOptionsId=tbl_finishOptions.finishOptions_id 
-	WHERE (YEAR(orders_timeCreated)=$year AND month(orders_timeCreated)=$month)
-	AND (status_name='Completed' OR status_name='Cancel')
-	ORDER BY orders_id ASC";
-
-
-//connects to the database.  Pulls the mysql settings from the file includes/settings.inc.php.
-$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
-mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
 
 //runs query and gets previous orders
-$ordersResult = mysql_query($ordersSql,$db);
+$orders = getPreviousOrders($db,$month,$year);
 
 $ordersHTML;
-if (mysql_numrows($ordersResult) == 0) {
+if (count($orders) == 0) {
 
 	$ordersHTML = "<tr>
 					<td>No Orders</td>
@@ -40,13 +29,13 @@ if (mysql_numrows($ordersResult) == 0) {
 
 }
 else {
-	for ($i=0; $i<mysql_numrows($ordersResult); $i++) {
+	for ($i=0; $i<count($orders); $i++) {
 		
-		$orderId = mysql_result($ordersResult,$i,"orders_id");
-		$orderEmail = mysql_result($ordersResult,$i,"orders_email");
-		$orderFileName = mysql_result($ordersResult,$i,"orders_fileName");
-		$orderStatus = mysql_result($ordersResult,$i,"status_name");
-		$orderCost = mysql_result($ordersResult,$i,"orders_totalCost");
+		$orderId = $orders[$i]["orders_id"];
+		$orderEmail = $orders[$i]["orders_email"];
+		$orderFileName = $orders[$i]["orders_fileName"];
+		$orderStatus = $orders[$i]["status_name"];
+		$orderCost = $orders[$i]["orders_totalCost"];
 		
 		$ordersHTML .= "<tr>" . 
 							"<td><a href='orders.php?orderId=" . $orderId . "'>" . $orderId . "</a></td>" .
@@ -83,12 +72,13 @@ for ($i=1;$i<=12;$i++) {
 }
 $monthHTML .= "</select>";
 
-$stats = new statistics($db,$startDate,$endDate);
 $startDate = $year . "/" . $month . "/01";
 
 $endDate =  date('Y/m/d',strtotime('-1 second',strtotime('+1 month',strtotime($startDate))));
+$stats = new statistics($db,$startDate,$endDate);
 
 $monthlyTotal = $stats->cost();
+
 
 ?>
 

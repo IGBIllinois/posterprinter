@@ -5,22 +5,17 @@ include_once 'mail.inc.php';
 
 if (isset($_POST['changeStatus'])) {
 
-	include '../includes/settings.inc.php';
-	
 	$orderId = $_POST['orderId'];
 	$statusId = $_POST['statusId'];
 	$finishOptionName = $_POST['finishOptionName'];
 	$paperTypeName = $_POST['paperTypeName'];
 	
-	//connects to the database.  Pulls the mysql settings from the file includes/settings.inc.php.
-	$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
-	mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
 	$timeFinished = date( 'Y-m-d H:i:s');
 
 	//updates the order to the new status
 	$updateStatusSql = "UPDATE tbl_orders SET orders_statusId='" . $statusId . "',orders_timeFinished='" . $timeFinished . "' WHERE orders_id= " . $orderId;
-	$updateResult = mysql_query($updateStatusSql,$db);
-	
+	$db->non_select_query($updateStatusSql);
+
 	//if status is set to "Complete", then it will email the user saying to come pick up the poster
 	if ($statusId == 3) {
 	
@@ -32,26 +27,26 @@ if (isset($_POST['changeStatus'])) {
 			LEFT JOIN tbl_rushOrder ON tbl_orders.orders_rushOrderId=tbl_rushOrder.rushOrder_id
 			WHERE orders_id=" . $orderId;
 		
-		$orderResult = mysql_query($orderSql,$db)
-			or die("Problem with database. " . mysql_error());
+		$orderResult = $db->query($orderSql);
+
 		
 		//sets an array with order information.
 		$orderInfo = array(
-					'email' => mysql_result($orderResult,0,'orders_email'),
-					'name' => mysql_result($orderResult,0,'orders_name'),
+					'email' => $orderResult[0]['orders_email'],
+					'name' => $orderResult[0]['orders_name'],
 					'orderID' => $orderId,
-					'fileName' =>  mysql_result($orderResult,0,'orders_fileName'),
-					'totalCost' => mysql_result($orderResult,0,'orders_totalCost'),
-					'posterLength' =>  mysql_result($orderResult,0,'orders_length'),
-					'posterWidth' =>  mysql_result($orderResult,0,'orders_width'),
-					'cfop' =>  mysql_result($orderResult,0,'orders_cfop'),
-					'activityCode' =>  mysql_result($orderResult,0,'orders_activityCode'),
-					'paperType' =>  mysql_result($orderResult,0,"paperTypes_name"),
-					'finishOption' =>  mysql_result($orderResult,0,"finishOptions_name"),
-					'posterTube' => mysql_result($orderResult,0,"posterTube_name"),
-					'rushOrder' => mysql_result($orderResult,0,"rushOrder_name"),
-					'comments' => mysql_result($orderResult,0,'orders_comments'),
-					'adminEmail' => $adminEmail
+					'fileName' =>  $orderResult[0]['orders_fileName'],
+					'totalCost' => $orderResult[0]['orders_totalCost'],
+					'posterLength' =>  $orderResult[0]['orders_length'],
+					'posterWidth' =>  $orderResult[0]['orders_width'],
+					'cfop' =>  $orderResult[0]['orders_cfop'],
+					'activityCode' =>  $orderResult[0]['orders_activityCode'],
+					'paperType' =>  $orderResult[0]['paperTypes_name'],
+					'finishOption' =>  $orderResult[0]['finishOptions_name'],
+					'posterTube' => $orderResult[0]['posterTube_name'],
+					'rushOrder' => $orderResult[0]['rushOrder_name'],
+					'comments' => $orderResult[0]['orders_comments'],
+					'adminEmail' => admin_email
 		);
 				
 		mailUserOrderComplete($orderInfo);
@@ -76,10 +71,6 @@ if (isset($_GET['orderId'])) {
 	//gets order id
 	$orderId = $_GET['orderId'];
 	
-	//connects to the database.  Pulls the mysql settings from the file includes/settings.inc.php.
-	$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
-	mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
-
 	//sql string to get order information
 	$orderSql = "SELECT tbl_orders.*, tbl_status.*,tbl_paperTypes.*,tbl_finishOptions.*,tbl_posterTube.*,tbl_rushOrder.* FROM tbl_orders 
 			LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id
@@ -91,37 +82,36 @@ if (isset($_GET['orderId'])) {
 	
 
 	//runs query	
-	$orderResult = mysql_query($orderSql,$db)
-		or die("Problem with database. " . mysql_error());
+	$orderResult = $db->query($orderSql);
 
 	//sets order information to variables
-	$orderEmail = mysql_result($orderResult,0,"orders_email");
-	$orderName = mysql_result($orderResult,0,"orders_name");
-	$orderFileName = mysql_result($orderResult,0,"orders_fileName");
-	$orderCFOP = mysql_result($orderResult,0,"orders_cfop");
-	$orderActivityCode = mysql_result($orderResult,0,"orders_activityCode");
-	$orderTimeCreated = mysql_result($orderResult,0,"orders_timeCreated");
-	$orderTotalCost = mysql_result($orderResult,0,"orders_totalCost");
-	$orderWidth = mysql_result($orderResult,0,"orders_width");
-	$orderLength =  mysql_result($orderResult,0,"orders_length");
-	$orderPaperType = mysql_result($orderResult,0,"paperTypes_name");
-	$orderFinishOption = mysql_result($orderResult,0,"finishOptions_name");
-	$posterTube = mysql_result($orderResult,0,"posterTube_name");
-	$rushOrder = mysql_result($orderResult,0,"rushOrder_name");
-	$orderComments = mysql_result($orderResult,0,"orders_comments");
-	$orderStatusId = mysql_result($orderResult,0,"orders_statusId");
+	$orderEmail = $orderResult[0]["orders_email"];
+	$orderName = $orderResult[0]["orders_name"];
+	$orderFileName = $orderResult[0]["orders_fileName"];
+	$orderCFOP = $orderResult[0]["orders_cfop"];
+	$orderActivityCode = $orderResult[0]["orders_activityCode"];
+	$orderTimeCreated = $orderResult[0]["orders_timeCreated"];
+	$orderTotalCost = $orderResult[0]["orders_totalCost"];
+	$orderWidth = $orderResult[0]["orders_width"];
+	$orderLength =  $orderResult[0]["orders_length"];
+	$orderPaperType = $orderResult[0]["paperTypes_name"];
+	$orderFinishOption = $orderResult[0]["finishOptions_name"];
+	$posterTube = $orderResult[0]["posterTube_name"];
+	$rushOrder = $orderResult[0]["rushOrder_name"];
+	$orderComments = $orderResult[0]["orders_comments"];
+	$orderStatusId = $orderResult[0]["orders_statusId"];
 	
 	//gets the different possible status options
 	$statusSql = "SELECT * FROM tbl_status";
-	$statusResult = mysql_query($statusSql,$db);
+	$statusResult = $db->query($statusSql);
 
 	
 	$statusHTML = "<form action='orders.php?orderId=" . $orderId . "' method='post'>
 					<select name='statusId'>";
 
-	for ($i=0; $i<mysql_numrows($statusResult); $i++) {
-		$statusId = mysql_result($statusResult,$i,"status_id");
-		$statusName = mysql_result($statusResult,$i,"status_name");
+	for ($i=0; $i<count($statusResult); $i++) {
+		$statusId = $statusResult[$i]["status_id"];
+		$statusName = $statusResult[$i]["status_name"];
 		//used to have the current status of the order be the one selected in the drop down box
 		if ($statusId == $orderStatusId) {
 			$statusHTML .= "<option value='" . $statusId . "' selected>" . $statusName . "</option>";

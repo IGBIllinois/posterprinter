@@ -1,12 +1,5 @@
 <?php
-include_once '../../includes/settings.inc.php';
-set_include_path(get_include_path() . ':../../libs');
-include_once 'db.class.inc.php';
-include_once 'statistics.class.inc.php';
-include_once 'jpgraph.php';
-include_once 'jpgraph_pie.php';
-include_once 'jpgraph_pie3d.php';
-$db = new db($mysqlSettings['host'],$mysqlSettings['database'],$mysqlSettings['username'],$mysqlSettings['password']);
+include_once 'graph_main.inc.php';
 
 if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
 

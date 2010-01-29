@@ -13,28 +13,19 @@
 ///////////////////////////////////////////////
 //Include files for the script to run
 
-include 'includes/main.inc.php';
-include 'includes/header.inc.php';
+include_once 'includes/main.inc.php';
+include_once 'includes/header.inc.php';
+include_once 'orders.inc.php';
 
 
 
 
-//connects to the database.  Pulls the mysql settings from the file includes/settings.inc.php.
-$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
-mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
-
-$ordersSql = "SELECT tbl_orders.*, tbl_status.*, tbl_rushOrder.*
-			FROM tbl_orders 
-			LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id
-			LEFT JOIN tbl_rushOrder ON tbl_orders.orders_rushOrderId=tbl_rushOrder.rushOrder_id
-			WHERE NOT (status_name='Completed' OR status_name='Cancel')
-			ORDER BY orders_id ASC";
 
 //runs query and gets the order_id
-$ordersResult = mysql_query($ordersSql,$db);
+$orders = getCurrentOrders($db);
 
 $ordersHTML;
-if (mysql_numrows($ordersResult) == 0) {
+if (count($orders) == 0) {
 
 	$ordersHTML = "<tr>
 					<td>None</td>
@@ -44,14 +35,14 @@ if (mysql_numrows($ordersResult) == 0) {
 
 }
 else {
-	for ($i=0; $i<mysql_numrows($ordersResult); $i++) {
+	for ($i=0; $i<count($orders); $i++) {
 		
-		$orderId = mysql_result($ordersResult,$i,"orders_id");
-		$orderEmail = mysql_result($ordersResult,$i,"orders_email");
-		$orderFileName = mysql_result($ordersResult,$i,"orders_fileName");
-		$orderStatus = mysql_result($ordersResult,$i,"status_name");
-		$orderCost = mysql_result($ordersResult,$i,"orders_totalCost");
-		$rushOrderName = mysql_result($ordersResult,$i,"rushOrder_name");
+		$orderId = $orders[$i]["orders_id"];
+		$orderEmail = $orders[$i]["orders_email"];
+		$orderFileName = $orders[$i]["orders_fileName"];
+		$orderStatus = $orders[$i]["status_name"];
+		$orderCost = $orders[$i]["orders_totalCost"];
+		$rushOrderName = $orders[$i]["rushOrder_name"];
 		$ordersHTML;
 		if ($rushOrderName == "Yes") {
 			$ordersHTML .= "<tr class='rush'>";

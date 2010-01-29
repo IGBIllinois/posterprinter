@@ -1,23 +1,17 @@
 <?php
 include_once 'includes/main.inc.php';
+include_once 'finishOptions.inc.php';
 
-//connects to the database.  Pulls the mysql settings from the file includes/settings.inc.php.
-$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
-mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
 	
 if (isset($_POST['removeFinishOption'])) {
 	$finishOptionId = $_POST['finishOptionId'];
-	$defaultSql = "UPDATE tbl_finishOptions SET finishOptions_available=0 WHERE finishOptions_id=$finishOptionId";
-	$defaultQuery = mysql_query($defaultSql,$db);
+	removeFinishOption($db,$finishOptionId);	
 	header("Location: finishOptions.php");
 
 }
 elseif (isset($_POST['makeDefault'])) {
 	$finishOptionId = $_POST['finishOptionId'];
-	$defaultSql = "UPDATE tbl_finishOptions SET finishOptions_default=0";
-	$defaultQuery = mysql_query($defaultSql,$db);	
-	$defaultSql = "UPDATE tbl_finishOptions SET finishOptions_default=1 WHERE finishOptions_id=$finishOptionId";
-	$defaultQuery = mysql_query($defaultSql,$db);
+	setDefaultFinishOption($db,$finishOptionId);
 	header("Location: finishOptions.php");
 }
 elseif (isset($_POST['editFinishOption'])) {
@@ -43,8 +37,8 @@ elseif (isset($_POST['editFinishOption'])) {
 		$errors++;
 	}
 	
-	if (($maxWidth == "") || ($maxWidth > $maxPrinterWidth) || !(eregi("^[0-9]{1,2}$", $maxWidth))) {
-		$maxWidthMsg = "<br><b class='error'>Please enter a valid Max Width. Maximum is $maxPrinterWidth inches</b>";
+	if (($maxWidth == "") || ($maxWidth > max_printer_width) || !(eregi("^[0-9]{1,2}$", $maxWidth))) {
+		$maxWidthMsg = "<br><b class='error'>Please enter a valid Max Width. Maximum is " . max_printer_width inches . "</b>";
 		$errors++;
 	}
 	if (($maxLength == "") || !(eregi("^[0-9]{1,3}$", $maxLength))) {
@@ -53,14 +47,7 @@ elseif (isset($_POST['editFinishOption'])) {
 	}
 	if ($errors == 0) {
 		
-		$addFinishOptionSql = "INSERT INTO tbl_finishOptions(finishOptions_name,finishOptions_cost,finishOptions_maxWidth,finishOptions_maxLength,finishOptions_available,finishOptions_default)" .
-						"VALUES('$name',$cost,$maxWidth,$maxLength,1,$default)";
-		$updateFinishOptionSql = "UPDATE tbl_finishOptions SET finishOptions_name='$name',finishOptions_cost=$cost,finishOptions_maxWidth=$maxWidth,finishOptions_maxLength=$maxLength," .
-							"finishOptions_available=0,finishOptions_default=0 WHERE finishOptions_id=$finishOptionId";
-		
-		$addFinishOptionQuery = mysql_query($addFinishOptionSql,$db);	
-		$updateFinishOptionQuery = mysql_query($updateFinishOptionSql,$db);
-		
+		updateFinishOption($db,$finishOptionId,$name,$cost,$maxWidth,$maxLength,$default);	
 		header("Location: finishOptions.php");
 	}
 }
@@ -69,15 +56,14 @@ elseif (isset($_GET['finishOptionId'])) {
 	$finishOptionId = $_GET['finishOptionId'];
 
 	
-	$finishOptionSql = "SELECT * FROM tbl_finishOptions WHERE finishOptions_id=$finishOptionId";
-	$finishOptionResult = mysql_query($finishOptionSql,$db);
+	$finishOption = getFinishOption($db,$finishOptionId);
 
-	$name = mysql_result($finishOptionResult,0,'finishOptions_name');
-	$cost = mysql_result($finishOptionResult,0,'finishOptions_cost');
-	$maxWidth = mysql_result($finishOptionResult,0,'finishOptions_maxWidth');
-	$maxLength =mysql_result($finishOptionResult,0,'finishOptions_maxLength'); 
-	$available = mysql_result($finishOptionResult,0,'finishOptions_available');
-	$default = mysql_result($finishOptionResult,0,'finishOptions_default');
+	$name = $finishOption[0]['finishOptions_name'];
+	$cost = $finishOption[0]['finishOptions_cost'];
+	$maxWidth = $finishOption[0]['finishOptions_maxWidth'];
+	$maxLength = $finishOption[0]['finishOptions_maxLength']; 
+	$available = $finishOption[0]['finishOptions_available'];
+	$default = $finishOption[0]['finishOptions_default'];
 	
 }
 

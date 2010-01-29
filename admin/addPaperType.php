@@ -1,6 +1,6 @@
 <?php
 include_once 'includes/main.inc.php';
-
+include_once 'paperTypes.inc.php';
 
 if (isset($_POST['addPaperType'])) {
 
@@ -23,30 +23,15 @@ if (isset($_POST['addPaperType'])) {
 		$errors++;
 	}
 	
-	if (($width == "") || ($width > $maxPrinterWidth) || !(eregi("^[0-9]{1,2}$", $width))) {
-		$widthMsg = "<br><b class='error'>Please enter a valid Width.  Maximum is $maxPrinterWidth</b>";
+	if (($width == "") || ($width > max_printer_width) || !(eregi("^[0-9]{1,2}$", $width))) {
+		$widthMsg = "<br><b class='error'>Please enter a valid Width.  Maximum is " . max_printer_width . "</b>";
 		$errors++;
 	}
 	
 	if ($errors == 0) {
 	
-	//connects to the database.  Pulls the mysql settings from the file includes/settings.inc.php.
-	$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
-	mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
-
-	if ($default == 1) {
-		$defaultSql = "UPDATE tbl_paperTypes SET paperTypes_default=0";
-		$defaultQuery = mysql_query($defaultSql,$db);	
-	}
-	else {
-		$default = 0;
-	}
-	$available = 1;
-	$addPaperTypeSql = "INSERT INTO tbl_paperTypes(paperTypes_name,paperTypes_cost,paperTypes_width,paperTypes_available,paperTypes_default)" .
-						"VALUES('$name',$cost,$width,$available,$default)";
-	$addPaperTypeQuery = mysql_query($addPaperTypeSql,$db);
-	
-	header("Location: paperTypes.php");
+		addPaperType($db,$name,$cost,$width,$default);	
+		header("Location: paperTypes.php");
 	
 	}
 

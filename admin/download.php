@@ -18,14 +18,11 @@ include 'includes/main.inc.php';
 if (isset($_GET['orderId'])) {
 
 	$orderId = $_GET['orderId'];
-	//connects to the database.  Pulls the mysql settings from the file includes/settings.inc.php.
-	$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
-	mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
 	$orderSql = "SELECT * FROM tbl_orders WHERE orders_id=" . $orderId;
 	//runs query and gets the order_id
-	$orderResult = mysql_query($orderSql,$db);
+	$orderResult = $db->query($orderSql);
 	//gets the file name
-	$filename = mysql_result($orderResult,0,"orders_fileName");
+	$filename = $orderResult[0]["orders_fileName"];
 
 	//gets the file type
 	$fileType = end(explode(".",$filename));
