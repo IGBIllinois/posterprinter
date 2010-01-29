@@ -1,9 +1,13 @@
 <?php
 include_once 'includes/main.inc.php';
 include_once 'mail.inc.php';
+include_once 'orders.inc.php';
+include_once 'paperTypes.inc.php';
+include_once 'finishOptions.inc.php';
+include_once 'posterTube.inc.php';
+include_once 'rushOrder.inc.php';
 
 if (isset($_POST['editOrder'])) {
-
 
 	$cfop1 = $_POST['cfop1'];
 	$cfop2 = $_POST['cfop2'];
@@ -33,36 +37,28 @@ if (isset($_POST['editOrder'])) {
 	}
 	
 	if ($error == false) {
-		//connects to the database.  Pulls the mysql settings from the file includes/settings.inc.php.
-		$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
-		mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
+		
 	
 		//Gets Finish Options Information
-		$finishOptionsSql = "SELECT * FROM tbl_finishOptions WHERE finishOptions_id=" . $finishOptionsId;
-		$finishOptionsResult = mysql_query($finishOptionsSql,$db)
-			or die("Problem with database. " . mysql_error());
-		$finishOptionCost = mysql_result($finishOptionsResult,0,'finishOptions_cost');
+		$finishOption = getFinishOption($db,$finishOptionId);
+		$finishOptionCost = $finishOptions[0]['finishOptions_cost'];
 	
 		//Gets Paper Type Information
-		$paperTypesSql = "SELECT * FROM tbl_paperTypes WHERE paperTypes_id=" . $paperTypesId;
-		$paperTypesResult = mysql_query($paperTypesSql,$db)
-			or die("Problem with database. " . mysql_error());
-		$paperTypeCost = mysql_result($paperTypesResult,0,'paperTypes_cost');
-		$paperTypeWidth = mysql_result($paperTypesResult,0,'paperTypes_width');
+		$paperType = getPaperType($db,$paperTypeId);
+		$paperTypeCost = $paperTypes[0]['paperTypes_cost'];
+		$paperTypeWidth = $paperTypes[0]['paperTypes_width'];
 		$widthSwitched;
 	
 		//Gets Power Tube Information
-		$posterTubeSql = "SELECT * FROM tbl_posterTube WHERE posterTube_id=$posterTubeId"; 
-		$posterTubeResult = mysql_query($posterTubeSql,$db)
-			or die("Problem with poster tube. " . mysql_error());
-		$posterTubeCost =  mysql_result($posterTubeResult,0,"posterTube_cost");
+		$posterTubeSql = "SELECT * FROM tbl_posterTube WHERE posterTube_id='" . $posterTubeId . "' LIMIT 1"; 
+		$posterTubeResult = $db->query($posterTubeSql);
+		$posterTubeCost =  $posterTubeResult[0]["posterTube_cost"];
 		
 		
 		//Gets Rush Order Information
 		$rushOrderSql = "SELECT * FROM tbl_rushOrder WHERE rushOrder_id=$rushOrderId";
-		$rushOrderResult = mysql_query($rushOrderSql,$db)
-			or die("Problem with rush order. " . mysql_error());
-		$rushOrderCost = mysql_result($rushOrderResult,0,"rushOrder_cost");
+		$rushOrderResult = $db->query($rushOrderSql);
+		$rushOrderCost = $rushOrderResult[0]["rushOrder_cost"];
 		
 		//Switches around the poster width and length to make the length the shortest possible to save money.
 		if (($posterWidth <= $paperTypeWidth) && ($posterLength <= $paperTypeWidth) && ($posterWidth < $posterLength)) {
@@ -89,7 +85,7 @@ if (isset($_POST['editOrder'])) {
 		$editOrderSql .= "WHERE orders_id=$orderId";
 	
 		//runs query and gets the order_id
-		mysql_query($editOrderSql,$db) or die("Error Updating Order: " . mysql_error());
+		$db->non_select_query($editOrderSql);
 	
 		header("Location: orders.php?orderId=$orderId");
 	}
@@ -104,10 +100,6 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 	//gets order id
 	$orderId = $_GET['orderId'];
 	
-	//connects to the database.  Pulls the mysql settings from the file includes/settings.inc.php.
-	$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
-	mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
-
 	//sql string to get order information
 	$orderSql = "SELECT tbl_orders.*, tbl_status.*,tbl_paperTypes.*,tbl_finishOptions.*,tbl_posterTube.*,tbl_rushOrder.* FROM tbl_orders 
 			LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id
@@ -119,27 +111,26 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 	
 
 	//runs query	
-	$orderResult = mysql_query($orderSql,$db)
-		or die("Problem with database. " . mysql_error());
-
+	$orderResult = $db->query($orderSql);
+	
 	//sets order information to variables
-	$orderEmail = mysql_result($orderResult,0,"orders_email");
-	$orderName = mysql_result($orderResult,0,"orders_name");
-	$orderFileName = mysql_result($orderResult,0,"orders_fileName");
-	$orderCFOP = mysql_result($orderResult,0,"orders_cfop");
-	$orderActivityCode = mysql_result($orderResult,0,"orders_activityCode");
-	$orderTimeCreated = mysql_result($orderResult,0,"orders_timeCreated");
-	$orderTotalCost = mysql_result($orderResult,0,"orders_totalCost");
-	$orderWidth = mysql_result($orderResult,0,"orders_width");
-	$orderLength =  mysql_result($orderResult,0,"orders_length");
-	$orderPaperTypeId = mysql_result($orderResult,0,"paperTypes_id");
-	$orderFinishOptionId = mysql_result($orderResult,0,"finishOptions_id");
-	$orderPosterTubeName = mysql_result($orderResult,0,"posterTube_name");
-	$orderPosterTubeId = mysql_result($orderResult,0,"posterTube_id");
-	$orderRushOrderName = mysql_result($orderResult,0,"rushOrder_name");
-	$orderRushOrderId = mysql_result($orderResult,0,"rushOrder_id");
-	$orderComments = mysql_result($orderResult,0,"orders_comments");
-	$orderStatusId = mysql_result($orderResult,0,"orders_statusId");
+	$orderEmail = $orderResult[0]["orders_email"];
+	$orderName = $orderResult[0]["orders_name"];
+	$orderFileName = $orderResult[0]["orders_fileName"];
+	$orderCFOP = $orderResult[0]["orders_cfop"];
+	$orderActivityCode = $orderResult[0]["orders_activityCode"];
+	$orderTimeCreated = $orderResult[0]["orders_timeCreated"];
+	$orderTotalCost = $orderResult[0]["orders_totalCost"];
+	$orderWidth = $orderResult[0]["orders_width"];
+	$orderLength =  $orderResult[0]["orders_length"];
+	$orderPaperTypeId = $orderResult[0]["paperTypes_id"];
+	$orderFinishOptionId = $orderResult[0]["finishOptions_id"];
+	$orderPosterTubeName = $orderResult[0]["posterTube_name"];
+	$orderPosterTubeId = $orderResult[0]["posterTube_id"];
+	$orderRushOrderName = $orderResult[0]["rushOrder_name"];
+	$orderRushOrderId = $orderResult[0]["rushOrder_id"];
+	$orderComments = $orderResult[0]["orders_comments"];
+	$orderStatusId = $orderResult[0]["orders_statusId"];
 	
 	$cfop1 = substr($orderCFOP,0,1);
 	$cfop2 = substr($orderCFOP,2,6);
@@ -148,12 +139,11 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 	
 	
 	////////////////Paper Types////////////
-	$paperTypesSql = "SELECT * FROM tbl_paperTypes WHERE paperTypes_available=1 AND (paperTypes_width>=$orderWidth OR paperTypes_width>=$orderLength) ORDER BY paperTypes_name ASC";
-	$paperTypesResult = mysql_query($paperTypesSql,$db);
+	$paperTypes = getValidPaperTypes($db,$orderWith,$orderLength);
 	$paperTypesHTML = "<select name='paperType'>";
-	for ($i=0;$i < mysql_num_rows($paperTypesResult);$i++) {
-		$paperTypeId = mysql_result($paperTypesResult,$i,"paperTypes_id");
-		$paperTypeName = mysql_result($paperTypesResult,$i,"paperTypes_name");
+	for ($i=0;$i < count($paperTypes);$i++) {
+		$paperTypeId = $paperTypes[$i]["paperTypes_id"];
+		$paperTypeName = $paperTypes[$i]["paperTypes_name"];
 		if ($orderPaperTypeId == $paperTypeId) {
 		$paperTypesHTML .= "<option selected='true' value='" . $paperTypeId . "'>" . $paperTypeName . "</option>";
 		
@@ -165,13 +155,11 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 	$paperTypesHTML .= "</select>";
 	
 	///////////////////Finish Options//////////////
-	$finishOptionsSql = "SELECT * FROM tbl_finishOptions WHERE finishOptions_available=1 AND finishOptions_maxLength>=$orderLength AND" . 
-						"(finishOptions_maxWidth>=$orderWidth OR finishOptions_maxWidth>=$orderLength) ORDER BY finishOptions_name ASC";
-	$finishOptionsResult = mysql_query($finishOptionsSql,$db);
+	$finishOptions = getValidFinishOptions($db,$orderWidth,$orderLength);
 	$finishOptionsHTML = "<select name='finishOption'>";
-	for ($i=0; $i < mysql_num_rows($finishOptionsResult); $i++) {
-		$finishOptionName = mysql_result($finishOptionsResult,$i,"finishOptions_name");
-		$finishOptionId = mysql_result($finishOptionsResult,$i,"finishOptions_id");
+	for ($i=0; $i < count($finishOptions); $i++) {
+		$finishOptionName = $finishOptions[$i]["finishOptions_name"];
+		$finishOptionId = $finishOptions[$i]["finishOptions_id"];
 		
 		if ($orderFinishOptionId == $finishOptionId) {
 			$finishOptionsHTML .= "<option selected='true' value='" . $finishOptionId . "'>" . $finishOptionName . "</option>";
@@ -184,12 +172,11 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 	$finishOptionsHTML .= "</select>";
 	
 	////////////////////Poster Tube////////////////////
-	$posterTubeSql = "SELECT * FROM tbl_posterTube WHERE posterTube_available=1";
-	$posterTubeResult = mysql_query($posterTubeSql,$db);
+	$posterTube = getPosterTube($db);	
 	$posterTubeHTML = "<select name='posterTube'>";
-	for($i=0;$i<mysql_num_rows($posterTubeResult);$i++) {
-		$posterTubeId = mysql_result($posterTubeResult,$i,'posterTube_id');
-		$posterTubeName = mysql_result($posterTubeResult,$i,'posterTube_name') ;
+	for($i=0;$i<count($posterTube);$i++) {
+		$posterTubeId = $posterTube[$i]['posterTube_id'];
+		$posterTubeName = $posterTube[$i]['posterTube_name'];
 		
 		if ($posterTubeName == $orderPosterTubeName) {
 			$posterTubeHTML .= "<option selected='true' value='" . $posterTubeId . "'>" . $posterTubeName . "</option>";
@@ -204,12 +191,11 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 	
 	
 	/////////////////Rush Order//////////////
-	$rushOrderSql = "SELECT * FROM tbl_rushOrder WHERE rushOrder_available=1";
-	$rushOrderResult = mysql_query($rushOrderSql,$db);
+	$rushOrder = getRushOrder($db);
 	$rushOrderHTML = "<select name='rushOrder'>";
-	for($i=0;$i<mysql_num_rows($rushOrderResult);$i++) {
-		$rushOrderId = mysql_result($rushOrderResult,$i,'rushOrder_id');
-		$rushOrderName = mysql_result($rushOrderResult,$i,'rushOrder_name');
+	for($i=0;$i<count($rushOrder);$i++) {
+		$rushOrderId = $rushOrder[$i]['rushOrder_id'];
+		$rushOrderName = $rushOrder[$i]['rushOrder_name'];
 		
 		if ($rushOrderName == $orderRushOrderName) {
 			$rushOrderHTML .= "<option selected value='" . $rushOrderId . "'>" . $rushOrderName . "</option>";

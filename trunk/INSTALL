@@ -12,9 +12,9 @@ Installation -
 5.  Set the permissions on /posterfiles so the user running the apache server has write permissions.
 6.  Edit the php.ini file so it has the following settings.
 	a. file_uploads = On
-	b. upload_max_filesize = 160M
-	c. post_max_size = 160M
-	d. memory_limit = 160M
+	b. upload_max_filesize = 200M
+	c. post_max_size = 200M
+	d. memory_limit = 200M
 	e. max_input_time = 100
 	f. max_execution_time = 100
 7.  Reload the webserver.

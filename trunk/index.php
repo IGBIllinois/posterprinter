@@ -1,22 +1,26 @@
 <?php
 //////////////////////////////////////////////////////
-//													//
-//	Poster Printer Order Submission					//
-//	index.php										//
-//													//
-//	Page to allow the user to submit poster files 	//
-//													//
-//	David Slater									//
-//	April 2007										//
-//													//
+//
+//	Poster Printer Order Submission
+//	index.php
+//
+//	Page to allow the user to submit poster files
+//
+//	David Slater
+//	April 2007
+//
 //////////////////////////////////////////////////////
 
-//Include files for the script to run
+//include files for the script to run
 include_once 'includes/settings.inc.php';
 set_include_path(get_include_path() . ':libs');
 include_once 'db.class.inc.php';
 include_once 'mail.inc.php';
 include_once 'functions.inc.php';
+include_once 'paperTypes.inc.php';
+include_once 'finishOptions.inc.php';
+
+$db = new db(mysql_host,mysql_database,mysql_user,mysql_password);
 
 //poster width and length submission
 if (isset($_POST['step1'])) {
@@ -27,7 +31,7 @@ if (isset($_POST['step1'])) {
 	$posterLength = trim(rtrim($posterLength));
 	
 
-	$paperTypes = getValidPaperTypes($posterWidth,$posterLength,$mysqlSettings);
+	$paperTypes = getValidPaperTypes($db,$posterWidth,$posterLength);
 	//takes the result and formats it into html into the paperTypeHTML variable.
 	$paperTypesHTML;
 	for ($i=0;$i < count($paperTypes);$i++) {
@@ -49,7 +53,7 @@ if (isset($_POST['step1'])) {
 	}
 	
 
-	$finishOptions = getValidFinishOptions($posterWidth,$posterLength,$mysqlSettings);
+	$finishOptions = getValidFinishOptions($db,$posterWidth,$posterLength);
 	//takes the result and formats it into html into the finishOptionsHTML variable.
 	$finishOptionsHTML;
 	for ($i=0; $i < count($finishOptions); $i++) {
@@ -72,10 +76,10 @@ if (isset($_POST['step1'])) {
 	
 	}
 	
-	$posterTubeHTML = "<tr><td class='td_2'>Poster Tube</td><td class='td_2'>$" . getPosterTubeCost($mysqlSettings) ."</td>" .
+	$posterTubeHTML = "<tr><td class='td_2'>Poster Tube</td><td class='td_2'>$" . getPosterTubeCost($db) ."</td>" .
 					"<td class='td_4'><input type='checkbox' name='posterTube' value='1'></td></tr>";
 
-	$rushOrderHTML = "<tr><td class='td_2'>Rush Order</td><td class='td_2'>$" . getRushOrderCost($mysqlSettings) ."</td>" .
+	$rushOrderHTML = "<tr><td class='td_2'>Rush Order</td><td class='td_2'>$" . getRushOrderCost($db) ."</td>" .
 					"<td class='td_4'><input type='checkbox' name='rushOrder' value='1'></td></tr>";
 	
 	$formHTML = "<br \>
@@ -191,32 +195,26 @@ elseif (isset($_POST['step2'])) {
 	//creates a temp file name for the file
 	$posterFileTmpName = "tmp_" . mt_rand(100000000,999999999) . "." . $fileType;
 	//makes the path for the file
-	$targetPath = $posterDirectory . "/" . $posterFileTmpName;
+	$targetPath = poster_dir . "/" . $posterFileTmpName;
 	//moves file to temporary location
 	move_uploaded_file($_FILES['posterFile']['tmp_name'],$targetPath);
 	//makes the complete CFOP number
 	$cfop = $cfop1 . "-" . $cfop2 . "-" . $cfop3 . "-" . $cfop4;
 	
-	//connects to the database.  Pulls the mysql settings from the file includes/settings.inc.php.
-	$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
-	mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
 
 	//Gets Finish Options Information
-	$finishOptionsSql = "SELECT * FROM tbl_finishOptions WHERE finishOptions_id=" . $finishOptionsId;
-	$finishOptionsResult = mysql_query($finishOptionsSql,$db)
-		or die("Problem with database. " . mysql_error());
-	$finishOptionCost = mysql_result($finishOptionsResult,0,'finishOptions_cost');
-	$finishOptionName = mysql_result($finishOptionsResult,0,'finishOptions_name');
+	$finishOptionsResult = getFinishOption($db,$finishOptionsId);
+	$finishOptionCost = $finishOptionsResult[0]['finishOptions_cost'];
+	$finishOptionName = $finishOptionsResult[0]['finishOptions_name'];
 	
 	
 	//Gets Paper Type Information
-	$paperTypesSql = "SELECT * FROM tbl_paperTypes WHERE paperTypes_id=" . $paperTypesId;
-	$paperTypesResult = mysql_query($paperTypesSql,$db)
-		or die("Problem with database. " . mysql_error());
-	$paperTypeCost = mysql_result($paperTypesResult,0,'paperTypes_cost');
-	$paperTypeName = mysql_result($paperTypesResult,0,'paperTypes_name');
-	$paperTypeWidth = mysql_result($paperTypesResult,0,'paperTypes_width');
+	$paperTypesResult = getPaperType($db,$paperTypesId);
+	$paperTypeCost = $paperTypesResult[0]['paperTypes_cost'];
+	$paperTypeName = $paperTypesResult[0]['paperTypes_name'];
+	$paperTypeWidth = $paperTypesResult[0]['paperTypes_width'];
 	$widthSwitched;
+	
 	//Switches around the poster width and length to make the length the shortest possible to save money.
 	if (($posterWidth <= $paperTypeWidth) && ($posterLength <= $paperTypeWidth) && ($posterWidth < $posterLength)) {
 		$tempPosterWidth = $posterWidth;
@@ -237,29 +235,27 @@ elseif (isset($_POST['step2'])) {
 	
 	//Gets Power Tube Information
 	if ($posterTube ==1) {
-		$posterTubeSql = "SELECT * FROM tbl_posterTube WHERE posterTube_available=1 AND posterTube_name='Yes'";
+		$posterTubeSql = "SELECT * FROM tbl_posterTube WHERE posterTube_available=1 AND posterTube_name='Yes' LIMIT 1";
 	}
 	else {
-		$posterTubeSql = "SELECT * FROM tbl_posterTube WHERE posterTube_available=1 AND posterTube_name='No'";
+		$posterTubeSql = "SELECT * FROM tbl_posterTube WHERE posterTube_available=1 AND posterTube_name='No' LIMIT 1";
 	}
-	$posterTubeResult = mysql_query($posterTubeSql,$db)
-		or die("Problem with poster tube. " . mysql_error());
-	$posterTubeCost =  mysql_result($posterTubeResult,0,"posterTube_cost");
-	$posterTubeName =  mysql_result($posterTubeResult,0,"posterTube_name");
-	$posterTubeId = mysql_result($posterTubeResult,0,"posterTube_id");
+	$posterTubeResult = $db->query($posterTubeSql);
+	$posterTubeCost =  $posterTubeResult[0]["posterTube_cost"];
+	$posterTubeName =  $posterTubeResult[0]["posterTube_name"];
+	$posterTubeId = $posterTubeResult[0]["posterTube_id"];
 	
 	//Gets Rush Order Information
 	if ($rushOrder == 1) {
-		$rushOrderSql = "SELECT * FROM tbl_rushOrder WHERE rushOrder_available=1 AND rushOrder_name='Yes'";
+		$rushOrderSql = "SELECT * FROM tbl_rushOrder WHERE rushOrder_available=1 AND rushOrder_name='Yes' LIMIT 1";
 	}
 	else {
-		$rushOrderSql = "SELECT * FROM tbl_rushOrder WHERE rushOrder_available=1 AND rushOrder_name='No'";
+		$rushOrderSql = "SELECT * FROM tbl_rushOrder WHERE rushOrder_available=1 AND rushOrder_name='No' LIMIT 1";
 	}
-	$rushOrderResult = mysql_query($rushOrderSql,$db)
-		or die("Problem with rush order. " . mysql_error());
-	$rushOrderCost = mysql_result($rushOrderResult,0,"rushOrder_cost");
-	$rushOrderName = mysql_result($rushOrderResult,0,"rushOrder_name");
-	$rushOrderId = mysql_result($rushOrderResult,0,"rushOrder_id");
+	$rushOrderResult = $db->query($rushOrderSql);
+	$rushOrderCost = $rushOrderResult[0]["rushOrder_cost"];
+	$rushOrderName = $rushOrderResult[0]["rushOrder_name"];
+	$rushOrderId = $rushOrderResult[0]["rushOrder_id"];
 
 	if ($posterTubeName == "Yes")
 		$posterTubeYesNo = 1;
@@ -361,9 +357,6 @@ elseif (isset($_POST['step3'])) {
 	$comments = stripslashes($_POST['comments']);
 	$widthSwitched = $_POST['widthSwitched'];
 	
-	//connects to the database.  Pulls the mysql settings from the file includes/settings.inc.php.
-	$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
-	mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
 
 	//sql string to insert order into database.
 	$ordersSql = "INSERT INTO tbl_orders(orders_email,
@@ -397,14 +390,13 @@ elseif (isset($_POST['step3'])) {
 	$widthSwitched . ")";
 				
 	//runs query and gets the order_id
-	mysql_query($ordersSql,$db);
-	$orderID = mysql_insert_id($db);
+	$orderID = $db->insert_query($ordersSql);
 	//gets the file type (ie .jpg, .bmp) of the uploaded poster file.
 	$fileType = end(explode(".",$posterFileName));
 	//sets the path to where the file will be saved.
-	$targetPath = $posterDirectory . "/" . $orderID . "." . $fileType;
+	$targetPath = poster_dir . "/" . $orderID . "." . $fileType;
 	
-	//renammes the temporary file to its permanment file name which is the orderID number plus the filetype extensions.
+	//renames the temporary file to its permanent file name which is the orderID number plus the filetype extensions.
 	rename($posterDirectory . "/" . $posterFileTmpName,$targetPath);
 
 	//sets an array with order information.
@@ -423,7 +415,7 @@ elseif (isset($_POST['step3'])) {
 					'posterTube' => $posterTubeName,
 					'rushOrder' => $rushOrderName,
 					'comments' => $comments,
-					'adminEmail' => $adminEmail,
+					'adminEmail' => admin_email,
 				);
 				
 	//mails admins that there is a new poster to be printed.
@@ -456,13 +448,13 @@ elseif (isset($_POST['step3'])) {
 					<tr><td class='td_2'>CFOP:</td><td>" . $cfop . "</td></tr>
 					<tr><td class='td_2'>Activity Code:</td><td>" . $activityCode . "</td></tr>
 					<tr><td class='td_2'>Total Cost:</td><td>$" . $totalCost . "</td></tr>
-					<tr><td class='td_1' colspan='2'>If you have any questions please contact us at " . $adminEmail ."</td></tr>
+					<tr><td class='td_1' colspan='2'>If you have any questions please contact us at " . admin_email ."</td></tr>
 			</table>
 			</center>";
 					
 }
 
-elseif ($enable == FALSE) {
+elseif (enable == FALSE) {
 	$formHTML = "<br>
 			<center>The poster printer is currently broken, soon maintenance should arrive to take care of the problem.  In the mean time, we are not accepting any new poster orders.  Please accept our apologies.</center>";
 
@@ -472,7 +464,7 @@ elseif ($enable == FALSE) {
 }
 else {
 
-	$paperTypes = getPaperTypes($mysqlSettings);
+	$paperTypes = getPaperTypes($db);
 
 	$paperTypesHTML;
         for ($i=0;$i < count($paperTypes);$i++) {
@@ -491,10 +483,10 @@ else {
 				
 	<center>
 	<form action='index.php' method='post' id='posterInfo' onsubmit='return validateStep1()' name='posterInfo'>
-	<input type='hidden' name='maxPrinterWidth' value='$maxPrinterWidth'>
+	<input type='hidden' name='maxPrinterWidth' value='" . max_printer_width . "'>
 	<table class='table_1'>
 		<tr><th colspan='2'>Paper Size</th></tr>
-		<tr><td colspan='2' class='td_1' width='400'>Please choose a width and length for your poster.  The width maximum is $maxPrinterWidth inches</td></tr>
+		<tr><td colspan='2' class='td_1' width='400'>Please choose a width and length for your poster.  The width maximum is " . max_printer_width . " inches</td></tr>
 		<tr>
 			<td class='td_2'>Width:</td>
 			<td class='td_3'><input type='text' name='posterWidth' id='posterWidth' maxlength='6' class='input_1'>\"</td>

@@ -1,23 +1,17 @@
 <?php
 include_once 'includes/main.inc.php';
+include_once 'paperTypes.inc.php';
 
-//connects to the database.  Pulls the mysql settings from the file includes/settings.inc.php.
-$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
-mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
 
 if (isset($_POST['removePaperType'])) {
 	$paperTypeId = $_POST['paperTypeId'];
-	$defaultSql = "UPDATE tbl_paperTypes SET paperTypes_available=0 WHERE paperTypes_id=$paperTypeId";
-	$defaultQuery = mysql_query($defaultSql,$db);
+	removePaperType($db,$paperTypeId);
 	header("Location: paperTypes.php");
 
 }
 elseif (isset($_POST['makeDefault'])) {
 	$paperTypeId = $_POST['paperTypeId'];
-	$defaultSql = "UPDATE tbl_paperTypes SET paperTypes_default=0";
-	$defaultQuery = mysql_query($defaultSql,$db);	
-	$defaultSql = "UPDATE tbl_paperTypes SET paperTypes_default=1 WHERE paperTypes_id=$paperTypeId";
-	$defaultQuery = mysql_query($defaultSql,$db);
+	setDefaultPaperType($db,$paperTypeId);
 	header("Location: paperTypes.php");
 }
 elseif (isset($_POST['editPaperType'])) {
@@ -41,32 +35,25 @@ elseif (isset($_POST['editPaperType'])) {
 		$errors++;
 	}
 	
-	if (($width == "") || ($width > $maxPrinterWidth) || !(eregi("^[0-9]{1,2}$", $width))) {
-		$widthMsg = "<br><b class='error'>Please enter a valid Width.  Maximum is $maxPrinterWidth inches</b>";
+	if (($width == "") || ($width > max_printer_width) || !(eregi("^[0-9]{1,2}$", $width))) {
+		$widthMsg = "<br><b class='error'>Please enter a valid Width.  Maximum is " . max_printer_width . " inches</b>";
 		$errors++;
 	}
 	
 	if ($errors == 0) {
 	
-		$addPaperTypeSql = "INSERT INTO tbl_paperTypes(paperTypes_name,paperTypes_cost,paperTypes_width,paperTypes_available,paperTypes_default)" .
-						"VALUES('$name',$cost,$width,1,$default)";
-		$updatePaperTypeSql = "UPDATE tbl_paperTypes SET paperTypes_name='$name',paperTypes_cost=$cost,paperTypes_width=$width,paperTypes_available=0,paperTypes_default=0 WHERE paperTypes_id=$paperTypeId";
-		
-		$addPaperTypeQuery = mysql_query($addPaperTypeSql,$db);	
-		$updatePaperTypeQuery = mysql_query($updatePaperTypeSql,$db);
-		
+		updatePaperType($db,$paperTypeId,$name,$cost,$width,$default);	
 		header("Location: paperTypes.php");
 	}
 }
 elseif (isset($_GET['paperTypeId'])) {
 	$paperTypeId = $_GET['paperTypeId'];
-	$paperTypeSql = "SELECT * FROM tbl_paperTypes WHERE paperTypes_id=$paperTypeId";
-	$paperTypeResult = mysql_query($paperTypeSql,$db);
-	$name = mysql_result($paperTypeResult,0,'paperTypes_name');
-	$cost = mysql_result($paperTypeResult,0,'paperTypes_cost');
-	$width = mysql_result($paperTypeResult,0,'paperTypes_width');
-	$available = mysql_result($paperTypeResult,0,'paperTypes_available');
-	$default = mysql_result($paperTypeResult,0,'paperTypes_default');
+	$paperType = getPaperType($db,$paperTypeId);
+	$name = $paperType[0]['paperTypes_name'];
+	$cost = $paperType[0]['paperTypes_cost'];
+	$width = $paperType[0]['paperTypes_width'];
+	$available = $paperType[0]['paperTypes_available'];
+	$default = $paperType[0]['paperTypes_default'];
 	
 }
 

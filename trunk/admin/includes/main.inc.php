@@ -16,12 +16,11 @@ set_include_path(get_include_path() . ':../libs');
 include_once 'db.class.inc.php';
 session_start();
 
-$db = new db($mysqlSettings['host'],$mysqlSettings['database'],$mysqlSettings['username'],$mysqlSettings['password']);
-
 if (isset($_SESSION['admin'])) {
 	
 	$username = $_SESSION['username'];
 	$admin = $_SESSION['admin'];
+	$db = new db(mysql_host,mysql_database,mysql_user,mysql_password);
 }
 else {
 	session_start();

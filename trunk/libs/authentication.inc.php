@@ -11,15 +11,9 @@
 //
 /////////////////////////////////////////////////
 
-function authenticate($username,$password,$authenticationSettings) {
+function authenticate($username,$password,$ldaphost,$base_dn,$people_ou,$group_ou,$group,$ssl,$port) {
 
-	$ldaphost = $authenticationSettings['host'];
-	$baseDN = $authenticationSettings['baseDN'];	
-	$peopleDN = $authenticationSettings['peopleOU'] . "," . $baseDN;
-	$groupDN = $authenticationSettings['groupOU'] . "," . $baseDN;
-	$ssl = $authenticationSettings['ssl'];
-	$port = $authenticationSettings['port'];
-	$group = $authenticationSettings['group'];
+	
 	$connect;
 	
 	if ($ssl == 1) {
@@ -31,13 +25,13 @@ function authenticate($username,$password,$authenticationSettings) {
 		
 	}
 			
-	$bindDN = "uid=" . $username . "," . $peopleDN;
+	$bindDN = "uid=" . $username . "," . $people_ou;
 	
 	$success = @ldap_bind($connect, $bindDN, $password);
 
 	if ($success == 1) {
 	
-		$search = ldap_search($connect,$groupDN,"(cn=" . $group . ")");
+		$search = ldap_search($connect,$group_ou,"(cn=" . $group . ")");
 		$data = ldap_get_entries($connect,$search);
 		ldap_unbind($connect);
 		

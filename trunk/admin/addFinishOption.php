@@ -1,6 +1,6 @@
 <?php
 include_once 'includes/main.inc.php';
-include_once 'includes/header.inc.php';
+include_once 'finishOptions.inc.php';
 
 
 if (isset($_POST['addFinishOption'])) {
@@ -25,8 +25,8 @@ if (isset($_POST['addFinishOption'])) {
 		$errors++;
 	}
 	
-	if (($maxWidth == "") || ($maxWidth > $maxPrinterWidth) || !(eregi("^[0-9]{1,2}$", $maxWidth))) {
-		$maxWidthMsg = "<br><b class='error'>Please enter a valid Max Width. Maximum is 42 inches</b>";
+	if (($maxWidth == "") || ($maxWidth > max_printer_width) || !(eregi("^[0-9]{1,2}$", $maxWidth))) {
+		$maxWidthMsg = "<br><b class='error'>Please enter a valid Max Width. Maximum is " . max_printer_width . " inches</b>";
 		$errors++;
 	}
 	if (($maxLength == "") || !(eregi("^[0-9]{1,3}$", $maxLength))) {
@@ -37,24 +37,8 @@ if (isset($_POST['addFinishOption'])) {
 	
 	if ($errors == 0) {
 	
-	//connects to the database.  Pulls the mysql settings from the file includes/settings.inc.php.
-	$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
-	mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
-
-	if ($default == 1) {
-		$defaultSql = "UPDATE tbl_finishOptions SET finishOptions_default=0";
-		$defaultQuery = mysql_query($defaultSql,$db);	
-	}
-	else {
-		$default = 0;
-	}
-	$available = 1;
-	$addFinishOptionSql = "INSERT INTO tbl_finishOptions(finishOptions_name,finishOptions_cost,finishOptions_maxWidth,finishOptions_maxLength,finishOptions_available,finishOptions_default)" .
-						"VALUES('$name',$cost,$maxWidth,$maxLength,$available,$default)";
-	$addFinishOptionQuery = mysql_query($addFinishOptionSql,$db);
-	
-	echo "Finish Option Added";
-	//header('Location: finishOptions.php');
+	addFinishOption($db,$name,$cost,$maxWidth,$maxLength,$default);
+	header('Location: finishOptions.php');
 	
 	
 	
@@ -64,6 +48,7 @@ if (isset($_POST['addFinishOption'])) {
 
 }
 
+include_once 'includes/header.inc.php';
 ?>
 
 <form action='addFinishOption.php' method='post'>

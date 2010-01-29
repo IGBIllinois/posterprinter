@@ -1,41 +1,8 @@
 <?php
 
-function rushOrderInformation($mysqlSettings) {
-	
-	$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
-	mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
-	$rushOrderSql = "SELECT * FROM tbl_rushOrder WHERE rushOrder_available=1 AND rushOrder_name='Yes'";
-	$rushOrderResult = mysql_query($rushOrderSql,$db);
-	$rushOrderCost = mysql_result($rushOrderResult,0,'rushOrder_cost');
-	$rushOrderId = mysql_result($rushOrderResult,0,'rushOrder_id');
-	mysql_close($db);
-	$rushOrderArray = array('id' => $rushOrderId,
-							'cost' => $rushOrderCost
-						);
-	return $rushOrderArray;
-
-}
-function posterTubeInformation($mysqlSettings) {
-	
-	$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
-	mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
-	$posterTubeSql = "SELECT * FROM tbl_posterTube WHERE posterTube_available=1 AND posterTube_name='Yes'";
-	$posterTubeResult = mysql_query($posterTubeSql,$db);
-	$posterTubeCost = mysql_result($posterTubeResult,0,'posterTube_cost');
-	$posterTubeId = mysql_result($posterTubeResult,0,'posterTube_id');
-	mysql_close($db);
-	$posterTubeArray = array('id' => $posterTubeId,
-							'cost' => $posterTubeCost
-							);
-	return $posterTubeArray;
-							
-
-}
 include_once 'includes/main.inc.php';
-
-//connects to the database.  Pulls the mysql settings from the file includes/settings.inc.php.
-$db = mysql_connect($mysqlSettings['host'],$mysqlSettings['username'],$mysqlSettings['password']);
-mysql_select_db($mysqlSettings['database'],$db) or die("Unable to select database");
+include_once 'posterTube.inc.php';
+include_once 'rushOrder.inc.php';
 
 if (isset($_POST['updatePosterTube'])) {
 	$posterTubeCost = $_POST['posterTubeCost'];
@@ -46,15 +13,12 @@ if (isset($_POST['updatePosterTube'])) {
 	}
 	else {
 		$posterTubeSql = "UPDATE tbl_posterTube SET posterTube_available=0 WHERE posterTube_id=$posterTubeOldId";
-		mysql_query($posterTubeSql,$db);
+		$db->non_select_query($posterTubeSql);
 		$posterTubeSql = "INSERT INTO tbl_posterTube(posterTube_name,posterTube_cost,posterTube_available) VALUES('Yes',$posterTubeCost,1)";
-		mysql_query($posterTubeSql,$db);
-		$posterTubeId = mysql_insert_id($db);
+		$posterTubeId = $db->query($posterTubeSql);
 	}
 	
-	$rushOrderInfo = rushOrderInformation($mysqlSettings);
-	$rushOrderId = $rushOrderInfo['id'];
-	$rushOrderCost = $rushOrderInfo['cost'];
+
 
 }
 elseif (isset($_POST['updateRushOrder'])) {
@@ -65,28 +29,23 @@ elseif (isset($_POST['updateRushOrder'])) {
 	}
 	else {
 		$rushOrderSql = "UPDATE tbl_rushOrder SET rushOrder_available=0 WHERE rushOrder_id=$rushOrderOldId";
-		mysql_query($rushOrderSql,$db);
+		$db->non_select_query($rushOrderSql);
 		$rushOrderSql = "INSERT INTO tbl_rushOrder(rushOrder_name,rushOrder_cost,rushOrder_available) VALUES('Yes',$rushOrderCost,1)";
-		mysql_query($rushOrderSql,$db);
-		$rushOrderId = mysql_insert_id($db);
+		$rushOrderId = $db->insert_query($rushOrderSql);
 	
 	}
 	
-	$posterTubeInfo = posterTubeInformation($mysqlSettings);
-	$posterTubeId = $posterTubeInfo['id'];
-	$posterTubeCost = $posterTubeInfo['cost'];
-	
-}
-else {
-	$posterTubeInfo = posterTubeInformation($mysqlSettings);
-	$posterTubeId = $posterTubeInfo['id'];
-	$posterTubeCost = $posterTubeInfo['cost'];
-	
-	$rushOrderInfo = rushOrderInformation($mysqlSettings);
-	$rushOrderId = $rushOrderInfo['id'];
-	$rushOrderCost = $rushOrderInfo['cost'];
 
+	
 }
+
+$posterTubeInfo = getPosterTubeInfo($db);
+$posterTubeId = $posterTubeInfo[0]['id'];
+$posterTubeCost = $posterTubeInfo[0]['cost'];
+	
+$rushOrderInfo = getRushOrderInfo($db);
+$rushOrderId = $rushOrderInfo[0]['id'];
+$rushOrderCost = $rushOrderInfo[0]['cost'];
 
 include 'includes/header.inc.php';
 ?>

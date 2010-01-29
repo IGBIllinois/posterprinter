@@ -34,6 +34,6 @@ include '../includes/settings.inc.php';
        
 	</ul>
 
-&nbsp;&nbsp;Version <?php echo $version; ?>
+&nbsp;&nbsp;Version <?php echo app_version; ?>
 </div>
 <div id="content_center">
