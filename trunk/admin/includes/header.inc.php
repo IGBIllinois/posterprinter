@@ -7,7 +7,7 @@ include '../includes/settings.inc.php';
 <HTML>
 <HEAD>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link rel="stylesheet" type="text/css" href="../includes/stylesheet.css">
+<link rel="stylesheet" type="text/css" href="../includes/stylesheet.css"></link>
 
 <TITLE>Poster Printer Orders</TITLE>
 
@@ -18,7 +18,6 @@ include '../includes/settings.inc.php';
 <div id="header">
 <br><center>Poster Printer Administration Center</center>
 </div>
-
 <div id='content_left'>
 	<ul class='ul_2'>
 		<li><a href='index.php'>Current Orders</a></li>
@@ -31,9 +30,8 @@ include '../includes/settings.inc.php';
 	<li><a href='stats_fiscal.php'>Fiscal Statistics</a></li>
         <li><a href='stats_OrdersPerMonth.php'>Orders Per Month</a></li>
 		<li><a href='logout.php'>Log Out</a></li>
-       
+	<li>Version <?php echo app_version; ?>       
 	</ul>
 
-&nbsp;&nbsp;Version <?php echo app_version; ?>
 </div>
 <div id="content_center">

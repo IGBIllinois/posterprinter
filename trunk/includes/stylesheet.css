@@ -23,19 +23,10 @@ ol {
 padding:0px; 
 }
 
-ul {
-line-height:20px; 
-}
 
 .ul_2 {
-line-height:30px; 
+line-height:25px;
 list-style: none;
-}
-
-.ul_nopadding {/*Removes padding from UL list and changes line height*/
-padding:5px; 
-margin:0px; 
-line-height:16px; 
 }
 
 form {
@@ -129,7 +120,6 @@ background-color:white;
 }
 
 
-
 h2 {
 font-family:Arial, Helvetica, sans-serif;
 font-size:15px; 
@@ -181,18 +171,12 @@ font-size:20px;
 
 }
 
-
-
 .select { /*positioning for select statement */
 margin-left:10px; 
 margin-top:40px; 
 height:20px; 
 }
 
-.go_btn { /*positioning for GO submit button */
-margin-left:10px; 
-background-color:#31436A
-}
 
 #form {
 background-color:white; 
@@ -224,6 +208,7 @@ border-right-color:#31436A;
 font-family:Verdana, Arial, Helvetica, sans-serif;
 font-weight:600; 
 min-height:800px;
+padding-right: 20px;
 }
 
 
@@ -239,13 +224,6 @@ border-width:1px 1px 0px 1px;
 font-family:Arial, Helvetica, sans-serif;
 min-height:770px;
 }
-/*
-#content_center a {
-
-text-decoration:none;
-margin-left:5px; 
-}
-*/
 #content_center ul {
 list-style:none;
 }

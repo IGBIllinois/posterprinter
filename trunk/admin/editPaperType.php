@@ -5,7 +5,7 @@ include_once 'paperTypes.inc.php';
 
 if (isset($_POST['removePaperType'])) {
 	$paperTypeId = $_POST['paperTypeId'];
-	removePaperType($db,$paperTypeId);
+	deletePaperType($db,$paperTypeId);
 	header("Location: paperTypes.php");
 
 }
@@ -124,5 +124,4 @@ else
 
 ?>
 
-
-<?php include 'includes/footer.inc.php'; ?>
+<?php include_once 'includes/footer.inc.php'; ?>

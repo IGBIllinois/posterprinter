@@ -223,4 +223,4 @@ else
 
 <?php if (isset($cfopMsg)){echo $cfopMsg; } ?>
 <?php if (isset($activityCodeMsg)){echo $activityCodeMsg; } ?>
-<?php include 'includes/footer.inc.php'; ?>
+<?php include_once 'includes/footer.inc.php'; ?>

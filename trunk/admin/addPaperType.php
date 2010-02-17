@@ -75,4 +75,4 @@ include 'includes/header.inc.php';
 	if (isset($costMsg)){echo $costMsg; }
 	if (isset($widthMsg)){echo $widthMsg; }
 ?>
-<?php include 'includes/footer.inc.php'; ?>
+<?php include_once 'includes/footer.inc.php'; ?>

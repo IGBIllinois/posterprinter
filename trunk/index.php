@@ -51,8 +51,7 @@ if (isset($_POST['step1'])) {
 		else {
 			$paperTypesHTML .= "<td class='td_4'><input type='radio' name='paperTypesId' value='" . $paperType_id . "'></td></tr>";
 		}
-						
-	
+
 	}
 	
 
@@ -74,8 +73,7 @@ if (isset($_POST['step1'])) {
 			$finishOptionsHTML .= "<td class='td_4'> <input type='radio' name='finishOptionsId' value='" . $finishOption_id . "'></td></tr>";
 		
 		}
-							
-	
+
 	}
 	
 	$posterTubeHTML = "<tr><td class='td_2'>Poster Tube</td><td class='td_2'>$" . getPosterTubeCost($db) ."</td>" .
@@ -212,7 +210,7 @@ elseif (isset($_POST['step2'])) {
 	//Gets Paper Type Information
 	$paperType = getPaperType($db,$paperTypesId);
 	$paperTypeCost = $paperType[0]['paperTypes_cost'];
-	$paperTypeName = $paperTypet[0]['paperTypes_name'];
+	$paperTypeName = $paperType[0]['paperTypes_name'];
 	$paperTypeWidth = $paperType[0]['paperTypes_width'];
 	$widthSwitched;
  
@@ -238,6 +236,7 @@ elseif (isset($_POST['step2'])) {
 		$posterTubeSql = "SELECT * FROM tbl_posterTube WHERE posterTube_available=1 AND posterTube_name='Yes' LIMIT 1";
 	}
 	else {
+		$posterTube = 0;
 		$posterTubeSql = "SELECT * FROM tbl_posterTube WHERE posterTube_available=1 AND posterTube_name='No' LIMIT 1";
 	}
 	$posterTubeResult = $db->query($posterTubeSql);
@@ -250,6 +249,7 @@ elseif (isset($_POST['step2'])) {
 		$rushOrderSql = "SELECT * FROM tbl_rushOrder WHERE rushOrder_available=1 AND rushOrder_name='Yes' LIMIT 1";
 	}
 	else {
+		$rushOrder = 0;
 		$rushOrderSql = "SELECT * FROM tbl_rushOrder WHERE rushOrder_available=1 AND rushOrder_name='No' LIMIT 1";
 	}
 	$rushOrderResult = $db->query($rushOrderSql);
@@ -257,18 +257,8 @@ elseif (isset($_POST['step2'])) {
 	$rushOrderName = $rushOrderResult[0]["rushOrder_name"];
 	$rushOrderId = $rushOrderResult[0]["rushOrder_id"];
 
-	if ($posterTubeName == "Yes")
-		$posterTubeYesNo = 1;
-	elseif ($posterTubeName == "No")
-		$posterTubeYesNo = 0;
-	
-	if ($rushOrderName == "Yes")
-		$rushOrderYesNo = 1;
-	elseif ($rushOrderName == "No")
-		$rushOrderYesNo = 0;
-		
 	//Calculates Total Cost
-	$totalCost = ($posterLength * $paperTypeCost) +$finishOptionCost + ($posterTubeYesNo * $posterTubeCost) + ($rushOrderYesNo * $rushOrderCost);
+	$totalCost = ($posterLength * $paperTypeCost) +$finishOptionCost + ($posterTube * $posterTubeCost) + ($rushOrder * $rushOrderCost);
 		
 	//outputs the order information to confirm the order.
 	$formHTML = "<center>
@@ -338,41 +328,40 @@ elseif (isset($_POST['step2'])) {
 //sends the order
 elseif (isset($_POST['step3'])) {
 	$posterWidth = $_POST['posterWidth'];
-	$posterLength = $_POST['posterLength'];
-	$paperTypesId = $_POST['paperTypesId'];
-	$paperTypeName = $_POST['paperTypeName'];
-	$finishOptionsId = $_POST['finishOptionsId'];
-	$finishOptionName = $_POST['finishOptionName'];
-	$posterTubeName = $_POST['posterTubeName'];
-	$posterTubeId = $_POST['posterTubeId'];
-	$rushOrderName = $_POST['rushOrderName'];
-	$rushOrderId = $_POST['rushOrderId'];
-	$cfop = $_POST['cfop'];
-	$activityCode = strtoupper($_POST['activityCode']);
-	$totalCost = $_POST['totalCost'];
+        $posterLength = $_POST['posterLength'];
+        $paperTypesId = $_POST['paperTypesId'];
+        $paperTypeName = $_POST['paperTypeName'];
+        $finishOptionsId = $_POST['finishOptionsId'];
+        $finishOptionName = $_POST['finishOptionName'];
+        $posterTubeName = $_POST['posterTubeName'];
+        $posterTubeId = $_POST['posterTubeId'];
+        $rushOrderName = $_POST['rushOrderName'];
+        $rushOrderId = $_POST['rushOrderId'];
+        $cfop = $_POST['cfop'];
+        $activityCode = strtoupper($_POST['activityCode']);
+        $totalCost = $_POST['totalCost'];
+        $email = $_POST['email'];
+        $name = stripslashes($_POST['name']);
+        $comments = stripslashes($_POST['comments']);
+        $widthSwitched = $_POST['widthSwitched'];
 	$posterFileName = $_POST['posterFileName'];
-	$posterFileTmpName = $_POST['posterFileTmpName'];
-	$email = $_POST['email'];
-	$name = stripslashes($_POST['name']);
-	$comments = stripslashes($_POST['comments']);
-	$widthSwitched = $_POST['widthSwitched'];
-	
+	$posterFileTmpName = $_POST['posterFileTmpName'];	
 
-	//sql string to insert order into database.
-	$ordersSql = "INSERT INTO tbl_orders(orders_email,
-	orders_name, orders_fileName, orders_totalCost,
-	orders_cfop, orders_activityCode, orders_width,
-	orders_length, orders_statusId, orders_paperTypesId,
-	orders_finishOptionsId, orders_comments, orders_posterTubeId,
-	orders_rushOrderId, orders_widthSwitched) 
-	VALUES('" . $email . "','" . mysql_real_escape_string($name) . "','" . 
-	$posterFileName . "'," . $totalCost . ",'" . $cfop . "','" . 
-	$activityCode . "'," . $posterWidth . "," . $posterLength . ",'1'," . 
-	$paperTypesId . "," . $finishOptionsId . ",'" . mysql_real_escape_string($comments) . "'," . 
-	$posterTubeId . "," .$rushOrderId . "," . $widthSwitched . ")";
-				
+        $sql = "INSERT INTO tbl_orders(orders_email, ";
+        $sql .= "orders_name, orders_fileName, orders_totalCost, ";
+        $sql .= "orders_cfop, orders_activityCode, orders_width, ";
+        $sql .= "orders_length, orders_statusId, orders_paperTypesId, ";
+        $sql .= "orders_finishOptionsId, orders_comments, orders_posterTubeId, ";
+        $sql .= "orders_rushOrderId, orders_widthSwitched) ";
+        $sql .= "VALUES('" . $email . "','" . mysql_real_escape_string($name) . "',' ";
+        $sql .= $posterFileName . "'," . $totalCost . ",'" . $cfop . "','";
+        $sql .= $activityCode . "'," . $posterWidth . "," . $posterLength . ",'1',";
+        $sql .= $paperTypesId . "," . $finishOptionsId . ",'" . mysql_real_escape_string($comments) . "',";
+        $sql .= $posterTubeId . "," .$rushOrderId . "," . $widthSwitched . ")";
+
+
 	//runs query and gets the order_id
-	$orderId = $db->insert_query($ordersSql);
+	$orderId = $db->insert_query($sql);
 	//gets the file type (ie .jpg, .bmp) of the uploaded poster file.
 	$fileType = end(explode(".",$posterFileName));
 	//sets the path to where the file will be saved.
@@ -434,9 +423,7 @@ else {
 		$paperTypesHtml .= "<td class='td_2'>" .  $name . "</td>";
 		$paperTypesHtml .= "<td class='td_4'>" . $maxWidth . "''</td>";
                 $paperTypesHtml .= "</tr>";
-        }
-	
-		
+        }	
 	$formHTML = "<br>
 				
 	<center>

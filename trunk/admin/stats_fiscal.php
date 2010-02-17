@@ -92,4 +92,4 @@ $graphForm .= "</form>";
 </table>
 </center>
 
-<?php include 'includes/footer.inc.php'; ?>
+<?php include_once 'includes/footer.inc.php'; ?>
