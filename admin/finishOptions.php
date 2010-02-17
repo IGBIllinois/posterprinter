@@ -43,4 +43,4 @@ include_once 'includes/header.inc.php';
 <br />
 <input type='button' value='New Finish Option' onClick="location.href='addFinishOption.php';" />
 
-<?php include 'includes/footer.inc.php'; ?>
+<?php include_once 'includes/footer.inc.php'; ?>

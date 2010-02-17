@@ -1,12 +1,10 @@
 <?php
-
 include_once 'includes/main.inc.php';
-
 include_once 'paperTypes.inc.php';
 
 $paperTypes = getPaperTypes($db);
 
-$paperTypesHTML;
+$paperTypes_html;
 
 for ($i=0;$i<count($paperTypes); $i++) {
 	
@@ -44,4 +42,4 @@ include_once 'includes/header.inc.php';
 
 
 
-<?php include 'includes/footer.inc.php'; ?>
+<?php include_once 'includes/footer.inc.php'; ?>

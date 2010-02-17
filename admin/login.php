@@ -1,16 +1,16 @@
 <?php
-//////////////////////////////////////////////////////////////////////////////
-//																			//
-//	Poster Printer Order Submission											//
-//	adminlogin.php															//
-//																			//
-//	Logs in the admin users so they can view orders and download			//
-//	the poster files														//
-//																			//
-//	David Slater															//
-//	April 2007																//
-//																			//
-//////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////
+//
+//	Poster Printer Order Submission
+//	login.php
+//
+//	Logs in the admin users so they can view orders and download
+//	the poster files
+//
+//	David Slater
+//	April 2007
+//
+/////////////////////////////////////////////
 
 include_once '../includes/settings.inc.php';
 set_include_path(get_include_path() . ':../libs');
@@ -51,8 +51,6 @@ if (isset($_POST['login'])) {
 	}
 	
 }
-
-
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">

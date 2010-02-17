@@ -97,9 +97,8 @@ Monthly Total: $<?php echo $monthlyTotal; ?>
 <select name='report_type'>
 <option value='excel2003'>Excel 2003</option>
 <option value='excel2007'>Excel 2007</option>
-<option value='pdf'>PDF</option>
 <option value='csv'>CSV</option>
 </select>
 <input type='submit' class='button_1' name='create_report' value='Create Report' />
 </form>
-<?php include 'includes/footer.inc.php'; ?>
+<?php include_once 'includes/footer.inc.php'; ?>

@@ -10,26 +10,27 @@ class order {
 	private $db; //mysql database object
 	private $id;
 	private $email; 
-    private $name;
-    private $filename;
-    private $cfop;
-    private $activity_code;
+	private $name;
+	private $filename;
+	private $cfop;
+	private $activity_code;
 	private $time_created;
 	private $time_finished;
-    private $total_cost;
-    private $width;
-    private $length;
-    private $paper_type_name;
-    private $paper_type_id;
-    private $finish_option_name;
-    private $finish_option_id;
-    private $poster_tube_name;
-    private $poster_tube_id;
-    private $rush_order_name;
-    private $rush_order_id;
-    private $comments;
-    private $status;
-    private $status_id;
+	private $total_cost;
+	private $width;
+	private $length;
+	private $paper_type_name;
+	private $paper_type_id;
+	private $finish_option_name;
+	private $finish_option_id;
+	private $poster_tube_name;
+	private $poster_tube_id;
+	private $rush_order_name;
+	private $rush_order_id;
+	private $comments;
+	private $status;
+	private $status_id;
+
 ////////////////Public Functions///////////
 
 	public function __construct($db,$order_id) {
@@ -42,6 +43,7 @@ class order {
 	public function get_email() { return $this->email; }
 	public function get_name() { return $this->name; }
 	public function get_filename() { return $this->filename; }
+	public function get_filetype() { return end(explode(".",$this->get_filename())); }
 	public function get_cfop() { return $this->cfop; }
 	public function get_cfop_college() { return substr($this->get_cfop(),0,1); }
 	public function get_cfop_fund() { return substr($this->get_cfop(),2,6); }

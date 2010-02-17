@@ -104,4 +104,4 @@ $forwardUrl = $url . "?startDate=" . htmlspecialchars($nextStartDate,ENT_QUOTES)
 </table>
 </center>
 
-<?php include 'includes/footer.inc.php'; ?>
+<?php include_once 'includes/footer.inc.php'; ?>

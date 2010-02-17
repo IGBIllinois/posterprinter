@@ -13,28 +13,23 @@
 
 //Include files for the script to run
 
-include 'includes/main.inc.php';
+include_once 'includes/main.inc.php';
+include_once 'order.class.inc.php';
 
 if (isset($_GET['orderId'])) {
 
 	$orderId = $_GET['orderId'];
-	$orderSql = "SELECT * FROM tbl_orders WHERE orders_id=" . $orderId;
-	//runs query and gets the order_id
-	$orderResult = $db->query($orderSql);
-	//gets the file name
-	$filename = $orderResult[0]["orders_fileName"];
+	$order = new order($db,$orderId);
 
-	//gets the file type
-	$fileType = end(explode(".",$filename));
 	//creates the link to the stored file
-	$linkToFile = "../" . poster_dir . "/" . $orderId . "." . $fileType;
+	$linkToFile = "../" . poster_dir . "/" . $order->get_order_id() . "." . $order->get_filetype();
 	
 	//creates the html header that is used to download the file.
 	header('Pragma: public');
 	header('Expires: 0');
 	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 	header('Content-Type: application-download');
-	header('Content-Disposition: attachment; filename="' . $filename . '"');
+	header('Content-Disposition: attachment; filename="' . $order->get_filename() . '"');
 	//opens up the file so it can be downloaded.
 	readfile($linkToFile);
 

@@ -220,7 +220,7 @@ class statistics {
 			$averageCost = 0;
 		}
 
-		return $averageCost;
+		return number_format($averageCost,2,'.','');
 	}
 
 }
