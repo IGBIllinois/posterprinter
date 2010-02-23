@@ -68,24 +68,24 @@ else {
 include_once 'includes/header.inc.php';
 
 ?>
-<table class='table_1'>
-<tr><th colspan='2'>Order Information</th></tr>
-<tr><td class='td_2'>Order Number:</td><td><?php echo $orderId; ?></td></tr>
-<tr><td class='td_2'>Email: </td><td><?php echo $order->get_email() ?></td></tr>
-<tr><td class='td_2'>Full Name: </td><td><?php echo $order->get_name() ?></td></tr>
-<tr><td class='td_2'>File:</td><td><a href='download.php?orderId=<?php echo $order->get_order_id() ?>'><?php echo $order->get_filename() ?></a></td></tr>
-<tr><td class='td_2'>CFOP:</td><td><?php echo $order->get_cfop(); ?></td></tr>
-<tr><td class='td_2'>Activity Code:</td><td><?php echo $order->get_activity_code(); ?></td></tr>
-<tr><td class='td_2'>Time Created:</td><td><?php echo $order->get_time_created(); ?></td></tr>
-<tr><td class='td_2'>Total Cost:</td><td><?php echo $order->get_total_cost(); ?></td></tr>
-<tr><td class='td_2'>Width:</td><td><?php echo $order->get_width(); ?>''</td></tr>
-<tr><td class='td_2'>Length:</td><td><?php echo $order->get_length(); ?>''</td></tr>
-<tr><td class='td_2'>Paper Type:</td><td><?php echo$order->get_paper_type_name(); ?></td></tr>
-<tr><td class='td_2'>Finish Option:</td><td><?php echo $order->get_finish_option_name(); ?></td></tr>
-<tr><td class='td_2'>Poster Tube:</td><td><?php echo $order->get_poster_tube_name(); ?></td></tr>
-<tr><td class='td_2'>Rush Order:</td><td><?php echo $order->get_rush_order_name(); ?></td></tr>
-<tr><td class='td_2' valign='top'>Comments:</td><td><?php echo $order->get_comments(); ?></td></tr>
-<tr><td class='td_2'>Status:</td><td><?php echo $status_html; ?></td></tr>
+<table class='medium'>
+<tr><td colspan='2' class='header'>Order Information</td></tr>
+<tr><td class='right'>Order Number:</td><td class='left'><?php echo $orderId; ?></td></tr>
+<tr><td class='right'>Email: </td><td class='left'><?php echo $order->get_email() ?></td></tr>
+<tr><td class='right'>Full Name: </td><td class='left'><?php echo $order->get_name() ?></td></tr>
+<tr><td class='right'>File:</td><td class='left'><a href='download.php?orderId=<?php echo $order->get_order_id() ?>'><?php echo $order->get_filename() ?></a></td></tr>
+<tr><td class='right'>CFOP:</td><td class='left'><?php echo $order->get_cfop(); ?></td></tr>
+<tr><td class='right'>Activity Code:</td><td class='left'><?php echo $order->get_activity_code(); ?></td></tr>
+<tr><td class='right'>Time Created:</td><td class='left'><?php echo $order->get_time_created(); ?></td></tr>
+<tr><td class='right'>Total Cost:</td><td class='left'><?php echo $order->get_total_cost(); ?></td></tr>
+<tr><td class='right'>Width:</td><td class='left'><?php echo $order->get_width(); ?>''</td></tr>
+<tr><td class='right'>Length:</td><td class='left'><?php echo $order->get_length(); ?>''</td></tr>
+<tr><td class='right'>Paper Type:</td><td class='left'><?php echo$order->get_paper_type_name(); ?></td></tr>
+<tr><td class='right'>Finish Option:</td><td class='left'><?php echo $order->get_finish_option_name(); ?></td></tr>
+<tr><td class='right'>Poster Tube:</td><td class='left'><?php echo $order->get_poster_tube_name(); ?></td></tr>
+<tr><td class='right'>Rush Order:</td><td class='left'><?php echo $order->get_rush_order_name(); ?></td></tr>
+<tr><td class='right' valign='top'>Comments:</td><td class='left'><?php echo $order->get_comments(); ?></td></tr>
+<tr><td class='right'>Status:</td><td class='left'><?php echo $status_html; ?></td></tr>
 </table>
 <br>		
 <?php echo $edit_order_html; ?>

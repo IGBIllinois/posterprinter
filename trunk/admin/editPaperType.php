@@ -90,28 +90,26 @@ else
 <form method='post' action='editPaperType.php?paperTypeId=<?php echo $paperTypeId; ?>'>
 <input type='hidden' name='paperTypeId' value='<?php echo $paperTypeId; ?>' />
 <input type='hidden' name='default' value='<?php echo $default; ?>' />
-<table class='table_3'>
+<table>
+	<tr><td colspan='2' class='header'>Edit Paper Type</td></tr>
 	<tr>
-		<th colspan='2'>Paper Type</th>
+		<td class='right'>Name:</td>
+		<td class='left'><input type='text' name='name' value='<?php echo $name; ?>' maxlength='40'/> </td>
 	</tr>
 	<tr>
-		<td class='td_2'>Name:</td>
-		<td class='td_3'><input type='text' name='name' value='<?php echo $name; ?>' maxlength='40'/> </td>
+		<td class='right'>Cost per Inch:</td>
+		<td class='left'><input type='text' name='cost' value='<?php echo $cost; ?>' / size='6'> </td>
 	</tr>
 	<tr>
-		<td class='td_2'>Cost per Inch:</td>
-		<td class='td_3'><input type='text' name='cost' value='<?php echo $cost; ?>' / size='6'> </td>
-	</tr>
-	<tr>
-		<td class='td_2'>Width:</td>
-		<td class='td_3'><input type='text' name='width' value='<?php echo $width; ?>' / maxlength='2' size='3'>" </td>
+		<td class='right'>Width:</td>
+		<td class='left'><input type='text' name='width' value='<?php echo $width; ?>' / maxlength='2' size='3'>" </td>
 	</tr>
 	</table>
-	<br /><input type='submit' name='editPaperType' value='Update Paper Type' onClick='return confirmUpdate()'/>
+	<br /><input class='wide' type='submit' name='editPaperType' value='Update Paper Type' onClick='return confirmUpdate()'/>
 	<?php 
 	if ($default==0) { 
-		echo "<br><br><input type='submit' name='makeDefault' value='Make Default' onClick='return confirmDefault()'>";  
-		echo "<br><br><input type='submit' name='removePaperType' value='Remove Paper Type' onClick='return confirmDelete()'>"; 
+		echo "<br><br><input class='wide' type='submit' name='makeDefault' value='Make Default' onClick='return confirmDefault()'>";  
+		echo "<br><br><input class='wide' type='submit' name='removePaperType' value='Remove Paper Type' onClick='return confirmDelete()'>"; 
 	} 
 	?>
 </form>

@@ -72,11 +72,11 @@ $graphForm .= "</form>";
 
 
 <center>
-<table class='table_4'>
-	<tr><th colspan='2'>Fiscal Year Statistics - <?php echo $year; ?></th></tr>
+<table class='wide'>
+	<tr><td colspan='2' class='header_center'>Fiscal Year Statistics - <?php echo $year; ?></td></tr>
     <tr>
-    	<th align='left'><a href='stats_fiscal.php?year=<?php echo $previousYear; ?>'>Previous</a></td>
-        <th align='right'><a href='stats_fiscal.php?year=<?php echo $nextYear;?>'>Next</a></td>
+    	<td class='nav_left'><a href='stats_fiscal.php?year=<?php echo $previousYear; ?>'>Previous</a></td>
+        <td class='nav_right'><a href='stats_fiscal.php?year=<?php echo $nextYear;?>'>Next</a></td>
     </tr>
   	<tr><td>Fiscal Yearly Total:</td><td>$<?php echo $yearlyTotal; ?></td></tr>
     <tr><td>Total Orders:</td><td><?php echo $totalOrders; ?></td></tr>

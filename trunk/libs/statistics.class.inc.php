@@ -153,16 +153,16 @@ class statistics {
 		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
 		$sql .= "AND status_name='Completed' ";
 		$sql .= "GROUP BY rushOrder_name";
-		$rushOrderData = $this->db->query($sql);
-		$rushOrderYes;
-		$rushOrderNo;
-		for ($i=0;$i<=count($rushOrderData);$i++) {
-			if ($rushOrderData[$i]['rushOrder_name'] == 'No') {
-				$rushOrderNo = $rushOrderData[$i]['count'];
+		$result = $this->db->query($sql);
+		$rushOrderYes = 0;
+		$rushOrderNo = 0;
+		for ($i=0;$i<count($result);$i++) {
+			if ($result[$i]['rushOrder_name'] == 'No') {
+				$rushOrderNo = $result[$i]['count'];
 
 			}
-			if ($rushOrderData[$i]['rushOrder_name'] == 'Yes') {
-				$rushOrderYes = $rushOrderData[$i]['count'];
+			if ($result[$i]['rushOrder_name'] == 'Yes') {
+				$rushOrderYes = $result[$i]['count'];
 			}
 		}
 		if (($rushOrderYes == 0) && ($rushOrderNo == 0)) {
@@ -184,16 +184,16 @@ class statistics {
 		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
 		$sql .= "AND status_name='Completed' ";
 		$sql .= "GROUP BY posterTube_name";
-		$posterTubeData = $this->db->query($sql);
-		$posterTubeYes;
-		$posterTubeNo;
-		for ($i=0;$i<=count($posterTubeData);$i++) {
-			if ($posterTubeData[$i]['posterTube_name'] == 'No') {
-				$posterTubeNo = $posterTubeData[$i]['count'];
+		$result = $this->db->query($sql);
+		$posterTubeYes = 0;
+		$posterTubeNo = 0;
+		for ($i=0;$i<count($result);$i++) {
+			if ($result[$i]['posterTube_name'] == 'No') {
+				$posterTubeNo = $result[$i]['count'];
 
 			}
-			if ($posterTubeData[$i]['posterTube_name'] == 'Yes') {
-				$posterTubeYes = $posterTubeData[$i]['count'];
+			if ($result[$i]['posterTube_name'] == 'Yes') {
+				$posterTubeYes = $result[$i]['count'];
 			}
 		}
 

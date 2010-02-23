@@ -53,11 +53,9 @@ else
 </script>
 
 <form method='post' action='otherOptions.php'>
-<table class='table_2'>
-	<tr>
-		<th colspan='3'>Poster Tube</th>
-	</tr>
-    <tr><td>Price</td>
+<table>
+	<tr><td colspan='3' class='header'>Poster Tube</td></tr>
+	<tr><td>Price</td>
     	<td>$<input type='text' name='posterTubeCost' value='<?php echo $posterTubeCost; ?>' maxlength='6' size='6'></td>
     	<td><input type='submit' name='updatePosterTube' value='Update Price' onClick='return confirmUpdate()'/></td>
 	</tr>
@@ -66,8 +64,8 @@ else
 <br />
 <br />
 
-<table class='table_2'>
-	<tr><th colspan='3'>Rush Order</th></tr>
+<table>
+	<tr><td colspan='3' class='header'>Rush Order</td></tr>
 	<tr><td>Price</td>
     <td>$<input type='text' name='rushOrderCost' value='<?php echo $rushOrderCost; ?>' maxlength='6' size='6'></td>
     <td><input type='submit' name='updateRushOrder' value='Update Price' onClick='return confirmUpdate()'/></td>

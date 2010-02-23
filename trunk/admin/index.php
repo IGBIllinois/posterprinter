@@ -24,14 +24,10 @@ include_once 'orders.inc.php';
 //runs query and gets the order_id
 $orders = getCurrentOrders($db);
 
-$ordersHTML;
+$orders_html = "";
 if (count($orders) == 0) {
 
-	$ordersHTML = "<tr>
-					<td>None</td>
-					<td></td>
-					</tr>";
-
+	$orders_html = "<tr><td>None</td><td></td></tr>";
 
 }
 else {
@@ -43,40 +39,35 @@ else {
 		$orderStatus = $orders[$i]["status_name"];
 		$orderCost = $orders[$i]["orders_totalCost"];
 		$rushOrderName = $orders[$i]["rushOrder_name"];
-		$ordersHTML;
 		if ($rushOrderName == "Yes") {
-			$ordersHTML .= "<tr class='rush'>";
+			$orders_html .= "<tr class='rush'>";
 		}
 		elseif ($rushOrderName == "No") {
-			$ordersHTML .= "<tr>";
+			$orders_html .= "<tr>";
 		}
-		 $ordersHTML .= "<td><a href='orders.php?orderId=" . $orderId . "'>" . $orderId . "</a></td>" .
-							"<td>" . $orderEmail . "</td>" .
-							"<td>" . $orderCost . "</td>" .
-							"<td><a href='download.php?orderId=" . $orderId . "'>" . $orderFileName . "</a></td>" .
-							"<td>" . $orderStatus  . "</td>" .
-						"</tr>";
+		$orders_html .= "<td><a href='orders.php?orderId=" . $orderId . "'>" . $orderId . "</a></td>";
+		$orders_html .= "<td>" . $orderEmail . "</td>";
+		$orders_html .= "<td>" . $orderCost . "</td>";
+		$orders_html .= "<td><a href='download.php?orderId=" . $orderId . "'>" . $orderFileName . "</a></td>";
+		$orders_html .= "<td>" . $orderStatus  . "</td>";
+		$orders_html .= "</tr>";
 	
 	}
 }
 ?>
 
 
-<table class='table_2'>
-	<thead>
+<table class='wide'>
 	<tr>
-		<th>Order Number</th>
-		<th>Email</th>
-		<th>Total Cost</th>
-		<th>File Name</th>
-		<th>Status</th>
+		<td class='header_center'>Order Number</td>
+		<td class='header_center'>Email</td>
+		<td class='header_center'>Total Cost</td>
+		<td class='header_center'>File Name</td>
+		<td class='header_center'>Status</td>
 	</tr>
-	</thead>
-	<tbody>
 	
-<?php echo $ordersHTML; ?>
+<?php echo $orders_html; ?>
 
-	</tbody>
 
 
 </table>

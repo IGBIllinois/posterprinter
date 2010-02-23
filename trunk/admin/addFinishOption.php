@@ -52,33 +52,31 @@ include_once 'includes/header.inc.php';
 ?>
 
 <form action='addFinishOption.php' method='post'>
-<table class='table_3'>
+<table>
+	<tr><td colspan='3' class='header'>Add New Finish Option</td></tr>
 	<tr>
-		<th colspan='3'>Add New Finish Option</th>
+		<td class='right'>Name:</td>
+		<td class='left'><input type='text' name='name' value='<?php if (isset($name)) { echo $name; } ?>' /> </td>
 	</tr>
 	<tr>
-		<td class='td_2'>Name:</td>
-		<td class='td_3'><input type='text' name='name' value='<?php echo $name; ?>' /> </td>
+		<td class='right'>Cost:</td>
+		<td class='left'><input type='text' name='cost' value='<?php if (isset($cost)) { echo $cost; } ?>' size='6'/> </td>
 	</tr>
 	<tr>
-		<td class='td_2'>Cost:</td>
-		<td class='td_3'><input type='text' name='cost' value='<?php echo $cost; ?>' size='6'/> </td>
+		<td class='right'>Max Width:</td>
+		<td class='left'><input type='text' name='maxWidth' value='<?php if (isset($maxWidth)) {echo $maxWidth; } ?>' maxlength='2' size='3'/>" </td>
 	</tr>
 	<tr>
-		<td class='td_2'>Max Width:</td>
-		<td class='td_3'><input type='text' name='maxWidth' value='<?php echo $maxWidth; ?>' maxlength='2' size='3'/>" </td>
+		<td class='right'>Max Length:</td>
+		<td class='left'><input type='text' name='maxLength' value='<?php if (isset($maxLength)) { echo $maxLength; } ?>' maxlength='3' size='3'/>" </td>
 	</tr>
 	<tr>
-		<td class='td_2'>Max Length:</td>
-		<td class='td_3'><input type='text' name='maxLength' value='<?php echo $maxLength; ?>' maxlength='3' size='3'/>" </td>
+		<td class='right'>Make Default:</td>
+		<td class='left'><input type='checkbox' name='default' value='1' <?php if (isset($default)) { echo "checked=checked"; } ?>/></td>
 	</tr>
 	<tr>
-		<td class='td_2'>Make Default:</td>
-		<td class='td_3'><input type='checkbox' name='default' value='1'/></td>
-	</tr>
-	<tr>
-		<td class='td_2'></td>
-		<td class='td_3'><input type='submit' name='addFinishOption' value='Add Finish Option' /></td>
+		<td class='right'></td>
+		<td class='left'><input type='submit' name='addFinishOption' value='Add Finish Option' /></td>
 	</tr>
 	
 </table>

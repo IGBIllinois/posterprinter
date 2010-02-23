@@ -117,7 +117,7 @@ class db {
 	//$mysqlResult - a mysql result
 	//returns an associative array of the mysql result.
 	private function mysqlToArray($mysqlResult) {
-		$dataArray;
+		$dataArray = array();
 		$i =0;
 		while($row = mysql_fetch_array($mysqlResult,MYSQL_ASSOC)){
 			foreach($row as $key=>$data) {
