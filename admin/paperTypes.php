@@ -4,19 +4,20 @@ include_once 'paperTypes.inc.php';
 
 $paperTypes = getPaperTypes($db);
 
-$paperTypes_html;
+$paperTypes_html = "";
 
 for ($i=0;$i<count($paperTypes); $i++) {
 	
-	$paperTypesHTML .= "<tr>" .
-	"<td><a href='editPaperType.php?paperTypeId=" . $paperTypes[$i]['paperTypes_id'] . "'>" . $paperTypes[$i]['paperTypes_name'] . "</a></td>" .
-	"<td>$" . $paperTypes[$i]['paperTypes_cost'] . "</td>" .
-	"<td>" . $paperTypes[$i]['paperTypes_width'] . "\"</td>";
+	$paperTypes_html .= "<tr>";
+	$paperTypes_html .= "<td><a href='editPaperType.php?paperTypeId=" . $paperTypes[$i]['paperTypes_id'] . "'>";
+	$paperTypes_html .= $paperTypes[$i]['paperTypes_name'] . "</a></td>";
+	$paperTypes_html .= "<td>$" . $paperTypes[$i]['paperTypes_cost'] . "</td>";
+	$paperTypes_html .= "<td>" . $paperTypes[$i]['paperTypes_width'] . "\"</td>";
 	if ($paperTypes[$i]['paperTypes_default'] == 1) {
-		$paperTypesHTML .= "<td>*</td></tr>";
+		$paperTypes_html .= "<td>*</td></tr>";
 	}
 	else {
-		$paperTypesHTML .= "<td></td></tr>";
+		$paperTypes_html .= "<td></td></tr>";
 	}					
 
 }
@@ -25,16 +26,16 @@ include_once 'includes/header.inc.php';
 ?>
 
 <br>
-<table class='table_2'>
+<table class='medium'>
 	<tr>
-		<th>Name</th>
-		<th>Cost per Inch</th>
-		<th>Max Width</th>
-		<th>Default</th>
+		<td class='header_center'>Name</td>
+		<td class='header_center'>Cost per Inch</td>
+		<td class='header_center'>Max Width</td>
+		<td class='header_center'>Default</td>
 		
 	</tr>
 
-<?php echo $paperTypesHTML; ?>
+<?php echo $paperTypes_html; ?>
 
 </table>
 <br />

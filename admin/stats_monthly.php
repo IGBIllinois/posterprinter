@@ -84,12 +84,12 @@ $forwardUrl = $url . "?startDate=" . htmlspecialchars($nextStartDate,ENT_QUOTES)
 
 ?>
 <center>
-<table class='table_4'>
-	<tr><th colspan='2'>Monthly Statistics - <?php echo $monthName . " " . $year; ?></th></tr>
+<table class='wide'>
+	<tr><td colspan='2' class='header_center'>Monthly Statistics - <?php echo $monthName . " " . $year; ?></td></tr>
     <tr>
-    	<th align='left'><a href='<?php echo $backUrl; ?>'>Previous</a></th>
+    	<td class='nav_left'><a href='<?php echo $backUrl; ?>'>Previous</a></td>
         
-        <th align='right'><a href='<?php echo $forwardUrl; ?>'>Next</a></th>
+        <td class='nav_right'><a href='<?php echo $forwardUrl; ?>'>Next</a></td>
     </tr>
   	<tr><td>Monthly Total:</td><td>$<?php echo $monthlyTotal; ?></td></tr>
     <tr><td>Total Orders:</td><td><?php echo $totalOrders; ?></td></tr>

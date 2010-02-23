@@ -100,33 +100,31 @@ else
 <form method='post' action='editFinishOption.php?finishOptioinId=<?php echo $finishOptionId; ?>'>
 <input type='hidden' name='finishOptionId' value='<?php echo $finishOptionId; ?>' />
 <input type='hidden' name='default' value='<?php echo $default; ?>' />
-<table class='table_3'>
+<table>
+	<tr><td colspan='2' class='header'>Edit Finish Option</td></tr>
 	<tr>
-		<th colspan='2'>Finish Option</th>
+		<td class='right'>Name:</td>
+		<td class='left'><input type='text' name='name' value='<?php echo $name; ?>' maxlength='40'/> </td>
 	</tr>
 	<tr>
-		<td class='td_2'>Name:</td>
-		<td class='td_3'><input type='text' name='name' value='<?php echo $name; ?>' maxlength='40'/> </td>
+		<td class='right'>Cost:</td>
+		<td class='left'><input type='text' name='cost' value='<?php echo $cost; ?>' / size='6'> </td>
 	</tr>
 	<tr>
-		<td class='td_2'>Cost:</td>
-		<td class='td_3'><input type='text' name='cost' value='<?php echo $cost; ?>' / size='6'> </td>
+		<td class='right'>Max Width:</td>
+		<td class='left'><input type='text' name='maxWidth' value='<?php echo $maxWidth; ?>' / maxlength='2' size='3'>"</td>
 	</tr>
 	<tr>
-		<td class='td_2'>Max Width:</td>
-		<td class='td_3'><input type='text' name='maxWidth' value='<?php echo $maxWidth; ?>' / maxlength='2' size='3'>"</td>
-	</tr>
-	<tr>
-		<td class='td_2'>Max Length:</td>
-		<td class='td_3'><input type='text' name='maxLength' value='<?php echo $maxLength; ?>' / maxlength='3' size='3'>" </td>
+		<td class='right'>Max Length:</td>
+		<td class='left'><input type='text' name='maxLength' value='<?php echo $maxLength; ?>' / maxlength='3' size='3'>" </td>
 	</tr>
 	</table>
 	
-	<br /><input type='submit' name='editFinishOption' value='Update Finish Option' onClick='return confirmUpdate()'/>
+	<br /><input class='wide' type='submit' name='editFinishOption' value='Update Finish Option' onClick='return confirmUpdate()'/>
 	<?php 
 	if ($default==0) { 
-		echo "<br><br /><input type='submit' name='makeDefault' value='Make Default' onClick='return confirmDefault()'>";
-		echo "<br><br /><input type='submit' name='removeFinishOption' value='Remove Finish Option' onClick='return confirmDelete()'>"; 
+		echo "<br><br /><input class='wide' type='submit' name='makeDefault' value='Make Default' onClick='return confirmDefault()'>";
+		echo "<br><br /><input class='wide' type='submit' name='removeFinishOption' value='Remove Finish Option' onClick='return confirmDelete()'>"; 
 	} 
 	?>
 </form>

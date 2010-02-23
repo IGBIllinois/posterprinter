@@ -20,19 +20,16 @@ include_once 'authentication.inc.php';
 $db = new db(mysql_host,mysql_database,mysql_user,mysql_password);
 
 session_start();
-if (isset($_SESSION['webpage'])) {
-	$webpage = $_SESSION['webpage'];
-}
-else {
-	$webpage = "/posterprinter/admin/index.php";
-}
 
+//sets first webpage
+if (isset($_SESSION['webpage'])) { $webpage = $_SESSION['webpage']; }
+else { $webpage = "index.php"; }
+
+//logs in
 if (isset($_POST['login'])) {
 	
 	$username = $_POST['username'];
 	$password = $_POST['password'];
-	
-	
 	$success = authenticate($username,$password,ldap_host,ldap_base_dn,ldap_people_ou,ldap_group_ou,ldap_group,ldap_ssl,ldap_port);
 	
 	if ($success == "1") {
@@ -41,8 +38,8 @@ if (isset($_POST['login'])) {
 		session_start();
 		
 		$_SESSION['username'] = $username;
-		$_SESSION['admin'] = True;
-		header("Location: http://" . $_SERVER['SERVER_NAME'] . $webpage);
+		//header("Location: http://" . $_SERVER['SERVER_NAME'] . $webpage);
+		header("Location: " . $webpage);
 	}
 	elseif ($success != "1") {
 	
@@ -62,31 +59,29 @@ if (isset($_POST['login'])) {
 </HEAD>
 <BODY OnLoad="document.login.username.focus();">
 <div id='container'>
-<div id="content_center">
+<div id='login_page'>
 
 <h2>Poster Printer Admin Login</h2>
 
 
-<center>
 <form id='login' action='login.php' method='post' name='login'>
-	<table bgcolor='white' class='table_2'>
+	<table class='center'>
 		<tr>
-			<td>Username:</td>
-			<td><input type='text' name='username' tabindex='1'></td>
+			<td class='right'>Username:</td>
+			<td class='left'><input type='text' name='username' tabindex='1'></td>
 		</tr>
 		<tr>
-			<td>Password:</td>
-			<td><input type='password' name='password' tabindex='2'></td>
+			<td class='right'>Password:</td>
+			<td class='left'><input type='password' name='password' tabindex='2'></td>
 		</tr>
 		<tr>
-			<td colspan='2' style='padding:5px 0px 10px 0px;' align='center'><input type='submit' value='Login' name='login' class='button_1'></td>
+			<td colspan='2' style='padding:5px 0px 10px 0px;' align='center'><input type='submit' value='Login' name='login'></td>
 		</tr>
 	
 	</table>
 
 </form>
 <?php if (isset($login_msg)) { echo $login_msg; } ?>
-</center>
 </div>
 </div>
 </BODY>

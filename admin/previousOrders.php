@@ -18,7 +18,7 @@ else {
 //runs query and gets previous orders
 $orders = getPreviousOrders($db,$month,$year);
 
-$ordersHTML;
+$orders_html = "";
 if (count($orders) == 0) { $orders_html = "<tr><td colspan='5'>No Orders</td></tr>"; }
 else {
 	for ($i=0; $i<count($orders); $i++) {
@@ -61,7 +61,7 @@ include_once 'includes/header.inc.php';
 ?>
 
 <form action='previousOrders.php' method='post'>
-<table class='table_2'>
+<table>
 	<tr>
 		<td>Month: <?php echo $month_html; ?></td>
 		<td>Year: <?php echo $year_html; ?></td>
@@ -70,21 +70,17 @@ include_once 'includes/header.inc.php';
 </table>
 </form>
 <br />
-<table class='table_2'>
-	<thead>
+<table class='wide'>
 	<tr>
-		<th>Order Number</th>
-		<th>Email</th>
-		<th>Total Cost</th>
-		<th>File Name</th>
-		<th>Status</th>
+		<td class='header_center'>Order Number</td>
+		<td class='header_center'>Email</td>
+		<td class='header_center'>Total Cost</td>
+		<td class='header_center'>File Name</td>
+		<td class='header_center'>Status</td>
 	</tr>
-	</thead>
-	<tbody>
 	
 <?php echo $orders_html; ?>
 
-	</tbody>
 
 
 </table>

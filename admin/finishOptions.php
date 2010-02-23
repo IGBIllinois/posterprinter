@@ -4,20 +4,21 @@ include_once 'finishOptions.inc.php';
 
 $finishOptions = getFinishOptions($db);
 
-$finishOptionsHTML;
+$finishOptions_html = "";
 
 for ($i=0;$i<count($finishOptions); $i++) {
 	
-	$finishOptionsHTML .= "<tr>" .
-	"<td><a href='editFinishOption.php?finishOptionId=" . $finishOptions[$i]['finishOptions_id'] . "'>" . $finishOptions[$i]['finishOptions_name'] . "</a></td>" .
-							"<td>$" . $finishOptions[$i]['finishOptions_cost'] . "</td>" .
-							"<td>" . $finishOptions[$i]['finishOptions_maxWidth'] . "\"</td>" .
-							"<td>" . $finishOptions[$i]['finishOptions_maxLength'] . "\"</td>";
+	$finishOptions_html .= "<tr>";
+	$finishOptions_html .= "<td><a href='editFinishOption.php?finishOptionId=" . $finishOptions[$i]['finishOptions_id'] . "'>";
+	$finishOptions_html .= $finishOptions[$i]['finishOptions_name'] . "</a></td>";
+	$finishOptions_html .= "<td>$" . $finishOptions[$i]['finishOptions_cost'] . "</td>";
+	$finishOptions_html .= "<td>" . $finishOptions[$i]['finishOptions_maxWidth'] . "\"</td>";
+	$finishOptions_html .= "<td>" . $finishOptions[$i]['finishOptions_maxLength'] . "\"</td>";
 	if ($finishOptions[$i]['finishOptions_default'] == 1) {
-		$finishOptionsHTML .= "<td>*</td></tr>";
+		$finishOptions_html .= "<td>*</td></tr>";
 	}
 	else {
-	$finishOptionsHTML .= "<td></td></tr>";
+		$finishOptions_html .= "<td></td></tr>";
 	}
 								
 
@@ -27,17 +28,17 @@ include_once 'includes/header.inc.php';
 ?>
 
 <br>
-<table class='table_2'>
+<table class='medium'>
 	<tr>
-		<th>Name</th>
-		<th>Cost</th>
-		<th>Max Width</th>
-		<th>Max Length</th>
-		<th>Default</th>
+		<td class='header_center'>Name</td>
+		<td class='header_center'>Cost</td>
+		<td class='header_center'>Max Width</td>
+		<td class='header_center'>Max Length</td>
+		<td class='header_center'>Default</td>
 		
 	</tr>
 
-<?php echo $finishOptionsHTML; ?>
+<?php echo $finishOptions_html; ?>
 
 </table>
 <br />
