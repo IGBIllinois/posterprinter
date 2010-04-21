@@ -54,7 +54,6 @@ $startDate = $year . "/" . $month . "/01";
 $endDate =  date('Y/m/d',strtotime('-1 second',strtotime('+1 month',strtotime($startDate))));
 $stats = new statistics($db,$startDate,$endDate);
 
-$monthlyTotal = $stats->cost();
 
 include_once 'includes/header.inc.php';
 
@@ -84,7 +83,7 @@ include_once 'includes/header.inc.php';
 
 
 </table>
-Monthly Total: $<?php echo $monthlyTotal; ?>
+Monthly Total: $<?php echo $stats->pretty_cost(); ?>
 <br />
 <br />
 <form action='reports.php' method='post'>

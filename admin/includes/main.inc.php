@@ -21,7 +21,6 @@ if (isset($_SESSION['username'])) {
 	$db = new db(mysql_host,mysql_database,mysql_user,mysql_password);
 }
 else {
-	//session_start();
 	$_SESSION['webpage'] = $_SERVER['REQUEST_URI'];
 	header('Location: login.php');
 	
