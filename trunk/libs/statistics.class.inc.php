@@ -29,7 +29,11 @@ class statistics {
 		if (count($result) > 0) { return $result[0]['totalCost']; }
 		else { return 0; }
 	}
+	
+	public function pretty_cost() {
+		return number_format($this->cost(),2);
 
+	}
 	public function popularPaperTypes() {
 
 		$sql = "SELECT paperTypes_id,paperTypes_name,COUNT(*) AS count ";
@@ -127,10 +131,8 @@ class statistics {
 						$exists = true;
 						break(1);
 					}
-					else {
 
 
-					}
 				}
 			}
 			if ($exists == false) {
@@ -144,8 +146,7 @@ class statistics {
 		}
 		return $newOrdersData;
 	}
-
-
+	
 	public function percentRushOrder() {
 		$sql = "SELECT tbl_rushOrder.rushOrder_name,COUNT(1) AS count ";
 		$sql .= "FROM tbl_orders LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id ";

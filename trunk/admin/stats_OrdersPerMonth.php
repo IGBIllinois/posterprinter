@@ -15,9 +15,6 @@ $endDate = $year . "/12/31";
 
 $stats = new statistics($db,$startDate,$endDate);
 
-$yearlyTotal = $stats->cost();
-$totalOrders = $stats->orders();
-
 
 ?>
 <center>
@@ -27,8 +24,8 @@ $totalOrders = $stats->orders();
     	<td class='nav_left'><a href='stats_OrdersPerMonth.php?year=<?php echo $previousYear; ?>'>Previous</a></td>
         <td class='nav_right'><a href='stats_OrdersPerMonth.php?year=<?php echo $nextYear;?>'>Next</a></td>
     </tr>
-    <tr><td>Yearly Total:</td><td>$<?php echo $yearlyTotal; ?></td></tr>
-    <tr><td>Total Orders:</td><td><?php echo $totalOrders; ?></td></tr>
+    <tr><td>Yearly Total:</td><td>$<?php echo $stats->pretty_cost(); ?></td></tr>
+    <tr><td>Total Orders:</td><td><?php echo $stats->orders(); ?></td></tr>
     <tr><td colspan='2'><img src='graphs/graph_ordersPerMonth.php?year=<?php echo $year; ?>' /></td></tr>
 </table>
 </center>
