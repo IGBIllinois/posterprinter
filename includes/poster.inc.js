@@ -106,9 +106,19 @@ function validateActivityCode(activityCode) {
 }
 function validatePaperTypes() {
 	var frm = document.forms["posterInfo"];
-	
-	for (i=0;i < frm.paperTypesId.length; i++) {
-		if (frm.paperTypesId[i].checked) {
+	var length;
+	if (IsNumeric(frm.paperTypesId.length)) {
+		length = frm.paperTypesId.length
+	        for (i=0;i <= length; i++) {
+        	        if (frm.paperTypesId[i].checked) {
+                	        document.getElementById('paperTypesWarning').innerHTML = "&nbsp";
+                        	return true;
+	                }
+        	}
+	}
+
+	else {
+		if (frm.paperTypesId.checked) {
 			document.getElementById('paperTypesWarning').innerHTML = "&nbsp";
 			return true;
 		}
@@ -120,8 +130,18 @@ function validatePaperTypes() {
 
 function validateFinishOptions() {
 	var frm = document.forms["posterInfo"];
-	for (i=0;i < frm.finishOptionsId.length; i++) {
-		if (frm.finishOptionsId[i].checked) {
+	var length;
+	if (IsNumeric(frm.finishOptionsId.length)) {
+		length = frm.finishOptionsId.length
+		for (i=0;i <= length; i++) {
+        	        if (frm.finishOptionsId[i].checked) {
+                	        document.getElementById('finishOptionsWarning').innerHTML = "&nbsp";
+                        	return true;
+                	}
+        	}
+	}
+	else {
+		if (frm.finishOptionsId.checked) {
 			document.getElementById('finishOptionsWarning').innerHTML = "&nbsp";
 			return true;
 		}
