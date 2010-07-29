@@ -45,7 +45,7 @@ if (isset($_POST['step1'])) {
 		$paperTypes_html .= "<tr>";
 		$paperTypes_html .= "<td class='right'>$" . $paperType_cost . "</td>";
 		$paperTypes_html .= "<td class='center'>" .  $paperType_name . "</td>";
-		if ($paperType_default == 1) {
+		if (($paperType_default == 1) || (count($paperTypes) == 1)) {
 			$paperTypes_html .= "<td class='left'><input type='radio' name='paperTypesId' checked='true' value='" . $paperType_id . "'></td></tr>";
 		}
 		else {
@@ -66,7 +66,7 @@ if (isset($_POST['step1'])) {
 		$finishOptions_html .= "<tr>";
 		$finishOptions_html .= "<td class='right'>$" . $finishOption_cost . "</td>";
 		$finishOptions_html .= "<td class='center'>" . $finishOption_name . "</td>";
-		if ($finishOption_default == 1) {
+		if (($finishOption_default == 1) || (count($finishOptions))) {
 			$finishOptions_html .= "<td class='left'> <input type='radio' name='finishOptionsId' checked='true' value='" . $finishOption_id . "'></td></tr>";
 		}
 		else {
