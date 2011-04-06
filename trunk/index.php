@@ -22,7 +22,7 @@ include_once 'finishOptions.inc.php';
 include_once 'posterTube.inc.php';
 include_once 'rushOrder.inc.php';
 
-
+//connects to database
 $db = new db(mysql_host,mysql_database,mysql_user,mysql_password);
 
 //poster width and length submission
