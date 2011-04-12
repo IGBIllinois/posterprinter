@@ -41,13 +41,13 @@ function create_generic_excel($data) {
 	$excel_file = new PHPExcel();
 	$excel_file->setActiveSheetIndex(0);
 	$headings = array_keys($data[0]);
-        for ($i=0;$i<count($headings);$i++) {
-                $excel_file->getActiveSheet()->setCellValueByColumnAndRow($i,1,$headings[$i]);
+	for ($i=0;$i<count($headings);$i++) {
+		$excel_file->getActiveSheet()->setCellValueByColumnAndRow($i,1,$headings[$i]);
 		$excel_file->getActiveSheet()->getStyleByColumnAndRow($i,1)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-		$excel_file->getActiveSheet()->getStyleByColumnAndRow($i,1)->getFont()->setBold(true);	
+		$excel_file->getActiveSheet()->getStyleByColumnAndRow($i,1)->getFont()->setBold(true);
 		$excel_file->getActiveSheet()->getStyleByColumnAndRow($i,1)->getFont()->setUnderline(PHPExcel_STYLE_Font::UNDERLINE_SINGLE);
-		$excel_file->getActiveSheet()->getColumnDimensionByColumn($i)->setAutoSize(true);	
-        }
+		$excel_file->getActiveSheet()->getColumnDimensionByColumn($i)->setAutoSize(true);
+	}
 	$rows = count($data);
 	$row = 3;
 	foreach ($data as $row_data) {
@@ -60,7 +60,7 @@ function create_generic_excel($data) {
 			else {
 				$excel_file->getActiveSheet()->getStyleByColumnAndRow($column,$row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);
 				$excel_file->getActiveSheet()->getStyleByColumnAndRow($column,$row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-			}	
+			}
 			$column++;
 		}
 		$row++;
@@ -68,7 +68,7 @@ function create_generic_excel($data) {
 
 	$excel_file->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
 	$excel_file->getActiveSheet()->getPageSetup()->setFitToPage(true);
-	
+
 	return $excel_file;
 
 }
@@ -79,24 +79,24 @@ function create_generic_excel($data) {
 //creates a csv file with data and prompts you to save it.
 function create_csv_report($data,$filename) {
 	$delimiter = ",";
-        $file_link = sys_get_temp_dir() . "/" . $filename;
+	$file_link = sys_get_temp_dir() . "/" . $filename;
 	@unlink($file_link);
 	$file_handle = fopen($file_link,"x");
-        $headings = array_keys($data[0]);
-       	fputcsv($file_handle,$headings,$delimiter);
+	$headings = array_keys($data[0]);
+	fputcsv($file_handle,$headings,$delimiter);
 	for ($i=0;$i<count($data);$i++) {
-                $row = array_values($data[$i]);
-		fputcsv($file_handle,$row,$delimiter);        
-	}	
-        fclose($file_handle);
+		$row = array_values($data[$i]);
+		fputcsv($file_handle,$row,$delimiter);
+	}
+	fclose($file_handle);
 	//Sets headers then downloads the csv report file.
-        header('Pragma: public');
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header('Content-Type: application/vnd.ms-excel');
-        header("Content-Disposition:attachment; filename=" . $filename);
-        readfile($file_link);
-        unlink($file_link);
+	header('Pragma: public');
+	header('Expires: 0');
+	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+	header('Content-Type: application/vnd.ms-excel');
+	header("Content-Disposition:attachment; filename=" . $filename);
+	readfile($file_link);
+	unlink($file_link);
 
 }
 
@@ -104,8 +104,8 @@ function create_csv_report($data,$filename) {
 //$month - string - month of report
 //$year - string - year of report
 //$ext - string - file extension
-//returns name of the file based on month, year, and extension.  
-function get_filename($month,$year,$ext) { 
-	return "PosterReport-" . $month . "-" . $year . "." . $ext; 
+//returns name of the file based on month, year, and extension.
+function get_filename($month,$year,$ext) {
+	return "PosterReport-" . $month . "-" . $year . "." . $ext;
 }
 ?>

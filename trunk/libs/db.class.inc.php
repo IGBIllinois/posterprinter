@@ -1,14 +1,14 @@
 <?php
 //////////////////////////////////////////
-//					//
-//	db.class.inc.php		//
-//					//
-//	Class to create easy to use	//
-//	interface with the database	//
-//					//
-//	By David Slater			//
-//	June 2009			//
-//					//
+//					
+//	db.class.inc.php
+//
+//	Class to create easy to use
+//	interface with the database
+//
+//	By David Slater
+//	June 2009
+//
 //////////////////////////////////////////
 
 
@@ -64,11 +64,35 @@ class db {
 		if (mysql_query($sql,$this->link)) {
 			return mysql_insert_id($this->link);
 		}
-		else {
-			return 0;
-		}
+		else { return 0; }
+	}
+        
+	//build_insert()
+	//$table - string - database table to insert data into
+	//$data - associative array with index being the column and value the data.
+	//returns the id number of the new record, 0 if it fails
+	public function build_insert($table,$data) {
+		$sql = "INSERT INTO " . $table;
+		$values_sql = "VALUES(";
+		$columns_sql = "(";
+		$count = 0;
+		foreach ($data as $key=>$value) {
+			if ($count == 0) {
+				$columns_sql .= $key;
+				$values_sql .= $value;
+			}
+			else {
+				$columns_sql .= "," . $key;
+				$values_sql .= ",'" . $value . "'";
+			}
 
-        }
+			$count++;
+		}
+		$values_sql .= ")";
+		$columns_sql .= ")";
+		$sql = $sql . $columns_sql . " " . $values_sql;
+		return $this->insert_query($sql);
+	}
         
 	//non_select_query()
 	//$sql - sql string to run on the database

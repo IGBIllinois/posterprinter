@@ -108,29 +108,24 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 	////////////////Paper Types////////////
 	$paperTypes = getValidPaperTypes($db,$order->get_width(),$order->get_length());
 	$paperTypesHTML = "<select name='paperType'>";
-	for ($i=0;$i < count($paperTypes);$i++) {
-		$paperTypeId = $paperTypes[$i]["paperTypes_id"];
-		$paperTypeName = $paperTypes[$i]["paperTypes_name"];
-		if ($order->get_paper_type_id() == $paperTypeId) {
-			$paperTypesHTML .= "<option selected='true' value='" . $paperTypeId . "'>" . $paperTypeName . "</option>";
+	foreach ($paperTypes as $paperType) {
+		if ($order->get_paper_type_id() === $paperType["id"]) {
+			$paperTypesHTML .= "<option selected='true' value='" . $paperType["id"] . "'>" . $paperType["name"] . "</option>";
 		}
-		else { $paperTypesHTML .= "<option value='" . $paperTypeId . "'>" . $paperTypeName . "</option>"; }
+		else { $paperTypesHTML .= "<option value='" . $paperType["id"] . "'>" . $paperType["name"]. "</option>"; }
 	}
 	$paperTypesHTML .= "</select>";
 	
 	///////////////////Finish Options//////////////
 	$finishOptions = getValidFinishOptions($db,$order->get_width(),$order->get_length());
 	$finishOptionsHTML = "<select name='finishOption'>";
-	for ($i=0; $i < count($finishOptions); $i++) {
-		$finishOptionName = $finishOptions[$i]["finishOptions_name"];
-		$finishOptionId = $finishOptions[$i]["finishOptions_id"];
-		
-		if ($order->get_finish_option_id() == $finishOptionId) {
-			$finishOptionsHTML .= "<option selected='true' value='" . $finishOptionId . "'>" . $finishOptionName . "</option>";
+	foreach ($finishOptions as $finishOption) {
+		if ($order->get_finish_option_id() == $finishOption["id"]) {
+			$finishOptionsHTML .= "<option selected='true' value='" . $finishOption["id"] . "'>" . $finishOption["name"] . "</option>";
 		
 		}
 		else {
-			$finishOptionsHTML .= "<option value='" . $finishOptionId . "'>" . $finishOptionName . "</option>";
+			$finishOptionsHTML .= "<option value='" . $finishOption["id"] . "'>" . $finishOption["name"] . "</option>";
 		}
 	}
 	$finishOptionsHTML .= "</select>";

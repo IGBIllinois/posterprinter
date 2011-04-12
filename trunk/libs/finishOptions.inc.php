@@ -19,9 +19,12 @@ function getFinishOptions($db) {
 //returns array of finish options that can be used on the poster based on the width and length.
 function getValidFinishOptions($db,$width,$length) {
 
-	$sql = "SELECT * FROM tbl_finishOptions ";
-	$sql .= "WHERE finishOptions_available=1 ";
-	$sql .= "AND finishOptions_maxLength>=$length ";
+	$sql = "SELECT finishOptions_id as id, finishOptions_name as name, ";
+	$sql .= "finishOptions_cost as cost, finishOptions_maxWidth as maxWidth, ";
+	$sql .= "finishOptions_maxLength as maxLength, finishOptions_default ";
+	$sql .= "FROM tbl_finishOptions ";
+	$sql .= "WHERE finishOptions_available='1' ";
+	$sql .= "AND finishOptions_maxLength>='" . $length . "' ";
 	$sql .= "AND (finishOptions_maxWidth>='" . $width . "' OR finishOptions_maxWidth>='" . $length . "') ";
 	$sql .= "ORDER BY finishOptions_name ASC";
 	return $db->query($sql);

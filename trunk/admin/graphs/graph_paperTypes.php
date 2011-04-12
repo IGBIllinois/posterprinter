@@ -24,20 +24,24 @@ if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
 	
 	}
 	
-	$graph = new PieGraph(500,250,"auto");
+	$graph = new PieGraph(500,300,"auto");
+	$theme_class = new AquaTheme();
+	$graph->SetTheme($theme_class);
 	$graph->SetMargin(40,80,30,200);
 	$graph->SetColor('#d3d1d2');
 	$graph->SetMarginColor('#ffffff');
 	$graph->SetFrame(false,'#d3d1d2');
 	$graph->title->Set("Paper Types");
 	$graph->title->SetFont(FF_ARIAL,FS_BOLD,12);
-	$p1 = new PiePlot($data);
-	$p1->SetTheme("earth");
-	$p1->SetSize(0.30);
-	$p1->SetCenter(0.35,0.55);
+	$graph->title->SetColor("#000000");
+	$p1 = new PiePlot3d($data);
+	$p1->SetAngle(85);
+	$p1->SetSize(0.35);
+	$p1->SetCenter(0.3,0.5);
 	$p1->SetLegends($data_legend);
 	$graph->legend->SetFont(FF_ARIAL,FS_NORMAL,8);
-	$graph ->legend->Pos( 0.05,0.5,"right" ,"center");
+	$graph->legend->SetPos(0.6,0.2,"left","top");
+	$graph->legend->SetLayout("LEGEND_VERT");
 	$p1->value->SetFont(FF_ARIAL,FS_NORMAL,8);
 	$graph->Add($p1);
 	$graph->Stroke();

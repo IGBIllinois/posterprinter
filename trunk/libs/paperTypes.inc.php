@@ -5,7 +5,10 @@ include_once 'db.class.inc.php';
 //$db - database object
 //returns array of all enabled paper types
 function getPaperTypes($db) {
-	$sql = "SELECT * FROM tbl_paperTypes ";
+	$sql = "SELECT paperTypes_id as id, paperTypes_name as name, ";
+	$sql .= "paperTypes_cost as cost, paperTypes_width as width, ";
+	$sql .= "paperTypes_default ";
+	$sql .= "FROM tbl_paperTypes ";
 	$sql .= "WHERE paperTypes_available=1 ";
 	$sql .= "ORDER BY paperTypes_name ASC";
 	return $db->query($sql);
@@ -19,8 +22,11 @@ function getPaperTypes($db) {
 //returns array of paper types that fit the given dimensions
 function getValidPaperTypes($db,$width,$length) {
 	
-	$sql = "SELECT * FROM tbl_paperTypes ";
-	$sql .= "WHERE paperTypes_available=1 ";
+	$sql = "SELECT paperTypes_id as id, paperTypes_name as name, ";
+	$sql .= "paperTypes_cost as cost, paperTypes_width as width, ";
+	$sql .= "paperTypes_default ";
+	$sql .= "FROM tbl_paperTypes ";
+	$sql .= "WHERE paperTypes_available='1' ";
 	$sql .= "AND (paperTypes_width>='" . $width  . "' OR paperTypes_width>='" . $length . "') ";
 	$sql .= "ORDER BY paperTypes_name ASC";;
 	return $db->query($sql);

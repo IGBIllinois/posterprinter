@@ -92,26 +92,26 @@ class order {
 		$sql .= "WHERE orders_id='" . $this->get_order_id() . "'";
 		$result = $this->db->query($sql);
 		$this->email = $result[0]["orders_email"];
-	        $this->name = $result[0]["orders_name"];
-        	$this->filename = $result[0]["orders_fileName"];
-	        $this->cfop = $result[0]["orders_cfop"];
-        	$this->activity_code = $result[0]['orders_activityCode'];
-	        $this->time_created = $result[0]["orders_timeCreated"];
-        	$this->time_finished = $result[0]["orders_timeFinished"];
-	        $this->total_cost = $result[0]["orders_totalCost"];
-	        $this->width = $result[0]["orders_width"];
-        	$this->length =  $result[0]["orders_length"];
-	        $this->paper_type_name = $result[0]["paperTypes_name"];
-        	$this->paper_type_id = $result[0]["paperTypes_id"];
-	        $this->finish_option_name = $result[0]["finishOptions_name"];
-        	$this->finish_option_id = $result[0]["finishOptions_id"];
-	        $this->poster_tube_name = $result[0]["posterTube_name"];
-        	$this->poster_tube_id = $result[0]["posterTube_id"];
-        	$this->rush_order_name = $result[0]["rushOrder_name"];
-	        $this->rush_order_id = $result[0]["rushOrder_id"];
-	        $this->comments = $result[0]["orders_comments"];
-        	$this->status = $result[0]["status_name"];
-	        $this->status_id = $result[0]["status_id"];
+		$this->name = $result[0]["orders_name"];
+		$this->filename = $result[0]["orders_fileName"];
+		$this->cfop = $result[0]["orders_cfop"];
+		$this->activity_code = $result[0]['orders_activityCode'];
+		$this->time_created = $result[0]["orders_timeCreated"];
+		$this->time_finished = $result[0]["orders_timeFinished"];
+		$this->total_cost = $result[0]["orders_totalCost"];
+		$this->width = $result[0]["orders_width"];
+		$this->length =  $result[0]["orders_length"];
+		$this->paper_type_name = $result[0]["paperTypes_name"];
+		$this->paper_type_id = $result[0]["paperTypes_id"];
+		$this->finish_option_name = $result[0]["finishOptions_name"];
+		$this->finish_option_id = $result[0]["finishOptions_id"];
+		$this->poster_tube_name = $result[0]["posterTube_name"];
+		$this->poster_tube_id = $result[0]["posterTube_id"];
+		$this->rush_order_name = $result[0]["rushOrder_name"];
+		$this->rush_order_id = $result[0]["rushOrder_id"];
+		$this->comments = $result[0]["orders_comments"];
+		$this->status = $result[0]["status_name"];
+		$this->status_id = $result[0]["status_id"];
         	
 	}
 
