@@ -46,14 +46,15 @@ else {
 	$status_html = "<form action='orders.php?orderId=" . $orderId . "' method='post'>";
 	$status_html .= "<select name='statusId'>";
 
-	for ($i=0; $i<count($statusResult); $i++) {
-		$statusId = $statusResult[$i]["status_id"];
-		$statusName = $statusResult[$i]["status_name"];
+	foreach ($statusResult as $status) {
+		
 		//used to have the current status of the order be the one selected in the drop down box
-		if ($statusId == $orderStatusId) {
-			$status_html .= "<option value='" . $statusId . "' selected>" . $statusName . "</option>";
+		$status_html .= "<option value='" . $status["status_id"] . "'";
+		if ($status["status_id"] == $orderStatusId) {
+			$status_html .= " selected";
 		}
-		else { $status_html .= "<option value='" . $statusId . "'>" . $statusName . "</option>"; }
+		$status_html .= ">" . $status["status_name"] . "</option>";
+		
 	}
 	$status_html .= "</select>";
 	$status_html .= "<input type='submit' value='Change' name='changeStatus'>";

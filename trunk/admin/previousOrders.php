@@ -21,13 +21,13 @@ $orders = getPreviousOrders($db,$month,$year);
 $orders_html = "";
 if (count($orders) == 0) { $orders_html = "<tr><td colspan='5'>No Orders</td></tr>"; }
 else {
-	for ($i=0; $i<count($orders); $i++) {
+	foreach ($orders as $order) {
 		$orders_html .= "<tr>"; 
-		$orders_html .= "<td><a href='orders.php?orderId=" . $orders[$i]["orders_id"] . "'>" . $orders[$i]["orders_id"] . "</a></td>";
-		$orders_html .= "<td>" . $orders[$i]["orders_email"] . "</td>";
-		$orders_html .= "<td>$" . $orders[$i]["orders_totalCost"] . "</td>";
-		$orders_html .= "<td><a href='download.php?orderId=" . $orders[$i]["orders_id"] . "'>" . $orders[$i]["orders_fileName"] . "</a></td>";
-		$orders_html .= "<td>" . $orders[$i]["status_name"]  . "</td>";
+		$orders_html .= "<td><a href='orders.php?orderId=" . $order["orders_id"] . "'>" . $order["orders_id"] . "</a></td>";
+		$orders_html .= "<td>" . $order["orders_email"] . "</td>";
+		$orders_html .= "<td>$" . $order["orders_totalCost"] . "</td>";
+		$orders_html .= "<td><a href='download.php?orderId=" . $order["orders_id"] . "'>" . $order["orders_fileName"] . "</a></td>";
+		$orders_html .= "<td>" . $order["status_name"]  . "</td>";
 		$orders_html .= "</tr>";
 	
 	}

@@ -6,27 +6,14 @@ include_once 'rushOrder.inc.php';
 
 if (isset($_POST['updatePosterTube'])) {
 	$posterTubeCost = $_POST['posterTubeCost'];
+	$result = updatePosterTube($db,$posterTubeCost);
 	
-	if (($posterTubeCost == "") || !eregi('^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$',$posterTubeCost)) {
-		$optionsMsg = "<b class='b'>Please enter a valid poster tube cost.</b>";
-	}
-	elseif (updatePosterTube($db,$posterTubeCost)) {
-		$optionsMsg = "<b>Poster Tube cost successfully updated.</b>";
-		
-	}
 	
 }
 elseif (isset($_POST['updateRushOrder'])) {
 	$rushOrderCost = $_POST['rushOrderCost'];
-	if (($rushOrderCost == "") || !eregi('^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$',$rushOrderCost)) {
-		$optionsMsg = "<b class='b'>Please enter a valid rush order cost</b>";
-	}
-	elseif (updateRushOrder($db,$rushOrderCost)) {
-		$optionsMsg = "<b>Rush Order cost successfully updated.</b>";
-	}
-	
-
-	
+	$result = updateRushOrder($db,$rushOrderCost);
+		
 }
 
 $posterTubeInfo = getPosterTubeInfo($db);
@@ -62,7 +49,6 @@ else
 </table>
 
 <br />
-<br />
 
 <table>
 	<tr><td colspan='3' class='header'>Rush Order</td></tr>
@@ -74,6 +60,6 @@ else
 
 
 <?php 
-if (isset($optionsMsg)) { echo $optionsMsg; }
+if (isset($result['MESSAGE'])) { echo $result['MESSAGE']; }
 
 include_once 'includes/footer.inc.php'; ?>

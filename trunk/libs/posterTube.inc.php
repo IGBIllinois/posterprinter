@@ -32,12 +32,24 @@ function getPosterTubeInfo($db) {
 }
 
 function updatePosterTube($db,$cost) {
-	$result = getPosterTubeInfo($db);
-	$posterTube_id = $result[0]['id'];
+	if (($cost == "") || !eregi('^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$',$cost)) {
+		$message = "<b class='error'>Please enter a valid poster tube cost.</b>";
+		return array('RESULT'=>FALSE,
+					'MESSAGE'=>$message);
+	}
+	else {
+		$result = getPosterTubeInfo($db);
+		$posterTube_id = $result[0]['id'];
+		$update_sql = "UPDATE tbl_posterTube SET posterTube_available=0 WHERE posterTube_id='" . $posterTube_id . "' LIMIT 1";
+		$db->non_select_query($update_sql);
+		$insert_sql = "INSERT INTO tbl_posterTube(posterTube_name,posterTube_cost,posterTube_available) VALUES('Yes','" . $cost . "',1)";
+		$insert_id = $db->insert_query($insert_sql);
+		$message = "<b>Poster Tube cost successfully updated.</b>";
+		return array('RESULT'=>TRUE,
+					'ID'=>$insert_id,
+					'MESSAGE'=>$message);
+	}
+	
 
-	$update_sql = "UPDATE tbl_posterTube SET posterTube_available=0 WHERE posterTube_id='" . $posterTube_id . "' LIMIT 1";
-	$db->non_select_query($update_sql);
-	$insert_sql = "INSERT INTO tbl_posterTube(posterTube_name,posterTube_cost,posterTube_available) VALUES('Yes','" . $cost . "',1)";
-	return $db->insert_query($insert_sql);
 }
 ?>

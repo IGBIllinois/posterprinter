@@ -255,7 +255,7 @@ elseif (isset($_POST['step2'])) {
 	$rushOrderId = $rushOrderResult[0]["rushOrder_id"];
 
 	//Calculates Total Cost
-	$totalCost = ($posterLength * $paperTypeCost) +$finishOptionCost + ($posterTube * $posterTubeCost) + ($rushOrder * $rushOrderCost);
+	$totalCost = ($posterLength * $paperTypeCost) + $finishOptionCost + ($posterTube * $posterTubeCost) + ($rushOrder * $rushOrderCost);
 
 	//outputs the order information to confirm the order.
 	$form_html = "<table class='medium_center'>";

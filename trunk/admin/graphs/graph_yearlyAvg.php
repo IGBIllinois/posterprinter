@@ -1,45 +1,40 @@
 <?php
 include_once 'graph_main.inc.php';
 
+$stats = new statistics($db,'','');
+$avgOrders = $stats->avgOrdersPerMonth();
 
-if (isset($_GET['year'])) {
-
-	$year = $_GET['year'];
-	$stats = new statistics($db,'','');
-	$ordersPerMonthData = $stats->avgOrdersPerMonth($year);
-	
-	$data_legend;
-	$data;
-	//print_r($ordersPerMonthData);
-	if (count($ordersPerMonthData) > 0) {
-	foreach($ordersPerMonthData as $key=>$value) {
-		$datax[] = $key;
-		$datay[] = $value;
-	}
-	}
-	else {
-		$datax[] = $key;
-		$datay[] = 0;
-	}
-	$graph = new Graph(600,500,"auto");
-	$graph->SetScale("textlin");
-	//$theme_class = new AquaTheme();
-	//$graph->SetTheme($theme_class);
-	$graph->yaxis->scale->SetGrace(20);
-	$graph->SetMarginColor('#ffffff');
-	$graph->title->Set("Yearly Averages");
-	$graph->title->SetFont(FF_ARIAL,FS_BOLD,12);
-	$graph->SetFrame(false,'#ffffff');
-	$graph->xaxis->SetTickLabels($datax);
-	$graph->xaxis->SetFont(FF_ARIAL,FS_NORMAL,10);
-
-	$graph->xaxis->SetLabelAngle('55');
-	$bplot = new BarPlot($datay);
-	$bplot->SetAlign("center");
-	//$bplot->value->Show();
-	$graph->Add($bplot);
-	//$graph->Stroke();
+foreach($avgOrders as $value) {
+		$data_x[] = $value['month_name'];
+		$avgOrders_y[] = $value['avg'];
 }
+
+
+
+$graph = new Graph(600,500,"auto");
+$graph->SetScale("textlin");
+$graph->yaxis->scale->SetGrace(20);
+$graph->SetMarginColor('#ffffff');
+$graph->title->Set("Yearly Averages");
+$graph->title->SetFont(FF_ARIAL,FS_BOLD,12);
+$graph->title->SetColor('#00000');
+$graph->SetFrame(false,'#ffffff');
+$graph->xaxis->SetTickLabels($data_x);
+$graph->xaxis->SetFont(FF_ARIAL,FS_NORMAL,10);
+$graph->xaxis->SetLabelAngle('55');
+
+//Orders
+$avgOrders_plot = new LinePlot($avgOrders_y);
+$avgOrders_plot->SetLegend('Orders');
+$graph->Add($avgOrders_plot);
+//Legend
+$graph->legend->SetFont(FF_ARIAL,FS_NORMAL,8);
+$graph->legend->SetPos(0.8,0.15,"left","top");
+$graph->legend->SetLayout("LEGEND_VERT");
+
+//Display Graph
+$graph->Stroke();
+
 
 
 ?>

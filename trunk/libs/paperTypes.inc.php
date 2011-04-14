@@ -66,7 +66,7 @@ function addPaperType($db,$name,$cost,$width,$default = 0) {
 		$sql .= "VALUES('" . $name . "','" . $cost . "','" . $width . "','" . $available . "','" . $default . "')";
         $id = $db->insert_query($sql);
         $message = "Paper Type successfully added";
-        retrun array('RESULT'=>TRUE,
+        return array('RESULT'=>TRUE,
         			'ID'=>$id,
         			'MESSAGE'=>$message);
 	}

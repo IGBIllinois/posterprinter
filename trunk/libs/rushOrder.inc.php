@@ -32,14 +32,25 @@ function getRushOrderInfo($db) {
 
 function updateRushOrder($db, $cost) {
 
-	$result = getRushOrderInfo($db);
-	$rushOrder_id = $result[0]['id'];
-	$update_sql = "UPDATE tbl_rushOrder SET rushOrder_available=0 WHERE rushOrder_id='" . $rushOrder_id . "'";
-	$db->non_select_query($update_sql);
+	if (($cost == "") || !eregi('^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$',$cost)) {
+		$message = "<b class='error'>Please enter a valid rush order cost</b>";
+		return array('RESULT'=>FALSE,
+					'MESSAGE'=>$message);
+	}
+	else {
 
-	$insert_sql = "INSERT INTO tbl_rushOrder(rushOrder_name,rushOrder_cost,rushOrder_available) VALUES('Yes','" . $cost . "',1)";
-	return $db->insert_query($insert_sql);
+		$result = getRushOrderInfo($db);
+		$rushOrder_id = $result[0]['id'];
+		$update_sql = "UPDATE tbl_rushOrder SET rushOrder_available=0 WHERE rushOrder_id='" . $rushOrder_id . "'";
+		$db->non_select_query($update_sql);
+		$insert_sql = "INSERT INTO tbl_rushOrder(rushOrder_name,rushOrder_cost,rushOrder_available) VALUES('Yes','" . $cost . "',1)";
+		$insert_id = $db->insert_query($insert_sql);
+		$message = "<b>Rush Order cost successfully updated.</b>";
+		return array('RESULT'=>TRUE,
+				'ID'=>insert_id,
+				'MESSAGE'=>$message);
 
+	}
 }
 
 ?>
