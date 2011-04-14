@@ -16,48 +16,20 @@ elseif (isset($_POST['makeDefault'])) {
 }
 elseif (isset($_POST['editFinishOption'])) {
 	$finishOptionId = $_POST['finishOptionId'];
-	$name = $_POST['name'];
-	$cost = $_POST['cost'];
-	$maxWidth = $_POST['maxWidth'];
-	$maxLength = $_POST['maxLength'];
+	$name = trim(rtrim($_POST['name']));
+	$cost =trim(rtrim( $_POST['cost']));
+	$maxWidth = trim(rtrim($_POST['maxWidth']));
+	$maxLength = trim(rtrim($_POST['maxLength']));
 	$default = $_POST['default'];
 	
-	$name = trim(rtrim($name));
-	$cost = trim(rtrim($cost));
-	$maxWidth = trim(rtrim($maxWidth));
-	$maxLength = trim(rtrim($maxLength));
-	$errors = 0;
-	
-	if ($name == "") {
-		$nameMsg = "<br><b class='error'>Pleae enter finish option name.</b>";
-		$errors++;
-	}
-	if (($cost == "") || !eregi('^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$',$cost)) {
-		$costMsg = "<br><b class='error'>Please enter a valid cost.</b>";
-		$errors++;
-	}
-	
-	if (($maxWidth == "") || ($maxWidth > max_printer_width) || !(eregi("^[0-9]{1,2}$", $maxWidth))) {
-		$maxWidthMsg = "<br><b class='error'>Please enter a valid Max Width. Maximum is " . max_printer_width . " inches.</b>";
-		$errors++;
-	}
-	if (($maxLength == "") || !(eregi("^[0-9]{1,3}$", $maxLength))) {
-		$maxLengthMsg = "<br><b class='error'>Please enter a valid Max Length.</b>";
-		$errors++;
-	}
-	if ($errors == 0) {
-		
-		updateFinishOption($db,$finishOptionId,$name,$cost,$maxWidth,$maxLength,$default);	
-		header("Location: finishOptions.php");
-	}
+	$result = updateFinishOption($db,$finishOptionId,$name,$cost,$maxWidth,$maxLength,$default);	
+	if ($result['RESULT']) { header("Location: finishOptions.php"); }
 }
 
 elseif (isset($_GET['finishOptionId'])) {
 	$finishOptionId = $_GET['finishOptionId'];
 
-	
 	$finishOption = getFinishOption($db,$finishOptionId);
-
 	$name = $finishOption[0]['finishOptions_name'];
 	$cost = $finishOption[0]['finishOptions_cost'];
 	$maxWidth = $finishOption[0]['finishOptions_maxWidth'];
@@ -131,10 +103,8 @@ else
 
 <?php 
 
-	if (isset($nameMsg)){echo $nameMsg; }
-	if (isset($costMsg)){echo $costMsg; }
-	if (isset($maxWidthMsg)){echo $maxWidthMsg; }
-	if (isset($maxLengthMsg)){echo $maxLengthMsg; }
+	if (isset($result['MESSAGE'])){echo $result['MESSAGE']; }
+	
  
 ?>
 <?php include_once 'includes/footer.inc.php'; ?>

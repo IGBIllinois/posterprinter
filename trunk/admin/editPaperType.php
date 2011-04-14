@@ -16,35 +16,15 @@ elseif (isset($_POST['makeDefault'])) {
 }
 elseif (isset($_POST['editPaperType'])) {
 	$paperTypeId = $_POST['paperTypeId'];
-	$name = $_POST['name'];
-	$cost = $_POST['cost'];
-	$width = $_POST['width'];
+	$name = trim(rtrim($_POST['name']));
+	$cost = trim(rtrim($_POST['cost']));
+	$width = trim(rtrim($_POST['width']));
 	$default = $_POST['default'];
+
+	$result = updatePaperType($db,$paperTypeId,$name,$cost,$width,$default);
+	if ($result['RESULT']) { header("Location: paperTypes.php"); }
 	
-	$name = trim(rtrim($name));
-	$cost = trim(rtrim($cost));
-	$width = trim(rtrim($width));
-	$errors = 0;
 	
-	if ($name == "") {
-		$nameMsg = "<br><b class='error'>Pleae enter paper type name</b>";
-		$errors++;
-	}
-	if (($cost == "") || !eregi('^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$',$cost)) {
-		$costMsg = "<br><b class='error'>Please enter a valid cost</b>";
-		$errors++;
-	}
-	
-	if (($width == "") || ($width > max_printer_width) || !(eregi("^[0-9]{1,2}$", $width))) {
-		$widthMsg = "<br><b class='error'>Please enter a valid Width.  Maximum is " . max_printer_width . " inches</b>";
-		$errors++;
-	}
-	
-	if ($errors == 0) {
-	
-		updatePaperType($db,$paperTypeId,$name,$cost,$width,$default);	
-		header("Location: paperTypes.php");
-	}
 }
 elseif (isset($_GET['paperTypeId'])) {
 	$paperTypeId = $_GET['paperTypeId'];
@@ -116,10 +96,5 @@ else
 
 <?php 
 
-	if (isset($nameMsg)){echo $nameMsg; }
-	if (isset($costMsg)){echo $costMsg; }
-	if (isset($widthMsg)){echo $widthMsg; }
-
-?>
-
-<?php include_once 'includes/footer.inc.php'; ?>
+	if (isset($result['MESSAGE'])){echo $result['MESSAGE']; }
+	include_once 'includes/footer.inc.php'; ?>

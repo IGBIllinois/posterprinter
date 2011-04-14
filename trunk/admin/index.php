@@ -17,10 +17,6 @@ include_once 'includes/main.inc.php';
 include_once 'includes/header.inc.php';
 include_once 'orders.inc.php';
 
-
-
-
-
 //runs query and gets the order_id
 $orders = getCurrentOrders($db);
 
@@ -31,25 +27,20 @@ if (count($orders) == 0) {
 
 }
 else {
-	for ($i=0; $i<count($orders); $i++) {
+	foreach ($orders as $order) {
 		
-		$orderId = $orders[$i]["orders_id"];
-		$orderEmail = $orders[$i]["orders_email"];
-		$orderFileName = $orders[$i]["orders_fileName"];
-		$orderStatus = $orders[$i]["status_name"];
-		$orderCost = $orders[$i]["orders_totalCost"];
-		$rushOrderName = $orders[$i]["rushOrder_name"];
+		$rushOrderName = $order["rushOrder_name"];
 		if ($rushOrderName == "Yes") {
 			$orders_html .= "<tr class='rush'>";
 		}
 		elseif ($rushOrderName == "No") {
 			$orders_html .= "<tr>";
 		}
-		$orders_html .= "<td><a href='orders.php?orderId=" . $orderId . "'>" . $orderId . "</a></td>";
-		$orders_html .= "<td>" . $orderEmail . "</td>";
-		$orders_html .= "<td>" . $orderCost . "</td>";
-		$orders_html .= "<td><a href='download.php?orderId=" . $orderId . "'>" . $orderFileName . "</a></td>";
-		$orders_html .= "<td>" . $orderStatus  . "</td>";
+		$orders_html .= "<td><a href='orders.php?orderId=" . $order["orders_id"] . "'>" . $order["orders_id"] . "</a></td>";
+		$orders_html .= "<td>" . $order["orders_email"] . "</td>";
+		$orders_html .= "<td>" . $order["orders_totalCost"] . "</td>";
+		$orders_html .= "<td><a href='download.php?orderId=" . $order["orders_id"] . "'>" . $order["orders_fileName"] . "</a></td>";
+		$orders_html .= "<td>" . $order["status_name"]  . "</td>";
 		$orders_html .= "</tr>";
 	
 	}

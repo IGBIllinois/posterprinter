@@ -79,6 +79,23 @@ class order {
 		$this->status_name = getStatusName($this->db,$status_id);
 		
 	}
+	
+	public function edit($cfop, $activityCode, $finishOptionId, $paperTypeId, $posterTubeId, $rushOrderId, $totalCost) {
+		
+		$sql = "UPDATE tbl_orders SET orders_cfop='" . $cfop . "', ";
+		$sql .= "orders_activityCode='" . $activityCode . "', ";
+		$sql .= "orders_finishOptionsId='" . $finishOptionId . "', ";
+		$sql .= "orders_paperTypesId='" . $paperTypeId . "', ";
+		$sql .= "orders_posterTubeId='" . $posterTubeId . "', ";
+		$sql .= "orders_rushOrderId='" . $rushOrderId . "', ";
+		$sql .= "orders_widthSwitched='" . $widthSwitched . "', ";
+		$sql .= "orders_totalCost='" . $totalCost . "' ";
+		$sql .= "WHERE orders_id='" . $this->get_order_id() . "' LIMIT 1 ";
+		$this->db->non_select_query($sql);
+		$this->get_order();
+		return true;
+	}
+	
 	/////////////////Private Functions///////////
 	
 	private function get_order() {
@@ -111,9 +128,9 @@ class order {
 		$this->rush_order_id = $result[0]["rushOrder_id"];
 		$this->comments = $result[0]["orders_comments"];
 		$this->status = $result[0]["status_name"];
-		$this->status_id = $result[0]["status_id"];
-        	
+		$this->status_id = $result[0]["status_id"]; 	
 	}
+	
 
 
 }

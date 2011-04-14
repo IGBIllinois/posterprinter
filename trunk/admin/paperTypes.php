@@ -6,14 +6,14 @@ $paperTypes = getPaperTypes($db);
 
 $paperTypes_html = "";
 
-for ($i=0;$i<count($paperTypes); $i++) {
+foreach ($paperTypes as $paperType) {
 	
 	$paperTypes_html .= "<tr>";
-	$paperTypes_html .= "<td><a href='editPaperType.php?paperTypeId=" . $paperTypes[$i]['paperTypes_id'] . "'>";
-	$paperTypes_html .= $paperTypes[$i]['paperTypes_name'] . "</a></td>";
-	$paperTypes_html .= "<td>$" . $paperTypes[$i]['paperTypes_cost'] . "</td>";
-	$paperTypes_html .= "<td>" . $paperTypes[$i]['paperTypes_width'] . "\"</td>";
-	if ($paperTypes[$i]['paperTypes_default'] == 1) {
+	$paperTypes_html .= "<td><a href='editPaperType.php?paperTypeId=" . $paperType['id'] . "'>";
+	$paperTypes_html .= $paperType['name'] . "</a></td>";
+	$paperTypes_html .= "<td>$" . $paperType['cost'] . "</td>";
+	$paperTypes_html .= "<td>" . $paperType['width'] . "\"</td>";
+	if ($paperType['paperTypes_default'] == 1) {
 		$paperTypes_html .= "<td>*</td></tr>";
 	}
 	else {

@@ -146,7 +146,46 @@ class statistics {
 		}
 		return $newOrdersData;
 	}
-	
+	public function avgOrdersPerMonth($year) {
+		$sql = "SELECT orders_timeCreated,COUNT(1) AS avg ";
+		$sql .= "FROM tbl_orders LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id ";
+		$sql .= "LEFT JOIN tbl_rushOrder ON tbl_orders.orders_rushOrderId=tbl_rushOrder.rushOrder_id ";
+		$sql .= "WHERE ";
+		$sql .= "status_name='Completed' ";
+		$sql .= "GROUP BY MONTH(orders_timeCreated)";
+		echo $sql;
+		$ordersData = $this->db->query($sql);
+		$newOrdersData;
+		for($i=1;$i<=12;$i++){
+			$exists = false;
+
+			if (count($ordersData) > 0) {
+				foreach($ordersData as $row) {
+					$timeCreated = strtotime($row['orders_timeCreated']);
+					$month = date('m',$timeCreated);
+
+					if ($month == $i) {
+						$monthName = date('F',$timeCreated);
+						$newOrdersData[$monthName] = $row['avg'];
+
+						$exists = true;
+						break(1);
+					}
+
+
+				}
+			}
+			if ($exists == false) {
+
+				$monthName = date('F',strtotime('2008-' . $i . '-01'));
+				$newOrdersData[$monthName] = 0;
+
+			}
+			$exists = false;
+
+		}
+		return $newOrdersData;
+	}
 	public function percentRushOrder() {
 		$sql = "SELECT tbl_rushOrder.rushOrder_name,COUNT(1) AS count ";
 		$sql .= "FROM tbl_orders LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id ";

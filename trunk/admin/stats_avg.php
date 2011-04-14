@@ -26,7 +26,7 @@ $stats = new statistics($db,$startDate,$endDate);
     </tr>
     <tr><td>Yearly Total:</td><td>$<?php echo $stats->pretty_cost(); ?></td></tr>
     <tr><td>Total Orders:</td><td><?php echo $stats->orders(); ?></td></tr>
-    <tr><td colspan='2'><img src='graphs/graph_avg.php?year=<?php echo $year; ?>' /></td></tr>
+    <tr><td colspan='2'><img src='graphs/graph_yearlyAvg.php?year=<?php echo $year; ?>' /></td></tr>
 </table>
 </center>
 

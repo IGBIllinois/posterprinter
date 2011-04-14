@@ -6,7 +6,10 @@ include_once 'db.class.inc.php';
 //returns array of all the enabled finish options.
 function getFinishOptions($db) {
 
-	$sql = "SELECT * FROM tbl_finishOptions ";
+	$sql = "SELECT finishOptions_id as id, finishOptions_name as name, ";
+	$sql .= "finishOptions_cost as cost, finishOptions_maxWidth as maxWidth, ";
+	$sql .= "finishOptions_maxLength as maxLength, finishOptions_default ";
+	$sql .= "FROM tbl_finishOptions ";
 	$sql .= "WHERE finishOptions_available=1 ";
 	$sql .= "ORDER BY finishOptions_name ASC";
 	return $db->query($sql);
@@ -41,15 +44,47 @@ function getValidFinishOptions($db,$width,$length) {
 //returns the new finish option id
 function addFinishOption($db,$name,$cost,$maxWidth,$maxLength,$default = 0) {
 
-	$available = 1;
+	$errors = 0;
+	$message = "";
+	if ($name == "") {
+		$message .= "<br><b class='error'>Pleae enter finish option name</b>";
+		$errors++;
+	}
+	if (($cost == "") || !eregi('^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$',$cost)) {
+		$message .= "<br><b class='error'>Please enter a valid cost</b>";
+		$errors++;
+	}
+	
+	if (($maxWidth == "") || ($maxWidth > max_printer_width) || !(eregi("^[0-9]{1,2}$", $maxWidth))) {
+		$message .= "<br><b class='error'>Please enter a valid Max Width. Maximum is " . max_printer_width . " inches</b>";
+		$errors++;
+	}
+	if (($maxLength == "") || !(eregi("^[0-9]{1,3}$", $maxLength))) {
+		$message .= "<br><b class='error'>Please enter a valid Max Length</b>";
+		$errors++;
+	}
+	
+	if ($errors == 0) {
+	
+		$available = 1;
         if ($default == 1) {
         	removeDefaultFinishOption($db);
-	}
-        else { $default = 0; }
+		}
+		else { $default = 0; }
         $sql = "INSERT INTO tbl_finishOptions(finishOptions_name,finishOptions_cost,finishOptions_maxWidth,finishOptions_maxLength,finishOptions_available,finishOptions_default)";
-	$sql .= "VALUES('" . $name . "','" . $cost . "','" . $maxWidth . "','" . $maxLength . "','" . $available . "','" . $default . "')";
-        return $db->insert_query($sql);
-
+        $sql .= "VALUES('" . $name . "','" . $cost . "','" . $maxWidth . "','" . $maxLength . "','" . $available . "','" . $default . "')";
+		$id = $db->insert_query($sql);
+		$message = "<br>Finish Option successfully added.";
+		return array ('RESULT'=>TRUE,
+					'ID'=>$id,
+					'MESSAGE'=>$message);
+	
+	}
+	else {
+		return array('RESULT'=>FALSE,
+					'MESSAGE'=>$message);
+		
+	}
 }
 
 //deleteFinishOption()
@@ -93,8 +128,14 @@ function setDefaultFinishOption($db,$finishOptionId) {
 //this function actually deletes the finish option then creates a new one.  If we really just
 //updated the finish option then calculating the cost for previous orders will be inconsistant.
 function updateFinishOption($db,$finishOptionId,$name,$cost,$maxWidth,$maxLength,$default) {
-	deleteFinishOption($db,$finishOptionId);
-	return addFinishOption($db,$name,$cost,$maxWidth,$maxLength,$default);
+	$result = addFinishOption($db,$name,$cost,$maxWidth,$maxLength,$default);
+	deleteFinishOption($db,$finishOptionId);	
+	$message = "<br>Finish Option successfully updated.";
+	if ($result['RESULT']) {
+		return array('RESULT'=>TRUE,
+					'MESSAGE'=>$message);
+	}
+	else { return $result; }
 }
 
 //getFinishOption()

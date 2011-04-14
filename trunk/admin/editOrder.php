@@ -76,20 +76,8 @@ if (isset($_POST['editOrder'])) {
 	
 		//Calculates Total Cost
 		$totalCost = ($posterLength * $paperTypeCost) + $finishOptionCost + $posterTubeCost + $rushOrderCost;
-		$editOrderSql = "UPDATE tbl_orders SET orders_cfop='" . $cfop . "', ";
-		$editOrderSql .= "orders_activityCode='" . $activityCode . "', ";
-		$editOrderSql .= "orders_width='" . $posterWidth . "', ";
-		$editOrderSql .= "orders_length='" . $posterLength . "', ";
-		$editOrderSql .= "orders_finishOptionsId='" . $finishOptionId . "', ";
-		$editOrderSql .= "orders_paperTypesId='" . $paperTypeId . "', ";
-		$editOrderSql .= "orders_posterTubeId='" . $posterTubeId . "', ";
-		$editOrderSql .= "orders_rushOrderId='" . $rushOrderId . "', ";
-		$editOrderSql .= "orders_widthSwitched='" . $widthSwitched . "', ";
-		$editOrderSql .= "orders_totalCost='" . $totalCost . "' ";
-		$editOrderSql .= "WHERE orders_id='" . $orderId . "' LIMIT 1 ";
-		//runs query and gets the order_id
-		$db->non_select_query($editOrderSql);
-	
+		$order = new order($db,$orderId);
+		$order->edit($cfop, $activityCode, $finishOptionId, $paperTypeId, $posterTubeId, $rushOrderId, $totalCost);
 		header("Location: orders.php?orderId=" . $orderId);
 	}
 

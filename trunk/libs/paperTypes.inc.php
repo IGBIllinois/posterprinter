@@ -40,15 +40,42 @@ function getValidPaperTypes($db,$width,$length) {
 //$width - integer - width of paper type in inches
 //$default - boolean - specifies if it will be the default selected paper type
 function addPaperType($db,$name,$cost,$width,$default = 0) {
-
-	$available = 1;	
+	$error = 0;
+	$message = "";
+	if ($name == "") {
+		$message .= "<br><b class='error'>Please enter finish option name</b>";
+		$errors++;
+	}
+	if (($cost == "") || !eregi('^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$',$cost)) {
+		$message .= "<br><b class='error'>Please enter a valid cost</b>";
+		$errors++;
+	}
+	
+	if (($width == "") || ($width > max_printer_width) || !(eregi("^[0-9]{1,2}$", $width))) {
+		$message .= "<br><b class='error'>Please enter a valid Width.  Maximum is " . max_printer_width . "</b>";
+		$errors++;
+	}
+	
+	if ($errors == 0) {
+		$available = 1;	
         if ($default == 1) {
         	removeDefaultPaperType($db);
+		}
+		else { $default = 0; }
+		$sql = "INSERT INTO tbl_paperTypes(paperTypes_name,paperTypes_cost,paperTypes_width,paperTypes_available,paperTypes_default) ";
+		$sql .= "VALUES('" . $name . "','" . $cost . "','" . $width . "','" . $available . "','" . $default . "')";
+        $id = $db->insert_query($sql);
+        $message = "Paper Type successfully added";
+        retrun array('RESULT'=>TRUE,
+        			'ID'=>$id,
+        			'MESSAGE'=>$message);
 	}
-	else { $default = 0; }
-	$sql = "INSERT INTO tbl_paperTypes(paperTypes_name,paperTypes_cost,paperTypes_width,paperTypes_available,paperTypes_default) ";
-	$sql .= "VALUES('" . $name . "','" . $cost . "','" . $width . "','" . $available . "','" . $default . "')";
-        return $db->insert_query($sql);
+	else {
+		return array('RESULT'=>FALSE,
+					'MESSAGE'=>$message);
+		
+	}
+	
 }
 
 //setDefaultPaperType()
@@ -73,8 +100,14 @@ function setDefaultPaperType($db,$paperTypeId) {
 //this functions marks the current paper type as inactive then creates a new one
 //this is done to keep consistancy in the database for the previous orders. 
 function updatePaperType($db,$paperTypeId,$name,$cost,$width,$default) {
+	$result = addPaperType($db,$name,$cost,$width,$default);
 	deletePaperType($db,$paperTypeId);
-	return addPaperType($db,$name,$cost,$width,$default);
+	$message = "<br>Paper Type successfully updated.";
+	if ($result['RESULT']) {
+		return array('RESULT'=>TRUE,
+					'MESSAGE'=>$message);
+	}
+	else { return $result; }
 }
 
 //deletePaperType()

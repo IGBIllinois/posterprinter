@@ -6,15 +6,15 @@ $finishOptions = getFinishOptions($db);
 
 $finishOptions_html = "";
 
-for ($i=0;$i<count($finishOptions); $i++) {
+foreach ($finishOptions as $finishOption) {
 	
 	$finishOptions_html .= "<tr>";
-	$finishOptions_html .= "<td><a href='editFinishOption.php?finishOptionId=" . $finishOptions[$i]['finishOptions_id'] . "'>";
-	$finishOptions_html .= $finishOptions[$i]['finishOptions_name'] . "</a></td>";
-	$finishOptions_html .= "<td>$" . $finishOptions[$i]['finishOptions_cost'] . "</td>";
-	$finishOptions_html .= "<td>" . $finishOptions[$i]['finishOptions_maxWidth'] . "\"</td>";
-	$finishOptions_html .= "<td>" . $finishOptions[$i]['finishOptions_maxLength'] . "\"</td>";
-	if ($finishOptions[$i]['finishOptions_default'] == 1) {
+	$finishOptions_html .= "<td><a href='editFinishOption.php?finishOptionId=" . $finishOption['id'] . "'>";
+	$finishOptions_html .= $finishOption['name'] . "</a></td>";
+	$finishOptions_html .= "<td>$" . $finishOption['cost'] . "</td>";
+	$finishOptions_html .= "<td>" . $finishOption['maxWidth'] . "\"</td>";
+	$finishOptions_html .= "<td>" . $finishOption['maxLength'] . "\"</td>";
+	if ($finishOption['finishOptions_default'] == 1) {
 		$finishOptions_html .= "<td>*</td></tr>";
 	}
 	else {
