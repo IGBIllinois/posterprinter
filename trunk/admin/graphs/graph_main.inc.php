@@ -9,6 +9,7 @@ include_once 'jpgraph_pie.php';
 include_once 'jpgraph_pie3d.php';
 include_once 'jpgraph_line.php';
 $db = new db(mysql_host,mysql_database,mysql_user,mysql_password);
+$theme_class = new SoftyTheme();
 
 
 

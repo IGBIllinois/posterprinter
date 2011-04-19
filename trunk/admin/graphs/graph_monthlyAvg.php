@@ -13,11 +13,10 @@ foreach($avgOrders as $value) {
 
 $graph = new Graph(600,500,"auto");
 $graph->SetScale("textlin");
+$graph->SetTheme($theme_class);
 $graph->yaxis->scale->SetGrace(20);
 $graph->SetMarginColor('#ffffff');
-$graph->title->Set("Yearly Averages");
-$graph->title->SetFont(FF_ARIAL,FS_BOLD,12);
-$graph->title->SetColor('#00000');
+
 $graph->SetFrame(false,'#ffffff');
 $graph->xaxis->SetTickLabels($data_x);
 $graph->xaxis->SetFont(FF_ARIAL,FS_NORMAL,10);
@@ -26,6 +25,7 @@ $graph->xaxis->SetLabelAngle('55');
 //Orders
 $avgOrders_plot = new LinePlot($avgOrders_y);
 $avgOrders_plot->SetLegend('Orders');
+
 $graph->Add($avgOrders_plot);
 //Legend
 $graph->legend->SetFont(FF_ARIAL,FS_NORMAL,8);

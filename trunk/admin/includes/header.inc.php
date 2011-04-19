@@ -27,7 +27,7 @@
 				<li><a href='stats_yearly.php'>Yearly Statistics</a></li>
 				<li><a href='stats_fiscal.php'>Fiscal Statistics</a></li>
 				<li><a href='stats_OrdersPerMonth.php'>Orders Per Month</a></li>
-				<li><a href='stats_avg.php'>Yearly Averages</a></li></a>
+				<li><a href='stats_avg.php'>Monthly Averages</a></li></a>
 				<li><a href='logout.php'>Log Out</a></li>
 				<li>Version <?php echo app_version; ?>
 			

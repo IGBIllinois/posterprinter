@@ -25,12 +25,7 @@ if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
 	}
 	
 	$graph = new PieGraph(500,300,"auto");
-	$theme_class = new AquaTheme();
 	$graph->SetTheme($theme_class);
-	$graph->SetMargin(40,80,30,200);
-	$graph->SetColor('#d3d1d2');
-	$graph->SetMarginColor('#ffffff');
-	$graph->SetFrame(false,'#d3d1d2');
 	$graph->title->Set("Paper Types");
 	$graph->title->SetFont(FF_ARIAL,FS_BOLD,12);
 	$graph->title->SetColor("#000000");

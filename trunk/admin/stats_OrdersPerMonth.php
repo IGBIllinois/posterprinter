@@ -7,7 +7,6 @@ include_once 'statistics.class.inc.php';
 if (isset($_GET['year'])) { $year = $_GET['year']; }
 else { $year = date('Y'); }
 
-
 $previousYear = $year -1;
 $nextYear =$year +1;
 $startDate = $year . "/01/01";
@@ -20,7 +19,7 @@ $stats = new statistics($db,$startDate,$endDate);
 <center>
 <table class='wide'>
 	<tr><td colspan='2' class='header_center'>Yearly Stats - <?php echo $year; ?></td></tr>
-    	<tr>
+    <tr>
     	<td class='nav_left'><a href='stats_OrdersPerMonth.php?year=<?php echo $previousYear; ?>'>Previous</a></td>
         <td class='nav_right'><a href='stats_OrdersPerMonth.php?year=<?php echo $nextYear;?>'>Next</a></td>
     </tr>
