@@ -41,7 +41,7 @@ $graphForm .= "</form>";
 
 
 <center>
-<table class='wide'>
+<table class='medium'>
 	<tr><td colspan='2' class='header_center'>Yearly Statistics - <?php echo $year; ?></td></tr>
     <tr>
     	<td class='nav_left'><a href='stats_yearly.php?year=<?php echo $previousYear; ?>'>Previous</a></td>
@@ -53,7 +53,7 @@ $graphForm .= "</form>";
     <tr><td>Poster Tube Percentage:</td><td><?php echo $stats->percentPosterTube(); ?>%</td></tr>
     <tr><td>Total Inches Printed:</td><td><?php echo $stats->totalInches(); ?>"</td></tr>
     <tr><td>Average Poster Cost:</td><td>$<?php echo $stats->averagePosterCost(); ?></td></tr>
-    <tr><td><?php echo $graphForm; ?></td></tr>
+    <tr><td colspan='2'><?php echo $graphForm; ?></td></tr>
     <tr>
     	<td colspan='2'><?php echo $graphImage; ?></td>
     </tr>

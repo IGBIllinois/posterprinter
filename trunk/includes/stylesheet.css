@@ -8,9 +8,9 @@ color:#333333;
 
 #container {
 margin: 0px auto;
-width: 850px;
-
+width: 800px;
 }
+
 /************** Header **************/
 #header{
 width:800px;
@@ -21,17 +21,20 @@ font-size:20px;
 }
 /******** Footer *************/
 #footer {
-width:748px;  
-border:1px solid #002F49;
+width:800px;  
+border-width:0px 0px 0px 0px; 
 background-color:#002F49;
-min-height:50px;
+height:50px;
+background-color:#B5B5B5;
+
+
 }
 
 /*********Global Settings **********/
 
 input {
-
-padding:0px; 
+padding-left:5px;
+padding-right:5px;
 margin:0px; 
 color:#004466;
 background-color:#dbeaf5;
@@ -48,19 +51,29 @@ width:48px;
 
 input[type="submit"] {
 width:110px;
+
 }
 
 input[type="submit"].wide {
 width:150px;
+
 }
 
-button {
-width:110px;
-padding:0px;
-margin:0px;
+input[type="button"] {
+min-width:110px;
 color:#004466;
 background-color:#dbeaf5;
 border:1px solid gray;
+	
+}
+button {
+width:110px;
+padding-left:5px;
+padding-right:5px;
+color:#004466;
+background-color:#dbeaf5;
+border:1px solid gray;
+
 }
 
 textarea {
@@ -94,11 +107,13 @@ margin-right: auto;
 
 }
 table.wide {
-width:600px;
+width:625px;
 
 }
 table.medium {
-width:450px;
+width:100%;
+margin-left: auto;
+margin-right: auto;
 
 }
 table.center {
@@ -110,7 +125,11 @@ background: none;
 }
 
 
-
+table td {
+padding-left: 10px;
+padding-right: 10px;
+	
+}
 table td.nav_right {
 background-color:#f4f4f4;
 padding:5px 20px 10px 5px;
@@ -130,6 +149,8 @@ border-style: solid;
 
 table td.right {
 text-align:right;
+
+
 }
 
 table td.left {
@@ -223,34 +244,34 @@ min-height:770px;
 /************Admin Pages**********************/
 #content_left {
 float:left;
-width: 160px;
+width: 148px;
 background-color:#e1e1e1;
-border-width:1px 1px 1px 1px; 
-border-style:solid; 
-border-color:gray;
-border-right-color:#31436A;
 font-family:Verdana, Arial, Helvetica, sans-serif;
 font-weight:600; 
-min-height:800px;
-padding-right: 20px;
+min-height:798px;
+height:100%;
+border-color:gray;
+border-style:solid;
+border-width:1px 1px 1px 1px;
 }
 
 #content_left ul {
 line-height:25px;
 list-style: none;
+padding-left:20px;
 }
 
 #content_center {
 float: left;
-width: 625px;
-background-color:#F2F4F3;
-padding:20px 10px 10px 15px; 
+width: 628px;
+background-color:#F2F4F3; 
 line-height: 16px;
 border-color:gray;
 border-style:solid;
-border-width:1px 1px 0px 1px;
+border-width:1px 1px 1px 1px;
 font-family:Arial, Helvetica, sans-serif;
-min-height:770px;
+min-height:778px;
+padding:10px;
 }
 
 

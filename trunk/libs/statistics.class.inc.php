@@ -156,9 +156,8 @@ class statistics {
 		$sql .= "GROUP BY MONTH(orders_timeCreated),YEAR(orders_timeCreated)) a ";
 		$sql .= "GROUP BY month ORDER BY month ASC";
 		return $this->db->query($sql);
-		
-
 	}
+	
 	public function percentRushOrder() {
 		$sql = "SELECT tbl_rushOrder.rushOrder_name,COUNT(1) AS count ";
 		$sql .= "FROM tbl_orders LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id ";

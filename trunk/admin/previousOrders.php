@@ -69,7 +69,7 @@ include_once 'includes/header.inc.php';
 </table>
 </form>
 <br />
-<table class='wide'>
+<table class='medium'>
 	<tr>
 		<td class='header_center'>Order Number</td>
 		<td class='header_center'>Email</td>

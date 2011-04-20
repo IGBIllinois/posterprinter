@@ -15,9 +15,6 @@ $graph = new Graph(600,500,"auto");
 $graph->SetScale("textlin");
 $graph->SetTheme($theme_class);
 $graph->yaxis->scale->SetGrace(20);
-$graph->SetMarginColor('#ffffff');
-
-$graph->SetFrame(false,'#ffffff');
 $graph->xaxis->SetTickLabels($data_x);
 $graph->xaxis->SetFont(FF_ARIAL,FS_NORMAL,10);
 $graph->xaxis->SetLabelAngle('55');

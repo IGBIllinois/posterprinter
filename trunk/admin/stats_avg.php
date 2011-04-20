@@ -5,7 +5,7 @@ include_once 'statistics.class.inc.php';
 
 ?>
 <center>
-<table class='wide'>
+<table class='medium'>
 	<tr><td class='header_center'>Monthly Averages</td></tr>
     
     <tr><td><img src='graphs/graph_monthlyAvg.php'/></td></tr>

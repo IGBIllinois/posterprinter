@@ -22,7 +22,7 @@ if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
 	}
 	
 	
-	$graph = new PieGraph(500,300,"auto");
+	$graph = new PieGraph(600,300,"auto");
 	$graph->SetTheme($theme_class);
 	$graph->SetShadow();
 	$graph->title->Set("Finish Options");

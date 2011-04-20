@@ -1,5 +1,8 @@
 </div>
-<div id='footer'>
+
+<div id="footer">
+&nbsp
+
 </div>
 </div>
 </body>

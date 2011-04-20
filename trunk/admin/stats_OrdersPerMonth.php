@@ -17,7 +17,7 @@ $stats = new statistics($db,$startDate,$endDate);
 
 ?>
 <center>
-<table class='wide'>
+<table class='medium'>
 	<tr><td colspan='2' class='header_center'>Yearly Stats - <?php echo $year; ?></td></tr>
     <tr>
     	<td class='nav_left'><a href='stats_OrdersPerMonth.php?year=<?php echo $previousYear; ?>'>Previous</a></td>

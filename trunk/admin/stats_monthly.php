@@ -66,7 +66,7 @@ $forwardUrl = $url . "?startDate=" . htmlspecialchars($nextStartDate,ENT_QUOTES)
 
 ?>
 <center>
-<table class='wide'>
+<table class='medium'>
 	<tr><td colspan='2' class='header_center'>Monthly Statistics - <?php echo $monthName . " " . $year; ?></td></tr>
     <tr>
     	<td class='nav_left'><a href='<?php echo $backUrl; ?>'>Previous</a></td>
@@ -79,7 +79,7 @@ $forwardUrl = $url . "?startDate=" . htmlspecialchars($nextStartDate,ENT_QUOTES)
     <tr><td>Poster Tube Percentage:</td><td><?php echo $stats->percentPosterTube(); ?>%</td></tr>
     <tr><td>Total Inches Printed:</td><td><?php echo $stats->totalInches(); ?>"</td></tr>
     <tr><td>Average Poster Cost:</td><td>$<?php echo $stats->averagePosterCost(); ?></td></tr>
-	<tr><td><?php echo $graphForm; ?></td></tr>
+	<tr><td colspan='2'><?php echo $graphForm; ?></td></tr>
   	<tr>
     	<td colspan='2'><?php echo $graphImage; ?></td>
     </tr>
