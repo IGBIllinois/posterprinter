@@ -23,7 +23,7 @@ $orders = getCurrentOrders($db);
 $orders_html = "";
 if (count($orders) == 0) {
 
-	$orders_html = "<tr><td>None</td><td></td></tr>";
+	$orders_html = "<tr><td colspan='5'>None</td></tr>";
 
 }
 else {
