@@ -41,7 +41,7 @@ class statistics {
 		$sql .= "LEFT JOIN tbl_paperTypes ON tbl_orders.orders_paperTypesId=tbl_paperTypes.paperTypes_id ";
 		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
 		$sql .= "AND status_name='Completed' ";
-		$sql .= "GROUP BY paperTypes_name";
+		$sql .= "GROUP BY paperTypes_name ORDER BY count DESC";
 		return $this->db->query($sql);
 
 	}
@@ -54,7 +54,7 @@ class statistics {
 		$sql .= "LEFT JOIN tbl_paperTypes ON tbl_orders.orders_paperTypesId=tbl_paperTypes.paperTypes_id ";
 		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
 		$sql .= "AND status_name='Completed' ";
-		$sql .= "GROUP BY paperTypes_name";
+		$sql .= "GROUP BY paperTypes_name ORDER BY totalLength DESC";
 		return $this->db->query($sql);
 
 	}
@@ -66,7 +66,7 @@ class statistics {
 		$sql .= "LEFT JOIN tbl_finishOptions ON tbl_orders.orders_finishOptionsId=tbl_finishOptions.finishOptions_id ";
 		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
 		$sql .= "AND status_name='Completed' ";
-		$sql .= "GROUP BY finishOptions_name";
+		$sql .= "GROUP BY finishOptions_name ORDER BY count DESC";
 		return $this->db->query($sql);
 
 	}
