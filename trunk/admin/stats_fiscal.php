@@ -64,7 +64,7 @@ $graphForm .= "</form>";
     <tr><td>Total Orders:</td><td><?php echo $stats->orders(); ?></td></tr>
     <tr><td>Rush Order Percentage:</td><td><?php echo $stats->percentRushOrder(); ?>%</td></tr>
     <tr><td>Poster Tube Percentage:</td><td><?php echo $stats->percentPosterTube(); ?>%</td></tr>
-    <tr><td>Total Inches Printed:</td><td><?php echo $stats->totalInches(); ?>"</td></tr>
+    <tr><td>Total Inches Printed:</td><td><?php echo $stats->pretty_totalInches(); ?>"</td></tr>
     <tr><td>Average Poster Cost:</td><td>$<?php echo $stats->averagePosterCost(); ?></td></tr>
     <tr><td colspan='2'><?php echo $graphForm; ?></td></tr>
     <tr>

@@ -96,6 +96,11 @@ class statistics {
 
 
 	}
+	
+	public function pretty_totalInches() {
+		return number_format($this->totalInches(),0);
+		
+	}
 	public function orders() {
 
 		$sql = "SELECT COUNT(1) As count ";
