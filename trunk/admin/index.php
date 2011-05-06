@@ -17,7 +17,7 @@ include_once 'includes/main.inc.php';
 include_once 'includes/header.inc.php';
 include_once 'orders.inc.php';
 
-//runs query and gets the order_id
+
 $orders = getCurrentOrders($db);
 
 $orders_html = "";
@@ -45,6 +45,8 @@ else {
 	
 	}
 }
+
+
 ?>
 
 

@@ -10,7 +10,8 @@ function create_excel_2003_report($data,$filename) {
 	$excel_file = create_generic_excel($data);
 	header('Content-Type: application/vnd.ms-excel');
 	header("Content-Disposition: attachment;filename=" . $filename);
-	header('Cache-Control: max-age=0');
+	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+	header('Pragma: public');
 	$writer = PHPExcel_IOFactory::createWriter($excel_file,'Excel5');
 	$writer->save('php://output');
 
@@ -25,7 +26,8 @@ function create_excel_2007_report($data,$filename) {
 	$excel_file = create_generic_excel($data);
 	header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 	header("Content-Disposition: attachment;filename=" . $filename);
-	header('Cache-Control: max-age=0');
+	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+	header('Pragma: public');
 	$writer = PHPExcel_IOFactory::createWriter($excel_file,'Excel2007');
 	$writer->save('php://output');
 
@@ -108,4 +110,22 @@ function create_csv_report($data,$filename) {
 function get_filename($month,$year,$ext) {
 	return "PosterReport-" . $month . "-" . $year . "." . $ext;
 }
+
+//sys_get_temp_dir()
+//If PHP version < 5.2.1 then this function is needed.
+//From http://php.net/manual/en/function.sys-get-temp-dir.php
+if ( !function_exists('sys_get_temp_dir')) {
+	function sys_get_temp_dir() {
+		if (!empty($_ENV['TMP'])) { return realpath($_ENV['TMP']); }
+		if (!empty($_ENV['TMPDIR'])) { return realpath( $_ENV['TMPDIR']); }
+		if (!empty($_ENV['TEMP'])) { return realpath( $_ENV['TEMP']); }
+		$tempfile=tempnam(uniqid(rand(),TRUE),'');
+		if (file_exists($tempfile)) {
+			unlink($tempfile);
+			return realpath(dirname($tempfile));
+		}
+	}
+}
+
+
 ?>
