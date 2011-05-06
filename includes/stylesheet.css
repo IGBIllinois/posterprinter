@@ -238,6 +238,12 @@ min-height:770px;
 
 }
 
+#login_page input[type="text"] {
+width: 120px;
+}
+#login_page input[type="password"] {
+width: 120px;
+}
 
 
 

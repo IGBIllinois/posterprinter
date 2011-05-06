@@ -28,8 +28,9 @@ function getCurrentOrders($db) {
 	$sql .= "LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id ";
 	$sql .= "LEFT JOIN tbl_rushOrder ON tbl_orders.orders_rushOrderId=tbl_rushOrder.rushOrder_id ";
 	$sql .= "WHERE NOT (status_name='Completed' OR status_name='Cancel') ";
-	$sql .= "ORDER BY orders_id ASC";
+	$sql .= "ORDER BY orders_id ASC";	
 	return $db->query($sql);
+
 
 }
 
