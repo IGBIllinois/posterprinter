@@ -12,11 +12,10 @@ if (isset($_POST['addFinishOption'])) {
 	$default = $_POST['default'];
 	$errors = 0;
 	
-
+	
 	$result = addFinishOption($db,$name,$cost,$maxWidth,$maxLength,$default);
 	if ($result['RESULT']) { header('Location: finishOptions.php'); }
 	
-
 }
 
 include_once 'includes/header.inc.php';
