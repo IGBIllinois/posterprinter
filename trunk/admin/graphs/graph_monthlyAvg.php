@@ -22,7 +22,6 @@ $graph->xaxis->SetLabelAngle('55');
 //Orders
 $avgOrders_plot = new LinePlot($avgOrders_y);
 $avgOrders_plot->SetLegend('Orders');
-
 $graph->Add($avgOrders_plot);
 //Legend
 $graph->legend->SetFont(FF_ARIAL,FS_NORMAL,8);

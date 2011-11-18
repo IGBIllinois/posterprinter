@@ -25,7 +25,7 @@ define("mysql_database","posterprinter");
 //define("mysql_database","posterprinter");
 define("max_printer_width",44);
 define("poster_dir","posterfiles");
-define("ldap_host",'authen.igb.uiuc.edu');
+define("ldap_host",'auth.igb.uiuc.edu');
 define("ldap_base_dn","dc=igb,dc=uiuc,dc=edu");
 define("ldap_people_ou","ou=people,dc=igb,dc=uiuc,dc=edu");
 define("ldap_group_ou","ou=group,dc=igb,dc=uiuc,dc=edu");
