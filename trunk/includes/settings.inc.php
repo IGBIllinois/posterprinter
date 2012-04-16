@@ -12,7 +12,7 @@
 ////////////////////////////////////////////////
 
 define("enable",TRUE);
-define("app_version","1.1.5");
+define("app_version","1.1.6");
 //define("admin_email","dslater@igb.uiuc.edu");
 define("admin_email","posterorders@igb.uiuc.edu");
 define("mysql_host","127.0.0.1");

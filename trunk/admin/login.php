@@ -41,7 +41,7 @@ if (isset($_POST['login'])) {
 		//header("Location: http://" . $_SERVER['SERVER_NAME'] . $webpage);
 		header("Location: " . $webpage);
 	}
-	elseif ($success != "1") {
+	else {
 	
 		$login_msg = "<b class='error'>Invalid Login</b><br />";
 	
