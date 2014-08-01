@@ -48,7 +48,11 @@ function getOrdersReport($db,$month,$year) {
 	$sql .= "tbl_orders.orders_totalCost as 'Cost' "; 
 	$sql .= "FROM tbl_orders LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id ";
 	$sql .= "LEFT JOIN tbl_paperTypes ON tbl_orders.orders_paperTypesId=tbl_paperTypes.paperTypes_id ";
-	$sql .= "LEFT JOIN tbl_finishOptions ON tbl_orders.orders_finishOptionsId=tbl_finishOptions.finishOptions_id "; 
+        $sql .= "tbl_paperTypes.paperTypes_cost as 'Cost per Inch', ";
+	$sql .= "LEFT JOIN tbl_finishOptions ON tbl_orders.orders_finishOptionsId=tbl_finishOptions.finishOptions_id ";
+        $sql .= "tbl_finishoptions.finishoption_cost as 'Cost from Finish Options', ";
+        $sql .= "tbl_rushOrder.rushOrder_cost as 'Cost from Rush Order', ";
+        $sql .= "tbl_posterTube.posterTube_cost as 'Cost from Poster Tube', ";
 	$sql .= "WHERE (YEAR(orders_timeCreated)='" . $year . "' AND month(orders_timeCreated)='" . $month . "') ";
 	$sql .= "AND status_name='Completed' ";
 	$sql .= "ORDER BY orders_id ASC";
