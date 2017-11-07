@@ -36,37 +36,43 @@ class db {
 
 	//open()
 	//$host - hostname
+	//$port - mysql port
 	//$database - name of the database
 	//$username - username to connect to the database with
 	//$password - password of the username
+	//$port - mysql port, defaults to 3306
 	//opens a connect to the database
-	public function open($host,$database,$username,$password) {
+	public function open($host,$database,$username,$password,$port = 3306) {
 		//Connects to database.
-		$this->link = mysql_connect($host,$username,$password);
-		@mysql_select_db($database,$this->link) or die("Unable to select database " . $database);
-		$this->host = $host;
-		$this->database = $database;
-		$this->username = $username;
-		$this->password = $password;
+		try {
+			$this->link = new PDO("mysql:host=$host;dbname=$database",$username,$password,
+					array(PDO::ATTR_PERSISTENT => true));
+			$this->host = $host;
+			$this->database = $database;
+			$this->username = $username;
+			$this->password = $password;
+		}
+		catch(PDOException $e) {
+			echo $e->getMessage();
+		}
 
 	}
 
 	//close()
 	//closes database connection
 	public function close() {
-		mysql_close($this->link);
+		$this->link = null;
 	}
 
 	//insert_query()
 	//$sql - sql string to run on the database
 	//returns the id number of the new record, 0 if it fails
 	public function insert_query($sql) {
-		if (mysql_query($sql,$this->link)) {
-			return mysql_insert_id($this->link);
+
+		$result = $this->link->exec($sql);
+		if ($result === false) {
 		}
-		else {
-			return 0;
-		}
+		return $this->link->lastInsertId();
 
 	}
 
@@ -75,34 +81,49 @@ class db {
 	//$data - associative array with index being the column and value the data.
 	//returns the id number of the new record, 0 if it fails
 	public function build_insert($table,$data) {
-		$sql = "INSERT INTO " . $table;
-		$values_sql = "VALUES(";
-		$columns_sql = "(";
-		$count = 0;
-		foreach ($data as $key=>$value) {
-			if ($count == 0) {
-				$columns_sql .= $key;
-				$values_sql .= "'" . mysql_real_escape_string($value,$this->get_link()) . "'";
-			}
-			else {
-				$columns_sql .= "," . $key;
-				$values_sql .= ",'" . mysql_real_escape_string($value,$this->get_link()) . "'";
+		try {
+			$sql = "INSERT INTO " . $table;
+			$values_sql = "VALUES(";
+			$columns_sql = "(";
+			$count = count($data);
+			$i = 1;
+			foreach ($data as $key=>$value) {
+				if ($i == $count) {
+					$columns_sql .= $key;
+					$values_sql .= ":" . $key . " ";
+				}
+				else {
+					$columns_sql .= $key . ","; 
+					$values_sql .= " :" . $key . ", ";
+				}
+	
+				$i++;
 			}
 
-			$count++;
+			$values_sql .= ")";
+			$columns_sql .= ")";
+			$sql = $sql . $columns_sql . " " . $values_sql;
+			$statement = $this->link->prepare($sql);
+			foreach ($data as $key=>$value) {
+				$statement->bindValue(":" . $key,$value);
+			}
+			$result = $statement->execute();
+			return $this->link->lastInsertId();
 		}
-		$values_sql .= ")";
-		$columns_sql .= ")";
-		$sql = $sql . $columns_sql . " " . $values_sql;
-		return $this->insert_query($sql);
+		catch(PDOException $e) {
+                        echo "<br>Error: " . $e->getMessage();
+			var_dump($e);
+                }
+
 	}
-	
+
 	//non_select_query()
 	//$sql - sql string to run on the database
 	//For update and delete queries
 	//returns true on success, false otherwise
 	public function non_select_query($sql) {
-		return mysql_query($sql,$this->link);
+		$result = $this->link->exec($sql);
+		return $result;
 	}
 
 	//query()
@@ -110,43 +131,65 @@ class db {
 	//Used for SELECT queries
 	//returns an associative array of the select query results.
 	public function query($sql) {
-		$result = mysql_query($sql,$this->link);
-		return $this->mysqlToArray($result);
+		$result = $this->link->query($sql);
+		return $result->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	//query_single()
-	//$sql - sql string to run on the database
-	//$row - row to retrieve
-	//$field - column to retrieve
-	//returns a single value from the specified row and field.
-	public function query_single($sql,$row,$field) {
-		$result = mysql_query($sql,$this->link);
-		return mysql_result($result,$row,$field);
-		
-	}
 	//getLink
 	//returns the mysql resource link
 	public function get_link() {
 		return $this->link;
 	}
 
-	/////////////////Private Functions///////////////////
-
-	//mysqlToArray
-	//$mysqlResult - a mysql result
-	//returns an associative array of the mysql result.
-	private function mysqlToArray($mysqlResult) {
-		$dataArray = array();
-		$i =0;
-		while($row = mysql_fetch_array($mysqlResult,MYSQL_ASSOC)){
-			foreach($row as $key=>$data) {
-				$dataArray[$i][$key] = $data;
-			}
-			$i++;
+	//ping
+	//pings the mysql server to see if connection is alive
+	//returns true if alive, false otherwise
+	public function ping() {
+		if ($this->link->getAttribute(PDO::ATTR_CONNECTION_STATUS)) {
+			return true;
 		}
-		return $dataArray;
-	}
-	
-}
+		return false;
 
+	}
+
+	public function transaction($sql) {
+		$this->link->beginTransaction();
+		$result = $this->link->exec($sql);
+		$this->link->commit();
+		return $result;
+
+	}
+
+	public function update($table,$data,$where_key,$where_value) {
+		try {
+	
+			$sql = "UPDATE `" . $table . "` SET ";
+			
+			$count = count($data);
+			$i = 1;
+	                foreach ($data as $key=>$value) {
+				if ($i == $count) {
+					$sql .= $key . "= :" . $key . " ";;
+                        	}
+	                        else {
+					$sql .= $key . "= :" . $key . ", ";
+                	        }
+
+                        	$i++;
+	                }
+			$sql .= "WHERE " . $where_key . "='" . $where_value . "' LIMIT 1";
+			$statement = $this->link->prepare($sql);
+			foreach ($data as $key=>$value) {
+				$statement->bindValue(":" . $key,$value);
+			}
+			$result = $statement->execute();
+			return $result;
+		}
+		catch(PDOException $e) {
+			echo "<br>Error: " . $e->getMessage();
+		}
+
+
+	}
+}
 ?>

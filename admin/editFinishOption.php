@@ -1,6 +1,7 @@
 <?php
-include_once 'includes/main.inc.php';
-include_once 'finishOptions.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'includes/session.inc.php';
+require_once 'finishOptions.inc.php';
 
 	
 if (isset($_POST['removeFinishOption'])) {
@@ -42,7 +43,7 @@ elseif (isset($_GET['finishOptionId'])) {
 include 'includes/header.inc.php';
 ?>
 
-<script language="JavaScript">
+<script>
 function confirmDelete()
 {
 var agree=confirm("Are you sure you wish to delete?");
@@ -72,31 +73,32 @@ else
 <form method='post' action='editFinishOption.php?finishOptioinId=<?php echo $finishOptionId; ?>'>
 <input type='hidden' name='finishOptionId' value='<?php echo $finishOptionId; ?>' />
 <input type='hidden' name='default' value='<?php echo $default; ?>' />
-<table>
-	<tr><td colspan='2' class='header'>Edit Finish Option</td></tr>
+<table class='table table-bordered table-condensed'>
+	<tr><th colspan='2'>Edit Finish Option</th></tr>
 	<tr>
-		<td class='right'>Name:</td>
-		<td class='left'><input type='text' name='name' value='<?php echo $name; ?>' maxlength='40'/> </td>
+		<td class='text-right'>Name:</td>
+		<td><div class='input-group col-md-6'><input class='form-control' type='text' name='name' value='<?php echo $name; ?>' maxlength='40'/></div></td>
 	</tr>
 	<tr>
-		<td class='right'>Cost:</td>
-		<td class='left'><input type='text' name='cost' value='<?php echo $cost; ?>' / size='6'> </td>
+		<td class='text-right'>Cost:</td>
+		<td><div class='input-group col-xs-3'><span class='input-group-addon'>$</span><input class='form-control' type='text' name='cost' value='<?php echo $cost; ?>' size='6'></div></td>
 	</tr>
 	<tr>
-		<td class='right'>Max Width:</td>
-		<td class='left'><input type='text' name='maxWidth' value='<?php echo $maxWidth; ?>' / maxlength='2' size='3'>"</td>
+		<td class='text-right'>Max Width:</td>
+		<td><div class='input-group col-xs-3'><input class='form-control' type='text' name='maxWidth' value='<?php echo $maxWidth; ?>' maxlength='2' size='3'><span class='input-group-addon'>Inches</span></div></td>
 	</tr>
 	<tr>
-		<td class='right'>Max Length:</td>
-		<td class='left'><input type='text' name='maxLength' value='<?php echo $maxLength; ?>' / maxlength='3' size='3'>" </td>
+		<td class='text-right'>Max Length:</td>
+		<td><div class='input-group col-xs-3'><input class='form-control' type='text' name='maxLength' value='<?php echo $maxLength; ?>' maxlength='3' size='3'><span class='input-group-addon'>Inches</span></div></td>
 	</tr>
 	</table>
 	
-	<br /><input class='wide' type='submit' name='editFinishOption' value='Update Finish Option' onClick='return confirmUpdate()'/>
+	<br>
+	<button class='btn btn-primary' type='submit' name='editFinishOption' onClick='return confirmUpdate()'>Update Finish Option</button> 
 	<?php 
 	if ($default==0) { 
-		echo "<br><br /><input class='wide' type='submit' name='makeDefault' value='Make Default' onClick='return confirmDefault()'>";
-		echo "<br><br /><input class='wide' type='submit' name='removeFinishOption' value='Remove Finish Option' onClick='return confirmDelete()'>"; 
+		echo "<button class='btn btn-warning' type='submit' name='makeDefault' onClick='return confirmDefault()'>Make Default</button> ";
+		echo "<button class='btn btn-danger' type='submit' name='removeFinishOption' onClick='return confirmDelete()'>Remove Finish Option</button>"; 
 	} 
 	?>
 </form>
@@ -107,4 +109,4 @@ else
 	
  
 ?>
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php require_once 'includes/footer.inc.php'; ?>

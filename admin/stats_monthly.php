@@ -1,7 +1,7 @@
 <?php
-include_once 'includes/main.inc.php';
-include_once 'includes/header.inc.php';
-include_once 'statistics.class.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'includes/session.inc.php';
+require_once 'includes/header.inc.php';
 
 
 if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
@@ -46,7 +46,7 @@ else {
 }
 
 $graphForm = "<form name='selectGraph' id='selectGraph' method='post' action='stats_monthly.php?startDate=" . $startDate . "&endDate=" . $endDate . "'>";
-$graphForm .= "<select name='graphType' onChange='document.selectGraph.submit();'>";
+$graphForm .= "<select class='form-control' name='graphType' onChange='document.selectGraph.submit();'>";
 
 if ($graphType == "finishOptions") { $graphForm .= "<option value='finishOptions' selected>Finish Options</option>"; }
 else { $graphForm .= "<option value='finishOptions'>Finish Options</option>"; }
@@ -65,14 +65,25 @@ $backUrl = $url . "?startDate=" . htmlspecialchars($previousStartDate,ENT_QUOTES
 $forwardUrl = $url . "?startDate=" . htmlspecialchars($nextStartDate,ENT_QUOTES) . "&endDate=" . htmlspecialchars($nextEndDate,ENT_QUOTES);
 
 ?>
-<center>
-<table class='medium'>
-	<tr><td colspan='2' class='header_center'>Monthly Statistics - <?php echo $monthName . " " . $year; ?></td></tr>
-    <tr>
-    	<td class='nav_left'><a href='<?php echo $backUrl; ?>'>Previous</a></td>
-        
-        <td class='nav_right'><a href='<?php echo $forwardUrl; ?>'>Next</a></td>
-    </tr>
+<h3>Monthly Statistics - <?php echo $monthName . " " . $year; ?></h3>
+<hr>
+<ul class='pager'>
+<li class='previous'><a href='<?php echo $backUrl; ?>'>Previous</a></li>
+<?php
+	$next_month = strtotime('+1 day', strtotime($endDate));
+	$today = mktime(0,0,0,date('m'),date('d'),date('y'));
+	if ($next_month > $today) {
+		echo "<li class='next disabled'><a href='#'>Next</a></li>";
+	}
+	else {
+		echo "<li class='next'><a href='" . $forwardUrl . "'>Next</a></li>";
+	}
+?>
+
+</ul>
+
+<table class='table table-bordered table-condensed table-striped'>
+
   	<tr><td>Monthly Total:</td><td>$<?php echo $stats->pretty_cost(); ?></td></tr>
     <tr><td>Total Orders:</td><td><?php echo $stats->orders(); ?></td></tr>
     <tr><td>Rush Order Percentage:</td><td><?php echo $stats->percentRushOrder(); ?>%</td></tr>
@@ -84,6 +95,5 @@ $forwardUrl = $url . "?startDate=" . htmlspecialchars($nextStartDate,ENT_QUOTES)
     	<td colspan='2'><?php echo $graphImage; ?></td>
     </tr>
 </table>
-</center>
 
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php require_once 'includes/footer.inc.php'; ?>

@@ -1,6 +1,7 @@
 <?php
-include_once 'includes/main.inc.php';
-include_once 'paperTypes.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'includes/session.inc.php';
+require_once 'paperTypes.inc.php';
 
 
 if (isset($_POST['removePaperType'])) {
@@ -40,7 +41,7 @@ elseif (isset($_GET['paperTypeId'])) {
 include 'includes/header.inc.php';
 ?>
 
-<script language="JavaScript">
+<script>
 function confirmDelete()
 {
 var agree=confirm("Are you sure you wish to delete?");
@@ -70,26 +71,26 @@ else
 <form method='post' action='editPaperType.php?paperTypeId=<?php echo $paperTypeId; ?>'>
 <input type='hidden' name='paperTypeId' value='<?php echo $paperTypeId; ?>' />
 <input type='hidden' name='default' value='<?php echo $default; ?>' />
-<table>
-	<tr><td colspan='2' class='header'>Edit Paper Type</td></tr>
+<table class='table table-bordered table-condensed'>
+	<tr><th colspan='2'>Edit Paper Type</th></tr>
 	<tr>
-		<td class='right'>Name:</td>
-		<td class='left'><input type='text' name='name' value='<?php echo $name; ?>' maxlength='40'/> </td>
+		<td class='text-right vcenter'>Name:</td>
+		<td><div class='input-group col-md-6'><input class='form-control' type='text' name='name' value='<?php echo $name; ?>' maxlength='40'></div></td>
 	</tr>
 	<tr>
-		<td class='right'>Cost per Inch:</td>
-		<td class='left'><input type='text' name='cost' value='<?php echo $cost; ?>' / size='6'> </td>
+		<td class='text-right'>Cost per Inch:</td>
+		<td><div class='input-group col-md-3'><span class='input-group-addon'>$</span><input class='form-control' type='text' name='cost' value='<?php echo $cost; ?>' / size='6'></div></td>
 	</tr>
 	<tr>
-		<td class='right'>Width:</td>
-		<td class='left'><input type='text' name='width' value='<?php echo $width; ?>' / maxlength='2' size='3'>" </td>
+		<td class='text-right'>Width:</td>
+		<td><div class='input-group col-md-3'><input class='form-control' type='text' name='width' value='<?php echo $width; ?>' / maxlength='2' size='3'><span class='input-group-addon'>Inches</span></div> </td>
 	</tr>
 	</table>
-	<br /><input class='wide' type='submit' name='editPaperType' value='Update Paper Type' onClick='return confirmUpdate()'/>
+	<br><input class='btn btn-primary' type='submit' name='editPaperType' value='Update Paper Type' onClick='return confirmUpdate()'>
 	<?php 
 	if ($default==0) { 
-		echo "<br><br><input class='wide' type='submit' name='makeDefault' value='Make Default' onClick='return confirmDefault()'>";  
-		echo "<br><br><input class='wide' type='submit' name='removePaperType' value='Remove Paper Type' onClick='return confirmDelete()'>"; 
+		echo "<input class='btn btn-warning' type='submit' name='makeDefault' value='Make Default' onClick='return confirmDefault()'> ";  
+		echo "<input class='btn btn-danger' type='submit' name='removePaperType' value='Remove Paper Type' onClick='return confirmDelete()'>"; 
 	} 
 	?>
 </form>
@@ -97,4 +98,4 @@ else
 <?php 
 
 	if (isset($result['MESSAGE'])){echo $result['MESSAGE']; }
-	include_once 'includes/footer.inc.php'; ?>
+	require_once 'includes/footer.inc.php'; ?>

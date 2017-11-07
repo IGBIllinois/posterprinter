@@ -1,16 +1,26 @@
 <?php
-include_once '../../includes/settings.inc.php';
-set_include_path(get_include_path() . ':../../libs');
-include_once 'db.class.inc.php';
-include_once 'statistics.class.inc.php';
-include_once 'jpgraph.php';
-include_once 'jpgraph_bar.php';
-include_once 'jpgraph_pie.php';
-include_once 'jpgraph_pie3d.php';
-include_once 'jpgraph_line.php';
+
+require_once '../../includes/settings.inc.php';
+
+$include_paths = array('../../libs',
+                '../../includes/jpgraph-3.5.0b1/src',
+                '../../includes/PHPExcel_1.8.0/Classes');
+
+set_include_path(get_include_path() . ":" . implode(':',$include_paths));
+function my_autoloader($class_name) {
+        if(file_exists("../../libs/" . $class_name . ".class.inc.php")) {
+                require_once $class_name . '.class.inc.php';
+        }
+}
+
+spl_autoload_register('my_autoloader');
+
+
 $db = new db(mysql_host,mysql_database,mysql_user,mysql_password);
-$theme_class = new SoftyTheme();
 
-
-
+require_once 'jpgraph.php';
+require_once 'jpgraph_bar.php';
+require_once 'jpgraph_pie.php';
+require_once 'jpgraph_pie3d.php';
+require_once 'jpgraph_line.php';
 ?>

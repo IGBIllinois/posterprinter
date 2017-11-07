@@ -1,5 +1,4 @@
 <?php
-include_once 'db.class.inc.php';
 
 //getPaperTypes()
 //$db - database object
@@ -28,7 +27,7 @@ function getValidPaperTypes($db,$width,$length) {
 	$sql .= "FROM tbl_paperTypes ";
 	$sql .= "WHERE paperTypes_available='1' ";
 	$sql .= "AND (paperTypes_width>='" . $width  . "' OR paperTypes_width>='" . $length . "') ";
-	$sql .= "ORDER BY paperTypes_name ASC";;
+	$sql .= "ORDER BY paperTypes_cost ASC";;
 	return $db->query($sql);
 
 }
@@ -46,7 +45,7 @@ function addPaperType($db,$name,$cost,$width,$default = 0) {
 		$message .= "<br><b class='error'>Please enter finish option name</b>";
 		$errors++;
 	}
-	if (($cost == "") || !eregi('^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$',$cost)) {
+	if (!verify::verify_cost($cost)) {
 		$message .= "<br><b class='error'>Please enter a valid cost</b>";
 		$errors++;
 	}

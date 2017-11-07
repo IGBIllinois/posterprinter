@@ -1,20 +1,20 @@
 <?php
-//////////////////////////////////////////////////////////////////////////////
-//																			//
-//	Poster Printer Order Submission											//
-//	download.php															//
-//																			//
-//	Downloads the poster file that is to be printed							//
-//																			//
-//	David Slater															//
-//	April 2007																//
-//																			//
+////////////////////////////////////////////////////////////////////////////
+//
+//	Poster Printer Order Submission
+//	download.php
+//
+//	Downloads the poster file that is to be printed
+//
+//	David Slater
+//	April 2007
+//
 //////////////////////////////////////////////////////////////////////////////
 
 //Include files for the script to run
 
-include_once 'includes/main.inc.php';
-include_once 'order.class.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'includes/session.inc.php';
 
 if (isset($_GET['orderId'])) {
 

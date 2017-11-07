@@ -1,196 +1,3 @@
-function validateStep1() {
-	var frm = document.forms["posterInfo"];
-	var width = frm.posterWidth.value;
-	var length = frm.posterLength.value;
-	var maxPrinterWidth = frm.maxPrinterWidth.value;
-	return validateDimensions(width,length,maxPrinterWidth);
-
-}
-
-function validateStep2() {
-	var frm = document.forms["posterInfo"];
-	var cfop1 = frm.cfop1.value;
-	var cfop2 = frm.cfop2.value;
-	var cfop3 = frm.cfop3.value;
-	var cfop4 = frm.cfop4.value;
-	var cfop = cfop1 + "-" + cfop2 + "-" + cfop3 + "-" + cfop4;
-	var activityCode = frm.activityCode.value;
-	var posterFile = frm.posterFile.value;
-	var email = frm.email.value;
-	var name = frm.name.value;
-	var valid = true;
-	
-	if (validateCFOP(cfop) == false) 
-		valid = false;
-	if (validateActivityCode(activityCode) == false)
-		valid = false;
-	if (validatePaperTypes() == false)
-		valid = false;
-	if (validateFinishOptions() == false)
-		valid = false;
-	if (validatePosterFile(posterFile) == false)
-		valid = false;
-	if (validateEmail(email) == false)
-		valid = false;
-	if (validateName(name) == false)
-		valid = false;
-	return valid;
-}
-
-function validateDimensions(width,length,maxPrinterWidth) {
-	var widthValid;
-	var lengthValid;
-	
-	if ((width == "") || (width % 1 != 0) || (width <= 0)){
-		document.getElementById('widthWarning').innerHTML = "Please enter a valid poster width.";
-		widthValid = false;
-	}
-	else if ((width > maxPrinterWidth) && (length > maxPrinterWidth)) {
-		document.getElementById('widthWarning').innerHTML = "Width can't be greater than " + maxPrinterWidth + " inches";
-		widthValid = false;
-	}
-	else {
-		document.getElementById('widthWarning').innerHTML = "&nbsp";
-		widthValid = true;
-	}
-	
-	if ((length == "") || (length % 1 != 0) || (length <=0)){
-		document.getElementById('lengthWarning').innerHTML = "Please enter a valid poster length.";
-		lengthValid = false;
-	}
-	else if (length > 200) {
-		document.getElementById('lengthWarning').innerHTML = "Length can't be greater than 200 inches.";
-		lengthValid = false;
-	}
-	else {
-		document.getElementById('lengthWarning').innerHTML = "&nbsp";
-		lengthValid = true;
-	}
-	
-	if ((widthValid == true) && (lengthValid == true)) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
-function validateCFOP(cfop) {
-	var cfopRegex = /^1-\d{6}-\d{6}-\d{6}$/;
-	if (cfop == "") {
-		document.getElementById('cfopWarning').innerHTML = "Please enter a valid CFOP number.";
-		return false;
-	}
-	else if (!cfop.match(cfopRegex)) {
-		document.getElementById('cfopWarning').innerHTML = "Please enter a valid CFOP number.";
-		return false;
-	}
-	else {
-		document.getElementById('cfopWarning').innerHTML = "&nbsp";
-		return true;
-	}
-}
-
-function validateActivityCode(activityCode) {
-	var activityCodeRegex = /^[a-zA-Z0-9]{6}/;
-	if ((activityCode != "") && (!activityCode.match(activityCodeRegex))) {
-		document.getElementById('activityCodeWarning').innerHTML = "Please enter a valid activity code.";
-		return false;
-	}
-	else {
-		document.getElementById('activityCodeWarning').innerHTML = "&nbsp";
-		return true;
-	}
-	
-	
-}
-function validatePaperTypes() {
-	var frm = document.forms["posterInfo"];
-	var length;
-	if (IsNumeric(frm.paperTypesId.length)) {
-		length = frm.paperTypesId.length
-	        for (i=0;i <= length; i++) {
-        	        if (frm.paperTypesId[i].checked) {
-                	        document.getElementById('paperTypesWarning').innerHTML = "&nbsp";
-                        	return true;
-	                }
-        	}
-	}
-
-	else {
-		if (frm.paperTypesId.checked) {
-			document.getElementById('paperTypesWarning').innerHTML = "&nbsp";
-			return true;
-		}
-	}
-	document.getElementById('paperTypesWarning').innerHTML = "Please select a Paper Type.";
-	return false;
-	
-}
-
-function validateFinishOptions() {
-	var frm = document.forms["posterInfo"];
-	var length;
-	if (IsNumeric(frm.finishOptionsId.length)) {
-		length = frm.finishOptionsId.length
-		for (i=0;i <= length; i++) {
-        	        if (frm.finishOptionsId[i].checked) {
-                	        document.getElementById('finishOptionsWarning').innerHTML = "&nbsp";
-                        	return true;
-                	}
-        	}
-	}
-	else {
-		if (frm.finishOptionsId.checked) {
-			document.getElementById('finishOptionsWarning').innerHTML = "&nbsp";
-			return true;
-		}
-	}
-	document.getElementById('finishOptionsWarning').innerHTML = "Please select a Finish Option.";
-	return false;
-	
-}
-
-function validatePosterFile(posterFile) {
-	if (posterFile.length == 0){
-		document.getElementById('posterFileWarning').innerHTML = "Please select a poster file.";
-		return false;
-	}
-	else {
-		document.getElementById('posterFileWarning').innerHTML = "&nbsp";
-		return true;
-	}
-}
-
-function validateEmail(email) {
-	var emailRegex = /^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/;
-	if (!email.match(emailRegex)) {
-		document.getElementById('emailWarning').innerHTML = "Please enter your email.";
-		return false;
-	}
-	else {
-		document.getElementById('emailWarning').innerHTML = "&nbsp";
-		return true;
-	}
-}
-
-function validateName(name) {
-	if (name != "" && name != " ") {
-		document.getElementById('nameWarning').innerHTML = "&nbsp";
-		return true;
-	}
-	else {
-		document.getElementById('nameWarning').innerHTML = "Please enter your full name.";
-		return false;
-	}
-
-}
-function IsNumeric(PossibleNumber) {	
-	var PNum = new String(PossibleNumber);
-	var regex = /[^0-9]/;
-	return !regex.test(PNum);
-}
-
 function cfopAdvance1() {
 	var length = document.forms["posterInfo"].cfop1.value.length;
 	if (length == 1) {
@@ -212,3 +19,102 @@ function cfopAdvance3() {
 	}
 	
 }
+
+function uploadFile() {
+	var fd = new FormData();
+	fd.append("posterFile", document.getElementById('posterFile').files[0]);
+	fd.append('posterWidth',document.getElementById('posterWidth').value);
+	fd.append('posterLength',document.getElementById('posterLength').value);
+	fd.append('paperTypesId',document.querySelector('input[name="paperTypesId"]:checked').value);
+	fd.append('finishOptionsId',document.querySelector('input[name="finishOptionsId"]:checked').value);
+	fd.append('cfop1',document.getElementById('cfop1').value);
+	fd.append('cfop2',document.getElementById('cfop2').value);
+	fd.append('cfop3',document.getElementById('cfop3').value);
+	fd.append('cfop4',document.getElementById('cfop4').value);
+	fd.append('activityCode',document.getElementById('activityCode').value);
+	fd.append('email',document.getElementById('email').value);
+	fd.append('additional_emails',document.getElementById('additional_emails').value);
+	fd.append('name',document.getElementById('name').value);
+	fd.append('comments',document.getElementById('comments').value);
+	fd.append('posterTube',document.getElementById('posterTube').checked);
+	fd.append('rushOrder',document.getElementById('rushOrder').checked);
+
+        var xhr = new XMLHttpRequest();
+	xhr.upload.addEventListener("progress", uploadProgress, false);
+	xhr.addEventListener("load", uploadComplete, false);
+	xhr.addEventListener("error", uploadFailed, false);
+	xhr.addEventListener("abort", uploadCanceled, false);
+	disableForm();
+        xhr.open("POST", "create.php",true);
+        xhr.send(fd);
+	xhr.onreadystatechange  = function(){
+		if (xhr.readyState == 4  ) {
+
+			// Javascript function JSON.parse to parse JSON data
+			var jsonObj = JSON.parse(xhr.responseText);
+
+			// jsonObj variable now contains the data structure and can
+			// be accessed as jsonObj.name and jsonObj.country.
+			if (jsonObj.valid) {
+				var parameters = jsonObj.post;
+				var form = $('<form></form>');
+                                //form.attr('method','post');
+                                //form.attr('action','index.php');
+                                //$.each(parameters,function(key,value) {
+                                //        var field = $('<input></input>');
+
+                                //        field.attr("type", "hidden");
+                                //        field.attr("name", key);
+                                //        field.attr("value", value);
+                                //        form.append(field);
+                                //}
+                                $document.body.append(form);
+                                form.submit();
+
+
+			}
+			if (jsonObj.message) {
+				enableForm();
+				document.getElementById("message").innerHTML =  jsonObj.message;
+			}
+			
+		}
+	}
+
+}
+
+function uploadProgress(evt) {
+        if (evt.lengthComputable) {
+		var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+		document.getElementById('progress_bar').innerHTML = "Uploading File: " + percentComplete.toString() + "%";
+		document.getElementById('progress_bar').style= "width: " + percentComplete.toString() + "%;";
+		document.getElementById('progress_bar').getAttribute("aria-valuenow").vlaue = percentComplete.toString();
+        }
+        else {
+          document.getElementById('progres_bar').innerHTML = 'Error';
+        }
+      }
+
+function uploadComplete(evt) {
+        /* This event is raised when the server send back a response */
+        //alert(evt.target.responseText);
+      }
+
+function uploadFailed(evt) {
+        alert("There was an error attempting to upload the file.");
+      }
+
+function uploadCanceled(evt) {
+        alert("The upload has been canceled by the user or the browser dropped the connection.");
+      }
+
+function disableForm() {
+                document.getElementById('poster_field').disabled = true;
+}
+function enableForm() {
+                document.getElementById('poster_field').disabled = false;
+
+}
+
+
+

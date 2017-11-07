@@ -1,15 +1,15 @@
 <?php
-include_once 'includes/main.inc.php';
-include_once 'includes/header.inc.php';
-include_once 'statistics.class.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'includes/session.inc.php';
+
+require_once 'includes/header.inc.php';
 
 ?>
-<center>
-<table class='medium'>
-	<tr><td class='header_center'>Monthly Averages</td></tr>
+<h3>Monthly Averages</h3>
+<hr>
+<table class='table table-bordered'>
     
     <tr><td><img src='graphs/graph_monthlyAvg.php'/></td></tr>
 </table>
-</center>
 
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php require_once 'includes/footer.inc.php'; ?>

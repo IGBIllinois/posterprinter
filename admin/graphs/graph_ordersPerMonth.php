@@ -1,5 +1,5 @@
 <?php
-include_once 'graph_main.inc.php';
+require_once 'graph_main.inc.php';
 
 
 if (isset($_GET['year'])) {
@@ -23,7 +23,6 @@ if (isset($_GET['year'])) {
 	}
 	$graph = new Graph(600,500,"auto");
 	$graph->SetScale("textlin");
-	$graph->SetTheme($theme_class);
 	$graph->yaxis->scale->SetGrace(20);
 	$graph->SetMarginColor('#ffffff');
 	$graph->title->Set("Orders Per Month");

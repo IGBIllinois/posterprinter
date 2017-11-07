@@ -13,9 +13,10 @@
 ///////////////////////////////////////////////
 //Include files for the script to run
 
-include_once 'includes/main.inc.php';
-include_once 'includes/header.inc.php';
-include_once 'orders.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'includes/session.inc.php';
+require_once 'includes/header.inc.php';
+require_once 'orders.inc.php';
 
 
 $orders = getCurrentOrders($db);
@@ -31,7 +32,7 @@ else {
 		
 		$rushOrderName = $order["rushOrder_name"];
 		if ($rushOrderName == "Yes") {
-			$orders_html .= "<tr class='rush'>";
+			$orders_html .= "<tr class='danger'>";
 		}
 		elseif ($rushOrderName == "No") {
 			$orders_html .= "<tr>";
@@ -40,7 +41,7 @@ else {
 		$orders_html .= "<td>" . $order["orders_email"] . "</td>";
 		$orders_html .= "<td>" . $order["orders_totalCost"] . "</td>";
 		$orders_html .= "<td><a href='download.php?orderId=" . $order["orders_id"] . "'>" . $order["orders_fileName"] . "</a></td>";
-		$orders_html .= "<td>" . $order["status_name"]  . "</td>";
+		$orders_html .= "<td>" . $order["orders_status"]  . "</td>";
 		$orders_html .= "</tr>";
 	
 	}
@@ -48,15 +49,15 @@ else {
 
 
 ?>
-
-
-<table class='wide'>
+<h3>Current Orders</h3>
+<hr>
+<table class='table table-bordered table-condensed table-striped'>
 	<tr>
-		<td class='header_center'>Order Number</td>
-		<td class='header_center'>Email</td>
-		<td class='header_center'>Total Cost</td>
-		<td class='header_center'>File Name</td>
-		<td class='header_center'>Status</td>
+		<th>Order Number</th>
+		<th>Email</th>
+		<th>Total Cost</th>
+		<th>File Name</th>
+		<th>Status</th>
 	</tr>
 	
 <?php echo $orders_html; ?>
@@ -65,4 +66,4 @@ else {
 
 </table>
 
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php require_once 'includes/footer.inc.php'; ?>

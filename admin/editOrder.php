@@ -1,13 +1,14 @@
 <?php
-include_once 'includes/main.inc.php';
-include_once 'mail.inc.php';
-include_once 'order.class.inc.php';
-include_once 'orders.inc.php';
-include_once 'paperTypes.inc.php';
-include_once 'finishOptions.inc.php';
-include_once 'posterTube.inc.php';
-include_once 'rushOrder.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'includes/session.inc.php';
+require_once 'mail.inc.php';
+require_once 'orders.inc.php';
+require_once 'paperTypes.inc.php';
+require_once 'finishOptions.inc.php';
+require_once 'posterTube.inc.php';
+require_once 'rushOrder.inc.php';
 
+$message = "";
 if (isset($_POST['editOrder'])) {
 
 	$cfop1 = $_POST['cfop1'];
@@ -29,11 +30,11 @@ if (isset($_POST['editOrder'])) {
 	$error = false;
 	if (!eregi('^1-[0-9]{6}-[0-9]{6}-[0-9]{6}$',$cfop)) {
 		$error = true;
-		$cfopMsg = "<br><b class='error'>Invalid CFOP Number</b>";
+		$message = functions::alert("Invalid CFOP Number",0);
 	}
 	elseif (!eregi('^[a-zA-Z0-9]{6}',$activityCode) && (strlen($activityCode) > 0)) {
 		$error = true;
-		$activityCodeMsg = 	"<b><b class='error'>Invalid Activity Code</b>";
+		$message .= functions::alert("Invalid Activity Code",0);
 	}
 	
 	if ($error == false) {
@@ -95,7 +96,8 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 		
 	////////////////Paper Types////////////
 	$paperTypes = getValidPaperTypes($db,$order->get_width(),$order->get_length());
-	$paperTypesHTML = "<select name='paperType'>";
+	$paperTypesHTML = "<div class='col-md-4'>";
+	$paperTypesHTML .= "<select class='form-control' name='paperType'>";
 	foreach ($paperTypes as $paperType) {
 		if ($order->get_paper_type_id() === $paperType["id"]) {
 			$paperTypesHTML .= "<option selected='true' value='" . $paperType["id"] . "'>" . $paperType["name"] . "</option>";
@@ -103,10 +105,12 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 		else { $paperTypesHTML .= "<option value='" . $paperType["id"] . "'>" . $paperType["name"]. "</option>"; }
 	}
 	$paperTypesHTML .= "</select>";
+	$paperTypesHTML .= "</div>";
 	
 	///////////////////Finish Options//////////////
 	$finishOptions = getValidFinishOptions($db,$order->get_width(),$order->get_length());
-	$finishOptionsHTML = "<select name='finishOption'>";
+	$finishOptionsHTML = "<div class='col-md-4'>";
+	$finishOptionsHTML .= "<select class='form-control' name='finishOption'>";
 	foreach ($finishOptions as $finishOption) {
 		if ($order->get_finish_option_id() == $finishOption["id"]) {
 			$finishOptionsHTML .= "<option selected='true' value='" . $finishOption["id"] . "'>" . $finishOption["name"] . "</option>";
@@ -117,10 +121,12 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 		}
 	}
 	$finishOptionsHTML .= "</select>";
+	$finishOptionsHTML .= "</div>";
 	
 	////////////////////Poster Tube////////////////////
-	$posterTube = getPosterTubes($db);	
-	$posterTubeHTML = "<select name='posterTube'>";
+	$posterTube = getPosterTubes($db);
+	$posterTubeHTML = "<div class='col-md-3'>";
+	$posterTubeHTML .= "<select class='form-control' name='posterTube'>";
 	for($i=0;$i<count($posterTube);$i++) {
 		$posterTubeId = $posterTube[$i]['posterTube_id'];
 		$posterTubeName = $posterTube[$i]['posterTube_name'];
@@ -135,11 +141,13 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 	
 	}
 	$posterTubeHTML .= "</select>";
+	$posterTubeHTML .= "</div>";
 	
 	
 	/////////////////Rush Order//////////////
 	$rushOrder = getRushOrders($db);
-	$rushOrderHTML = "<select name='rushOrder'>";
+	$rushOrderHTML = "<div class='col-md-3'>";
+	$rushOrderHTML .= "<select class='form-control' name='rushOrder'>";
 	for($i=0;$i<count($rushOrder);$i++) {
 		$rushOrderId = $rushOrder[$i]['rushOrder_id'];
 		$rushOrderName = $rushOrder[$i]['rushOrder_name'];
@@ -154,14 +162,15 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 	
 	}
 	$rushOrderHTML .= "</select>";
+	$rushOrderHTML .= "</div>";
 	
 				
 }
 
-include_once 'includes/header.inc.php';
+require_once 'includes/header.inc.php';
 
 ?>
-<script language="JavaScript">
+<script>
 function confirmUpdate()
 {
 var agree=confirm("Are you sure you wish to update?");
@@ -171,39 +180,46 @@ else
 	return false ;
 }
 </script>
+
 <form method='post' action='editOrder.php?orderId=<?php echo $orderId; ?>'>
-<table class='medium'>
-	<tr><td colspan='2' class='header'>Edit Order Information</td></tr>
-	<tr><td class='right'>Order Number:</td><td class='left'><?php echo $order->get_order_id(); ?></td></tr>
-	<tr><td class='right'>Email: </td><td class='left'><?php echo $order->get_email(); ?></td></tr>
-	<tr><td class='right'>Full Name: </td><td class='left'><?php echo $order->get_name(); ?></td></tr>
-	<tr><td class='right'>File:</td><td class='left'><a href='download.php?orderId=<?php echo $order->get_order_id(); ?>'><?php echo $order->get_filename();  ?></a></td></tr>
-	<tr><td class='right'>CFOP:</td>
-		<td class='left'>
-		<input type='text' name='cfop1' id='cfop1' maxlength='1' class='cfop_1' onKeyUp='cfopAdvance1()' value='<?php echo $order->get_cfop_college(); ?>'> - 
-		<input type='text' name='cfop2' id='cfop2' maxlength='6' size='6' class='cfop_2' onKeyUp='cfopAdvance2()' value='<?php echo $order->get_cfop_fund(); ?>'> - 
-		<input type='text' name='cfop3' id='cfop3' maxlength='6' class='cfop_2' onKeyUp='cfopAdvance3()' value='<?php echo $order->get_cfop_organization(); ?>'> - 
-		<input type='text' name='cfop4' id='cfop4' maxlength='6' class='cfop_2' value='<?php echo $order->get_cfop_program(); ?>'>
+<div class='col-sm-8 col-md-6'>
+
+<table class='table table-bordered table-condensed'>
+	<tr><th colspan='2'>Edit Order Information</th></tr>
+	<tr><td class='text-right'>Order Number</td><td><?php echo $order->get_order_id(); ?></td></tr>
+	<tr><td class='text-right'>Email</td><td><?php echo $order->get_email(); ?></td></tr>
+	<tr><td class='text-right'>Additional Emails </td><td><?php echo $order->get_cc_emails() ?></td></tr>
+	<tr><td class='text-right'>Full Name</td><td><?php echo $order->get_name(); ?></td></tr>
+	<tr><td class='text-right'>File</td><td><a href='download.php?orderId=<?php echo $order->get_order_id(); ?>'><?php echo $order->get_filename();  ?></a></td></tr>
+	<tr><td class='text-right' style='vertical-align:middle;'>CFOP</td>
+		<td>
+		<div class='col-md-2'><input type='text' name='cfop1' id='cfop1' maxlength='1' class='form-control' onKeyUp='cfopAdvance1()' value='<?php echo $order->get_cfop_college(); ?>'></div> 
+		<div class='col-md-2'><input type='text' name='cfop2' id='cfop2' maxlength='6' size='6' class='form-control' onKeyUp='cfopAdvance2()' value='<?php echo $order->get_cfop_fund(); ?>'></div>
+		<div class='col-md-2'><input type='text' name='cfop3' id='cfop3' maxlength='6' class='form-control' onKeyUp='cfopAdvance3()' value='<?php echo $order->get_cfop_organization(); ?>'></div>
+		<div class='col-md-2'><input type='text' name='cfop4' id='cfop4' maxlength='6' class='form-control' value='<?php echo $order->get_cfop_program(); ?>'></div>
 		</td>
 	</tr>
-	<tr><td class='right'>Activity Code:</td><td class='left'><input type='text' name='activityCode' maxlength='6' class='cfop_2'  value='<?php echo $order->get_activity_code(); ?>'></td></tr>
-	<tr><td class='right'>Time Created:</td><td class='left'><?php echo $order->get_time_created(); ?></td></tr>
-	<tr><td class='right'>Total Cost:</td><td class='left'><?php echo $order->get_total_cost(); ?></td></tr>
-	<tr><td class='right'>Width:</td><td class='left'><?php echo $order->get_width(); ?>"</td></tr>
-	<tr><td class='right'>Length:</td><td class='left'><?php echo $order->get_length(); ?>"</td></tr>
-	<tr><td class='right'>Paper Type:</td><td class='left'><?php echo $paperTypesHTML; ?></td></tr>
-	<tr><td class='right'>Finish Option:</td><td class='left'><?php echo $finishOptionsHTML;  ?></td></tr>
-	<tr><td class='right'>Poster Tube:</td><td class='left'><?php echo $posterTubeHTML; ?></td></tr>
-	<tr><td class='right'>Rush Order:</td><td class='left'><?php echo $rushOrderHTML; ?></td></tr>
-	<tr><td class='right' valign='top'>Comments:</td><td class='left'><?php echo $order->get_comments(); ?></td></tr>
+	<tr><td class='text-right' style='vertical-align:middle;'>Activity Code</td><td><div class='col-md-2'><input class='form-control' type='text' name='activityCode' maxlength='6' class='cfop_2'  value='<?php echo $order->get_activity_code(); ?>'></div></td></tr>
+	<tr><td class='text-right'>Time Created</td><td><?php echo $order->get_time_created(); ?></td></tr>
+	<tr><td class='text-right'>Total Cost</td><td>$<?php echo $order->get_total_cost(); ?></td></tr>
+	<tr><td class='text-right'>Width</td><td><?php echo $order->get_width(); ?>"</td></tr>
+	<tr><td class='text-right'>Length</td><td><?php echo $order->get_length(); ?>"</td></tr>
+	<tr><td class='text-right' style='vertical-align:middle;'>Paper Type</td><td><?php echo $paperTypesHTML; ?></td></tr>
+	<tr><td class='text-right' style='vertical-align:middle;'>Finish Option</td><td><?php echo $finishOptionsHTML;  ?></td></tr>
+	<tr><td class='text-right' style='vertical-align:middle;'>Poster Tube</td><td><?php echo $posterTubeHTML; ?></td></tr>
+	<tr><td class='text-right' style='vertical-align:middle;'>Rush Order</td><td><?php echo $rushOrderHTML; ?></td></tr>
+	<tr><td class='text-right'>Comments</td><td><?php echo $order->get_comments(); ?></td></tr>
 </table>
+</div>
 <br>
 <input type='hidden' name='orderId' value='<?php echo $order->get_order_id(); ?>'>
 <input type='hidden' name='posterWidth' value='<?php echo $order->get_width(); ?>'>
 <input type='hidden' name='posterLength' value='<?php echo $order->get_length(); ?>'>
-<input type='submit' name='editOrder' value='Edit Order' onClick='return confirmUpdate()'>
+<div class='col-sm-12 col-md-12'>
+<a class='btn btn-warning' href='orders.php?orderId=<?php echo $order->get_order_id(); ?>'>Cancel</a>
+<button class='btn btn-primary' type='submit' name='editOrder' onClick='return confirmUpdate()'>Edit Order</button>
+</div>
 </form>
-
-<?php if (isset($cfopMsg)){echo $cfopMsg; } ?>
-<?php if (isset($activityCodeMsg)){echo $activityCodeMsg; } ?>
-<?php include_once 'includes/footer.inc.php'; ?>
+<br>
+<?php if (isset($message)){echo $message; } ?>
+<?php require_once 'includes/footer.inc.php'; ?>

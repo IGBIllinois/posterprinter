@@ -69,10 +69,10 @@ if (isset($_POST['step1'])) {
 
 	}
 	$posterTube_html = "<tr><td class='right'>Poster Tube</td><td class='right'>$" . getPosterTubeCost($db) . "</td>\n";
-	$posterTube_html .= "<td class='left'><input type='checkbox' id='posterTube' name='posterTube' value='1'></td></tr>\n";
+	$posterTube_html .= "<td class='left'><input type='checkbox' name='posterTube' value='1'></td></tr>\n";
 
 	$rushOrder_html = "<tr><td class='right'>Rush Order</td><td class='right'>$" . getRushOrderCost($db) ."</td>\n";
-	$rushOrder_html .= "<td class='left'><input type='checkbox' id='rushOrder' name='rushOrder' value='1'></td></tr>\n";
+	$rushOrder_html .= "<td class='left'><input type='checkbox' name='rushOrder' value='1'></td></tr>\n";
 
 	$form_html = "<br \>
 			
@@ -134,7 +134,7 @@ if (isset($_POST['step1'])) {
 		</tr>\n
 		<tr>\n
 			<td class='text-right'>Comments</td>\n
-			<td><textarea class='form-control' id='comments' name='comments' rows='3' cols='33'></textarea></td>\n
+			<td><textarea class='form-control' name='comments' rows='3' cols='33'></textarea></td>\n
 		</tr>\n
 	</table>\n
 	<div class='row'>
@@ -166,7 +166,10 @@ elseif (isset($_POST['step2'])) {
 	$posterLength = $_POST['posterLength'];
 	$paperTypesId = $_POST['paperTypesId'];
 	$finishOptionsId = $_POST['finishOptionsId'];
-	$cfop1 = $_POST['cfop'];
+	$cfop1 = $_POST['cfop1'];
+	$cfop2 = $_POST['cfop2'];
+	$cfop3 = $_POST['cfop3'];
+	$cfop4 = $_POST['cfop4'];
 	$activityCode = $_POST['activityCode'];
 	$posterFileName = $_FILES['posterFile']['name'];
 	$email = $_POST['email'];
@@ -192,6 +195,9 @@ elseif (isset($_POST['step2'])) {
 //		$posterThumbFileTmpName = $result['THUMB'];
 //	}
 	
+
+	//makes the complete CFOP number
+	$cfop = $cfop1 . "-" . $cfop2 . "-" . $cfop3 . "-" . $cfop4;
 
 
 	//Gets Finish Options Information

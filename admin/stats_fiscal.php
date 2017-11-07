@@ -1,7 +1,7 @@
 <?php
-include_once 'includes/main.inc.php';
-include_once 'includes/header.inc.php';
-include_once 'statistics.class.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'includes/session.inc.php';
+require_once 'includes/header.inc.php';
 
 $month = date('m');
 if (isset($_GET['year'])) {
@@ -39,7 +39,7 @@ $stats = new statistics($db,$startDate,$endDate);
 
 
 $graphForm = "<form name='selectGraph' id='selectGraph' method='post' action='stats_fiscal.php?year=" . $year . "'>";
-$graphForm .= "<select name='graphType' onChange='document.selectGraph.submit();'>";
+$graphForm .= "<select class='form-control' name='graphType' onChange='document.selectGraph.submit();'>";
 
 if ($graphType == "finishOptions") { $graphForm .= "<option value='finishOptions' selected>Finish Options</option>"; }
 else { $graphForm .= "<option value='finishOptions'>Finish Options</option>"; }
@@ -52,15 +52,26 @@ $graphForm .= "</select>";
 $graphForm .= "</form>";
 ?>
 
+<h3>Fiscal Year Statistics - <?php echo $year; ?></h3>
+<hr>
+<ul class='pager'>
+<li class='previous'><a href='stats_fiscal.php?year=<?php echo $previousYear; ?>'>Previous</a></li>
+<?php
+	$next_year = strtotime('+1 day', strtotime($endDate));
+                $today = mktime(0,0,0,date('m'),date('d'),date('y'));
 
-<center>
-<table class='medium'>
-	<tr><td colspan='2' class='header_center'>Fiscal Year Statistics - <?php echo $year; ?></td></tr>
-    <tr>
-    	<td class='nav_left'><a href='stats_fiscal.php?year=<?php echo $previousYear; ?>'>Previous</a></td>
-        <td class='nav_right'><a href='stats_fiscal.php?year=<?php echo $nextYear;?>'>Next</a></td>
-    </tr>
-  	<tr><td>Fiscal Yearly Total:</td><td>$<?php echo $stats->pretty_cost(); ?></td></tr>
+        if ($next_year > $today) {
+                echo "<li class='next disabled'><a href='#'>Next</a></li>";
+        }
+        else {
+                echo "<li class='next'><a href='stats_fiscal.php?year=" . $nextYear . "'>Next</a></li>";
+        }
+?>
+
+</ul>
+<table class='table table-bordered table-condensed table-striped'>
+
+	<tr><td>Fiscal Yearly Total:</td><td>$<?php echo $stats->pretty_cost(); ?></td></tr>
     <tr><td>Total Orders:</td><td><?php echo $stats->orders(); ?></td></tr>
     <tr><td>Rush Order Percentage:</td><td><?php echo $stats->percentRushOrder(); ?>%</td></tr>
     <tr><td>Poster Tube Percentage:</td><td><?php echo $stats->percentPosterTube(); ?>%</td></tr>
@@ -72,6 +83,5 @@ $graphForm .= "</form>";
     </tr>
 
 </table>
-</center>
 
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php require_once 'includes/footer.inc.php'; ?>

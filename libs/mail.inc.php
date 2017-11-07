@@ -1,3 +1,4 @@
+
 <?php
 /////////////////////////////////////////////////////////
 //
@@ -13,51 +14,51 @@
 //
 ////////////////////////////////////////////////////////
 
-include_once 'db.class.inc.php';
-include_once 'order.class.inc.php';
 
 //mailNewOrder()
 //$db - database object
 //$orderId - integer - order number
-//$adminEmail - string - admin email
 //emails the user and admins that a new order has been made
-function mailNewOrder($db,$orderId,$adminEmail) {
+function mailNewOrder($db,$orderId) {
 	$order = new order($db,$orderId);
-	mailAdminsNewOrder($db,$order,$adminEmail);
-	mailUserNewOrder($db,$order,$adminEmail);
+	mailAdminsNewOrder($db,$order);
+	mailUserNewOrder($db,$order);
 
 }
 
 //mailAdminsNewOrer()
 //$db - database object
 //$order - order object
-//$adminEmail - string - admin email
 //emails admin of the new order
-function mailAdminsNewOrder($db,$order,$adminEmail) {
-
+function mailAdminsNewOrder($db,$order) {
+	$boundary = uniqid('np');
 	$requestUri = substr($_SERVER["REQUEST_URI"],0,strrpos($_SERVER["REQUEST_URI"], "/")+1);
 	$urlAddress = "http://" . $_SERVER["SERVER_NAME"] . $requestUri; 
-	$subject = "New Poster To Print. Order #" . $order->get_order_id();
-	$to = $adminEmail;
-	$message = "<br>New Poster Printer Order From " . $order->get_email() . "\r\n";
-	$message .= "<p>Full Name: " . $order->get_name() . "\r\n";
-	$message .= "<br>Order Number: " . $order->get_order_id() . "\r\n"; 
-	$message .= "<br>Email: " . $order->get_email() . "\r\n";
-	$message .= "<br>Poster File: " . $order->get_filename() . "\r\n";
-	$message .= "<br>Poster Length: " . $order->get_length() . " inches \r\n";
-	$message .= "<br>Poster Width: " . $order->get_width() . " inches \r\n";
-	$message .= "<br>CFOP: " . $order->get_cfop() . "\r\n";
-	$message .= "<br>Activity Code: " . $order->get_activity_code() . "\r\n";
-	$message .= "<br>Paper Type: " . $order->get_paper_type_name() . "\r\n";
-	$message .= "<br>Finish Option: " . $order->get_finish_option_name() . "\r\n";
-	$message .= "<br>Poster Tube: " . $order->get_poster_tube_name() . "\r\n";
-	$message .= "<br>Rush Order: " . $order->get_rush_order_name() . "\r\n";
-	$message .= "<br>Comments: " . $order->get_comments() . "\r\n";
-	$message .= "<br>Total Cost: $" . $order->get_total_cost() . "\r\n";
+	$subject = "New Poster To Print - Order #" . $order->get_order_id();
+	$to = settings::get_admin_email();
+
+	//html email
+	$message = "\r\n\r\n--" . $boundary . "\r\n";
+	$message .= "Content-type:text/html;charset='utf-8'\r\n";
+	$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+	$message .= "<br>New Poster Printer Order From " . $order->get_email() . "\r\n";
+	$message .= "<br>\r\n";
+	$message .= "<br>" . nl2br($order->get_job_info(),false);
 	$message .= "<br>To view the order <a href='" . $urlAddress . "admin/orders.php?orderId=" . $order->get_order_id() . "'>click here</a>" . "\r\n";
+
+	//plain text email
+        $message .= "\r\n\r\n--" . $boundary . "\r\n";
+	$message .= "Content-type:text/plain;charset='utf-8'\r\n";
+	$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+        $message .= "New Poster Printer Order From " . $order->get_email() . "\r\n\r\n";
+	$message .= $order->get_job_info();
+        $message .= "To view the order: " . $urlAddress . "admin/orders.php?orderId=" . $order->get_order_id() . "\r\n";
+	$message .= "\r\n\r\n--" . $boundary . "--\r\n";
 	
-	$headers = "From: " . $order->get_email() . "\r\n";
-	$headers .= "Content-Type: text/html; charset=iso-8859-1" . "\r\n";
+	//headers
+	$headers = "MIME-Version: 1.0\r\n"; 	
+	$headers .= "From: " . $order->get_email() . "\r\n";
+	$headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
 	mail($to,$subject,$message,$headers," -f " . $order->get_email());
 
 }
@@ -65,65 +66,91 @@ function mailAdminsNewOrder($db,$order,$adminEmail) {
 //mailUserNewOrder()
 //$db - database object
 //$order - order object
-//$adminEmail - string - admin email
 //Emails User order confirmation
-function mailUserNewOrder($db,$order,$adminEmail) {
-
+function mailUserNewOrder($db,$order) {
+	$boundary = uniqid('np');
 	$to = $order->get_email();
 	$subject = "Poster Order #" . $order->get_order_id();
 	
-	$message = "<br>Thank you for your order.  Your order will be processed as soon as possible.   ";
-	$message .= "It could take up to three days.  We will email you when the poster is completed printing.\r\n";
+	//html email
+        $message = "\r\n\r\n--" . $boundary . "\r\n";
+	$message .= "Content-type:text/html;charset='utf-8'\r\n";
+	$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+	$message .= "<br>Thank you for your poster order.\r\n";
+	$message .= "For regular orders, we guarantee within 72 hours, excluding weekends.\r\n";
+	$message .= "For rush orders, we guarantee within 24 hours, excluding weekends.\r\n";
+	$message .= "We will email you when the poster is completed printing.\r\n";
 	$message .= "<p>For your reference\r\n";
-	$message .= "<br>Full Name: " . $order->get_name() . "\r\n";
-	$message .= "<br>Order Number: " . $order->get_order_id() . "\r\n";
-	$message .= "<br>Poster File: " . $order->get_filename() . "\r\n";
-	$message .= "<br>Poster Length: " . $order->get_length() . " inches \r\n";
-	$message .= "<br>Poster Width: " . $order->get_width() . " inches \r\n";
-	$message .= "<br>CFOP: " . $order->get_cfop() . "\r\n";
-	$message .= "<br>Activity Code: " . $order->get_activity_code() . "\r\n";
-	$message .= "<br>Paper Type: " . $order->get_paper_type_name() . "\r\n";
-	$message .= "<br>Finish Option: " . $order->get_finish_option_name() . "\r\n";
-	$message .= "<br>Poster Tube: " . $order->get_poster_tube_name() . "\r\n";
-	$message .= "<br>Rush Order: " . $order->get_rush_order_name() . "\r\n";
-	$message .= "<br>Comments: " . $order->get_comments() . "\r\n";
-	$message .= "<br>Total Cost: $" . $order->get_total_cost() . "\r\n";
+	$message .= "<br>\r\n";
+	$message .= "<br>" . nl2br($order->get_job_info(),false);
+
+	///plain text email
+	$message .= "\r\n\r\n--" . $boundary . "\r\n";
+	$message .= "Content-type:text/plain;charset='utf-8'\r\n";
+	$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+	$message .= "Thank you for your poster order.\r\n";
+        $message .= "For regular orders, we guarantee within 72 hours, excluding weekends.\r\n";
+        $message .= "For rush orders, we guarantee within 24 hours, excluding weekends.\r\n";
+        $message .= "We will email you when the poster is completed printing.\r\n";
+        $message .= "For your reference\r\n\r\n";
+	$message .= $order->get_job_info();
+	$message .= "\r\n\r\n--" . $boundary . "--\r\n";
+
+	//headers
+	$headers = "MIME-Version: 1.0\r\n";     
+        $headers .= "From: " . settings::get_admin_email() . "\r\n";
+	if ($order->get_cc_emails() != "") {
+                $headers .= "Cc: " . $order->get_cc_emails() . "\r\n";
+        }
+        $headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
 	
-	$headers = "From: " . $adminEmail . "\r\n";
-	$headers .= "Content-Type: text/html; charset=iso-8859-1" . "\r\n";
-	mail($to,$subject,$message,$headers, " -f " . $adminEmail);
+	mail($to,$subject,$message,$headers, " -f " . settings::get_admin_email());
 }
 
 //mailuserOrderComplete()
 //$db - database object
 //$orderId - integer - order number
-//$adminEmail - string - admin email
 //emails user that the order is complete
-function mailUserOrderComplete($db,$orderId,$adminEmail) {
-	
+function mailUserOrderComplete($db,$orderId) {
+	$boundary = uniqid('np');	
 	$order = new order($db,$orderId);
 	$to = $order->get_email();
+
 	$subject = "Poster Order #" . $order->get_order_id() . " Completed";
-			
-	$message = "<br>Your Poster Order #" . $order->get_order_id() . " is now completed.\r\n";
-	$message .=	"<br>You can come to Room 2626 to pick up your poster.\r\n";
-	$message .=	"<p>Order Number: " . $order->get_order_id() . "\r\n";
-	$message .=	"<br>Poster File: " . $order->get_filename() . "\r\n";
-	$message .=	"<br>Poster Length: " . $order->get_length() . " inches \r\n";
-	$message .=	"<br>Poster Width: " . $order->get_width() . " inches \r\n";
-	$message .=	"<br>CFOP: " .  $order->get_cfop() . "\r\n";
-	$message .=	"<br>Activity Code: " . $order->get_activity_code() . "\r\n";
-	$message .=	"<br>Paper Type: " . $order->get_paper_type_name() . "\r\n";
-	$message .=	"<br>Finish Option: " . $order->get_finish_option_name() . "\r\n"; 
-	$message .=	"<br>Poster Tube: " . $order->get_poster_tube_name() . "\r\n";
-	$message .=	"<br>Rush Order: " . $order->get_rush_order_name() . "\r\n";
-	$message .=	"<br>Comments: " . $order->get_comments() . "\r\n";
-	$message .=	"<br>Total Cost: $" . $order->get_total_cost() . "\r\n";
+
+	//HTML Email
+	$message = "\r\n\r\n--" . $boundary . "\r\n";
+	$message .= "Content-type:text/html;charset='utf-8'\r\n";
+	$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+	$message .= "<br>Your Poster Order #" . $order->get_order_id() . " is now completed.\r\n";
+	$message .= "<br>You can come to Room 2626 to pick up your poster.\r\n";
+	$message .= "<br>\r\n";
+	$message .= "<br>" . nl2br($order->get_job_info(),false);
 	
-	$headers = "From: " . $adminEmail . "\r\n";
-	$headers .= "Cc: " . $adminEmail . "\r\n";
-	$headers .= "Content-Type: text/html; charset=iso-8859-1" . "\r\n";
-	mail($to,$subject,$message,$headers, " -f " . $adminEmail);
+	//Plain Text email
+	$message .= "\r\n\r\n--" . $boundary . "\r\n";
+	$message .= "Content-type:text/plain;charset='utf-8'\r\n";
+	$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+        $message .= "Your Poster Order #" . $order->get_order_id() . " is now completed.\r\n";
+        $message .= "You can come to Room 2626 to pick up your poster.\r\n\r\n";
+        $message .= $order->get_job_info();
+	$message .= "\r\n\r\n--" . $boundary . "--\r\n";
+
+
+	//Headers
+	$headers = "MIME-Version: 1.0\r\n";
+	$headers .= "From: " . settings::get_admin_email() . "\r\n";
+	$headers .= "Cc: " . settings::get_admin_email() . "\r\n";
+	if ($order->get_cc_emails() != "") {
+                $headers .= "Cc: " . $order->get_cc_emails() . "\r\n";
+        }
+	$headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
+
+	mail($to,$subject,$message,$headers, " -f " . settings::get_admin_email());
 
 }
+
+
+
+
 ?>

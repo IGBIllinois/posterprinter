@@ -1,6 +1,7 @@
 <?php
-include_once 'includes/main.inc.php';
-include_once 'finishOptions.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'includes/session.inc.php';
+require_once 'finishOptions.inc.php';
 
 $finishOptions = getFinishOptions($db);
 
@@ -15,7 +16,7 @@ foreach ($finishOptions as $finishOption) {
 	$finishOptions_html .= "<td>" . $finishOption['maxWidth'] . "\"</td>";
 	$finishOptions_html .= "<td>" . $finishOption['maxLength'] . "\"</td>";
 	if ($finishOption['finishOptions_default'] == 1) {
-		$finishOptions_html .= "<td>*</td></tr>";
+		$finishOptions_html .= "<td><span class='glyphicon glyphicon-ok'></span></td></tr>";
 	}
 	else {
 		$finishOptions_html .= "<td></td></tr>";
@@ -24,24 +25,25 @@ foreach ($finishOptions as $finishOption) {
 
 }
 
-include_once 'includes/header.inc.php';
+require_once 'includes/header.inc.php';
 ?>
 
-<br>
-<table class='medium'>
+<h3>Finish Options</h3>
+<hr>
+<table class='table table-condensed table-bordered'>
 	<tr>
-		<td class='header_center'>Name</td>
-		<td class='header_center'>Cost</td>
-		<td class='header_center'>Max Width</td>
-		<td class='header_center'>Max Length</td>
-		<td class='header_center'>Default</td>
+		<th>Name</th>
+		<th>Cost</th>
+		<th>Max Width</th>
+		<th>Max Length</th>
+		<th>Default</th>
 		
 	</tr>
 
 <?php echo $finishOptions_html; ?>
 
 </table>
-<br />
-<input type='button' value='New Finish Option' onClick="location.href='addFinishOption.php';" />
+<br>
+<input class='btn btn-primary' type='button' value='New Finish Option' onClick="location.href='addFinishOption.php';" />
 
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php require_once 'includes/footer.inc.php'; ?>

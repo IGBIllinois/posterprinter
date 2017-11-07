@@ -1,5 +1,4 @@
 <?php
-include_once 'db.class.inc.php';
 
 function getRushOrderCost($db) {
 
@@ -30,10 +29,26 @@ function getRushOrderInfo($db) {
 	return $db->query($sql);
 }
 
+function getRushOrderStuff($db,$yesno = 0) {
+	$name = "No";
+        if ($yesno == 1) {
+                $name = "Yes";
+        }
+
+	$sql = "SELECT rushOrder_id as id, rushOrder_name as name, rushOrder_cost as cost ";
+	$sql .= "FROM tbl_rushOrder WHERE rushOrder_available='1' and rushOrder_name='" . $name . "' LIMIT 1";
+	$result = $db->query($sql);
+	if (count($result)) {
+		return $result[0];
+	}
+	return false;
+
+
+}
 function updateRushOrder($db, $cost) {
 
-	if (($cost == "") || !eregi('^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$',$cost)) {
-		$message = "<b class='error'>Please enter a valid rush order cost</b>";
+	if (!verify::verify_cost($cost)) {
+		$message = "Please enter a valid rush order cost";
 		return array('RESULT'=>FALSE,
 					'MESSAGE'=>$message);
 	}
@@ -45,7 +60,7 @@ function updateRushOrder($db, $cost) {
 		$db->non_select_query($update_sql);
 		$insert_sql = "INSERT INTO tbl_rushOrder(rushOrder_name,rushOrder_cost,rushOrder_available) VALUES('Yes','" . $cost . "',1)";
 		$insert_id = $db->insert_query($insert_sql);
-		$message = "<b>Rush Order cost successfully updated.</b>";
+		$message = "Rush Order cost successfully updated.";
 		return array('RESULT'=>TRUE,
 				'ID'=>insert_id,
 				'MESSAGE'=>$message);

@@ -1,0 +1,38 @@
+<?php
+/////////////////////////////////////////////////
+//
+//	Poster Printer Order Submission
+//	settings.inc.php
+//
+//	Settings for the scripts.
+//
+//	David Slater
+//	April 2007
+//
+////////////////////////////////////////////////
+
+define("enable",TRUE);
+define("app_version","1.1.8");
+define("admin_email","");
+define("mysql_host","");
+define("mysql_user","");
+define("mysql_password","");
+define("mysql_database","");
+define("max_printer_width",44);
+define("poster_dir","posterfiles");
+define("ldap_host",'');
+define("ldap_base_dn","");
+define("ldap_people_ou","");
+define("ldap_group_ou","");
+define("ldap_group","");
+define("ldap_ssl",FALSE);
+define("ldap_port",389);
+define("unoconv_exec","/usr/bin/unoconv");
+define("order_time",72);
+define("rush_order_time",24);
+define("session_name","");
+define("session_timeout",300);
+$conf = array();
+$conf['status'] = array('New','In Progress','Completed','Cancel','On Hold');
+
+?>

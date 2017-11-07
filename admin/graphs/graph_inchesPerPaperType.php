@@ -1,5 +1,5 @@
 <?php
-include_once 'graph_main.inc.php';
+require_once 'graph_main.inc.php';
 
 if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
 
@@ -23,7 +23,6 @@ if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
 	}
 	
 	$graph = new PieGraph(600,300,"auto");
-	$graph->SetTheme($theme_class);
 	$graph->SetShadow();
 	$graph->title->Set("Inches Per Paper Type");
 	$graph->title->SetFont(FF_ARIAL,FS_BOLD,12);

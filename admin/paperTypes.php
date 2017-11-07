@@ -1,6 +1,7 @@
 <?php
-include_once 'includes/main.inc.php';
-include_once 'paperTypes.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'includes/session.inc.php';
+require_once 'paperTypes.inc.php';
 
 $paperTypes = getPaperTypes($db);
 
@@ -14,7 +15,7 @@ foreach ($paperTypes as $paperType) {
 	$paperTypes_html .= "<td>$" . $paperType['cost'] . "</td>";
 	$paperTypes_html .= "<td>" . $paperType['width'] . "\"</td>";
 	if ($paperType['paperTypes_default'] == 1) {
-		$paperTypes_html .= "<td>*</td></tr>";
+		$paperTypes_html .= "<td><span class='glyphicon glyphicon-ok'></span></td></tr>";
 	}
 	else {
 		$paperTypes_html .= "<td></td></tr>";
@@ -22,25 +23,26 @@ foreach ($paperTypes as $paperType) {
 
 }
 
-include_once 'includes/header.inc.php';
+require_once 'includes/header.inc.php';
 ?>
 
-<br>
-<table class='medium'>
+<h3>Paper Types</h3>
+<hr>
+<table class='table table-condensed table-bordered'>
 	<tr>
-		<td class='header_center'>Name</td>
-		<td class='header_center'>Cost per Inch</td>
-		<td class='header_center'>Max Width</td>
-		<td class='header_center'>Default</td>
+		<th>Name</th>
+		<th>Cost per Inch</th>
+		<th>Max Width</th>
+		<th>Default</th>
 		
 	</tr>
 
 <?php echo $paperTypes_html; ?>
 
 </table>
-<br />
-<input type='button' value='New Paper Type' onClick="location.href='addPaperType.php';" />
+<br>
+<input class='btn btn-primary' type='button' value='New Paper Type' onClick="location.href='addPaperType.php';" />
 
 
 
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php require_once 'includes/footer.inc.php'; ?>

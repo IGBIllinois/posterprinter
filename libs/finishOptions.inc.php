@@ -1,5 +1,4 @@
 <?php
-include_once 'db.class.inc.php';
 
 //getFinishOptions()
 //$db - database object
@@ -29,7 +28,7 @@ function getValidFinishOptions($db,$width,$length) {
 	$sql .= "WHERE finishOptions_available='1' ";
 	$sql .= "AND finishOptions_maxLength>='" . $length . "' ";
 	$sql .= "AND (finishOptions_maxWidth>='" . $width . "' OR finishOptions_maxWidth>='" . $length . "') ";
-	$sql .= "ORDER BY finishOptions_name ASC";
+	$sql .= "ORDER BY finishOptions_cost ASC";
 	return $db->query($sql);
 
 }
@@ -50,7 +49,7 @@ function addFinishOption($db,$name,$cost,$maxWidth,$maxLength,$default = 0) {
 		$message .= "<br><b class='error'>Pleae enter finish option name</b>";
 		$errors++;
 	}
-	if (($cost == "") || !eregi('^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$',$cost)) {
+	if (!verify::verify_cost($cost)) {
 		$message .= "<br><b class='error'>Please enter a valid cost</b>";
 		$errors++;
 	}

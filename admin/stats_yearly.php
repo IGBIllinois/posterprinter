@@ -1,7 +1,7 @@
 <?php
-include_once 'includes/main.inc.php';
-include_once 'includes/header.inc.php';
-include_once 'statistics.class.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'includes/session.inc.php';
+require_once 'includes/header.inc.php';
 
 
 if (isset($_GET['year'])) { $year = $_GET['year']; }
@@ -26,7 +26,7 @@ else {
 $stats = new statistics($db,$startDate,$endDate);
 
 $graphForm = "<form name='selectGraph' id='selectGraph' method='post' action='stats_yearly.php?year=" . $year . "'>";
-$graphForm .= "<select name='graphType' onChange='document.selectGraph.submit();'>";
+$graphForm .= "<select class='form-control' name='graphType' onChange='document.selectGraph.submit();'>";
 
 if ($graphType == "finishOptions") { $graphForm .= "<option value='finishOptions' selected>Finish Options</option>"; }
 else { $graphForm .= "<option value='finishOptions'>Finish Options</option>"; }
@@ -40,15 +40,26 @@ $graphForm .= "</form>";
 ?>
 
 
-<center>
-<table class='medium'>
-	<tr><td colspan='2' class='header_center'>Yearly Statistics - <?php echo $year; ?></td></tr>
-    <tr>
-    	<td class='nav_left'><a href='stats_yearly.php?year=<?php echo $previousYear; ?>'>Previous</a></td>
-        <td class='nav_right'><a href='stats_yearly.php?year=<?php echo $nextYear;?>'>Next</a></td>
-    </tr>
-  	<tr><td>Yearly Total:</td><td>$<?php echo $stats->pretty_cost(); ?></td></tr>
-    <tr><td>Total Orders:</td><td><?php echo $stats->orders(); ?></td></tr>
+<h3>Yearly Statistics - <?php echo $year; ?></h3>
+<hr>
+<ul class='pager'>
+<li class='previous'><a href='stats_yearly.php?year=<?php echo $previousYear; ?>'>Previous</a></li>
+<?php
+        $next_year = strtotime('+1 day', strtotime($endDate));
+	$today = mktime(0,0,0,date('m'),date('d'),date('y'));
+
+	if ($next_year > $today) {
+                echo "<li class='next disabled'><a href='#'>Next</a></li>";
+        }
+        else {
+                echo "<li class='next'><a href='stats_yearly.php?year=" . $nextYear . "'>Next</a></li>";
+        }
+?>
+
+</ul>
+<table class='table table-bordered table-condensed table-striped'>
+	<tr><td>Yearly Total:</td><td>$<?php echo $stats->pretty_cost(); ?></td></tr>
+	<tr><td>Total Orders:</td><td><?php echo $stats->orders(); ?></td></tr>
     <tr><td>Rush Order Percentage:</td><td><?php echo $stats->percentRushOrder(); ?>%</td></tr>
     <tr><td>Poster Tube Percentage:</td><td><?php echo $stats->percentPosterTube(); ?>%</td></tr>
     <tr><td>Total Inches Printed:</td><td><?php echo $stats->pretty_totalInches(); ?>"</td></tr>
@@ -59,6 +70,5 @@ $graphForm .= "</form>";
     </tr>
 
 </table>
-</center>
 
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php require_once 'includes/footer.inc.php'; ?>

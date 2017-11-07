@@ -1,6 +1,6 @@
 <?php
 include 'includes/main.inc.php';
-session_destroy();
-header("Location: index.php")
-
+$session = new session(session_name);
+$session->destroy_session();
+header("Location: login.php")
 ?>

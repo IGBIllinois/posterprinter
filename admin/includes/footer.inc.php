@@ -1,10 +1,8 @@
 </div>
-
-<div id="footer">
-&nbsp
-
 </div>
-</div>
+<footer class='footer'>
+</footer>
+
 </body>
 </html>
 
