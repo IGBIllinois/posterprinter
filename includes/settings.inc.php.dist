@@ -1,0 +1,31 @@
+<?php
+/////////////////////////////////////////////////
+//
+//	Poster Printer Order Submission
+//	settings.inc.php
+//
+//	Settings for the scripts.
+//
+//	David Slater
+//	April 2007
+//
+////////////////////////////////////////////////
+
+define("enable",TRUE);
+define("app_version","1.1.7");
+define("admin_email","");
+define("mysql_host","");
+define("mysql_user","");
+define("mysql_password","");
+define("mysql_database","");
+define("max_printer_width",44);
+define("poster_dir","posterfiles");
+define("ldap_host","");
+define("ldap_base_dn","");
+define("ldap_people_ou","");
+define("ldap_group_ou","");
+define("ldap_group","");
+define("ldap_ssl",FALSE);
+define("ldap_port",389);
+
+?>
