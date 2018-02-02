@@ -5,7 +5,7 @@ Poster Printer Submission and Accounting Program
 
 ## Installation
 
-### Prerequisites -
+### Prerequisites
 - PHP Composer
 
 ### Installation
@@ -15,12 +15,12 @@ Poster Printer Submission and Accounting Program
 4.  Edit /includes/settings.inc.php to reflect your settings.
 5.  Set the permissions on /posterfiles so the user running the apache server has write permissions.
 6.  Edit the php.ini file so it has the following settings.
-        a. file_uploads = On
-        b. upload_max_filesize = 200M
-        c. post_max_size = 200M
-        d. memory_limit = 200M
-        e. max_input_time = 100
-        f. max_execution_time = 100
+- file_uploads = On
+- upload_max_filesize = 200M
+- post_max_size = 200M
+- memory_limit = 200M
+- max_input_time = 100
+- max_execution_time = 100
 7.  Reload the webserver.
 8.  All Done!
 
