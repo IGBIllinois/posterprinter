@@ -263,7 +263,7 @@ class poster {
 
 
 	public static function get_max_poster_width($db) {
-		$sql = "SELECT MAX(paperTypes_width) as max_width FROM tbl_paperTypes ";
+		$sql = "SELECT MAX(paperTypes_width) as max_width FROM paperTypes ";
 		$sql .= "WHERE paperTypes_available=1";
 		$result = $db->query($sql);
 		if (count($result)) {

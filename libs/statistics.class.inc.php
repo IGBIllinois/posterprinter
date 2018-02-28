@@ -21,10 +21,10 @@ class statistics {
 	public function cost() {
 
 		$sql = "SELECT SUM(orders_totalCost) AS totalCost ";
-		$sql .= "FROM tbl_orders ";
+		$sql .= "FROM orders ";
 		$sql .= "WHERE DATE(orders_timeCreated) BETWEEN '" . $this->startDate . "' AND '" . $this->endDate . "' ";
-		$sql .= "AND tbl_orders.orders_status='Completed' ";
-		$sql .= "GROUP BY tbl_orders.orders_status";
+		$sql .= "AND orders.orders_status='Completed' ";
+		$sql .= "GROUP BY orders.orders_status";
 		$result = $this->db->query($sql);
 		if (count($result) > 0) { return $result[0]['totalCost']; }
 		else { return 0; }
@@ -37,10 +37,10 @@ class statistics {
 	public function popularPaperTypes() {
 
 		$sql = "SELECT paperTypes_id,paperTypes_name,COUNT(*) AS count ";
-		$sql .= "FROM tbl_orders ";
-		$sql .= "LEFT JOIN tbl_paperTypes ON tbl_orders.orders_paperTypesId=tbl_paperTypes.paperTypes_id ";
+		$sql .= "FROM orders ";
+		$sql .= "LEFT JOIN paperTypes ON orders.orders_paperTypesId=paperTypes.paperTypes_id ";
 		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
-		$sql .= "AND tbl_orders.orders_status='Completed' ";
+		$sql .= "AND orders.orders_status='Completed' ";
 		$sql .= "GROUP BY paperTypes_name ORDER BY count DESC";
 		return $this->db->query($sql);
 
@@ -49,11 +49,11 @@ class statistics {
 
 	public function paperTypesTotalInches() {
 
-		$sql = "SELECT paperTypes_name,SUM(tbl_orders.orders_length) AS totalLength ";
-		$sql .= "FROM tbl_orders ";
-		$sql .= "LEFT JOIN tbl_paperTypes ON tbl_orders.orders_paperTypesId=tbl_paperTypes.paperTypes_id ";
+		$sql = "SELECT paperTypes_name,SUM(orders.orders_length) AS totalLength ";
+		$sql .= "FROM orders ";
+		$sql .= "LEFT JOIN paperTypes ON orders.orders_paperTypesId=paperTypes.paperTypes_id ";
 		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
-		$sql .= "AND tbl_orders.orders_status='Completed' ";
+		$sql .= "AND orders.orders_status='Completed' ";
 		$sql .= "GROUP BY paperTypes_name ORDER BY totalLength DESC";
 		return $this->db->query($sql);
 
@@ -62,10 +62,10 @@ class statistics {
 	public function popularFinishOptions() {
 
 		$sql = "SELECT finishOptions_id,finishOptions_name,COUNT(*) AS count ";
-		$sql .= "FROM tbl_orders ";
-		$sql .= "LEFT JOIN tbl_finishOptions ON tbl_orders.orders_finishOptionsId=tbl_finishOptions.finishOptions_id ";
+		$sql .= "FROM orders ";
+		$sql .= "LEFT JOIN finishOptions ON orders.orders_finishOptionsId=finishOptions.finishOptions_id ";
 		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
-		$sql .= "AND tbl_orders.orders_status='Completed' ";
+		$sql .= "AND orders.orders_status='Completed' ";
 		$sql .= "GROUP BY finishOptions_name ORDER BY count DESC";
 		return $this->db->query($sql);
 
@@ -74,20 +74,20 @@ class statistics {
 
 	public function finishOptionsTotalInches() {
 
-		$sql = "SELECT finishOptions_name,SUM(tbl_orders.orders_length) AS totalLength ";
-		$sql .= "FROM tbl_orders ";
-		$sql .= "LEFT JOIN tbl_finishOptions ON tbl_orders.orders_finishOptionsId=tbl_finishOptions.finishOptions_id ";
+		$sql = "SELECT finishOptions_name,SUM(orders.orders_length) AS totalLength ";
+		$sql .= "FROM orders ";
+		$sql .= "LEFT JOIN finishOptions ON orders.orders_finishOptionsId=finishOptions.finishOptions_id ";
 		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
-		$sql .= "AND tbl_orders.orders_status='Completed'";
+		$sql .= "AND orders.orders_status='Completed'";
 		return $this->db->query($sql);
 
 	}
 
 	public function totalInches() {
-		$sql = "SELECT SUM(tbl_orders.orders_length) AS total ";
-		$sql .= "FROM tbl_orders ";
+		$sql = "SELECT SUM(orders.orders_length) AS total ";
+		$sql .= "FROM orders ";
 		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
-		$sql .= "AND tbl_orders.orders_status='Completed'";
+		$sql .= "AND orders.orders_status='Completed'";
 		$result = $this->db->query($sql);
 		$total = $result[0]['total'];
 		if ($total == "") {
@@ -105,9 +105,9 @@ class statistics {
 	public function orders() {
 
 		$sql = "SELECT COUNT(1) As count ";
-		$sql .= "FROM tbl_orders ";
+		$sql .= "FROM orders ";
 		$sql .= "WHERE DATE(orders_timeCreated) BETWEEN '" . $this->startDate . "' AND '" . $this->endDate . "' ";
-		$sql .= "AND tbl_orders.orders_status='Completed'";
+		$sql .= "AND orders.orders_status='Completed'";
 		$ordersData = $this->db->query($sql);
 		$count = $ordersData[0]['count'];
 		return $count;
@@ -115,10 +115,10 @@ class statistics {
 
 	public function ordersPerMonth($year) {
 		$sql = "SELECT orders_timeCreated,COUNT(1) AS count ";
-		$sql .= "FROM tbl_orders ";
-		$sql .= "LEFT JOIN tbl_rushOrder ON tbl_orders.orders_rushOrderId=tbl_rushOrder.rushOrder_id ";
+		$sql .= "FROM orders ";
+		$sql .= "LEFT JOIN rushOrder ON orders.orders_rushOrderId=rushOrder.rushOrder_id ";
 		$sql .= "WHERE YEAR(orders_timeCreated)='" . $year . "' ";
-		$sql .= "AND tbl_orders.orders_status='Completed' ";
+		$sql .= "AND orders.orders_status='Completed' ";
 		$sql .= "GROUP BY MONTH(orders_timeCreated)";
 		$ordersData = $this->db->query($sql);
 		$newOrdersData;
@@ -155,21 +155,21 @@ class statistics {
 	public function avgOrdersPerMonth() {
 		$sql = "SELECT MONTH(a.timeCreated) as month, MONTHNAME(a.timeCreated) as month_name, AVG(a.count) as avg FROM ( ";
 		$sql .= "SELECT orders_timeCreated as timeCreated,COUNT(1) AS count ";
-		$sql .= "FROM tbl_orders ";
-		$sql .= "LEFT JOIN tbl_rushOrder ON tbl_orders.orders_rushOrderId=tbl_rushOrder.rushOrder_id ";
+		$sql .= "FROM orders ";
+		$sql .= "LEFT JOIN rushOrder ON orders.orders_rushOrderId=rushOrder.rushOrder_id ";
 		$sql .= "WHERE ";
-		$sql .= "tbl_orders.orders_status='Completed' ";
+		$sql .= "orders.orders_status='Completed' ";
 		$sql .= "GROUP BY MONTH(orders_timeCreated),YEAR(orders_timeCreated)) a ";
 		$sql .= "GROUP BY month ORDER BY month ASC";
 		return $this->db->query($sql);
 	}
 	
 	public function percentRushOrder() {
-		$sql = "SELECT tbl_rushOrder.rushOrder_name,COUNT(1) AS count ";
-		$sql .= "FROM tbl_orders ";
-		$sql .= "LEFT JOIN tbl_rushOrder ON tbl_orders.orders_rushOrderId=tbl_rushOrder.rushOrder_id ";
+		$sql = "SELECT rushOrder.rushOrder_name,COUNT(1) AS count ";
+		$sql .= "FROM orders ";
+		$sql .= "LEFT JOIN rushOrder ON orders.orders_rushOrderId=rushOrder.rushOrder_id ";
 		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
-		$sql .= "AND tbl_orders.orders_status='Completed' ";
+		$sql .= "AND orders.orders_status='Completed' ";
 		$sql .= "GROUP BY rushOrder_name";
 		$result = $this->db->query($sql);
 		$rushOrderYes = 0;
@@ -196,11 +196,11 @@ class statistics {
 	}
 
 	public function percentPosterTube() {
-		$sql = "SELECT tbl_posterTube.posterTube_name,COUNT(1) AS count ";
-		$sql .= "FROM tbl_orders ";
-		$sql .= "LEFT JOIN tbl_posterTube ON tbl_orders.orders_posterTubeId=tbl_posterTube.posterTube_id ";
+		$sql = "SELECT posterTube.posterTube_name,COUNT(1) AS count ";
+		$sql .= "FROM orders ";
+		$sql .= "LEFT JOIN posterTube ON orders.orders_posterTubeId=posterTube.posterTube_id ";
 		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
-		$sql .= "AND tbl_orders.orders_status='Completed' ";
+		$sql .= "AND orders.orders_status='Completed' ";
 		$sql .= "GROUP BY posterTube_name";
 		$result = $this->db->query($sql);
 		$posterTubeYes = 0;

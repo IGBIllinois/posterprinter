@@ -92,7 +92,7 @@ class order {
 	public function set_status($status) {
 	
 		$time_finished = date( 'Y-m-d H:i:s');
-		$sql = "UPDATE tbl_orders ";
+		$sql = "UPDATE orders ";
 		$sql .= "SET orders_status='" . $status . "' ";
 		if ($status == 'Completed') {
 			$sql .= ",orders_timeFinished='" . $time_finished . "' ";
@@ -112,7 +112,7 @@ class order {
 	
 	public function edit($cfop, $activityCode, $finishOptionId, $paperTypeId, $posterTubeId, $rushOrderId, $totalCost) {
 		
-		$sql = "UPDATE tbl_orders SET orders_cfop='" . $cfop . "', ";
+		$sql = "UPDATE orders SET orders_cfop='" . $cfop . "', ";
 		$sql .= "orders_activityCode='" . $activityCode . "', ";
 		$sql .= "orders_finishOptionsId='" . $finishOptionId . "', ";
 		$sql .= "orders_paperTypesId='" . $paperTypeId . "', ";
@@ -148,11 +148,11 @@ class order {
 	
 	private function get_order() {
 	
-		$sql = "SELECT tbl_orders.*, tbl_paperTypes.*,tbl_finishOptions.*,tbl_posterTube.*,tbl_rushOrder.* FROM tbl_orders ";
-		$sql .= "LEFT JOIN tbl_paperTypes ON tbl_orders.orders_paperTypesId=tbl_paperTypes.paperTypes_id ";
-		$sql .= "LEFT JOIN tbl_finishOptions ON tbl_orders.orders_finishOptionsId=tbl_finishOptions.finishOptions_id ";
-		$sql .= "LEFT JOIN tbl_posterTube ON tbl_orders.orders_posterTubeId=tbl_posterTube.posterTube_id ";
-		$sql .= "LEFT JOIN tbl_rushOrder ON tbl_orders.orders_rushOrderId=tbl_rushOrder.rushOrder_id ";
+		$sql = "SELECT orders.*, paperTypes.*,finishOptions.*,posterTube.*,rushOrder.* FROM orders ";
+		$sql .= "LEFT JOIN paperTypes ON orders.orders_paperTypesId=paperTypes.paperTypes_id ";
+		$sql .= "LEFT JOIN finishOptions ON orders.orders_finishOptionsId=finishOptions.finishOptions_id ";
+		$sql .= "LEFT JOIN posterTube ON orders.orders_posterTubeId=posterTube.posterTube_id ";
+		$sql .= "LEFT JOIN rushOrder ON orders.orders_rushOrderId=rushOrder.rushOrder_id ";
 		$sql .= "WHERE orders_id='" . $this->get_order_id() . "'";
 		$result = $this->db->query($sql);
 		if (count($result)) {

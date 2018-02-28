@@ -7,7 +7,7 @@ function getPaperTypes($db) {
 	$sql = "SELECT paperTypes_id as id, paperTypes_name as name, ";
 	$sql .= "paperTypes_cost as cost, paperTypes_width as width, ";
 	$sql .= "paperTypes_default ";
-	$sql .= "FROM tbl_paperTypes ";
+	$sql .= "FROM paperTypes ";
 	$sql .= "WHERE paperTypes_available=1 ";
 	$sql .= "ORDER BY paperTypes_name ASC";
 	return $db->query($sql);
@@ -24,7 +24,7 @@ function getValidPaperTypes($db,$width,$length) {
 	$sql = "SELECT paperTypes_id as id, paperTypes_name as name, ";
 	$sql .= "paperTypes_cost as cost, paperTypes_width as width, ";
 	$sql .= "paperTypes_default ";
-	$sql .= "FROM tbl_paperTypes ";
+	$sql .= "FROM paperTypes ";
 	$sql .= "WHERE paperTypes_available='1' ";
 	$sql .= "AND (paperTypes_width>='" . $width  . "' OR paperTypes_width>='" . $length . "') ";
 	$sql .= "ORDER BY paperTypes_cost ASC";;
@@ -61,7 +61,7 @@ function addPaperType($db,$name,$cost,$width,$default = 0) {
         	removeDefaultPaperType($db);
 		}
 		else { $default = 0; }
-		$sql = "INSERT INTO tbl_paperTypes(paperTypes_name,paperTypes_cost,paperTypes_width,paperTypes_available,paperTypes_default) ";
+		$sql = "INSERT INTO paperTypes(paperTypes_name,paperTypes_cost,paperTypes_width,paperTypes_available,paperTypes_default) ";
 		$sql .= "VALUES('" . $name . "','" . $cost . "','" . $width . "','" . $available . "','" . $default . "')";
         $id = $db->insert_query($sql);
         $message = "Paper Type successfully added";
@@ -83,7 +83,7 @@ function addPaperType($db,$name,$cost,$width,$default = 0) {
 //sets paper type to be default selected paper type
 function setDefaultPaperType($db,$paperTypeId) {
 	removeDefaultPaperType($db);
-	$sql = "UPDATE tbl_paperTypes SET paperTypes_default=1 WHERE paperTypes_id='" . $paperTypeId . "'";
+	$sql = "UPDATE paperTypes SET paperTypes_default=1 WHERE paperTypes_id='" . $paperTypeId . "'";
 	$db->non_select_query($sql);
 
 }
@@ -114,7 +114,7 @@ function updatePaperType($db,$paperTypeId,$name,$cost,$width,$default) {
 //$paperTypeId - integer - paper type id
 //deletes paper type
 function deletePaperType($db,$paperTypeId) {
-	$sql = "UPDATE tbl_paperTypes SET paperTypes_available=0 WHERE paperTypes_id=$paperTypeId";
+	$sql = "UPDATE paperTypes SET paperTypes_available=0 WHERE paperTypes_id=$paperTypeId";
 	$db->non_select_query($sql);
 
 }
@@ -124,7 +124,7 @@ function deletePaperType($db,$paperTypeId) {
 //$paperTypeId - integer - paper type id
 //returns array of selected paper type information
 function getPaperType($db,$paperTypeId) {
-	$sql = "SELECT * FROM tbl_paperTypes WHERE paperTypes_id='" . $paperTypeId . "' LIMIT 1";
+	$sql = "SELECT * FROM paperTypes WHERE paperTypes_id='" . $paperTypeId . "' LIMIT 1";
 	return $db->query($sql);
 	
 }
@@ -133,7 +133,7 @@ function getPaperType($db,$paperTypeId) {
 //$db - database object
 //removes the default flag for the paper type
 function removeDefaultPaperType($db) {
-	$sql = "UPDATE tbl_paperTypes SET paperTypes_default=0";
+	$sql = "UPDATE paperTypes SET paperTypes_default=0";
 	$db->non_select_query($sql);
 
 }

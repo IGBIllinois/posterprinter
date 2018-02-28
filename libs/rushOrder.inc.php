@@ -2,7 +2,7 @@
 
 function getRushOrderCost($db) {
 
-	$sql = "SELECT rushOrder_cost FROM tbl_rushOrder ";
+	$sql = "SELECT rushOrder_cost FROM rushOrder ";
 	$sql .= "WHERE rushOrder_available=1 ";
 	$sql .= "AND rushOrder_name='Yes'";
 	$result = $db->query($sql);
@@ -11,20 +11,20 @@ function getRushOrderCost($db) {
 
 function getRushOrders($db) {
 
-	$sql = "SELECT * FROM tbl_rushOrder WHERE rushOrder_available=1";
+	$sql = "SELECT * FROM rushOrder WHERE rushOrder_available=1";
 	return $db->query($sql);
 
 }
 
 function getRushOrder($db,$rushOrderId) {
-	$sql = "SELECT * FROM tbl_rushOrder WHERE rushOrder_id='" . $rushOrderId . "' LIMIT 1";
+	$sql = "SELECT * FROM rushOrder WHERE rushOrder_id='" . $rushOrderId . "' LIMIT 1";
 	return $db->query($sql);
 
 }
 function getRushOrderInfo($db) {
 	
 	$sql = "SELECT rushOrder_id as id, rushOrder_cost as cost ";
-	$sql .= "FROM tbl_rushOrder ";
+	$sql .= "FROM rushOrder ";
 	$sql .= "WHERE rushOrder_available=1 AND rushOrder_name='Yes' LIMIT 1";
 	return $db->query($sql);
 }
@@ -36,7 +36,7 @@ function getRushOrderStuff($db,$yesno = 0) {
         }
 
 	$sql = "SELECT rushOrder_id as id, rushOrder_name as name, rushOrder_cost as cost ";
-	$sql .= "FROM tbl_rushOrder WHERE rushOrder_available='1' and rushOrder_name='" . $name . "' LIMIT 1";
+	$sql .= "FROM rushOrder WHERE rushOrder_available='1' and rushOrder_name='" . $name . "' LIMIT 1";
 	$result = $db->query($sql);
 	if (count($result)) {
 		return $result[0];
@@ -56,9 +56,9 @@ function updateRushOrder($db, $cost) {
 
 		$result = getRushOrderInfo($db);
 		$rushOrder_id = $result[0]['id'];
-		$update_sql = "UPDATE tbl_rushOrder SET rushOrder_available=0 WHERE rushOrder_id='" . $rushOrder_id . "'";
+		$update_sql = "UPDATE rushOrder SET rushOrder_available=0 WHERE rushOrder_id='" . $rushOrder_id . "'";
 		$db->non_select_query($update_sql);
-		$insert_sql = "INSERT INTO tbl_rushOrder(rushOrder_name,rushOrder_cost,rushOrder_available) VALUES('Yes','" . $cost . "',1)";
+		$insert_sql = "INSERT INTO rushOrder(rushOrder_name,rushOrder_cost,rushOrder_available) VALUES('Yes','" . $cost . "',1)";
 		$insert_id = $db->insert_query($insert_sql);
 		$message = "Rush Order cost successfully updated.";
 		return array('RESULT'=>TRUE,

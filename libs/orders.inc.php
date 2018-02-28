@@ -7,12 +7,12 @@
 //returns array of previous orders for given month and year.
 function getPreviousOrders($db,$month,$year) {
 
-	$sql = "SELECT tbl_orders.*, tbl_paperTypes.*,tbl_finishOptions.* ";
-	$sql .= "FROM tbl_orders ";
-	$sql .= "LEFT JOIN tbl_paperTypes ON tbl_orders.orders_paperTypesId=tbl_paperTypes.paperTypes_id ";
-	$sql .= "LEFT JOIN tbl_finishOptions ON tbl_orders.orders_finishOptionsId=tbl_finishOptions.finishOptions_id ";
+	$sql = "SELECT orders.*, paperTypes.*,finishOptions.* ";
+	$sql .= "FROM orders ";
+	$sql .= "LEFT JOIN paperTypes ON orders.orders_paperTypesId=paperTypes.paperTypes_id ";
+	$sql .= "LEFT JOIN finishOptions ON orders.orders_finishOptionsId=finishOptions.finishOptions_id ";
 	$sql .= "WHERE (YEAR(orders_timeCreated)='" . $year ."' AND month(orders_timeCreated)='" . $month ."') ";
-	$sql .= "AND (tbl_orders.orders_status='Completed' OR tbl_orders.orders_status='Cancel') ";
+	$sql .= "AND (orders.orders_status='Completed' OR orders.orders_status='Cancel') ";
 	$sql .= "ORDER BY orders_id ASC";
 	return $db->query($sql);
 }
@@ -22,10 +22,10 @@ function getPreviousOrders($db,$month,$year) {
 //returns array of all the current orders.
 function getCurrentOrders($db) {
 
-	$sql = "SELECT tbl_orders.*, tbl_rushOrder.* ";
-	$sql .= "FROM tbl_orders ";
-	$sql .= "LEFT JOIN tbl_rushOrder ON tbl_orders.orders_rushOrderId=tbl_rushOrder.rushOrder_id ";
-	$sql .= "WHERE NOT (tbl_orders.orders_status='Completed' OR tbl_orders.orders_status='Cancel') ";
+	$sql = "SELECT orders.*, rushOrder.* ";
+	$sql .= "FROM orders ";
+	$sql .= "LEFT JOIN rushOrder ON orders.orders_rushOrderId=rushOrder.rushOrder_id ";
+	$sql .= "WHERE NOT (orders.orders_status='Completed' OR orders.orders_status='Cancel') ";
 	$sql .= "ORDER BY orders_id ASC";
 	return $db->query($sql);
 
@@ -40,21 +40,21 @@ function getCurrentOrders($db) {
 //this is ment to pass to the report functions to build monthly reports
 function getOrdersReport($db,$month,$year) {
 
-	$sql = "SELECT tbl_orders.orders_id as 'Order Number', tbl_orders.orders_email as 'Email', ";
-	$sql .= "tbl_orders.orders_name as 'Full Name', tbl_orders.orders_timeCreated as 'Date', ";
-	$sql .= "tbl_orders.orders_cfop as 'CFOP', tbl_orders.orders_activityCode as 'Activity Code', ";
-	$sql .= "tbl_orders.orders_totalCost as 'Cost', ";
-	$sql .= "tbl_paperTypes.paperTypes_name as 'Paper Type', tbl_paperTypes.paperTypes_cost as 'Paper Type Cost (per Inch)', ";
-	$sql .= "tbl_finishOptions.finishOptions_name as 'Finish Option', tbl_finishOptions.finishOptions_cost as 'Finish Option Cost', ";
-	$sql .= "tbl_rushOrder.rushOrder_name as 'Rush Order', tbl_rushOrder.rushOrder_cost as 'Rush Order Cost', ";
-	$sql .= "tbl_posterTube.posterTube_name as 'Poster Tube', tbl_posterTube.posterTube_cost as 'Poster Tube Cost' ";
-	$sql .= "FROM tbl_orders ";
-	$sql .= "LEFT JOIN tbl_paperTypes ON tbl_orders.orders_paperTypesId=tbl_paperTypes.paperTypes_id ";
-	$sql .= "LEFT JOIN tbl_finishOptions ON tbl_orders.orders_finishOptionsId=tbl_finishOptions.finishOptions_id ";
-	$sql .= "LEFT JOIN tbl_posterTube ON tbl_orders.orders_posterTubeId=tbl_posterTube.posterTube_id ";
-	$sql .= "LEFT JOIN tbl_rushOrder ON tbl_orders.orders_rushOrderId=tbl_rushOrder.rushOrder_id ";
+	$sql = "SELECT orders.orders_id as 'Order Number', orders.orders_email as 'Email', ";
+	$sql .= "orders.orders_name as 'Full Name', orders.orders_timeCreated as 'Date', ";
+	$sql .= "orders.orders_cfop as 'CFOP', orders.orders_activityCode as 'Activity Code', ";
+	$sql .= "orders.orders_totalCost as 'Cost', ";
+	$sql .= "paperTypes.paperTypes_name as 'Paper Type', paperTypes.paperTypes_cost as 'Paper Type Cost (per Inch)', ";
+	$sql .= "finishOptions.finishOptions_name as 'Finish Option', finishOptions.finishOptions_cost as 'Finish Option Cost', ";
+	$sql .= "rushOrder.rushOrder_name as 'Rush Order', rushOrder.rushOrder_cost as 'Rush Order Cost', ";
+	$sql .= "posterTube.posterTube_name as 'Poster Tube', posterTube.posterTube_cost as 'Poster Tube Cost' ";
+	$sql .= "FROM orders ";
+	$sql .= "LEFT JOIN paperTypes ON orders.orders_paperTypesId=paperTypes.paperTypes_id ";
+	$sql .= "LEFT JOIN finishOptions ON orders.orders_finishOptionsId=finishOptions.finishOptions_id ";
+	$sql .= "LEFT JOIN posterTube ON orders.orders_posterTubeId=posterTube.posterTube_id ";
+	$sql .= "LEFT JOIN rushOrder ON orders.orders_rushOrderId=rushOrder.rushOrder_id ";
 	$sql .= "WHERE (YEAR(orders_timeCreated)='" . $year . "' AND month(orders_timeCreated)='" . $month . "') ";
-	$sql .= "AND tbl_orders.orders_status='Completed' ";
+	$sql .= "AND orders.orders_status='Completed' ";
 	$sql .= "ORDER BY orders_id ASC";
 	return $db->query($sql);
 }

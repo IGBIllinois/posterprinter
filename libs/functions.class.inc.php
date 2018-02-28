@@ -71,7 +71,7 @@ class functions {
 			'orders_widthSwitched'=>$order_info['widthSwitched'],
 			'orders_name'=>$order_info['name']
 			);
-		return $db->build_insert('tbl_orders',$data);
+		return $db->build_insert('orders',$data);
 
 	}
 }

@@ -8,7 +8,7 @@ function getFinishOptions($db) {
 	$sql = "SELECT finishOptions_id as id, finishOptions_name as name, ";
 	$sql .= "finishOptions_cost as cost, finishOptions_maxWidth as maxWidth, ";
 	$sql .= "finishOptions_maxLength as maxLength, finishOptions_default ";
-	$sql .= "FROM tbl_finishOptions ";
+	$sql .= "FROM finishOptions ";
 	$sql .= "WHERE finishOptions_available=1 ";
 	$sql .= "ORDER BY finishOptions_name ASC";
 	return $db->query($sql);
@@ -24,7 +24,7 @@ function getValidFinishOptions($db,$width,$length) {
 	$sql = "SELECT finishOptions_id as id, finishOptions_name as name, ";
 	$sql .= "finishOptions_cost as cost, finishOptions_maxWidth as maxWidth, ";
 	$sql .= "finishOptions_maxLength as maxLength, finishOptions_default ";
-	$sql .= "FROM tbl_finishOptions ";
+	$sql .= "FROM finishOptions ";
 	$sql .= "WHERE finishOptions_available='1' ";
 	$sql .= "AND finishOptions_maxLength>='" . $length . "' ";
 	$sql .= "AND (finishOptions_maxWidth>='" . $width . "' OR finishOptions_maxWidth>='" . $length . "') ";
@@ -70,7 +70,7 @@ function addFinishOption($db,$name,$cost,$maxWidth,$maxLength,$default = 0) {
         	removeDefaultFinishOption($db);
 		}
 		else { $default = 0; }
-        $sql = "INSERT INTO tbl_finishOptions(finishOptions_name,finishOptions_cost,finishOptions_maxWidth,finishOptions_maxLength,finishOptions_available,finishOptions_default)";
+        $sql = "INSERT INTO finishOptions(finishOptions_name,finishOptions_cost,finishOptions_maxWidth,finishOptions_maxLength,finishOptions_available,finishOptions_default)";
         $sql .= "VALUES('" . $name . "','" . $cost . "','" . $maxWidth . "','" . $maxLength . "','" . $available . "','" . $default . "')";
 		$id = $db->insert_query($sql);
 		$message = "<br>Finish Option successfully added.";
@@ -91,7 +91,7 @@ function addFinishOption($db,$name,$cost,$maxWidth,$maxLength,$default = 0) {
 //$finishOptionId - integer - finish option id
 //returns true on success of deletion of finish option
 function deleteFinishOption($db,$finishOptionId) {
-	$sql = "UPDATE tbl_finishOptions SET finishOptions_available=0 WHERE finishOptions_id='" . $finishOptionId . "'";
+	$sql = "UPDATE finishOptions SET finishOptions_available=0 WHERE finishOptions_id='" . $finishOptionId . "'";
 	$db->non_select_query($sql);
 
 }
@@ -100,7 +100,7 @@ function deleteFinishOption($db,$finishOptionId) {
 //$db - database object
 //removes the default finish option.  This is a helper function.
 function removeDefaultFinishOption($db) {
-	$sql = "UPDATE tbl_finishOptions SET finishOptions_default=0";
+	$sql = "UPDATE finishOptions SET finishOptions_default=0";
 	$db->non_select_query($sql);
 }
 
@@ -111,7 +111,7 @@ function removeDefaultFinishOption($db) {
 function setDefaultFinishOption($db,$finishOptionId) {
 
 	removeDefaultFinishOption($db);
-	$sql =  "UPDATE tbl_finishOptions SET finishOptions_default=1 WHERE finishOptions_id='" . $finishOptionId . "'";
+	$sql =  "UPDATE finishOptions SET finishOptions_default=1 WHERE finishOptions_id='" . $finishOptionId . "'";
 	return $db->non_select_query($sql);
 
 }
@@ -142,7 +142,7 @@ function updateFinishOption($db,$finishOptionId,$name,$cost,$maxWidth,$maxLength
 //$finishOptionId - integer - finish option id
 //returns array of information for the select finish option
 function getFinishOption($db,$finishOptionId) {
-	$sql = "SELECT * FROM tbl_finishOptions WHERE finishOptions_id='" . $finishOptionId . "' LIMIT 1";
+	$sql = "SELECT * FROM finishOptions WHERE finishOptions_id='" . $finishOptionId . "' LIMIT 1";
 	return $db->query($sql);
 
 
