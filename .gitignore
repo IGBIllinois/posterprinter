@@ -1,4 +1,5 @@
 includes/settings.inc.php
 /vendor
 /html/vendor
-posterfiles/*
+posters/*
+/conf/settings.inc.php

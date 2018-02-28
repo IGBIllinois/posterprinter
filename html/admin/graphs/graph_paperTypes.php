@@ -26,17 +26,14 @@ if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
 	
 	$graph = new PieGraph(600,300,"auto");
 	$graph->title->Set("Paper Types");
-	$graph->title->SetFont(FF_ARIAL,FS_BOLD,12);
 	$graph->title->SetColor("#000000");
 	$p1 = new PiePlot3d($data);
 	$p1->SetAngle(85);
 	$p1->SetSize(0.35);
 	$p1->SetCenter(0.3,0.5);
 	$p1->SetLegends($data_legend);
-	$graph->legend->SetFont(FF_ARIAL,FS_NORMAL,8);
 	$graph->legend->SetPos(0.6,0.2,"left","top");
 	$graph->legend->SetLayout("LEGEND_VERT");
-	$p1->value->SetFont(FF_ARIAL,FS_NORMAL,8);
 	$graph->Add($p1);
 	$graph->Stroke();
 }

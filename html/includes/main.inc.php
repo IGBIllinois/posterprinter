@@ -11,12 +11,13 @@
 //////////////////////////////////////////////////////
 
 ini_set('log_errors',1);
-require_once 'includes/settings.inc.php';
+require_once '../conf/settings.inc.php';
+require_once '../vendor/autoload.php';
 
-set_include_path(get_include_path() . ":libs");
+set_include_path(get_include_path() . ":../libs");
 
 function my_autoloader($class_name) {
-        if(file_exists("libs/" . $class_name . ".class.inc.php")) {
+        if(file_exists("../libs/" . $class_name . ".class.inc.php")) {
                 require_once $class_name . '.class.inc.php';
         }
 }

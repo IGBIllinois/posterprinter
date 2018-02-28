@@ -4,8 +4,8 @@
 		"components/jquery": "2.2.4",
 		"components/jqueryui": "1.12.1",
 		"jpgraph/jpgraph": "4.0.2",
-		"components/bootstrap": "2.3.2",
-		"components/bootstrap-default": "2.3.2",
+		"components/bootstrap": "3.3.5",
+		"components/bootstrap-default": "3.3.5",
 		"pear/mail_mime": "1.10.2",
 		"pear/mail": "1.4.1"
 	},

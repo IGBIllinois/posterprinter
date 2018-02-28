@@ -67,7 +67,8 @@ if (isset($_POST['login'])) {
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link rel="stylesheet" type="text/css" href="../includes/bootstrap-3.3.5-dist/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css"
+        href="../vendor/components/bootstrap/css/bootstrap.min.css">
 
 <TITLE><?php echo settings::get_title(); ?> Login</TITLE>
 </HEAD>

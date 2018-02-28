@@ -11,16 +11,15 @@
 //
 //////////////////////////////////////////////////////
 
-require_once '../includes/settings.inc.php';
+require_once '../../conf/settings.inc.php';
+require_once '../../vendor/autoload.php';
 
-$include_paths = array('../libs',
-                '../includes/jpgraph-3.5.0b1/src',
-                '../includes/PHPExcel_1.8.0/Classes');
+$include_paths = array('../../libs');
 
 set_include_path(get_include_path() . ":" . implode(':',$include_paths));
 
 function my_autoloader($class_name) {
-        if(file_exists("../libs/" . $class_name . ".class.inc.php")) {
+        if(file_exists("../../libs/" . $class_name . ".class.inc.php")) {
                 require_once $class_name . '.class.inc.php';
         }
 }

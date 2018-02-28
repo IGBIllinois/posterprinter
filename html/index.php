@@ -166,7 +166,7 @@ elseif (isset($_POST['step2'])) {
 	$posterLength = $_POST['posterLength'];
 	$paperTypesId = $_POST['paperTypesId'];
 	$finishOptionsId = $_POST['finishOptionsId'];
-	$cfop1 = $_POST['cfop'];
+	$cfop = $_POST['cfop'];
 	$activityCode = $_POST['activityCode'];
 	$posterFileName = $_FILES['posterFile']['name'];
 	$email = $_POST['email'];
@@ -379,11 +379,11 @@ else {
 	$form_html .= "<tr><th colspan='2'>Paper Size</th></tr>\n";
 	$form_html .= "<tr><td colspan='2'><em>Please choose a width and length for your poster.  The width maximum is " . settings::get_max_width() . " inches.</em></td></tr>\n";
 	$form_html .= "<tr><td class='text-right' style='vertical-align:middle;'>Width:</td>\n";
-	$form_html .= "<td class='left'>\n";
-	$form_html .= "<div class='input-group col-md-3'><input class='form-control' text='text' name='posterWidth' id='posterWidth' maxlength='6' size='6'><span class='input-group-addon'>Inches</span></div></td></tr>\n";
+	$form_html .= "<td class='left'>";
+	$form_html .= "<div class='input-group col-md-5'><input class='form-control' text='text' name='posterWidth' id='posterWidth' maxlength='6' size='6'><span class='input-group-addon'>Inches</span></div></td></tr>\n";
 	$form_html .= "<tr><td class='text-right' style='vertical-align:middle;'>Length:</td>\n";
 	$form_html .= "<td class='left'>\n";
-	$form_html .= "<div class='input-group col-md-3'><input class='form-control' type='text' name='posterLength' id='posterLength' maxlength='6' size='6'><span class='input-group-addon'>Inches</span></div></td></tr>\n";
+	$form_html .= "<div class='input-group col-md-5'><input class='form-control' type='text' name='posterLength' id='posterLength' maxlength='6' size='6'><span class='input-group-addon'>Inches</span></div></td></tr>\n";
 	$form_html .= "</table>\n";
 	$form_html .= "<br>\n";
 	$form_html .= "<table class='table table-bordered table-condensed table-striped'>\n";
@@ -405,11 +405,13 @@ else {
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
-<link rel="stylesheet" type="text/css" href="includes/bootstrap-3.3.5-dist/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css"
+        href="vendor/components/bootstrap/css/bootstrap.min.css">
 
-<script type='text/javascript' src='includes/jquery-2.1.4.min.js'></script>
-<script type="text/javascript" src="includes/poster.inc.js"></script>
+<link rel='stylesheet' href='vendor/components/jquery-ui/themes/base/jquery-ui.css'>
+<script src='vendor/components/jquery/jquery.min.js' type='text/javascript'></script>
+<script src='vendor/components/jquery-ui/ui/minified/jquery-ui.min.js' type='text/javascript'></script>
+<script src='includes/poster.inc.js' type='text/javascript'></script>
 
 <title><?php echo settings::get_title(); ?></title>
 

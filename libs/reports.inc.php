@@ -1,6 +1,4 @@
 <?php
-include_once 'PHPExcel.php';
-include_once 'PHPExcel/IOFactory.php';
 
 //create_excel_2003_report()
 //$data - double array - data values
