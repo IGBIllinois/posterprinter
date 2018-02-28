@@ -1,7 +1,6 @@
 <?php
 require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
-require_once 'orders.inc.php';
 
 if (isset($_POST['selectedDate'])) {
 	$year = $_POST['year'];
@@ -15,7 +14,7 @@ else {
 
 
 //runs query and gets previous orders
-$orders = getPreviousOrders($db,$month,$year);
+$orders = functions::getPreviousOrders($db,$month,$year);
 
 $orders_html = "";
 if (count($orders) == 0) { $orders_html = "<tr><td colspan='5'>No Orders</td></tr>"; }
@@ -91,14 +90,14 @@ require_once 'includes/header.inc.php';
 Monthly Total: $<?php echo $stats->pretty_cost(); ?>
 <br>
 
-<form class='form' action='reports.php' method='post'>
+<form class='form' action='report.php' method='post'>
 <div class='row'>
 <div class="col-xs-2">
 <input type='hidden' name='month' value='<?php echo $month; ?>' />
 <input type='hidden' name='year' value='<?php echo $year; ?>' />
 <select class='form-control' name='report_type'>
-<option value='excel2003'>Excel 2003</option>
-<option value='excel2007'>Excel 2007</option>
+<option value='xls'>Excel 2003</option>
+<option value='xlsx'>Excel 2007</option>
 <option value='csv'>CSV</option>
 </select>
 </div>

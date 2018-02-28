@@ -1,9 +1,8 @@
 <?php
 require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
-require_once 'paperTypes.inc.php';
 
-$paperTypes = getPaperTypes($db);
+$paperTypes = paper_types::getPaperTypes($db);
 
 $paperTypes_html = "";
 

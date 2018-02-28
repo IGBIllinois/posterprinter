@@ -16,10 +16,9 @@
 require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
 require_once 'includes/header.inc.php';
-require_once 'orders.inc.php';
 
 
-$orders = getCurrentOrders($db);
+$orders = functions::getCurrentOrders($db);
 
 $orders_html = "";
 if (count($orders) == 0) {

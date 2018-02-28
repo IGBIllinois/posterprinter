@@ -2,25 +2,23 @@
 
 require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
-require_once 'posterTube.inc.php';
-require_once 'rushOrder.inc.php';
 
 $message = "";
 if (isset($_POST['updatePosterTube'])) {
-	$result = updatePosterTube($db,$_POST['posterTubeCost']);
+	$result = poster_tube::updatePosterTube($db,$_POST['posterTubeCost']);
 	$message = functions::alert($result['MESSAGE'],$result['RESULT']);
 	
 }
 elseif (isset($_POST['updateRushOrder'])) {
-	$result = updateRushOrder($db,$_POST['rushOrderCost']);
+	$result = poster_tube::updateRushOrder($db,$_POST['rushOrderCost']);
 	$message = functions::alert($result['MESSAGE'],$result['RESULT']);	
 }
 
-$posterTubeInfo = getPosterTubeInfo($db);
+$posterTubeInfo = poster_tube::getPosterTubeInfo($db);
 $posterTubeId = $posterTubeInfo[0]['id'];
 $posterTubeCost = $posterTubeInfo[0]['cost'];
 	
-$rushOrderInfo = getRushOrderInfo($db);
+$rushOrderInfo = rush_order::getRushOrderInfo($db);
 $rushOrderId = $rushOrderInfo[0]['id'];
 $rushOrderCost = $rushOrderInfo[0]['cost'];
 

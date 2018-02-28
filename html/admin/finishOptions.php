@@ -1,9 +1,8 @@
 <?php
 require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
-require_once 'finishOptions.inc.php';
 
-$finishOptions = getFinishOptions($db);
+$finishOptions = finish_options::getFinishOptions($db);
 
 $finishOptions_html = "";
 

@@ -1,18 +1,17 @@
 <?php
 require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
-require_once 'finishOptions.inc.php';
 
 	
 if (isset($_POST['removeFinishOption'])) {
 	$finishOptionId = $_POST['finishOptionId'];
-	deleteFinishOption($db,$finishOptionId);	
+	finish_options::deleteFinishOption($db,$finishOptionId);	
 	header("Location: finishOptions.php");
 
 }
 elseif (isset($_POST['makeDefault'])) {
 	$finishOptionId = $_POST['finishOptionId'];
-	setDefaultFinishOption($db,$finishOptionId);
+	finish_options::setDefaultFinishOption($db,$finishOptionId);
 	header("Location: finishOptions.php");
 }
 elseif (isset($_POST['editFinishOption'])) {
@@ -23,14 +22,14 @@ elseif (isset($_POST['editFinishOption'])) {
 	$maxLength = trim(rtrim($_POST['maxLength']));
 	$default = $_POST['default'];
 	
-	$result = updateFinishOption($db,$finishOptionId,$name,$cost,$maxWidth,$maxLength,$default);	
+	$result = finish_options::updateFinishOption($db,$finishOptionId,$name,$cost,$maxWidth,$maxLength,$default);	
 	if ($result['RESULT']) { header("Location: finishOptions.php"); }
 }
 
 elseif (isset($_GET['finishOptionId'])) {
 	$finishOptionId = $_GET['finishOptionId'];
 
-	$finishOption = getFinishOption($db,$finishOptionId);
+	$finishOption = finish_options::getFinishOption($db,$finishOptionId);
 	$name = $finishOption[0]['finishOptions_name'];
 	$cost = $finishOption[0]['finishOptions_cost'];
 	$maxWidth = $finishOption[0]['finishOptions_maxWidth'];

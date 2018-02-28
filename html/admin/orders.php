@@ -2,7 +2,6 @@
 require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
 require_once 'mail.inc.php';
-require_once 'orders.inc.php';
 
 
 if ((isset($_GET['orderId'])) && is_numeric($_GET['orderId'])) {
@@ -22,7 +21,7 @@ if (isset($_POST['changeStatus'])) {
 	//if status is set to "Complete", then it will email the user saying to come pick up the poster
 	if ($_POST['status'] == 'Completed') {
 					
-		mailUserOrderComplete($db,$orderId,admin_email);
+		$order->mailUserOrderComplete();
 		header("Location: index.php");
 	}
 	//else if status is set to "Cancel"

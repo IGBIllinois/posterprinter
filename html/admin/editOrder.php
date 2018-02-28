@@ -1,8 +1,6 @@
 <?php
 require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
-require_once 'mail.inc.php';
-require_once 'orders.inc.php';
 require_once 'paperTypes.inc.php';
 require_once 'finishOptions.inc.php';
 require_once 'posterTube.inc.php';

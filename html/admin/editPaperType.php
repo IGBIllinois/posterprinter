@@ -1,18 +1,17 @@
 <?php
 require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
-require_once 'paperTypes.inc.php';
 
 
 if (isset($_POST['removePaperType'])) {
 	$paperTypeId = $_POST['paperTypeId'];
-	deletePaperType($db,$paperTypeId);
+	paper_types::deletePaperType($db,$paperTypeId);
 	header("Location: paperTypes.php");
 
 }
 elseif (isset($_POST['makeDefault'])) {
 	$paperTypeId = $_POST['paperTypeId'];
-	setDefaultPaperType($db,$paperTypeId);
+	paper_types::setDefaultPaperType($db,$paperTypeId);
 	header("Location: paperTypes.php");
 }
 elseif (isset($_POST['editPaperType'])) {
@@ -22,14 +21,14 @@ elseif (isset($_POST['editPaperType'])) {
 	$width = trim(rtrim($_POST['width']));
 	$default = $_POST['default'];
 
-	$result = updatePaperType($db,$paperTypeId,$name,$cost,$width,$default);
+	$result = paper_types::updatePaperType($db,$paperTypeId,$name,$cost,$width,$default);
 	if ($result['RESULT']) { header("Location: paperTypes.php"); }
 	
 	
 }
 elseif (isset($_GET['paperTypeId'])) {
 	$paperTypeId = $_GET['paperTypeId'];
-	$paperType = getPaperType($db,$paperTypeId);
+	$paperType = paper_types::getPaperType($db,$paperTypeId);
 	$name = $paperType[0]['paperTypes_name'];
 	$cost = $paperType[0]['paperTypes_cost'];
 	$width = $paperType[0]['paperTypes_width'];

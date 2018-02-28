@@ -13,12 +13,6 @@
 
 //include files for the script to run
 require_once 'includes/main.inc.php';
-require_once 'mail.inc.php';
-require_once 'orders.inc.php';
-require_once 'paperTypes.inc.php';
-require_once 'finishOptions.inc.php';
-require_once 'posterTube.inc.php';
-require_once 'rushOrder.inc.php';
 
 
 //poster width and length submission
@@ -36,7 +30,7 @@ if (isset($_POST['step1'])) {
 	} 
 	else {
 
-	$paperTypes = getValidPaperTypes($db,$posterWidth,$posterLength);
+	$paperTypes = paper_types::getValidPaperTypes($db,$posterWidth,$posterLength);
 	//takes the result and formats it into html into the paperTypeHTML variable.
 	$paperTypes_html = "";
 	foreach ($paperTypes as $paperType) {
@@ -53,7 +47,7 @@ if (isset($_POST['step1'])) {
 	}
 
 
-	$finishOptions = getValidFinishOptions($db,$posterWidth,$posterLength);
+	$finishOptions = finish_options::getValidFinishOptions($db,$posterWidth,$posterLength);
 	//takes the result and formats it into html into the finishOptionsHTML variable.
 	$finishOptions_html = "";
 	foreach ($finishOptions as $finishOption) {
@@ -68,10 +62,10 @@ if (isset($_POST['step1'])) {
 		}
 
 	}
-	$posterTube_html = "<tr><td class='right'>Poster Tube</td><td class='right'>$" . getPosterTubeCost($db) . "</td>\n";
+	$posterTube_html = "<tr><td class='right'>Poster Tube</td><td class='right'>$" . poster_tube::getPosterTubeCost($db) . "</td>\n";
 	$posterTube_html .= "<td class='left'><input type='checkbox' id='posterTube' name='posterTube' value='1'></td></tr>\n";
 
-	$rushOrder_html = "<tr><td class='right'>Rush Order</td><td class='right'>$" . getRushOrderCost($db) ."</td>\n";
+	$rushOrder_html = "<tr><td class='right'>Rush Order</td><td class='right'>$" .rush_order:: getRushOrderCost($db) ."</td>\n";
 	$rushOrder_html .= "<td class='left'><input type='checkbox' id='rushOrder' name='rushOrder' value='1'></td></tr>\n";
 
 	$form_html = "<br \>
@@ -195,13 +189,13 @@ elseif (isset($_POST['step2'])) {
 
 
 	//Gets Finish Options Information
-	$finishOptionsResult = getFinishOption($db,$finishOptionsId);
+	$finishOptionsResult = finish_options::getFinishOption($db,$finishOptionsId);
 	$finishOptionCost = $finishOptionsResult[0]['finishOptions_cost'];
 	$finishOptionName = $finishOptionsResult[0]['finishOptions_name'];
 
 
 	//Gets Paper Type Information
-	$paperType = getPaperType($db,$paperTypesId);
+	$paperType = paper_types::getPaperType($db,$paperTypesId);
 	$paperTypeCost = $paperType[0]['paperTypes_cost'];
 	$paperTypeName = $paperType[0]['paperTypes_name'];
 	$paperTypeWidth = $paperType[0]['paperTypes_width'];
@@ -214,12 +208,12 @@ elseif (isset($_POST['step2'])) {
 		$widthSwitched = 1;	
 	}
 
-	$posterTubeResult = getPosterTubeStuff($db,$posterTube);
+	$posterTubeResult = poster_tube::getPosterTubeStuff($db,$posterTube);
 	$posterTubeCost =  $posterTubeResult["cost"];
 	$posterTubeName =  $posterTubeResult["name"];
 	$posterTubeId = $posterTubeResult["id"];
 
-	$rushOrderResult = getRushOrderStuff($db,$rushOrder);
+	$rushOrderResult = rush_order::getRushOrderStuff($db,$rushOrder);
 	$rushOrderCost = $rushOrderResult["cost"];
 	$rushOrderName = $rushOrderResult["name"];
 	$rushOrderId = $rushOrderResult["id"];
@@ -322,10 +316,10 @@ elseif (isset($_POST['step3'])) {
 		rename(poster_dir . "/" . $fullsize_posterFileTmpName,poster_dir . "/" . $fullsize_filename);
 	}
 
-	//mail new order to users and admins
-	mailNewOrder($db,$orderId,settings::get_admin_email());
 
 	$order = new order($db,$orderId);
+	$order->mailNewOrder();
+
 	$form_html = "<table class='table table-bordered table-condensed'>";
 	$form_html .= "<tr><th colspan='2'>Order Information</td></tr>";
 	$form_html .= "<tr><td colspan='2'><em>Thank you for your order.  Your order will be completed within <strong>" . settings::get_order_timeframe() . " business hours</strong>. ";
@@ -362,7 +356,7 @@ elseif (enable == FALSE) {
 }
 else {
 
-	$paperTypes = getPaperTypes($db);
+	$paperTypes = paper_types::getPaperTypes($db);
 
 	$paperTypes_html = "";
 	foreach ($paperTypes as $paperType) {
