@@ -1,7 +1,6 @@
 <?php
 require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
-require_once 'mail.inc.php';
 
 
 if ((isset($_GET['orderId'])) && is_numeric($_GET['orderId'])) {

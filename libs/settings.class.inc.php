@@ -3,6 +3,9 @@
 
 class settings {
 
+	const ldap_port = 389;
+	const ldap_ssl = false;
+
 	public static function get_title() {
 		return title;
 
@@ -45,6 +48,44 @@ class settings {
 	public static function get_valid_filetypes() {
 		global $conf;
 		return $conf['valid_filetypes'];
+	}
+
+	public static function get_ldap_host() {
+		return ldap_host;
+
+	}
+	public static function get_ldap_base_dn() {
+		return ldap_base_dn;
+		
+	}
+	public static function get_ldap_people_ou() {
+		return ldap_people_ou;
+	}
+	public static function get_ldap_group_ou() {
+		return ldap_group_ou;
+	}
+
+	public static function get_ldap_group() {
+		return ldap_group;
+
+	}
+	public static function get_ldap_ssl() {
+		if (defined(ldap_ssl)) {
+			return ldap_ssl;
+		}
+		else {
+			return ldap_ssl;
+		}
+
+	}
+	public static function get_ldap_port() {
+		if (defined(ldap_port)) {
+			return ldap_port;
+		}
+		else {
+			return self::ldap_port;
+		}
+
 	}
 }
 

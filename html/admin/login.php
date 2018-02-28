@@ -39,7 +39,7 @@ if (isset($_POST['login'])) {
         }
         if ($error == false) {
 
-		$success = functions::authenticate($username,$password,ldap_host,ldap_base_dn,ldap_people_ou,ldap_group_ou,ldap_group,ldap_ssl,ldap_port);
+		$success = functions::authenticate($username,$password);
 	
 		if ($success) {
 		

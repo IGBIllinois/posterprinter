@@ -19,17 +19,21 @@ class functions {
 
         }
 
-	public static function authenticate($username,$password,$ldaphost,$base_dn,$people_ou,$group_ou,$group,$ssl,$port) {
+	public static function authenticate($username,$password) {
 
 	        $connect;
-        	if ($ssl == 1) { $connect = ldap_connect("ldaps://" . $ldaphost,$port); }
-	        elseif ($ssl == 0) { $connect = ldap_connect("ldap://" . $ldaphost,$port); }
-        	$bindDN = "uid=" . $username . "," . $people_ou;
+		$ldap_uri = "ldap://";
+        	if (settings::get_ldap_ssl() == 1) { 
+			$ldap_uri = "ldaps://";
+		}	
+		$connect = ldap_connect($ldap_uri . settings::get_ldap_host(),settings::get_ldap_port());
+
+        	$bindDN = "uid=" . $username . "," . settings::get_ldap_people_ou();
 	        $bind_success = @ldap_bind($connect, $bindDN, $password);
         	$success = 0;
 	        if ($bind_success) {
-        	        $filter = "(&(cn=" . $group . ")(memberUid=" . $username . "))";
-                	$search = ldap_search($connect,$group_ou,$filter);
+        	        $filter = "(&(cn=" . settings::get_ldap_group() . ")(memberUid=" . $username . "))";
+                	$search = ldap_search($connect,settings::get_ldap_group_ou(),$filter);
 	                $result = ldap_get_entries($connect,$search);
         	        if ($result["count"]) { $success = 1; }
 	        }
