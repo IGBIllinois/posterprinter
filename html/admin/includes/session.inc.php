@@ -11,7 +11,7 @@
 //						//
 //////////////////////////////////////////////////
 
-$session = new session(session_name);
+$session = new session(settings::get_session_name());
 
 //If not logged in
 if (!($session->get_var('login'))) {
@@ -24,7 +24,7 @@ if (!($session->get_var('login'))) {
 	header('Location: login.php');
 }
 //If session timeout is reach
-elseif (time() > $session->get_var('timeout') + session_timeout) {
+elseif (time() > $session->get_var('timeout') + settings::get_session_timeout()) {
 	header('Location: logout.php');
 }
 //If IP address is different

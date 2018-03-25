@@ -18,17 +18,17 @@ $stats = new statistics($db,$startDate,$endDate);
 ?>
 <h3>Orders Per Month - <?php echo $year; ?></h3>
 <hr>
-<ul class='pager'>
-<li class='previous'><a href='stats_OrdersPerMonth.php?year=<?php echo $previousYear; ?>'>Previous</a></li>
+<ul class='pagination justify-content-center'>
+<li class='page-item'><a class='page-link' href='stats_OrdersPerMonth.php?year=<?php echo $previousYear; ?>'>Previous</a></li>
 <?php
         $next_year = strtotime('+1 day', strtotime($endDate));
 	$today = mktime(0,0,0,date('m'),date('d'),date('y'));
 
         if ($next_year > $today) {
-                echo "<li class='next disabled'><a href='#'>Next</a></li>";
+                echo "<li class='page-item' disabled'><a class='page-link' href='#'>Next</a></li>";
         }
         else {
-                echo "<li class='next'><a href='stats_OrdersPerMonth.php?year=" . $nextYear  . "'>Next</a></li>";
+                echo "<li class='page-item'><a class='page-link' href='stats_OrdersPerMonth.php?year=" . $nextYear  . "'>Next</a></li>";
         }
 ?>
 

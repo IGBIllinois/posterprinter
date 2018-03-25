@@ -2,7 +2,7 @@
 require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
 
-$paperTypes = paper_types::getPaperTypes($db);
+$paperTypes = functions::getPaperTypes($db);
 
 $paperTypes_html = "";
 
@@ -27,7 +27,7 @@ require_once 'includes/header.inc.php';
 
 <h3>Paper Types</h3>
 <hr>
-<table class='table table-condensed table-bordered'>
+<table class='table table-sm table-bordered'>
 	<tr>
 		<th>Name</th>
 		<th>Cost per Inch</th>

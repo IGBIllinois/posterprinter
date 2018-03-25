@@ -38,13 +38,40 @@ class verify {
 
         }
 
+	public static function verify_cc_emails($cc_emails) {
+		$email_array=explode(",",$cc_emails);
+		$valid = 1;
+		if (count($email_array)) {
+			foreach ($email_array as $email) {
+				$result = self::verify_email($email);
+			}
+		}
+		return $valid;	
+
+
+	}
+	public static function verify_name($name) {
+		$name = trim(rtrim($name));
+		if ($name == "") {
+			return false;
+		}
+		if (count(explode(" ",$name)) != 2) {
+			return false;
+		}
+		if (!preg_match("/^[a-zA-Z ]+$/",$name)) {
+			return false;
+		}
+		return true;
+
+
+	}
 	public static function verify_cost($cost) {
 		$errors = false;
 		$valid = false;
 		if ($cost == "") {
 			$errors = true;
 		}
-		if (!preg_match('/\$(\d+\.\d+)/',$cost)) {
+		if (!preg_match('/^[0-9]+(\.[0-9]{1,2})?$/',$cost)) {
 			$errors = true;
 
 		}

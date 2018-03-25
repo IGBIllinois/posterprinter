@@ -1,10 +1,6 @@
 <?php
 require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
-require_once 'paperTypes.inc.php';
-require_once 'finishOptions.inc.php';
-require_once 'posterTube.inc.php';
-require_once 'rushOrder.inc.php';
 
 $message = "";
 if (isset($_POST['editOrder'])) {
@@ -75,25 +71,25 @@ if (isset($_POST['editOrder'])) {
 	
 		//Calculates Total Cost
 		$totalCost = ($posterLength * $paperTypeCost) + $finishOptionCost + $posterTubeCost + $rushOrderCost;
-		$order = new order($db,$orderId);
+		$order = new order($db,$order_id);
 		$order->edit($cfop, $activityCode, $finishOptionId, $paperTypeId, $posterTubeId, $rushOrderId, $totalCost);
-		header("Location: orders.php?orderId=" . $orderId);
+		header("Location: order.php?order_id=" . $order_id);
 	}
 
 	
 }
 
 
-if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
+if (isset($_GET['order_id']) && is_numeric($_GET['order_id'])) {
 
 	
 	//gets order id
-	$orderId = $_GET['orderId'];
+	$order_id = $_GET['order_id'];
 	
-	$order = new order($db,$orderId);
+	$order = new order($db,$order_id);
 		
 	////////////////Paper Types////////////
-	$paperTypes = getValidPaperTypes($db,$order->get_width(),$order->get_length());
+	$paperTypes = functions::getValidPaperTypes($db,$order->get_width(),$order->get_length());
 	$paperTypesHTML = "<div class='col-md-4'>";
 	$paperTypesHTML .= "<select class='form-control' name='paperType'>";
 	foreach ($paperTypes as $paperType) {
@@ -106,7 +102,7 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 	$paperTypesHTML .= "</div>";
 	
 	///////////////////Finish Options//////////////
-	$finishOptions = getValidFinishOptions($db,$order->get_width(),$order->get_length());
+	$finishOptions = functions::getValidFinishOptions($db,$order->get_width(),$order->get_length());
 	$finishOptionsHTML = "<div class='col-md-4'>";
 	$finishOptionsHTML .= "<select class='form-control' name='finishOption'>";
 	foreach ($finishOptions as $finishOption) {
@@ -122,7 +118,7 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 	$finishOptionsHTML .= "</div>";
 	
 	////////////////////Poster Tube////////////////////
-	$posterTube = getPosterTubes($db);
+	$posterTube = poster_tube::getPosterTubes($db);
 	$posterTubeHTML = "<div class='col-md-3'>";
 	$posterTubeHTML .= "<select class='form-control' name='posterTube'>";
 	for($i=0;$i<count($posterTube);$i++) {
@@ -143,7 +139,7 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 	
 	
 	/////////////////Rush Order//////////////
-	$rushOrder = getRushOrders($db);
+	$rushOrder = rush_order::getRushOrders($db);
 	$rushOrderHTML = "<div class='col-md-3'>";
 	$rushOrderHTML .= "<select class='form-control' name='rushOrder'>";
 	for($i=0;$i<count($rushOrder);$i++) {
@@ -179,10 +175,10 @@ else
 }
 </script>
 
-<form method='post' action='editOrder.php?orderId=<?php echo $orderId; ?>'>
-<div class='col-sm-8 col-md-6'>
+<form method='post' action='<?php echo $_SERVER['PHP_SELF']; ?>?order_id=<?php echo $order_id; ?>'>
+<div class='col-sm-8 col-md-8'>
 
-<table class='table table-bordered table-condensed'>
+<table class='table table-bordered table-sm'>
 	<tr><th colspan='2'>Edit Order Information</th></tr>
 	<tr><td class='text-right'>Order Number</td><td><?php echo $order->get_order_id(); ?></td></tr>
 	<tr><td class='text-right'>Email</td><td><?php echo $order->get_email(); ?></td></tr>
@@ -206,7 +202,7 @@ else
 	<tr><td class='text-right' style='vertical-align:middle;'>Finish Option</td><td><?php echo $finishOptionsHTML;  ?></td></tr>
 	<tr><td class='text-right' style='vertical-align:middle;'>Poster Tube</td><td><?php echo $posterTubeHTML; ?></td></tr>
 	<tr><td class='text-right' style='vertical-align:middle;'>Rush Order</td><td><?php echo $rushOrderHTML; ?></td></tr>
-	<tr><td class='text-right'>Comments</td><td><?php echo $order->get_comments(); ?></td></tr>
+	<tr><td class='text-right'>Comments</td><td><?php echo $order->get_wordwrap_comments(); ?></td></tr>
 </table>
 </div>
 <br>
@@ -214,7 +210,7 @@ else
 <input type='hidden' name='posterWidth' value='<?php echo $order->get_width(); ?>'>
 <input type='hidden' name='posterLength' value='<?php echo $order->get_length(); ?>'>
 <div class='col-sm-12 col-md-12'>
-<a class='btn btn-warning' href='orders.php?orderId=<?php echo $order->get_order_id(); ?>'>Cancel</a>
+<a class='btn btn-warning' href='order.php?order_id=<?php echo $order->get_order_id(); ?>'>Cancel</a>
 <button class='btn btn-primary' type='submit' name='editOrder' onClick='return confirmUpdate()'>Edit Order</button>
 </div>
 </form>

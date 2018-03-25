@@ -23,8 +23,8 @@ function cfopAdvance3() {
 function uploadFile() {
 	var fd = new FormData();
 	fd.append("posterFile", document.getElementById('posterFile').files[0]);
-	fd.append('posterWidth',document.getElementById('posterWidth').value);
-	fd.append('posterLength',document.getElementById('posterLength').value);
+	fd.append('width',document.getElementById('width').value);
+	fd.append('length',document.getElementById('length').value);
 	fd.append('paperTypesId',document.querySelector('input[name="paperTypesId"]:checked').value);
 	fd.append('finishOptionsId',document.querySelector('input[name="finishOptionsId"]:checked').value);
 	fd.append('cfop1',document.getElementById('cfop1').value);
@@ -38,7 +38,7 @@ function uploadFile() {
 	fd.append('comments',document.getElementById('comments').value);
 	fd.append('posterTube',document.getElementById('posterTube').checked);
 	fd.append('rushOrder',document.getElementById('rushOrder').checked);
-
+	fd.append('step2',"1");
         var xhr = new XMLHttpRequest();
 	xhr.upload.addEventListener("progress", uploadProgress, false);
 	xhr.addEventListener("load", uploadComplete, false);
@@ -46,29 +46,33 @@ function uploadFile() {
 	xhr.addEventListener("abort", uploadCanceled, false);
 	disableForm();
         xhr.open("POST", "create.php",true);
+	xhr.responseType = 'json';
+	//var fd = new FormData();
         xhr.send(fd);
 	xhr.onreadystatechange  = function(){
 		if (xhr.readyState == 4  ) {
 
 			// Javascript function JSON.parse to parse JSON data
-			var jsonObj = JSON.parse(xhr.responseText);
+			var result = xhr.response;
+			console.log("Reponse: " + result);
+			var jsonObj = JSON.parse(xhr.response);
 
 			// jsonObj variable now contains the data structure and can
 			// be accessed as jsonObj.name and jsonObj.country.
 			if (jsonObj.valid) {
 				var parameters = jsonObj.post;
 				var form = $('<form></form>');
-                                //form.attr('method','post');
-                                //form.attr('action','index.php');
-                                //$.each(parameters,function(key,value) {
-                                //        var field = $('<input></input>');
+                                form.attr('method','post');
+                                form.attr('action','step3.php');
+                                $.each(parameters,function(key,value) {
+                                        var field = $('<input></input>');
 
-                                //        field.attr("type", "hidden");
-                                //        field.attr("name", key);
-                                //        field.attr("value", value);
-                                //        form.append(field);
-                                //}
-                                $document.body.append(form);
+                                        field.attr("type", "hidden");
+                                        field.attr("name", key);
+                                        field.attr("value", value);
+                                        form.append(field);
+                                });
+                                document.body.append(form);
                                 form.submit();
 
 

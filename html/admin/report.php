@@ -12,6 +12,15 @@ if (isset($_POST['create_report'])) {
 	
 
 }
+elseif (isset($_POST['create_boa_report'])) {
+	$year = $_POST['year'];
+	$month = $_POST['month'];
+	$type = $_POST['report_type'];
+	$data = functions::get_boa_report($db,$month,$year);
+	$filename = "BoaPosterReport-" . $month . "-" . $year . "." . $type;
+
+
+}
 
 switch ($type) {
 	case 'csv':
@@ -24,5 +33,4 @@ switch ($type) {
 		report::create_excel_2007_report($data,$filename);
 		break;
 }
-
 ?>

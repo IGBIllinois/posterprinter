@@ -2,7 +2,7 @@
 require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
 
-$finishOptions = finish_options::getFinishOptions($db);
+$finishOptions = functions::getFinishOptions($db);
 
 $finishOptions_html = "";
 
@@ -29,7 +29,7 @@ require_once 'includes/header.inc.php';
 
 <h3>Finish Options</h3>
 <hr>
-<table class='table table-condensed table-bordered'>
+<table class='table table-sm table-bordered'>
 	<tr>
 		<th>Name</th>
 		<th>Cost</th>

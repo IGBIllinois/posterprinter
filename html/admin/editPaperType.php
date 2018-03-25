@@ -5,13 +5,16 @@ require_once 'includes/session.inc.php';
 
 if (isset($_POST['removePaperType'])) {
 	$paperTypeId = $_POST['paperTypeId'];
-	paper_types::deletePaperType($db,$paperTypeId);
+	$papertype = new papertype($db,$paperTypeId);
+	$papertype->delete();
+
 	header("Location: paperTypes.php");
 
 }
 elseif (isset($_POST['makeDefault'])) {
 	$paperTypeId = $_POST['paperTypeId'];
-	paper_types::setDefaultPaperType($db,$paperTypeId);
+	$papertype = new papertype($db,$paperTypeId);
+	$papertype->set_default();
 	header("Location: paperTypes.php");
 }
 elseif (isset($_POST['editPaperType'])) {
@@ -19,21 +22,25 @@ elseif (isset($_POST['editPaperType'])) {
 	$name = trim(rtrim($_POST['name']));
 	$cost = trim(rtrim($_POST['cost']));
 	$width = trim(rtrim($_POST['width']));
-	$default = $_POST['default'];
+	$papertype = new papertype($db,$paperTypeId);
+	$default = $papertype->get_default();
+	$result = $papertype->update($name,$cost,$width);
+	if ($result['RESULT']) { 
+		header("Location: paperTypes.php"); 
 
-	$result = paper_types::updatePaperType($db,$paperTypeId,$name,$cost,$width,$default);
-	if ($result['RESULT']) { header("Location: paperTypes.php"); }
+	}
 	
 	
 }
 elseif (isset($_GET['paperTypeId'])) {
 	$paperTypeId = $_GET['paperTypeId'];
-	$paperType = paper_types::getPaperType($db,$paperTypeId);
-	$name = $paperType[0]['paperTypes_name'];
-	$cost = $paperType[0]['paperTypes_cost'];
-	$width = $paperType[0]['paperTypes_width'];
-	$available = $paperType[0]['paperTypes_available'];
-	$default = $paperType[0]['paperTypes_default'];
+	$papertype = new papertype($db,$paperTypeId);
+
+	$name = $papertype->get_name();
+	$cost = $papertype->get_cost();
+	$width = $papertype->get_width();
+	$available = $papertype->get_width();
+	$default = $papertype->get_default();
 	
 }
 
@@ -67,10 +74,9 @@ else
 	return false ;
 }
 </script>
-<form method='post' action='editPaperType.php?paperTypeId=<?php echo $paperTypeId; ?>'>
+<form method='post' action='<?php echo $_SERVER['PHP_SELF']; ?>?paperTypeId=<?php echo $paperTypeId; ?>'>
 <input type='hidden' name='paperTypeId' value='<?php echo $paperTypeId; ?>' />
-<input type='hidden' name='default' value='<?php echo $default; ?>' />
-<table class='table table-bordered table-condensed'>
+<table class='table table-bordered table-sm'>
 	<tr><th colspan='2'>Edit Paper Type</th></tr>
 	<tr>
 		<td class='text-right vcenter'>Name:</td>
@@ -78,22 +84,22 @@ else
 	</tr>
 	<tr>
 		<td class='text-right'>Cost per Inch:</td>
-		<td><div class='input-group col-md-3'><span class='input-group-addon'>$</span><input class='form-control' type='text' name='cost' value='<?php echo $cost; ?>' / size='6'></div></td>
+		<td><div class='input-group'><div class='input-group-prepend'><span class='input-group-text'>$</span></div><input class='form-control' type='text' name='cost' value='<?php echo $cost; ?>' / size='6'></div></td>
 	</tr>
 	<tr>
 		<td class='text-right'>Width:</td>
-		<td><div class='input-group col-md-3'><input class='form-control' type='text' name='width' value='<?php echo $width; ?>' / maxlength='2' size='3'><span class='input-group-addon'>Inches</span></div> </td>
+		<td><div class='input-group col-md-3'><input class='form-control' type='text' name='width' value='<?php echo $width; ?>' / maxlength='2' size='3'><div class='input-group-append'><span class='input-group-text'>Inches</span><div></div> </td>
 	</tr>
 	</table>
 	<br><input class='btn btn-primary' type='submit' name='editPaperType' value='Update Paper Type' onClick='return confirmUpdate()'>
 	<?php 
-	if ($default==0) { 
+	if (!$default) { 
 		echo "<input class='btn btn-warning' type='submit' name='makeDefault' value='Make Default' onClick='return confirmDefault()'> ";  
 		echo "<input class='btn btn-danger' type='submit' name='removePaperType' value='Remove Paper Type' onClick='return confirmDelete()'>"; 
 	} 
 	?>
 </form>
-
+<br>
 <?php 
 
 	if (isset($result['MESSAGE'])){echo $result['MESSAGE']; }

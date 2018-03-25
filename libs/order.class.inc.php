@@ -8,7 +8,7 @@ class order {
 	private $db; //mysql database object
 	private $id;
 	private $email;
-	private $cc_emails; 
+	private $cc_emails = array(); 
 	private $name;
 	private $filename;
 	private $cfop;
@@ -29,6 +29,9 @@ class order {
 	private $comments;
 	private $status;
 
+	const order_page = "order.php";
+	const wordwrap = 80;
+	const full_path = "/var/www/html/posterprinter/";
 ////////////////Public Functions///////////
 
 	public function __construct($db,$order_id) {
@@ -47,13 +50,13 @@ class order {
 	}
 
 	public function get_filesize() {
-		$full_path = "/var/www/html/eclipse/posterprinter/" . settings::get_poster_dir() . "/" . $this->get_order_id() . "." . $this->get_filetype();
+		$full_path = self::full_path . settings::get_poster_dir() . "/" . $this->get_order_id() . "." . $this->get_filetype();
 		if (file_exists($full_path)) {
 			$bytes = filesize($full_path);
 			$megabytes = round($bytes / 1000000,2);
 			return $megabytes;
 		}
-		return false;
+		return 0;
 	}	
 	public function get_cfop() { return $this->cfop; }
 	public function get_cfop_college() { return substr($this->get_cfop(),0,1); }
@@ -74,6 +77,10 @@ class order {
 	public function get_rush_order_name() { return $this->rush_order_name; }
 	public function get_rush_order_id() { return $this->rush_order_id; }
 	public function get_comments() { return $this->comments; }
+	public function get_wordwrap_comments() { 
+		return wordwrap($this->comments,self::wordwrap,"<br>");
+
+	}
 	public function get_status() { return $this->status; }
 
 	public function get_thumbnail() {
@@ -157,117 +164,118 @@ class order {
 	//$order - order object
 	//emails admin of the new order
 	public function mailAdminsNewOrder($db,$order) {
-        	$boundary = uniqid('np');
-	        $requestUri = substr($_SERVER["REQUEST_URI"],0,strrpos($_SERVER["REQUEST_URI"], "/")+1);
+	        
+		$requestUri = substr($_SERVER["REQUEST_URI"],0,strrpos($_SERVER["REQUEST_URI"], "/")+1);
         	$urlAddress = "http://" . $_SERVER["SERVER_NAME"] . $requestUri;
 	        $subject = "New Poster To Print - Order #" . $this->get_order_id();
         	$to = settings::get_admin_email();
 
 	        //html email
-        	$message = "\r\n\r\n--" . $boundary . "\r\n";
-	        $message .= "Content-type:text/html;charset='utf-8'\r\n";
-        	$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-	        $message .= "<br>New Poster Printer Order From " . $this->get_email() . "\r\n";
-        	$message .= "<br>\r\n";
-	        $message .= "<br>" . nl2br($this->get_job_info(),false);
-        	$message .= "<br>To view the order <a href='" . $urlAddress . "admin/orders.php?orderId=" . $this->get_order_id() . "'>click here</a>" . "\r\n";
+	        $html_message = "<br>New Poster Printer Order From " . $this->get_email() . "\r\n";
+        	$html_message .= "<br>\r\n";
+	        $html_message .= "<br>" . nl2br($this->get_job_info(),false);
+        	$html_message .= "<br>To view the order <a href='" . $urlAddress . "admin/" . self::order_page . "?order_id=" . $this->get_order_id() . "'>click here</a>" . "\r\n";
 
 	        //plain text email
-        	$message .= "\r\n\r\n--" . $boundary . "\r\n";
-	        $message .= "Content-type:text/plain;charset='utf-8'\r\n";
-        	$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-	        $message .= "New Poster Printer Order From " . $this->get_email() . "\r\n\r\n";
-        	$message .= $this->get_job_info();
-	        $message .= "To view the order: " . $urlAddress . "admin/orders.php?orderId=" . $this->get_order_id() . "\r\n";
-        	$message .= "\r\n\r\n--" . $boundary . "--\r\n";
+	        $plain_message .= "New Poster Printer Order From " . $this->get_email() . "\r\n\r\n";
+        	$plain_message .= $this->get_job_info();
+	        $plain_message .= "To view the order: " . $urlAddress . "admin/" . self::order_page . "?order_id=" . $this->get_order_id() . "\r\n";
 
-	        //headers
-        	$headers = "MIME-Version: 1.0\r\n";
-	        $headers .= "From: " . $this->get_email() . "\r\n";
-        	$headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
-	        mail($to,$subject,$message,$headers," -f " . $this->get_email());
+
+		$extraheaders = array("From"=>$this->get_email(),
+					"Subject"=>$subject
+		);
+		$message = new Mail_mime();
+		$message->setHTMLBody($html_message);
+		$message->setTXTBody($plain_message);
+		$headers= $message->headers($extraheaders);
+		$body = $message->get();
+		$mail = Mail::factory("mail");
+		$mail->send($to,$headers,$body);
+
 
 	}
 
 	//mailUserNewOrder()
 	//Emails User order confirmation
 	public function mailUserNewOrder() {
-        	$boundary = uniqid('np');
-	        $to = $this->get_email();
+	        
+		$to = $this->get_email();
         	$subject = "Poster Order #" . $this->get_order_id();
 
 	        //html email
-        	$message = "\r\n\r\n--" . $boundary . "\r\n";
-	        $message .= "Content-type:text/html;charset='utf-8'\r\n";
-        	$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-	        $message .= "<br>Thank you for your poster order.\r\n";
-        	$message .= "For regular orders, we guarantee within 72 hours, excluding weekends.\r\n";
-	        $message .= "For rush orders, we guarantee within 24 hours, excluding weekends.\r\n";
-        	$message .= "We will email you when the poster is completed printing.\r\n";
-	        $message .= "<p>For your reference\r\n";
-        	$message .= "<br>\r\n";
-	        $message .= "<br>" . nl2br($this->get_job_info(),false);
+	        $html_message = "<br>Thank you for your poster order.\r\n";
+        	$html_message .= "For regular orders, we guarantee within 72 hours, excluding weekends.\r\n";
+	        $html_message .= "For rush orders, we guarantee within 24 hours, excluding weekends.\r\n";
+        	$html_message .= "We will email you when the poster is completed printing.\r\n";
+	        $html_message .= "<p>For your reference\r\n";
+        	$html_message .= "<br>\r\n";
+	        $html_message .= "<br>" . nl2br($this->get_job_info(),false);
 
         	///plain text email
-	        $message .= "\r\n\r\n--" . $boundary . "\r\n";
-        	$message .= "Content-type:text/plain;charset='utf-8'\r\n";
-	        $message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-        	$message .= "Thank you for your poster order.\r\n";
-	        $message .= "For regular orders, we guarantee within 72 hours, excluding weekends.\r\n";
-        	$message .= "For rush orders, we guarantee within 24 hours, excluding weekends.\r\n";
-	        $message .= "We will email you when the poster is completed printing.\r\n";
-        	$message .= "For your reference\r\n\r\n";
-	        $message .= $this->get_job_info();
-        	$message .= "\r\n\r\n--" . $boundary . "--\r\n";
+        	$plain_message = "Thank you for your poster order.\r\n";
+	        $plain_message .= "For regular orders, we guarantee within 72 hours, excluding weekends.\r\n";
+        	$plain_message .= "For rush orders, we guarantee within 24 hours, excluding weekends.\r\n";
+	        $plain_message .= "We will email you when the poster is completed printing.\r\n";
+        	$plain_message .= "For your reference\r\n\r\n";
+	        $plain_message .= $this->get_job_info();
 
 	        //headers
-        	$headers = "MIME-Version: 1.0\r\n";
-	        $headers .= "From: " . settings::get_admin_email() . "\r\n";
         	if ($this->get_cc_emails() != "") {
                 	$headers .= "Cc: " . $this->get_cc_emails() . "\r\n";
 	        }
         	$headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
 
-	        mail($to,$subject,$message,$headers, " -f " . settings::get_admin_email());
+		$extraheaders = array("From"=>settings::get_admin_email(),
+                                        "Subject"=>$subject
+                );
+                $message = new Mail_mime();
+                $message->setHTMLBody($html_message);
+                $message->setTXTBody($plain_message);
+                $headers= $message->headers($extraheaders);
+                $body = $message->get();
+                $mail = Mail::factory("mail");
+                $mail->send($to,$headers,$body);
+
+
 	}
 
 	//mailuserOrderComplete()
 	//emails user that the order is complete
 	function mailUserOrderComplete() {
-        	$boundary = uniqid('np');
         	$to = $this->get_email();
 
 	        $subject = "Poster Order #" . $this->get_order_id() . " Completed";
 
 	        //HTML Email
-        	$message = "\r\n\r\n--" . $boundary . "\r\n";
-	        $message .= "Content-type:text/html;charset='utf-8'\r\n";
-        	$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-	        $message .= "<br>Your Poster Order #" . $this->get_order_id() . " is now completed.\r\n";
-        	$message .= "<br>You can come to Room 2626 to pick up your poster.\r\n";
-	        $message .= "<br>\r\n";
-        	$message .= "<br>" . nl2br($this->get_job_info(),false);
+	        $html_message = "<br>Your Poster Order #" . $this->get_order_id() . " is now completed.\r\n";
+        	$html_message .= "<br>You can come to Room 2626 to pick up your poster.\r\n";
+	        $html_message .= "<br>\r\n";
+        	$html_message .= "<br>" . nl2br($this->get_job_info(),false);
 
 	        //Plain Text email
-        	$message .= "\r\n\r\n--" . $boundary . "\r\n";
-	        $message .= "Content-type:text/plain;charset='utf-8'\r\n";
-        	$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-	        $message .= "Your Poster Order #" . $this->get_order_id() . " is now completed.\r\n";
-        	$message .= "You can come to Room 2626 to pick up your poster.\r\n\r\n";
-	        $message .= $this->get_job_info();
-        	$message .= "\r\n\r\n--" . $boundary . "--\r\n";
+	        $plain_message .= "Your Poster Order #" . $this->get_order_id() . " is now completed.\r\n";
+        	$plain_message .= "You can come to Room 2626 to pick up your poster.\r\n\r\n";
+	        $plain_message .= $this->get_job_info();
 
 
 	        //Headers
-        	$headers = "MIME-Version: 1.0\r\n";
-	        $headers .= "From: " . settings::get_admin_email() . "\r\n";
-        	$headers .= "Cc: " . settings::get_admin_email() . "\r\n";
 	        if ($this->get_cc_emails() != "") {
         	        $headers .= "Cc: " . $this->get_cc_emails() . "\r\n";
 	        }
         	$headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
 
-	        mail($to,$subject,$message,$headers, " -f " . settings::get_admin_email());
+		$extraheaders = array("From"=>settings::get_admin_email(),
+                                        "Subject"=>$subject
+                );
+                $message = new Mail_mime();
+                $message->setHTMLBody($html_message);
+                $message->setTXTBody($plain_message);
+                $headers= $message->headers($extraheaders);
+                $body = $message->get();
+                $mail = Mail::factory("mail");
+                $mail->send($to,$headers,$body);
+
 
 	}
 
@@ -309,6 +317,12 @@ class order {
 	}
 	
 
+	private function generate_key() {
+	        $key = uniqid (rand (),true);
+        	$hash = sha1($key);
+	        return $hash;
+
+	}
 
 }
 

@@ -36,7 +36,7 @@ else {
 		elseif ($rushOrderName == "No") {
 			$orders_html .= "<tr>";
 		}
-		$orders_html .= "<td><a href='orders.php?orderId=" . $order["orders_id"] . "'>" . $order["orders_id"] . "</a></td>";
+		$orders_html .= "<td><a href='order.php?order_id=" . $order["orders_id"] . "'>" . $order["orders_id"] . "</a></td>";
 		$orders_html .= "<td>" . $order["orders_email"] . "</td>";
 		$orders_html .= "<td>" . $order["orders_totalCost"] . "</td>";
 		$orders_html .= "<td><a href='download.php?orderId=" . $order["orders_id"] . "'>" . $order["orders_fileName"] . "</a></td>";
@@ -50,7 +50,8 @@ else {
 ?>
 <h3>Current Orders</h3>
 <hr>
-<table class='table table-bordered table-condensed table-striped'>
+<table class='table table-bordered table-sm table-striped'>
+	<thead class='thead-light'>
 	<tr>
 		<th>Order Number</th>
 		<th>Email</th>
@@ -58,7 +59,7 @@ else {
 		<th>File Name</th>
 		<th>Status</th>
 	</tr>
-	
+	</thead>	
 <?php echo $orders_html; ?>
 
 

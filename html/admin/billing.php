@@ -21,7 +21,7 @@ if (count($orders) == 0) { $orders_html = "<tr><td colspan='5'>No Orders</td></t
 else {
 	foreach ($orders as $order) {
 		$orders_html .= "<tr>"; 
-		$orders_html .= "<td><a href='orders.php?orderId=" . $order["orders_id"] . "'>" . $order["orders_id"] . "</a></td>";
+		$orders_html .= "<td><a href='order.php?order_id=" . $order["orders_id"] . "'>" . $order["orders_id"] . "</a></td>";
 		$orders_html .= "<td>" . $order["orders_email"] . "</td>";
 		$orders_html .= "<td>$" . $order["orders_totalCost"] . "</td>";
 		$orders_html .= "<td><a href='download.php?orderId=" . $order["orders_id"] . "'>" . $order["orders_fileName"] . "</a></td>";
@@ -57,9 +57,9 @@ require_once 'includes/header.inc.php';
 
 ?>
 
-<h3>Previous Orders</h3>
+<h3>Billing Reports</h3>
 <hr>
-<form class='form-inline' action='previousOrders.php' method='post'>
+<form class='form-inline' action='<?php echo $_SERVER['PHP_SELF']; ?>' method='post'>
 <div class='form-group'>
 	<label for='month'>Month:</label>
 	<?php echo $month_html; ?>
@@ -68,12 +68,14 @@ require_once 'includes/header.inc.php';
 	<label for='year'>Year:</label>
 	 <?php echo $year_html; ?>
 </div>
+&nbsp;
 <div class='form-group'>
 	<button class='btn btn-primary' type='submit' name='selectedDate'>Get Records</button>
 </div>
 </form>
 <br />
-<table class='table table-bordered table-condensed table-striped'>
+<table class='table table-bordered table-sm table-striped'>
+	<thead class='thead-light'>
 	<tr>
 		<th>Order Number</th>
 		<th>Email</th>
@@ -81,27 +83,27 @@ require_once 'includes/header.inc.php';
 		<th>File Name</th>
 		<th>Status</th>
 	</tr>
-	
+	</thead>
 <?php echo $orders_html; ?>
 
 
 
 </table>
-Monthly Total: $<?php echo $stats->pretty_cost(); ?>
-<br>
+<p>Monthly Total: $<?php echo $stats->pretty_cost(); ?></p>
 
 <form class='form' action='report.php' method='post'>
 <div class='row'>
-<div class="col-xs-2">
+<div class='col-md-2 col-lg-2 col-xl-2'>
 <input type='hidden' name='month' value='<?php echo $month; ?>' />
 <input type='hidden' name='year' value='<?php echo $year; ?>' />
 <select class='form-control' name='report_type'>
-<option value='xls'>Excel 2003</option>
 <option value='xlsx'>Excel 2007</option>
+<option value='xls'>Excel 2003</option>
 <option value='csv'>CSV</option>
 </select>
 </div>
-<button type='submit' class='btn btn-primary' name='create_report'>Create Report</button>
+<button type='submit' class='btn btn-primary' name='create_report'>Create Report</button>&nbsp;
+<button type='submit' class='btn btn-primary' name='create_boa_report'>Create BOA Report</button>
 </div>
 </form>
 <?php require_once 'includes/footer.inc.php'; ?>

@@ -11,29 +11,31 @@
 //
 ////////////////////////////////////////////////
 
-define("enable",TRUE);
-define("app_version","1.1.8");
-define("admin_email","");
-define("mysql_host","");
-define("mysql_user","");
-define("mysql_password","");
-define("mysql_database","");
-define("max_printer_width",44);
-define("poster_dir","posterfiles");
-define("ldap_host",'');
-define("ldap_base_dn","");
-define("ldap_people_ou","");
-define("ldap_group_ou","");
-define("ldap_group","");
-define("ldap_ssl",FALSE);
-define("ldap_port",389);
-define("unoconv_exec","/usr/bin/unoconv");
-define("order_time",72);
-define("rush_order_time",24);
-define("session_name","");
-define("session_timeout",300);
-define("title","Poster Submission Form");
-$conf = array();
-$conf['status'] = array('New','In Progress','Completed','Cancel','On Hold');
-
+define("__ENABLE__",TRUE);
+define("__APP_VERSION__","2.0 Beta");
+define("__ADMIN_EMAIL__","");
+define("__MYSQL_HOST__","");
+define("__MYSQL_USER__","");
+define("__MYSQL_PASSWORD__","");
+define("__MYSQL_DATABASE__","");
+define("__PRINTER_MAX_WIDTH__",60);
+define("__POSTER_DIR__","posters");
+define("__LDAP_HOST__",'');
+define("__LDAP_BASE_DN__","");
+define("__LDAP_PEOPLE_OU__","");
+define("__LDAP_GROUP_OU__","");
+define("__LDAP_GROUP__","");
+define("__LDAP_SSL__",FALSE);
+define("__LDAP_PORT__",389);
+define("__UNOCONV_EXEC__","/usr/bin/unoconv");
+define("__ORDER_TIME__",72);
+define("__RUSH_ORDER_TIME__",24);
+define("__SESSION_NAME__","");
+define("__SESSION_TIMEOUT__",300);
+define("__TITLE__","");
+define("__PRINTER__MAX_LENGTH__",200);
+define("__STATUS__","New,In Progress,Completed,Cancel,On Hold");
+define("__VALID_FILETYPES__","ppt,pptx,pdf,jpg,tiff");
+define("__BOA_CFOP__","");
+define("__BOA_ACTIVITY_CODE__","");
 ?>

@@ -1,4 +1,5 @@
 <?php
+
 //////////////////////////////////////////////////////
 //
 //	Poster Printer Order Submission
@@ -25,5 +26,8 @@ function my_autoloader($class_name) {
 spl_autoload_register('my_autoloader');
 
 //connects to database
-$db = new db(mysql_host,mysql_database,mysql_user,mysql_password);	
+$db = new db(__MYSQL_HOST__,__MYSQL_DATABASE__,__MYSQL_USER__,__MYSQL_PASSWORD__);
+
+$session = new session(settings::get_session_name());
+
 ?>

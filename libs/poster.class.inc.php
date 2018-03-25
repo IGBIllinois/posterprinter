@@ -9,16 +9,20 @@ class poster {
 	const fullsize_width = '1000';
 	const fullsize_height = '1000';
 
+	const root_dir = "/var/www/html/posterprinter";
 	public static function move_tmp_file($filename,$tmp_name) {
-
+		error_log('move_tmp_file');
 		//gets the file type (ie .jpg, .bmp) of the uploaded poster file.
 		$filetype = self::get_filetype($filename);
 		//creates a temp file name for the file
 		$posterFileTmpName = "tmp_" . mt_rand(100000000,999999999) . "." . $filetype;
 		//makes the path for the file
-		$target_path = settings::get_poster_dir() . "/" . $posterFileTmpName;
+		$target_path = self::root_dir . "/" . settings::get_poster_dir() . "/" . $posterFileTmpName;
 	        //moves file to temporary location
 		$result = 0;
+		error_log("Tmp: " . $tmp_name . " Exists: " . file_exists($tmp_name));
+		error_log("Uploaded File: " . is_uploaded_file($tmp_name));
+		error_log("Target Path: " . $target_path);
 		if (file_exists($tmp_name) && is_uploaded_file($tmp_name)) {
         		$result = move_uploaded_file($tmp_name,$target_path);
 		}
@@ -78,6 +82,7 @@ class poster {
 
 	}
 	public static function create_image($filename) {
+		$filename = self::root_dir . "/" . settings::get_poster_dir() . "/" . $filename;
 		if (!file_exists($filename)) {
 			return array('RESULT'=>false);
 		}
@@ -176,7 +181,7 @@ class poster {
                 $basename = basename($filename);
 		$basename = strtolower(reset(explode(".",$basename)));
                 $thumb_filename = "thumb_" . $basename . ".jpg";
-                $full_path = "/var/www/html/eclipse/posterprinter/" . settings::get_poster_dir() . "/" . $thumb_filename;
+                $full_path = "/var/www/html/posterprinter/" . settings::get_poster_dir() . "/" . $thumb_filename;
 		return $full_path;
 
 	}
@@ -185,7 +190,7 @@ class poster {
                 $basename = basename($filename);
                 $basename = strtolower(reset(explode(".",$basename)));
                 $thumb_filename = "fullsize_" . $basename . ".jpg";
-                $full_path = "/var/www/html/eclipse/posterprinter/" . settings::get_poster_dir() . "/" . $thumb_filename;
+                $full_path = "/var/www/html/posterprinter/" . settings::get_poster_dir() . "/" . $thumb_filename;
                 return $full_path;
 
         }

@@ -2,40 +2,46 @@
 require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
 
-	
+
 if (isset($_POST['removeFinishOption'])) {
-	$finishOptionId = $_POST['finishOptionId'];
-	finish_options::deleteFinishOption($db,$finishOptionId);	
+	$finishoption = new finishoption($db,$_POST['finishOptionId']);	
+	$finishoption->delete();	
 	header("Location: finishOptions.php");
 
 }
 elseif (isset($_POST['makeDefault'])) {
-	$finishOptionId = $_POST['finishOptionId'];
-	finish_options::setDefaultFinishOption($db,$finishOptionId);
+	$finishoption = new finishoption($db,$_POST['finishOptionId']);
+	$finishoption->set_default();
 	header("Location: finishOptions.php");
 }
 elseif (isset($_POST['editFinishOption'])) {
+	
 	$finishOptionId = $_POST['finishOptionId'];
+	
 	$name = trim(rtrim($_POST['name']));
 	$cost =trim(rtrim( $_POST['cost']));
 	$maxWidth = trim(rtrim($_POST['maxWidth']));
 	$maxLength = trim(rtrim($_POST['maxLength']));
-	$default = $_POST['default'];
-	
-	$result = finish_options::updateFinishOption($db,$finishOptionId,$name,$cost,$maxWidth,$maxLength,$default);	
+	$finishoption = new finishoption($db,$_POST['finishOptionId']);
+	$default = $finishoption->get_default();
+	$result = $finishoption->update($name,$cost,$maxWidth,$maxLength);
 	if ($result['RESULT']) { header("Location: finishOptions.php"); }
 }
 
 elseif (isset($_GET['finishOptionId'])) {
 	$finishOptionId = $_GET['finishOptionId'];
-
-	$finishOption = finish_options::getFinishOption($db,$finishOptionId);
-	$name = $finishOption[0]['finishOptions_name'];
-	$cost = $finishOption[0]['finishOptions_cost'];
-	$maxWidth = $finishOption[0]['finishOptions_maxWidth'];
-	$maxLength = $finishOption[0]['finishOptions_maxLength']; 
-	$available = $finishOption[0]['finishOptions_available'];
-	$default = $finishOption[0]['finishOptions_default'];
+	$finishoption = new finishoption($db,$finishOptionId);
+	if ($finishoption->get_available()) {
+		$name = $finishoption->get_name();
+		$cost = $finishoption->get_cost();
+		$maxWidth = $finishoption->get_max_width();
+		$maxLength = $finishoption->get_max_length();
+		$available = $finishoption->get_available();
+		$default = $finishoption->get_default();
+	}
+	else {
+		$result['MESSAGE'] = functions::alert("Invalid Finish Option",0);
+	}
 	
 }
 
@@ -71,8 +77,7 @@ else
 </script>
 <form method='post' action='editFinishOption.php?finishOptioinId=<?php echo $finishOptionId; ?>'>
 <input type='hidden' name='finishOptionId' value='<?php echo $finishOptionId; ?>' />
-<input type='hidden' name='default' value='<?php echo $default; ?>' />
-<table class='table table-bordered table-condensed'>
+<table class='table table-bordered table-sm'>
 	<tr><th colspan='2'>Edit Finish Option</th></tr>
 	<tr>
 		<td class='text-right'>Name:</td>
@@ -80,28 +85,28 @@ else
 	</tr>
 	<tr>
 		<td class='text-right'>Cost:</td>
-		<td><div class='input-group col-xs-3'><span class='input-group-addon'>$</span><input class='form-control' type='text' name='cost' value='<?php echo $cost; ?>' size='6'></div></td>
+		<td><div class='input-group col-xs-3'><div class='input-group-prepend'><span class='input-group-text'>$</span></div><input class='form-control' type='text' name='cost' value='<?php echo $cost; ?>' size='6'></div></td>
 	</tr>
 	<tr>
 		<td class='text-right'>Max Width:</td>
-		<td><div class='input-group col-xs-3'><input class='form-control' type='text' name='maxWidth' value='<?php echo $maxWidth; ?>' maxlength='2' size='3'><span class='input-group-addon'>Inches</span></div></td>
+		<td><div class='input-group col-xs-3'><input class='form-control' type='text' name='maxWidth' value='<?php echo $maxWidth; ?>' maxlength='2' size='3'><div clas='input-group-append'><span class='input-group-text'>Inches</span><div></div></td>
 	</tr>
 	<tr>
 		<td class='text-right'>Max Length:</td>
-		<td><div class='input-group col-xs-3'><input class='form-control' type='text' name='maxLength' value='<?php echo $maxLength; ?>' maxlength='3' size='3'><span class='input-group-addon'>Inches</span></div></td>
+		<td><div class='input-group col-xs-3'><input class='form-control' type='text' name='maxLength' value='<?php echo $maxLength; ?>' maxlength='3' size='3'><div class='input-group-append'><span class='input-group-text'>Inches</span></div></div></td>
 	</tr>
 	</table>
 	
 	<br>
 	<button class='btn btn-primary' type='submit' name='editFinishOption' onClick='return confirmUpdate()'>Update Finish Option</button> 
 	<?php 
-	if ($default==0) { 
+	if (!$default) { 
 		echo "<button class='btn btn-warning' type='submit' name='makeDefault' onClick='return confirmDefault()'>Make Default</button> ";
 		echo "<button class='btn btn-danger' type='submit' name='removeFinishOption' onClick='return confirmDelete()'>Remove Finish Option</button>"; 
 	} 
 	?>
 </form>
-
+<br>
 <?php 
 
 	if (isset($result['MESSAGE'])){echo $result['MESSAGE']; }

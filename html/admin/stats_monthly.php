@@ -45,8 +45,8 @@ else {
 	$graphType = "finishOptions";
 }
 
-$graphForm = "<form name='selectGraph' id='selectGraph' method='post' action='stats_monthly.php?startDate=" . $startDate . "&endDate=" . $endDate . "'>";
-$graphForm .= "<select class='form-control' name='graphType' onChange='document.selectGraph.submit();'>";
+$graphForm = "<form class='form' name='selectGraph' method='post' action='stats_monthly.php?startDate=" . $startDate . "&endDate=" . $endDate . "'>";
+$graphForm .= "<div class='col-md-2'><select class='custom-select' name='graphType' onChange='document.selectGraph.submit();'>";
 
 if ($graphType == "finishOptions") { $graphForm .= "<option value='finishOptions' selected>Finish Options</option>"; }
 else { $graphForm .= "<option value='finishOptions'>Finish Options</option>"; }
@@ -55,7 +55,7 @@ else { $graphForm .= "<option value='paperTypes'>Paper Types</option>"; }
 if ($graphType == "inchesPerPaperType") { $graphForm .= "<option value='inchesPerPaperType' selected>Inches Per Paper Type</option>"; }
 else { $graphForm .= "<option value='inchesPerPaperType'>Inches Per Paper Type</option>"; }
 
-$graphForm .= "</select>";
+$graphForm .= "</select></div>";
 $graphForm .= "</form>";
 
 $stats = new statistics($db,$startDate,$endDate);
@@ -67,22 +67,22 @@ $forwardUrl = $url . "?startDate=" . htmlspecialchars($nextStartDate,ENT_QUOTES)
 ?>
 <h3>Monthly Statistics - <?php echo $monthName . " " . $year; ?></h3>
 <hr>
-<ul class='pager'>
-<li class='previous'><a href='<?php echo $backUrl; ?>'>Previous</a></li>
+<ul class='pagination justify-content-center'>
+<li class='page-item'><a class='page-link' href='<?php echo $backUrl; ?>'>Previous</a></li>
 <?php
 	$next_month = strtotime('+1 day', strtotime($endDate));
 	$today = mktime(0,0,0,date('m'),date('d'),date('y'));
 	if ($next_month > $today) {
-		echo "<li class='next disabled'><a href='#'>Next</a></li>";
+		echo "<li class='page-item disabled'><a class='page-link' href='#'>Next</a></li>";
 	}
 	else {
-		echo "<li class='next'><a href='" . $forwardUrl . "'>Next</a></li>";
+		echo "<li class='page-item'><a class='page-link' href='" . $forwardUrl . "'>Next</a></li>";
 	}
 ?>
 
 </ul>
 
-<table class='table table-bordered table-condensed table-striped'>
+<table class='table table-bordered table-sm table-striped'>
 
   	<tr><td>Monthly Total:</td><td>$<?php echo $stats->pretty_cost(); ?></td></tr>
     <tr><td>Total Orders:</td><td><?php echo $stats->orders(); ?></td></tr>

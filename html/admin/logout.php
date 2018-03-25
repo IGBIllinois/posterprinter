@@ -1,6 +1,6 @@
 <?php
-include 'includes/main.inc.php';
-$session = new session(session_name);
+require_once 'includes/main.inc.php';
+$session = new session(settings::get_session_name());
 $session->destroy_session();
 header("Location: login.php")
 ?>

@@ -44,7 +44,7 @@ else
 <div class='form-group'>
 	<label for='posterTubeCost'>Price</label>
         <div class="input-group col-md-8">	
-                <span class="input-group-addon">$</span>
+                <div class='input-group-prepend'><span class="input-group-text">$</span></div>
 		<input class='form-control' type='text' name='posterTubeCost' id='posterTubeCost' value='<?php echo $posterTubeCost; ?>'>
 	</div>
 </div>
@@ -57,7 +57,7 @@ else
 <div class='form-group'>
 	<label for='rushOrderCost'>Price</label>
 	<div class="input-group col-md-8">
-		<span class="input-group-addon">$</span>
+		<div class='input-group-prepend'><span class="input-group-text">$</span></div>
 		<input class='form-control' type='text' id='rushOrderCost' name='rushOrderCost' value='<?php echo $rushOrderCost; ?>'>
 	</div>
 </div>

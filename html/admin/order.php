@@ -3,10 +3,10 @@ require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
 
 
-if ((isset($_GET['orderId'])) && is_numeric($_GET['orderId'])) {
-	$orderId = $_GET['orderId'];
+if ((isset($_GET['order_id'])) && is_numeric($_GET['order_id'])) {
+	$order_id = $_GET['order_id'];
 
-	$order = new order($db,$orderId);
+	$order = new order($db,$order_id);
 }
 else {
 	exit;
@@ -37,8 +37,8 @@ if (strtotime($order->get_time_created()) < $previous_date) {
 }
 else {
 	//gets the different possible status options
-	$status_html = "<form class='form-inline' action='orders.php?orderId=" . $orderId . "' method='post'>";
-	$status_html . "<div class='form-group'><div class='col-md-3'>";
+	$status_html = "<form class='form-inline' action='" . $_SERVER['PHP_SELF'] . "?order_id=" . $order_id . "' method='post'>";
+	$status_html . "<div class='form-group'><div class='col-md-4'>";
 	$status_html .= "<select class='form-control' name='status'>";
 
 	foreach (settings::get_status() as $possible_status) {
@@ -53,11 +53,11 @@ else {
 	}
 	$status_html .= "</select>";
 	$status_html .= "</div>";
-	$status_html .= "<input class='btn btn-primary btn-sm' type='submit' value='Change' name='changeStatus'>";
+	$status_html .= "&nbsp;<input class='btn btn-primary btn-sm' type='submit' value='Change' name='changeStatus'>";
 	$status_html .= "</div></form>";
 	
 	$edit_order_html = "<form method='get' action='editOrder.php'>";
-	$edit_order_html .= "<input type='hidden' name='orderId' value='" . $order->get_order_id() . "'>";
+	$edit_order_html .= "<input type='hidden' name='order_id' value='" . $order->get_order_id() . "'>";
 	$edit_order_html .= "<button class='btn btn-primary' type='submit'>Edit Order</button>";
 	$edit_order_html .= "</form>";
 }
@@ -67,10 +67,10 @@ $file_link = "<a href='download.php?orderId=" . $order->get_order_id() . "'>" . 
 require_once 'includes/header.inc.php';
 
 ?>
-<div class='col-sm-8 col-md-4'>
-<table class='table table-bordered table-condensed'>
+<div class='col-sm-8 col-md-8'>
+<table class='table table-bordered table-sm'>
 <tr><th colspan='2'>Order Information</th></tr>
-<tr><td class='text-right'>Order Number</td><td><?php echo $orderId; ?></td></tr>
+<tr><td class='text-right'>Order Number</td><td><?php echo $order->get_order_id(); ?></td></tr>
 <tr><td class='text-right'>Email </td><td><?php echo $order->get_email() ?></td></tr>
 <tr><td class='text-right'>Additional Emails </td><td><?php echo $order->get_cc_emails() ?></td></tr>
 <tr><td class='text-right'>Full Name </td><td><?php echo $order->get_name() ?></td></tr>
@@ -86,7 +86,7 @@ require_once 'includes/header.inc.php';
 <tr><td class='text-right'>Finish Option</td><td><?php echo $order->get_finish_option_name(); ?></td></tr>
 <tr><td class='text-right'>Poster Tube</td><td><?php echo $order->get_poster_tube_name(); ?></td></tr>
 <tr><td class='text-right'>Rush Order</td><td><?php echo $order->get_rush_order_name(); ?></td></tr>
-<tr><td class='text-right'>Comments</td><td><?php echo $order->get_comments(); ?></td></tr>
+<tr><td class='text-right'>Comments</td><td><?php echo $order->get_wordwrap_comments(); ?></td></tr>
 <tr><td class='text-right' style='vertical-align:middle;'>Status</td><td><?php echo $status_html; ?></td></tr>
 <?php if (file_exists($order->get_thumbnail())) {
         echo "<tr><td colspan='2'>";

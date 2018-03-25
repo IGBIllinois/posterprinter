@@ -44,11 +44,11 @@ class functions {
 	public static function alert($message, $success = 1) {
 		$alert = "";
 		if ($success) {
-			$alert = "<div class='alert alert-success' role='alert'>" . $message . "</div>";
+			$alert = "<div class='alert alert-success' role='alert'>" . $message . "</div>&nbsp;";
 
 		}
 		else {
-			$alert = "<div class='alert alert-danger' role='alert'>" . $message . "</div>";
+			$alert = "<div class='alert alert-danger' role='alert'>" . $message . "</div>&nbsp;";
 		}
 		return $alert;
 
@@ -138,6 +138,98 @@ class functions {
 	        $sql .= "ORDER BY orders_id ASC";
         	return $db->query($sql);
 	}
+
+        public static function get_boa_report($db,$month,$year) {
+
+                $sql = "SELECT '' as 'DATE', ";
+		$sql .= "orders.orders_email as 'NAME', ";
+                $sql .= "orders.orders_cfop as 'CFOP', ";
+		$sql .= "orders.orders_activityCode as 'ACTIVITY CODE', ";
+                $sql .= "orders.orders_totalCost as 'COST' ";
+                $sql .= "FROM orders ";
+                $sql .= "WHERE (YEAR(orders_timeCreated)='" . $year . "' AND month(orders_timeCreated)='" . $month . "') ";
+                $sql .= "AND orders.orders_status='Completed' ";
+                $sql .= "ORDER BY `CFOP` ASC, `ACTIVITY CODE` ASC";
+		$result = $db->query($sql);
+
+		$total_bill = 0;
+		foreach ($result as $num => $values) {
+			$total_bill += $values['COST'];
+		}			
+		$first_row = array(array('DATE'=>$month . "/" . $year,
+					'NAME'=>'IGB Posterprinter Report',
+					'CFOP'=>settings::get_boa_cfop(),
+					'ACTIVITY CODE'=>settings::get_boa_activity_code(),
+					'COST'=>"-" . $total_bill));
+
+                return array_merge($first_row,$result);
+        }
+
+	//getPaperTypes()
+        //$db - database object
+        //returns array of all enabled paper types
+        public static function getPaperTypes($db) {
+                $sql = "SELECT paperTypes_id as id, paperTypes_name as name, ";
+                $sql .= "paperTypes_cost as cost, paperTypes_width as width, ";
+                $sql .= "paperTypes_default ";
+                $sql .= "FROM paperTypes ";
+                $sql .= "WHERE paperTypes_available=1 ";
+                $sql .= "ORDER BY paperTypes_name ASC";
+                return $db->query($sql);
+
+        }
+
+        //getValidPaperTypes()
+        //$db - database object
+        //$width - integer - width in inches
+        //$length - integer - length in inches
+        //returns array of paper types that fit the given dimensions
+        public static function getValidPaperTypes($db,$width,$length) {
+
+                $sql = "SELECT paperTypes_id as id, paperTypes_name as name, ";
+                $sql .= "paperTypes_cost as cost, paperTypes_width as width, ";
+                $sql .= "paperTypes_default ";
+                $sql .= "FROM paperTypes ";
+                $sql .= "WHERE paperTypes_available='1' ";
+                $sql .= "AND (paperTypes_width>='" . $width  . "' OR paperTypes_width>='" . $length . "') ";
+                $sql .= "ORDER BY paperTypes_cost ASC";;
+                return $db->query($sql);
+
+        }
+
+        //getFinishOptions()
+        //$db - database object
+        //returns array of all the enabled finish options.
+        public static function getFinishOptions($db) {
+
+                $sql = "SELECT finishOptions_id as id, finishOptions_name as name, ";
+                $sql .= "finishOptions_cost as cost, finishOptions_maxWidth as maxWidth, ";
+                $sql .= "finishOptions_maxLength as maxLength, finishOptions_default ";
+                $sql .= "FROM finishOptions ";
+                $sql .= "WHERE finishOptions_available=1 ";
+                $sql .= "ORDER BY finishOptions_name ASC";
+                return $db->query($sql);
+        }
+
+        //getValidFinishOptions()
+        //$db - database object
+        //$width - integer - width in inches
+        //$length - intenger - length in inches
+        //returns array of finish options that can be used on the poster based on the width and length.
+        public static function getValidFinishOptions($db,$width,$length) {
+
+                $sql = "SELECT finishOptions_id as id, finishOptions_name as name, ";
+                $sql .= "finishOptions_cost as cost, finishOptions_maxWidth as maxWidth, ";
+                $sql .= "finishOptions_maxLength as maxLength, finishOptions_default ";
+                $sql .= "FROM finishOptions ";
+                $sql .= "WHERE finishOptions_available='1' ";
+                $sql .= "AND finishOptions_maxLength>='" . $length . "' ";
+                $sql .= "AND (finishOptions_maxWidth>='" . $width . "' OR finishOptions_maxWidth>='" . $length . "') ";
+                $sql .= "ORDER BY finishOptions_name ASC";
+                return $db->query($sql);
+
+        }
+
 
 
 }

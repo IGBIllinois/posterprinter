@@ -14,7 +14,7 @@
 
 require_once 'includes/main.inc.php';
 
-$session = new session(session_name);
+$session = new session(__SESSION_NAME__);
 $message = "";
 $webpage = $dir = dirname($_SERVER['PHP_SELF']) . "/index.php";
 if ($session->get_var('webpage') != "") {
@@ -31,7 +31,7 @@ if (isset($_POST['login'])) {
 	$error = false;
         if ($username == "") {
                 $error = true;
-                $message .= functions::alert("Please enter your username",false);
+                $message = functions::alert("Please enter your username",false);
         }
         if ($password == "") {
                 $error = true;
@@ -56,7 +56,7 @@ if (isset($_POST['login'])) {
 	
 		}
 		else {
-			$message = functions::alert("Invalid Login",false);
+			$message = functions::alert("Invalid Username or Password",false);
 	
 		}
 	
@@ -68,34 +68,54 @@ if (isset($_POST['login'])) {
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" type="text/css"
-        href="../vendor/components/bootstrap/css/bootstrap.min.css">
+        href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 
 <TITLE><?php echo settings::get_title(); ?> Login</TITLE>
 </HEAD>
-<BODY OnLoad="document.login.username.focus();">
+<body style='padding-top: 60px; padding-bottom: 60px;'>
+<nav class="navbar fixed-top navbar-dark bg-dark">
+        <a class='navbar-brand' href='#'><?php echo settings::get_title(); ?> Administration</a>
+        <div class='collapse navbar-collapse' id='navbarText'>
+                <ul class="navbar-nav mr-auto">
+                </ul>
+                <span class='navbar-text'>
+                <p class='navbar-text pull-right'>Version <?php echo settings::get_version(); ?></p>
+                </span>
+
+        </div>
+</nav>
 <div class='container'>
 
-<div class='col-lg-6 col-lg-offset-3'>
-<h2>Poster Printer Admin Login</h2>
+<div class='row col-md-6 offset-md-3'>
 
+<form class='form' role='form'  action='<?php echo $_SERVER['PHP_SELF']; ?>' method='post' name='login'>
+	<div class='form-group row'>	
+		<label for='username'>Username:</label> 
+		<input class='form-control' type='text'
+			name='username' tabindex='1' placeholder='Username'
+			value='<?php if (isset($username)) { echo $username; } ?>'>
+		<div class="input-group-append"> 
+		<span class='glyphicon glyphicon-user' aria-hidden='true'></span>
+		</div>
+	</div>
+	<div class='form-group row'>
+		<label for='password'>Password:</label>
+		<input class='form-control' type='password' name='password' 
+			placeholder='Password' tabindex='2'>
+		<div class="input-group-append">
+		<span class='glyphicon glyphicon-lock' aria-hidden='true'></span>
+		</div>
 
-<form class='form' id='login' action='login.php' method='post' name='login'>
-<div class='form-group'>
-	<label for='username'>Username:</label>
-	<input class='form-control' type='text' name='username' id='username' tabindex='1'>
-</div>
-<div class='form-group'>
-	<label for='password'>Password:</label>
-	<input class='form-control' type='password' name='password' tabindex='2'>
-</div>
-<div class='form-group'>
-	<input class='btn btn-primary' type='submit' value='Login' name='login'>
-</div>
-	
+	</div>
+	<div class='row'>
+	<button type='submit' name='login' class='btn btn-primary'>Login</button>
+	</div>
 
 </form>
+</div>
+<div class='row col-md-6 offset-md-3'>
 <?php if (isset($message)) { echo $message; } ?>
 </div>
 </div>
-</BODY>
-</HTML>
+</body>
+</html>
