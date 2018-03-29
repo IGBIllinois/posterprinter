@@ -12,7 +12,7 @@
 ////////////////////////////////////////////////
 
 define("__ENABLE__",TRUE);
-define("__APP_VERSION__","2.0 Beta");
+define("__VERSION__","2.0 Beta");
 define("__ADMIN_EMAIL__","");
 define("__MYSQL_HOST__","");
 define("__MYSQL_USER__","");

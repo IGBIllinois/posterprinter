@@ -42,9 +42,34 @@ foreach ($filetypes as $filetype) {
 }
 
 
-require_once 'includes/header.inc.php';
 
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link rel="stylesheet" type="text/css"
+        href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
+
+<link rel='stylesheet' href='vendor/components/jqueryui/themes/base/jquery-ui.css'>
+<script src='vendor/twbs/bootstrap/dist/js/bootstrap.min.js'></script>
+<script src='vendor/components/jquery/jquery.min.js' type='text/javascript'></script>
+<script src='vendor/components/jqueryui/jquery-ui.min.js' type='text/javascript'></script>
+<script src='includes/poster.inc.js' type='text/javascript'></script>
+
+<title><?php echo settings::get_title(); ?></title>
+
+</head>
+<body style='padding-top: 70px;'>
+<nav class="navbar fixed-top navbar-dark bg-dark">
+        <a class='navbar-brand' href='#'><?php echo settings::get_title(); ?></a>
+                <span class='navbar-text'>Version <?php echo settings::get_version(); ?>&nbsp;
+                <a class='btn btn-danger btn-sm' role='button' href='admin/'>Admin</a></span>
+</nav>
+
+<div class='container'>
+        <div class='col-md-12 col-lg-12 col-xl-12'>
 <div class='jumbotron'>
 	<h1 class='display-3'><img src='images/imark_bw.gif' alt='University of Illinois at Urbana-Champaign'>&nbspIGB Poster Order Form</h1>
 	<p class='lead'>Welcome to the IGB Poster Order Form.</p>
@@ -58,7 +83,7 @@ require_once 'includes/header.inc.php';
 	</div>
         <div class='col-md-6 col-lg-6 col-xl-6'>
 		<h2>Fequently Asked Questions</h2>
-		<p>Check out out <a href='faq.php'>Frequently Asked Questions</a> for our common questions</p>
+		<p>Check out the <a href='faq.php'>Frequently Asked Questions</a> for answers to common questions</p>
         </div>
 </div>
 
@@ -89,7 +114,7 @@ require_once 'includes/header.inc.php';
 <table class='table table-bordered table-sm'>
 <thead>
 <tr><th colspan='3'>Allowed File Types</th></tr>
-<tr><td colspan='3'><em>Below are the list of allowed file types.  If your filetype is not on the list, please email us.</em></td></tr>
+<tr><td colspan='3'><em>Below are the list of allowed file types.  If your file type is not on the list, please email us.</em></td></tr>
 </thead>
 <?php echo $filetypes_html; ?>
 </table>
@@ -109,4 +134,5 @@ require_once 'includes/header.inc.php';
 <div class='row justify-content-center'>
 <a class='btn btn-primary' href='step1.php' role='button'>Start Order</a>
 </div>
+
 <?php require_once 'includes/footer.inc.php'; ?>

@@ -22,7 +22,7 @@ if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
 		$data_legend[0] = "None";
 	}
 	
-	$graph = new PieGraph(600,300,"auto");
+	$graph = new PieGraph(900,600,"auto");
 	$graph->SetShadow();
 	$graph->title->Set("Inches Per Paper Type");
 	$graph->title->SetColor("#000000");

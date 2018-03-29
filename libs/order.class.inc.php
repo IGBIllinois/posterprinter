@@ -28,6 +28,7 @@ class order {
 	private $rush_order_id;
 	private $comments;
 	private $status;
+	private $rotated;
 
 	const order_page = "order.php";
 	const wordwrap = 80;
@@ -77,6 +78,7 @@ class order {
 	public function get_rush_order_name() { return $this->rush_order_name; }
 	public function get_rush_order_id() { return $this->rush_order_id; }
 	public function get_comments() { return $this->comments; }
+	public function get_rotated() { return $this->rotated; }
 	public function get_wordwrap_comments() { 
 		return wordwrap($this->comments,self::wordwrap,"<br>");
 
@@ -154,8 +156,8 @@ class order {
 	//mailNewOrder()
 	//emails the user and admins that a new order has been made
 	public function mailNewOrder() {
-	        mailAdminsNewOrder();
-        	mailUserNewOrder();
+	        $this->mailAdminsNewOrder();
+        	$this->mailUserNewOrder();
 
 	}
 
@@ -163,7 +165,7 @@ class order {
 	//$db - database object
 	//$order - order object
 	//emails admin of the new order
-	public function mailAdminsNewOrder($db,$order) {
+	public function mailAdminsNewOrder() {
 	        
 		$requestUri = substr($_SERVER["REQUEST_URI"],0,strrpos($_SERVER["REQUEST_URI"], "/")+1);
         	$urlAddress = "http://" . $_SERVER["SERVER_NAME"] . $requestUri;
@@ -177,7 +179,7 @@ class order {
         	$html_message .= "<br>To view the order <a href='" . $urlAddress . "admin/" . self::order_page . "?order_id=" . $this->get_order_id() . "'>click here</a>" . "\r\n";
 
 	        //plain text email
-	        $plain_message .= "New Poster Printer Order From " . $this->get_email() . "\r\n\r\n";
+	        $plain_message = "New Poster Printer Order From " . $this->get_email() . "\r\n\r\n";
         	$plain_message .= $this->get_job_info();
 	        $plain_message .= "To view the order: " . $urlAddress . "admin/" . self::order_page . "?order_id=" . $this->get_order_id() . "\r\n";
 
@@ -220,15 +222,15 @@ class order {
         	$plain_message .= "For your reference\r\n\r\n";
 	        $plain_message .= $this->get_job_info();
 
-	        //headers
-        	if ($this->get_cc_emails() != "") {
-                	$headers .= "Cc: " . $this->get_cc_emails() . "\r\n";
-	        }
-        	$headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
 
 		$extraheaders = array("From"=>settings::get_admin_email(),
                                         "Subject"=>$subject
                 );
+                if ($this->get_cc_emails() != "") {
+                        $extraheadeders['Cc'] = $this->get_cc_emails();
+                }
+
+
                 $message = new Mail_mime();
                 $message->setHTMLBody($html_message);
                 $message->setTXTBody($plain_message);
@@ -259,15 +261,13 @@ class order {
 	        $plain_message .= $this->get_job_info();
 
 
-	        //Headers
-	        if ($this->get_cc_emails() != "") {
-        	        $headers .= "Cc: " . $this->get_cc_emails() . "\r\n";
-	        }
-        	$headers .= "Content-Type: multipart/alternative;boundary=" . $boundary . "\r\n";
-
 		$extraheaders = array("From"=>settings::get_admin_email(),
                                         "Subject"=>$subject
                 );
+                if ($this->get_cc_emails() != "") {
+                        $extraheadeders['Cc'] = $this->get_cc_emails();
+                }
+
                 $message = new Mail_mime();
                 $message->setHTMLBody($html_message);
                 $message->setTXTBody($plain_message);
@@ -313,6 +313,7 @@ class order {
 			$this->rush_order_id = $result[0]["rushOrder_id"];
 			$this->comments = $result[0]["orders_comments"];
 			$this->status = $result[0]["orders_status"];
+			$this->rotated = $result[0]["orders_rotated"];
 		}
 	}
 	

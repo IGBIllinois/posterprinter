@@ -7,9 +7,8 @@ require_once 'includes/header.inc.php';
 ?>
 <h3>Monthly Averages</h3>
 <hr>
-<table class='table table-bordered'>
-    
-    <tr><td><img src='graphs/graph_monthlyAvg.php'/></td></tr>
-</table>
+<div class='row'>    
+<img class='mx-auto' src='graphs/graph_monthlyAvg.php'/>
+</div>
 
 <?php require_once 'includes/footer.inc.php'; ?>

@@ -11,7 +11,7 @@ foreach($avgOrders as $value) {
 
 
 
-$graph = new Graph(600,500,"auto");
+$graph = new Graph(900,650,"auto");
 $graph->SetScale("textlin");
 $graph->yaxis->scale->SetGrace(20);
 $graph->xaxis->SetTickLabels($data_x);
@@ -19,10 +19,10 @@ $graph->xaxis->SetLabelAngle('55');
 
 //Orders
 $avgOrders_plot = new LinePlot($avgOrders_y);
-$avgOrders_plot->SetLegend('Orders');
+$avgOrders_plot->SetLegend('Average Number of Orders');
 $graph->Add($avgOrders_plot);
 //Legend
-$graph->legend->SetPos(0.8,0.15,"left","top");
+$graph->legend->SetPos(0.7,0.15,"left","top");
 $graph->legend->SetLayout("LEGEND_VERT");
 
 //Display Graph

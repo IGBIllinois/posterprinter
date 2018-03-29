@@ -19,8 +19,56 @@ function cfopAdvance3() {
 	}
 	
 }
+function update_posterfile_name() {
+	var fileInput = document.getElementById('posterFile');
+	var filename = fileInput.files[0].name;
+	$('#posterfile-label').text(filename);
+}
 
-function uploadFile() {
+function first_step() {
+        var fd = new FormData();
+        fd.append('width',document.getElementById('width').value);
+        fd.append('length',document.getElementById('length').value);
+	fd.append('step1','1');
+	var session = document.getElementById('session').value;
+	var xhr = new XMLHttpRequest();
+        xhr.responseType = "text";
+	disableForm();
+	xhr.open("POST", "create.php",true);
+	xhr.send(fd);
+        xhr.onreadystatechange  = function(){
+                if (xhr.readyState == 4 && xhr.status == 200) {
+			var result = xhr.response;
+                        console.log(xhr.response);
+                        var jsonObj = JSON.parse(xhr.response);
+			if (jsonObj.valid) {
+                                var parameters = jsonObj.post;
+                                var form = $('<form></form>');
+                                form.attr('method','post');
+                                form.attr('action','step2.php?session=' + session);
+                                console.log('session: ' + session);
+                                $.each(parameters,function(key,value) {
+                                        var field = $('<input></input>');
+
+                                        field.attr("type", "hidden");
+                                        field.attr("name", key);
+                                        field.attr("value", value);
+                                        form.append(field);
+                                });
+                                $(document.body).append(form);
+                                form.submit();
+
+
+                        }
+                        else if (jsonObj.message) {
+                                enableForm();
+                                document.getElementById("message").innerHTML =  jsonObj.message;
+                        }
+
+		}
+	}
+}
+function second_step() {
 	var fd = new FormData();
 	fd.append("posterFile", document.getElementById('posterFile').files[0]);
 	fd.append('width',document.getElementById('width').value);
@@ -39,31 +87,37 @@ function uploadFile() {
 	fd.append('posterTube',document.getElementById('posterTube').checked);
 	fd.append('rushOrder',document.getElementById('rushOrder').checked);
 	fd.append('step2',"1");
+	var session = document.getElementById('session').value;
         var xhr = new XMLHttpRequest();
+	xhr.responseType = "text";
 	xhr.upload.addEventListener("progress", uploadProgress, false);
 	xhr.addEventListener("load", uploadComplete, false);
 	xhr.addEventListener("error", uploadFailed, false);
 	xhr.addEventListener("abort", uploadCanceled, false);
 	disableForm();
         xhr.open("POST", "create.php",true);
-	xhr.responseType = 'json';
 	//var fd = new FormData();
         xhr.send(fd);
 	xhr.onreadystatechange  = function(){
-		if (xhr.readyState == 4  ) {
+		if (xhr.readyState == 4 && xhr.status == 200) {
 
 			// Javascript function JSON.parse to parse JSON data
 			var result = xhr.response;
-			console.log("Reponse: " + result);
+			console.log(xhr.response);
 			var jsonObj = JSON.parse(xhr.response);
-
+			var output = "";
+			for (property in jsonObj) {
+				output += property + ': ' + jsonObj[property]+'; ';
+			}
+			console.log(output);
 			// jsonObj variable now contains the data structure and can
 			// be accessed as jsonObj.name and jsonObj.country.
 			if (jsonObj.valid) {
 				var parameters = jsonObj.post;
 				var form = $('<form></form>');
                                 form.attr('method','post');
-                                form.attr('action','step3.php');
+                                form.attr('action','step3.php?session=' + session);
+				console.log('session: ' + session);
                                 $.each(parameters,function(key,value) {
                                         var field = $('<input></input>');
 
@@ -72,12 +126,12 @@ function uploadFile() {
                                         field.attr("value", value);
                                         form.append(field);
                                 });
-                                document.body.append(form);
+				$(document.body).append(form);
                                 form.submit();
 
 
 			}
-			if (jsonObj.message) {
+			else if (jsonObj.message) {
 				enableForm();
 				document.getElementById("message").innerHTML =  jsonObj.message;
 			}

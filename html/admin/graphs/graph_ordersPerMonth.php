@@ -10,7 +10,6 @@ if (isset($_GET['year'])) {
 	
 	$data_legend;
 	$data;
-	//print_r($ordersPerMonthData);
 	if (count($ordersPerMonthData) > 0) {
 	foreach($ordersPerMonthData as $key=>$value) {
 		$datax[] = $key;
@@ -21,11 +20,11 @@ if (isset($_GET['year'])) {
 		$datax[] = $key;
 		$datay[] = 0;
 	}
-	$graph = new Graph(600,500,"auto");
+	$graph = new Graph(900,650,"auto");
 	$graph->SetScale("textlin");
 	$graph->yaxis->scale->SetGrace(20);
 	$graph->SetMarginColor('#ffffff');
-	$graph->title->Set("Orders Per Month");
+	//$graph->title->Set("Orders Per Month");
 	$graph->SetFrame(false,'#ffffff');
 	$graph->xaxis->SetTickLabels($datax);
 

@@ -7,6 +7,7 @@
         href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 
 <link rel='stylesheet' href='../vendor/components/jqueryui/themes/base/jquery-ui.css'>
+<link rel="stylesheet" href="../vendor/fortawesome/font-awesome/css/font-awesome.css" type="text/css" />
 <script src='../vendor/twbs/bootstrap/dist/js/bootstrap.min.js'></script>
 <script src='../vendor/components/jquery/jquery.min.js' type='text/javascript'></script>
 <script src='../vendor/components/jqueryui/jquery-ui.min.js' type='text/javascript'></script>
@@ -19,14 +20,11 @@
 <body style='padding-top: 60px; padding-bottom: 60px;'>
 <nav class="navbar fixed-top navbar-dark bg-dark">
         <a class='navbar-brand' href='#'><?php echo settings::get_title(); ?> Administration</a>
-        <div class='collapse navbar-collapse' id='navbarText'>
-                <ul class="navbar-nav mr-auto">
-                </ul>
                 <span class='navbar-text'>
-                <p class='navbar-text pull-right'>Version <?php echo settings::get_version(); ?></p>
+                Version <?php echo settings::get_version(); ?>&nbsp;
+		<a class='btn btn-danger btn-sm' role='button' href='../'>Main Page</a></span>
                 </span>
 
-        </div>
 </nav>
 
 

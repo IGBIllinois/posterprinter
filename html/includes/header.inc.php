@@ -15,19 +15,11 @@
 <title><?php echo settings::get_title(); ?></title>
 
 </head>
-<body style='padding-top: 65px;'>
+<body style='padding-top: 70px;'>
 <nav class="navbar fixed-top navbar-dark bg-dark">
 	<a class='navbar-brand' href='#'><?php echo settings::get_title(); ?></a>
-	<div class='collapse navbar-collapse' id='navbarText'>
-		<ul class="navbar-nav mr-auto">
-		</ul>
-		<span class='navbar-text'>
-	        <p class='navbar-text pull-right'>Version <?php echo settings::get_version(); ?></p>
-		</span>
-
-	</div>
+		<span class='navbar-text'>Version <?php echo settings::get_version(); ?></span>
 </nav>
 
 <div class='container'>
-        <div class='col-md-12 col-lg-12 col-xl-12'>
-
+	<div class='col-md-8 col-lg-8 col-xl-8 offset-md-2 offset-lg-2 offset-xl-2'>

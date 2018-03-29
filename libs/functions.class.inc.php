@@ -3,6 +3,8 @@
 
 class functions {
 
+	const bytes_in_megabyte = 1048576;
+
 	//Possible errors when you upload a file
         private static $upload_errors = array(
                 1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini.',
@@ -57,22 +59,22 @@ class functions {
 
 
 	public static function create_order($db,$order_info) {
-
+		
 		$data = array('orders_email'=>$order_info['email'],
 			'orders_cc_emails'=>$order_info['additional_emails'],
 			'orders_fileName'=>$order_info['posterFileName'],
 			'orders_totalCost'=>$order_info['totalCost'],
 			'orders_cfop'=>$order_info['cfop'],
 			'orders_activityCode'=>$order_info['activityCode'],
-			'orders_width'=>$order_info['posterWidth'],
-			'orders_length'=>$order_info['posterLength'],
+			'orders_width'=>$order_info['width'],
+			'orders_length'=>$order_info['length'],
 			'orders_status'=>'NEW',
 			'orders_paperTypesId'=>$order_info['paperTypesId'],
 			'orders_finishOptionsId'=>$order_info['finishOptionsId'],
 			'orders_comments'=>$order_info['comments'],
 			'orders_posterTubeId'=>$order_info['posterTubeId'],
 			'orders_rushOrderId'=> $order_info['rushOrderId'],
-			'orders_widthSwitched'=>$order_info['widthSwitched'],
+			'orders_rotated'=>$order_info['rotated'],
 			'orders_name'=>$order_info['name']
 			);
 		return $db->build_insert('orders',$data);
@@ -230,7 +232,11 @@ class functions {
 
         }
 
+	public static function convert_bytes_to_megabytes($bytes) {
+		return round($bytes/self::bytes_in_megabyte,2);
 
+
+	}
 
 }
 

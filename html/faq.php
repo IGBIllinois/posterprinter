@@ -16,7 +16,7 @@ Please contact your advisor or the business office if you do not know what CFOP 
 <p>We automatically flipped the width and length to maximize the use of the paper you select.  This way we use less paper and save you money.  Your poster's orientation will remain the same</p>
 <h4>How long will it take to print my poster?</h4>
 <p>For a standard order, we gurantee within <?php echo settings::get_order_timeframe(); ?> business hours.  This excludes weekends, holidays and breaks.</p>
-<h4>How long does a rush order?</h4>
+<h4>How long does a rush order take?</h4>
 <p>For a rush order, we gurantee within <?php echo settings::get_rush_order_timeframe(); ?> business hours.  We will also make a best faith effort to get it done
 sooner if need be.  This excludes weekends, holidays and breaks.</p>
 <h4>Can you print multiple copies of the same poster?</h4>

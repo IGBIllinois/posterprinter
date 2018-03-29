@@ -39,40 +39,40 @@ class poster {
 		return strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 	}
 
-	public static function switch_dimensions($posterWidth,$posterLength,$paperTypeWidth) {
+	public static function rotate_dimensions($posterWidth,$posterLength,$paperTypeWidth) {
 
 
 		//Switches around the poster width and length to make the length the shortest possible to save money.
-		$widthSwitched = 0;
+		$rotated = 0;
 	        if (($posterWidth <= $paperTypeWidth) && ($posterLength <= $paperTypeWidth) && ($posterWidth < $posterLength)) {
-        	        $widthSwitched = 1;
+        	        $rotated = 1;
 	        }
         	elseif (($posterWidth > $paperTypeWidth) && ($posterLength <= $paperTypeWidth)) {
-                	$widthSwitched = 1;
+                	$rotated = 1;
 	        }
 
-		return $widthSwitched;
+		return $rotated;
 	}
 
 	public static function verify_dimensions($db,$width,$length) {
 		$max_poster_width = self::get_max_poster_width($db);
 		$message = "";
 		$valid = true;
-	 	if (($width == "") || ($width % 1 != 0) || ($width <= 0)){
-                	$message = "Please enter a valid poster width.";
+	 	if (($width == "") || ($width % 1 != 0) || ($width <= 0) || (!is_numeric($width))){
+                	$message = functions::alert("Please enter a valid poster width.",0);
                 	$valid = false;
         	}
 		elseif (($width > $max_poster_width) && ($length > $max_poster_width)) {
-                	$message = "Width can't be greater than " . $max_poster_width . " inches";
+                	$message = functions::alert("Width can't be greater than " . $max_poster_width . " inches",0);
 			$valid = false;
 	        }
 
-        	if (($length == "") || ($length % 1 != 0) || ($length <=0)){
-                	$message .= "Please enter a valid poster length.";
+        	if (($length == "") || ($length % 1 != 0) || ($length <=0) || (!is_numeric($length))){
+                	$message .= functions::alert("Please enter a valid poster length.",0);
                 	$valid = false;
         	}
 		elseif ($length > settings::get_max_length()) {
-                	$message .= "Length can't be greater than 200 inches.";
+                	$message .= functions::alert("Length can't be greater than " . settings::get_max_length() . " inches.",0);
                 	$valid = false;
         	}
 

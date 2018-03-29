@@ -27,11 +27,11 @@ $endDate = $year . "/06/30";
 if (isset($_POST['graphType'])) {
 	
 	$graphType = $_POST['graphType'];
-	$graphImage = "<img src='graphs/graph_" . $graphType . ".php?startDate=" . $startDate . "&endDate=" . $endDate . "'>";
+	$graphImage = "<img class='mx-auto' src='graphs/graph_" . $graphType . ".php?startDate=" . $startDate . "&endDate=" . $endDate . "'>";
 
 }
 else {
-	$graphImage = "<img src='graphs/graph_finishOptions.php?startDate=" . $startDate . "&endDate=" . $endDate . "'>";
+	$graphImage = "<img class='mx-auto' src='graphs/graph_finishOptions.php?startDate=" . $startDate . "&endDate=" . $endDate . "'>";
 	$graphType = "finishOptions";
 }
 
@@ -78,10 +78,8 @@ $graphForm .= "</form>";
     <tr><td>Total Inches Printed:</td><td><?php echo $stats->pretty_totalInches(); ?>"</td></tr>
     <tr><td>Average Poster Cost:</td><td>$<?php echo $stats->averagePosterCost(); ?></td></tr>
     <tr><td colspan='2'><?php echo $graphForm; ?></td></tr>
-    <tr>
-    	<td colspan='2'><?php echo $graphImage; ?></td>
-    </tr>
-
 </table>
+<div class='row'><?php echo $graphImage; ?></div>
+
 
 <?php require_once 'includes/footer.inc.php'; ?>

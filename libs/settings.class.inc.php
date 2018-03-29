@@ -8,7 +8,7 @@ class settings {
 
 	}
 	public static function get_version() {
-		return __APP_VERSION__;
+		return __VERSION__;
 	}
 
 	public static function site_enabled() {
@@ -49,7 +49,9 @@ class settings {
 	}
 
 	public static function get_valid_filetypes() {
-		return explode(",",__VALID_FILETYPES__);
+		$result = explode(",",__VALID_FILETYPES__);
+		sort($result,SORT_STRING);
+		return $result;
 	}
 
 	public static function get_ldap_host() {

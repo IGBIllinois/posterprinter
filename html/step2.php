@@ -16,7 +16,7 @@ elseif ((isset($_GET['session'])) && ($_GET['session'] == $session->get_session_
 
 	$session_vars = $session->get_all_vars();
 
-	$paperTypes = functions::getValidPaperTypes($db,$session_vars['width'],$session_vars['length']);
+	$paperTypes = functions::getValidPaperTypes($db,$_POST['width'],$_POST['length']);
 	//takes the result and formats it into html into the paperTypeHTML variable.
 	$paperTypes_html = "";
 	foreach ($paperTypes as $paperType) {
@@ -30,7 +30,7 @@ elseif ((isset($_GET['session'])) && ($_GET['session'] == $session->get_session_
 			$paperTypes_html .= "<td class='left'><input type='radio' name='paperTypesId' value='" . $paperType['id'] . "'></td></tr>\n";
 		}
 	}
-	$finishOptions = functions::getValidFinishOptions($db,$session_vars['width'],$session_vars['length']);
+	$finishOptions = functions::getValidFinishOptions($db,$_POST['width'],$_POST['length']);
 	//takes the result and formats it into html into the finishOptionsHTML variable.
 	$finishOptions_html = "";
 	foreach ($finishOptions as $finishOption) {
@@ -60,8 +60,9 @@ require_once 'includes/header.inc.php';
 ?>
 	<form action='' method='post' id='posterInfo' enctype='multipart/form-data'>
 	<fieldset id='poster_field'>
-		<input type='hidden' id='width' name='width' value='<?php echo $session->get_var('width'); ?>'>
-		<input type='hidden' id='length' name='length' value='<?php echo  $session->get_var('length'); ?>'>
+		<input type='hidden' id='width' name='width' value='<?php echo $_POST['width']; ?>'>
+		<input type='hidden' id='length' name='length' value='<?php echo  $_POST['length']; ?>'>
+		<input type='hidden' id='session' name='session' value='<?php echo $_GET['session']; ?>'>
 <div class='row'>
 	<table class='table table-bordered table-sm table-hover'>
 		<thead>
@@ -85,7 +86,7 @@ require_once 'includes/header.inc.php';
 	<table class='table table-bordered table-sm table-hover'>
 		<thead>
 		<tr><th colspan='3'>Other Options</th></tr>
-		<tr><td colspan='3'><em>Please select any additional options.  Rush orders will be done within <strong><?php echo settings::get_rush_order_timeframe(); ?> business hours</strong>.</em></td></tr>
+		<tr><td colspan='3'><em>Please select any additional options.  Rush orders will be completed within <strong><?php echo settings::get_rush_order_timeframe(); ?> business hours</strong>.</em></td></tr>
 	</thead>
 	<?php echo $posterTube_html; ?>
 	<?php echo $rushOrder_html; ?>
@@ -112,10 +113,12 @@ require_once 'includes/header.inc.php';
 		<tr>
 			<td class='text-right' style='vertical-align:middle;'>CFOP Number</td>
 			<td>
+				<div class='form-group row'>
 				<div class='col-md-2'><input type='text' name='cfop1' id='cfop1' maxlength='1' class='form-control' onKeyUp='cfopAdvance1()'></div> - 
 				<div class='col-md-3'><input type='text' name='cfop2' id='cfop2' maxlength='6' size='6' class='form-control' onKeyUp='cfopAdvance2()'></div> - 
 				<div class='col-md-3'><input type='text' name='cfop3' id='cfop3' maxlength='6' size='6' class='form-control' onKeyUp='cfopAdvance3()'></div> - 
 				<div class='col-md-3'><input type='text' name='cfop4' id='cfop4' maxlength='6' size='6' class='form-control'></div>
+				</div>
 			</td>
 		</tr>
 		<tr>
@@ -124,8 +127,8 @@ require_once 'includes/header.inc.php';
 		</tr>
 		<tr>
 			<td class='text-right' style='vertical-align:middle;'>File (Max <?php echo ini_get('post_max_size'); ?>)</td>
-			<td><div class='custom-file'><input class='form-control-file' type='file' name='posterFile' id='posterFile'>
-			<label class="custom-file-label" for="posterFile">Choose file</label>
+			<td><div class='custom-file'><input class='form-control-file' type='file' name='posterFile' id='posterFile' onChange='update_posterfile_name()'>
+			<label class="custom-file-label" id='posterfile-label' for="posterFile">Choose file</label>
 			</div>
 			</td>
 		</tr>
@@ -136,24 +139,25 @@ require_once 'includes/header.inc.php';
 	</table>
 </div>
 <div class='row'>
-	<div class='progress' style='height: 2em;'>
-	<div id='progress_bar' class='progress-bar progress-bar-striped active' role='progressbar' 
-		aria-valuenow='0' aria-valuemin='0' aria-valuemax='100' style='width: 0%;'>
+	<div class='progress col-md-12 col-lg-12 col-xl-12' style="height: 30px;">
+	<div id='progress_bar' class='progress-bar progress-bar-striped progress-bar-animated' role='progressbar' 
+		aria-valuenow='0' aria-valuemin='0' aria-valuemax='100'>
 	</div>
 	</div>
 </div>
-<br>
-<div class='row justify-content-center'>
-<button class='btn btn-warning' type='submit' name='cancel'>Cancel</button>&nbsp;
-<button class='btn btn-primary' type='submit' name='step2' onClick='uploadFile()'>Next</button>
+<p></p>
+<div class='row'>
+	<div class='mx-auto btn-toolbar'>
+		<button class='btn btn-warning' type='submit' name='cancel'>Cancel</button>&nbsp;
+		<button class='btn btn-primary' type='submit' name='step2' onClick='second_step()'>Next</button>
+	</div>
 </div>
 </fieldset>
 </form>
-
-<div class='row' id='message'>
-<?php if (isset($message)) { echo $message; } ?>
-</div>
-
+<p></p>
+	<div id='message'>
+		<?php if (isset($message)) { echo $message; } ?>
+	</div>
 <?php require_once 'includes/footer.inc.php'; ?>
 
 

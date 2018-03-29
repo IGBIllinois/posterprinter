@@ -25,7 +25,7 @@ $stats = new statistics($db,$startDate,$endDate);
 	$today = mktime(0,0,0,date('m'),date('d'),date('y'));
 
         if ($next_year > $today) {
-                echo "<li class='page-item' disabled'><a class='page-link' href='#'>Next</a></li>";
+                echo "<li class='page-item disabled'><a class='page-link' href='#'>Next</a></li>";
         }
         else {
                 echo "<li class='page-item'><a class='page-link' href='stats_OrdersPerMonth.php?year=" . $nextYear  . "'>Next</a></li>";
@@ -37,7 +37,10 @@ $stats = new statistics($db,$startDate,$endDate);
 
     <tr><td>Yearly Total:</td><td>$<?php echo $stats->pretty_cost(); ?></td></tr>
     <tr><td>Total Orders:</td><td><?php echo $stats->orders(); ?></td></tr>
-    <tr><td colspan='2'><img src='graphs/graph_ordersPerMonth.php?year=<?php echo $year; ?>' /></td></tr>
 </table>
+<div class='row'>
+<img class='mx-auto' src='graphs/graph_ordersPerMonth.php?year=<?php echo $year; ?>' />
+</div>
+
 
 <?php require_once 'includes/footer.inc.php'; ?>
