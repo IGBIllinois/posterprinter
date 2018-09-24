@@ -90,7 +90,7 @@ if (isset($_GET['order_id']) && is_numeric($_GET['order_id'])) {
 		
 	////////////////Paper Types////////////
 	$paperTypes = functions::getValidPaperTypes($db,$order->get_width(),$order->get_length());
-	$paperTypesHTML = "<div class='col-md-4'>";
+	$paperTypesHTML = "<div class='col-md-6'>";
 	$paperTypesHTML .= "<select class='form-control' name='paperType'>";
 	foreach ($paperTypes as $paperType) {
 		if ($order->get_paper_type_id() === $paperType["id"]) {
@@ -103,7 +103,7 @@ if (isset($_GET['order_id']) && is_numeric($_GET['order_id'])) {
 	
 	///////////////////Finish Options//////////////
 	$finishOptions = functions::getValidFinishOptions($db,$order->get_width(),$order->get_length());
-	$finishOptionsHTML = "<div class='col-md-4'>";
+	$finishOptionsHTML = "<div class='col-md-6'>";
 	$finishOptionsHTML .= "<select class='form-control' name='finishOption'>";
 	foreach ($finishOptions as $finishOption) {
 		if ($order->get_finish_option_id() == $finishOption["id"]) {
@@ -119,7 +119,7 @@ if (isset($_GET['order_id']) && is_numeric($_GET['order_id'])) {
 	
 	////////////////////Poster Tube////////////////////
 	$posterTube = poster_tube::getPosterTubes($db);
-	$posterTubeHTML = "<div class='col-md-3'>";
+	$posterTubeHTML = "<div class='col-md-4'>";
 	$posterTubeHTML .= "<select class='form-control' name='posterTube'>";
 	for($i=0;$i<count($posterTube);$i++) {
 		$posterTubeId = $posterTube[$i]['posterTube_id'];
@@ -140,7 +140,7 @@ if (isset($_GET['order_id']) && is_numeric($_GET['order_id'])) {
 	
 	/////////////////Rush Order//////////////
 	$rushOrder = rush_order::getRushOrders($db);
-	$rushOrderHTML = "<div class='col-md-3'>";
+	$rushOrderHTML = "<div class='col-md-4'>";
 	$rushOrderHTML .= "<select class='form-control' name='rushOrder'>";
 	for($i=0;$i<count($rushOrder);$i++) {
 		$rushOrderId = $rushOrder[$i]['rushOrder_id'];
@@ -176,7 +176,7 @@ else
 </script>
 
 <form method='post' action='<?php echo $_SERVER['PHP_SELF']; ?>?order_id=<?php echo $order_id; ?>'>
-<div class='col-sm-8 col-md-8'>
+<div class='col-sm-8 col-md-8 col-lg-8 col-xl-8'>
 
 <table class='table table-bordered table-sm'>
 	<tr><th colspan='2'>Edit Order Information</th></tr>
@@ -187,13 +187,15 @@ else
 	<tr><td class='text-right'>File</td><td><a href='download.php?orderId=<?php echo $order->get_order_id(); ?>'><?php echo $order->get_filename();  ?></a></td></tr>
 	<tr><td class='text-right' style='vertical-align:middle;'>CFOP</td>
 		<td>
+		<div class='form-group row'>
 		<div class='col-md-2'><input type='text' name='cfop1' id='cfop1' maxlength='1' class='form-control' onKeyUp='cfopAdvance1()' value='<?php echo $order->get_cfop_college(); ?>'></div> 
 		<div class='col-md-2'><input type='text' name='cfop2' id='cfop2' maxlength='6' size='6' class='form-control' onKeyUp='cfopAdvance2()' value='<?php echo $order->get_cfop_fund(); ?>'></div>
 		<div class='col-md-2'><input type='text' name='cfop3' id='cfop3' maxlength='6' class='form-control' onKeyUp='cfopAdvance3()' value='<?php echo $order->get_cfop_organization(); ?>'></div>
 		<div class='col-md-2'><input type='text' name='cfop4' id='cfop4' maxlength='6' class='form-control' value='<?php echo $order->get_cfop_program(); ?>'></div>
+		</div>
 		</td>
 	</tr>
-	<tr><td class='text-right' style='vertical-align:middle;'>Activity Code</td><td><div class='col-md-2'><input class='form-control' type='text' name='activityCode' maxlength='6' class='cfop_2'  value='<?php echo $order->get_activity_code(); ?>'></div></td></tr>
+	<tr><td class='text-right' style='vertical-align:middle;'>Activity Code</td><td><div class='col-md-2'><input class='form-control' type='text' name='activityCode' maxlength='6' value='<?php echo $order->get_activity_code(); ?>'></div></td></tr>
 	<tr><td class='text-right'>Time Created</td><td><?php echo $order->get_time_created(); ?></td></tr>
 	<tr><td class='text-right'>Total Cost</td><td>$<?php echo $order->get_total_cost(); ?></td></tr>
 	<tr><td class='text-right'>Width</td><td><?php echo $order->get_width(); ?>"</td></tr>

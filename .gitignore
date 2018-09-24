@@ -3,3 +3,4 @@ includes/settings.inc.php
 /html/vendor
 posters/*
 /conf/settings.inc.php
+composer.lock

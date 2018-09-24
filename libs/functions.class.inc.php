@@ -59,7 +59,7 @@ class functions {
 
 
 	public static function create_order($db,$order_info) {
-		
+		$key = self::generate_key();	
 		$data = array('orders_email'=>$order_info['email'],
 			'orders_cc_emails'=>$order_info['additional_emails'],
 			'orders_fileName'=>$order_info['posterFileName'],
@@ -75,7 +75,8 @@ class functions {
 			'orders_posterTubeId'=>$order_info['posterTubeId'],
 			'orders_rushOrderId'=> $order_info['rushOrderId'],
 			'orders_rotated'=>$order_info['rotated'],
-			'orders_name'=>$order_info['name']
+			'orders_name'=>$order_info['name'],
+			'orders_key'=>$key
 			);
 		return $db->build_insert('orders',$data);
 
@@ -238,6 +239,46 @@ class functions {
 
 	}
 
+	public static function generate_key() {
+		$key = uniqid (rand (),true);
+		$hash = sha1($key);
+		return $hash;
+
+	}
+
+	public static function debug($message,$log_level = 0) {
+		
+                if (settings::debug()) {
+			switch ($log_level) {
+				case 0:
+					error_log("INFO: " . $message);
+				case 1:
+					error_log("ERROR: " . $message);
+				default:
+					error_log("INFO: " . $message);
+	
+
+			}
+
+                }
+        }
+
+	public static function get_referral_url() {
+		$pos = strpos($_SERVER['HTTP_REFERER'],"?");
+		$url = $_SERVER['HTTP_REFERER'];
+		if ($pos) {
+			$url = substr($_SERVER['HTTP_REFERER'],0,$pos);
+		}
+		return $url;
+	}
+
+	public static function get_current_url_dir() {
+		$dir_name = dirname($_SERVER['PHP_SELF']);
+		$url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://".$_SERVER['HTTP_HOST'] . $dir_name . "/";
+		return $url;
+
+
+	}
 }
 
 

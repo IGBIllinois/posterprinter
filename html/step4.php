@@ -11,8 +11,12 @@ elseif (isset($_POST['cancel'])) {
         $session->destroy_session();
         header('Location: index.php');
 }
+elseif (functions::get_referral_url() != functions::get_current_url_dir() . "step3.php") {
+        $session->destroy_session();
+        header('Location: index.php');
+}
 
-elseif (isset($_POST['step4']) && ($_SERVER['HTTP_REFERER'] == "step3.php")) {
+elseif (isset($_POST['step4'])) {
 
         $posterFileName = $_POST['posterFileName'];
         $posterFileTmpName = $_POST['posterFileTmpName'];
@@ -74,7 +78,7 @@ if ($order->get_rotated()) {
 <tr><td>Full Name</td><td><?php echo $order->get_name(); ?></td></tr>
 <tr><td>Email</td><td><?php echo $order->get_email(); ?></td></tr>
 <tr><td>Additional Emails</td><td><?php echo $order->get_cc_emails(); ?></td></tr>
-<tr><td>Order Number</td><td><?php echo $orderId; ?></td></tr>
+<tr><td>Order Number</td><td><?php echo $order->get_id(); ?></td></tr>
 <tr><td>File</td><td><?php echo $order->get_filename(); ?></td></tr>
 <tr><td>Length</td><td><?php echo $order->get_length(); ?></td></tr>
 <tr><td>Width</td><td><?php echo $order->get_width(); ?></td></tr>

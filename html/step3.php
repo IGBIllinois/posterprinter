@@ -2,7 +2,7 @@
 
 require_once 'includes/main.inc.php';
 
-error_log("Referer: " . $_SERVER['REQUEST_URI']);
+functions::debug("Referer: " . $_SERVER['REQUEST_URI']);
 
 if (!(isset($_GET['session'])) || ($_GET['session'] != $session->get_session_id())) {
 	$session->destroy_session();
@@ -13,13 +13,17 @@ elseif (isset($_POST['cancel'])) {
         $session->destroy_session();
         header('Location: index.php');
 }
+elseif (functions::get_referral_url() != functions::get_current_url_dir() . "step2.php") {
+        $session->destroy_session();
+        header('Location: index.php');
+}
 
-elseif (isset($_POST['step3']) && ($_SERVER['HTTP_REFERER'] == "/step2.php")) {
+elseif (isset($_POST['step3'])) {
         foreach ($_POST as $var) {
 		
                 $var = trim(rtrim($var));
         }
-	error_log(implode(",",$_POST));
+	functions::debug(implode(",",$_POST));
         $width = $_POST['width'];
         $length = $_POST['length'];
         $paperTypesId = $_POST['paperTypesId'];
@@ -108,8 +112,8 @@ if ($_POST['rotated']) {
 <tr><td>Comments</td><td><?php echo stripslashes($_POST['comments']); ?></td></tr>
 
 <?php
-if (($_POST['posterThumbFileTmpName'] != "") && (file_exists(settings::get_poster_dir() . "/". $_POST['posterThumbFileTmpName']))) {
-	echo "<tr><td colspan='2'><img class='img-responsive img-thumbnail' src='" . settings::get_poster_dir() . "/" . $_POST['posterThumbFileTmpName'] . "'></td></tr>";
+if (($_POST['posterThumbFileTmpName'] != "") && (file_exists(poster::get_tmp_path() . "/". $_POST['posterThumbFileTmpName']))) {
+	echo "<tr><td colspan='2'><img class='img-responsive img-thumbnail' src='image.php?image=" . $_POST['posterThumbFileTmpName'] . "'></td></tr>";
 }
 else {
 	echo "<tr><td colspan='2'>No Preview</td></tr>";
@@ -133,7 +137,7 @@ $url = "step4.php?session=" . $_GET['session'];
 	}
 	?>
 	<div class='mx-auto btn-toolbar'>
-		<button class='btn btn-warning' type='button' name='cancel'>Cancel</button>&nbsp;
+		<button class='btn btn-warning' type='submit' name='cancel'>Cancel</button>&nbsp;
 		<button class='btn btn-primary' type='submit' name='step4'>Submit Order</button>
 	</div>
 	</form>

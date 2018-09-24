@@ -32,14 +32,17 @@ function first_step() {
 	fd.append('step1','1');
 	var session = document.getElementById('session').value;
 	var xhr = new XMLHttpRequest();
-        xhr.responseType = "text";
 	disableForm();
 	xhr.open("POST", "create.php",true);
-	xhr.send(fd);
+	xhr.responseType = "text";
+	//xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange  = function(){
+		        window.alert("Status: " + xhr.status);
+			window.alert("Response: " * xhr.responseText);
                 if (xhr.readyState == 4 && xhr.status == 200) {
 			var result = xhr.response;
                         console.log(xhr.response);
+			window.alert(result);
                         var jsonObj = JSON.parse(xhr.response);
 			if (jsonObj.valid) {
                                 var parameters = jsonObj.post;
@@ -66,7 +69,8 @@ function first_step() {
                         }
 
 		}
-	}
+	};
+	xhr.send(fd);
 }
 function second_step() {
 	var fd = new FormData();
@@ -89,13 +93,14 @@ function second_step() {
 	fd.append('step2',"1");
 	var session = document.getElementById('session').value;
         var xhr = new XMLHttpRequest();
-	xhr.responseType = "text";
 	xhr.upload.addEventListener("progress", uploadProgress, false);
 	xhr.addEventListener("load", uploadComplete, false);
 	xhr.addEventListener("error", uploadFailed, false);
 	xhr.addEventListener("abort", uploadCanceled, false);
 	disableForm();
         xhr.open("POST", "create.php",true);
+	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xhr.responseType = "text";
 	//var fd = new FormData();
         xhr.send(fd);
 	xhr.onreadystatechange  = function(){

@@ -4,12 +4,12 @@ require_once 'includes/session.inc.php';
 require_once 'includes/header.inc.php';
 
 
-if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
-	$startDate = $_GET['startDate'];
-	$endDate = $_GET['endDate'];
-	$month = date('m',strtotime($startDate));
-	$year = date('Y',strtotime($startDate));
-	$monthName = date('F',strtotime($startDate));
+if (isset($_GET['start_date']) && isset($_GET['end_date'])) {
+	$start_date = $_GET['start_date'];
+	$end_date = $_GET['end_date'];
+	$month = date('m',strtotime($start_date));
+	$year = date('Y',strtotime($start_date));
+	$monthName = date('F',strtotime($start_date));
 }
 else {
 
@@ -21,48 +21,48 @@ else {
 	$startYear = $year . "/01/01";
 	$beginning = "0001/01/01";
 	$monthName = date('F');
-	$startDate = $year . "/" . $month . "/01";
-	$endDate = date('Y/m/d',strtotime('-1 second',strtotime('+1 month',strtotime($startDate))));
+	$start_date = $year . "/" . $month . "/01";
+	$end_date = date('Y/m/d',strtotime('-1 second',strtotime('+1 month',strtotime($start_date))));
 
 }
 
-$previousEndDate = date('Y/m/d',strtotime('-1 second', strtotime($startDate)));
+$previousEndDate = date('Y/m/d',strtotime('-1 second', strtotime($start_date)));
 $previousEndMonth = substr($previousEndDate,5,2);
 $previousEndYear = substr($previousEndDate,0,4);
 $previousStartDate = $previousEndYear . "/" . $previousEndMonth . "/01";
 	
-$nextStartDate = date('Y/m/d',strtotime('+1 day', strtotime($endDate)));
+$nextStartDate = date('Y/m/d',strtotime('+1 day', strtotime($end_date)));
 $nextEndDate =  date('Y/m/d',strtotime('-1 second',strtotime('+1 month',strtotime($nextStartDate))));
 
-if (isset($_POST['graphType'])) {
+if (isset($_POST['graph_type'])) {
 	
-	$graphType = $_POST['graphType'];
-	$graphImage = "<img class='mx-auto' src='graphs/graph_" . $graphType . ".php?startDate=" . $startDate . "&endDate=" . $endDate . "'>";
+	$graph_type = $_POST['graph_type'];
+	$graphImage = "<img class='mx-auto' src='graph.php?graph_type=" . $graph_type . "&start_date=" . $start_date . "&end_date=" . $end_date . "'>";
 
 }
 else {
-	$graphImage = "<img class='mx-auth' src='graphs/graph_finishOptions.php?startDate=" . $startDate . "&endDate=" . $endDate . "'>";
+	$graphImage = "<img class='mx-auth' src='graph.php?graph_type=finishoptions&start_date=" . $start_date . "&end_date=" . $end_date . "'>";
 	$graphType = "finishOptions";
 }
 
-$graphForm = "<form class='form' name='selectGraph' method='post' action='stats_monthly.php?startDate=" . $startDate . "&endDate=" . $endDate . "'>";
-$graphForm .= "<div class='col-md-2'><select class='custom-select' name='graphType' onChange='document.selectGraph.submit();'>";
+$graphForm = "<form class='form' name='selectGraph' method='post' action='stats_monthly.php?start_date=" . $start_date . "&end_date=" . $end_date . "'>";
+$graphForm .= "<div class='col-md-2'><select class='custom-select' name='graph_type' onChange='document.selectGraph.submit();'>";
 
-if ($graphType == "finishOptions") { $graphForm .= "<option value='finishOptions' selected>Finish Options</option>"; }
+if ($graph_type == "finishoptions") { $graphForm .= "<option value='finishoptions' selected>Finish Options</option>"; }
 else { $graphForm .= "<option value='finishOptions'>Finish Options</option>"; }
-if ($graphType == "paperTypes") { $graphForm .= "<option value='paperTypes' selected>Paper Types</option>"; }
+if ($graph_type == "papertypes") { $graphForm .= "<option value='papertypes' selected>Paper Types</option>"; }
 else { $graphForm .= "<option value='paperTypes'>Paper Types</option>"; }
-if ($graphType == "inchesPerPaperType") { $graphForm .= "<option value='inchesPerPaperType' selected>Inches Per Paper Type</option>"; }
+if ($graph_type == "inches_per_papetype") { $graphForm .= "<option value='inches_per_papertype' selected>Inches Per Paper Type</option>"; }
 else { $graphForm .= "<option value='inchesPerPaperType'>Inches Per Paper Type</option>"; }
 
 $graphForm .= "</select></div>";
 $graphForm .= "</form>";
 
-$stats = new statistics($db,$startDate,$endDate);
+$stats = new statistics($db,$start_date,$end_date);
 
 $url = "stats_monthly.php";
-$backUrl = $url . "?startDate=" . htmlspecialchars($previousStartDate,ENT_QUOTES) . "&endDate=" . htmlspecialchars($previousEndDate,ENT_QUOTES);
-$forwardUrl = $url . "?startDate=" . htmlspecialchars($nextStartDate,ENT_QUOTES) . "&endDate=" . htmlspecialchars($nextEndDate,ENT_QUOTES);
+$backUrl = $url . "?start_date=" . htmlspecialchars($previousStartDate,ENT_QUOTES) . "&end_date=" . htmlspecialchars($previousEndDate,ENT_QUOTES);
+$forwardUrl = $url . "?start_date=" . htmlspecialchars($nextStartDate,ENT_QUOTES) . "&end_date=" . htmlspecialchars($nextEndDate,ENT_QUOTES);
 
 ?>
 <h3>Monthly Statistics - <?php echo $monthName . " " . $year; ?></h3>
@@ -70,7 +70,7 @@ $forwardUrl = $url . "?startDate=" . htmlspecialchars($nextStartDate,ENT_QUOTES)
 <ul class='pagination justify-content-center'>
 <li class='page-item'><a class='page-link' href='<?php echo $backUrl; ?>'>Previous</a></li>
 <?php
-	$next_month = strtotime('+1 day', strtotime($endDate));
+	$next_month = strtotime('+1 day', strtotime($end_date));
 	$today = mktime(0,0,0,date('m'),date('d'),date('y'));
 	if ($next_month > $today) {
 		echo "<li class='page-item disabled'><a class='page-link' href='#'>Next</a></li>";

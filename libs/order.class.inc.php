@@ -29,6 +29,7 @@ class order {
 	private $comments;
 	private $status;
 	private $rotated;
+	private $key = false;
 
 	const order_page = "order.php";
 	const wordwrap = 80;
@@ -79,6 +80,7 @@ class order {
 	public function get_rush_order_id() { return $this->rush_order_id; }
 	public function get_comments() { return $this->comments; }
 	public function get_rotated() { return $this->rotated; }
+	public function get_key() { return $this->key; }
 	public function get_wordwrap_comments() { 
 		return wordwrap($this->comments,self::wordwrap,"<br>");
 
@@ -314,6 +316,9 @@ class order {
 			$this->comments = $result[0]["orders_comments"];
 			$this->status = $result[0]["orders_status"];
 			$this->rotated = $result[0]["orders_rotated"];
+			if (!is_null($result[0]['orders_key'])) {
+				$this->key = $result[0]['orders_key'];
+			}
 		}
 	}
 	

@@ -5,12 +5,18 @@ require_once 'includes/header.inc.php';
 ?>
 <h2>Frequently Asked Questions</h2>
 <hr>
-<h4>What form of payments do you accept?</h4>
+<h4>Which form of payments do you accept?</h4>
 <p>We only accept CFOPs as payment.  We are not able to accept credit cards, checks or cash.  A CFOP is the University's Account Number.  
-Please contact your advisor or the business office if you do not know what CFOP you should use.</p>
-<h4>What filetypes do you accept?</h4>
-<p>We accept the following filetypes.</p>
-<h4>What file format is best?</h4>
+Please contact your advisor or the business office if you do not know which CFOP you should use.</p>
+<h4>Which filetypes do you accept?</h4>
+<p>We accept the following filetypes. 
+
+<table class='table table-bordered table-sm'>
+<?php echo html::get_filetypes_table(); ?>
+</table>
+
+</p>
+<h4>Which file format is best?</h4>
 <p>PDFs are by far the best file format.  They produce the best accuracy.</p>
 <h4>Why did the width and length of my poster get flipped in my order?</h4>
 <p>We automatically flipped the width and length to maximize the use of the paper you select.  This way we use less paper and save you money.  Your poster's orientation will remain the same</p>

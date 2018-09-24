@@ -8,21 +8,24 @@ class poster {
 	const thumb_height = '800';
 	const fullsize_width = '1000';
 	const fullsize_height = '1000';
+	const temp_dir = "tmp";
 
-	const root_dir = "/var/www/html/posterprinter";
 	public static function move_tmp_file($filename,$tmp_name) {
-		error_log('move_tmp_file');
+		functions::debug('move_tmp_file');
 		//gets the file type (ie .jpg, .bmp) of the uploaded poster file.
 		$filetype = self::get_filetype($filename);
 		//creates a temp file name for the file
 		$posterFileTmpName = "tmp_" . mt_rand(100000000,999999999) . "." . $filetype;
 		//makes the path for the file
-		$target_path = self::root_dir . "/" . settings::get_poster_dir() . "/" . $posterFileTmpName;
+		if (!is_dir(self::get_tmp_path())) {
+			mkdir (self::get_tmp_path(),0777);
+		}
+		$target_path = self::get_tmp_path() . "/" . $posterFileTmpName;
 	        //moves file to temporary location
 		$result = 0;
-		error_log("Tmp: " . $tmp_name . " Exists: " . file_exists($tmp_name));
-		error_log("Uploaded File: " . is_uploaded_file($tmp_name));
-		error_log("Target Path: " . $target_path);
+		functions::debug("Tmp: " . $tmp_name . " Exists: " . file_exists($tmp_name));
+		functions::debug("Uploaded File: " . is_uploaded_file($tmp_name));
+		functions::debug("Target Path: " . $target_path);
 		if (file_exists($tmp_name) && is_uploaded_file($tmp_name)) {
         		$result = move_uploaded_file($tmp_name,$target_path);
 		}
@@ -82,8 +85,8 @@ class poster {
 
 	}
 	public static function create_image($filename) {
-		$filename = self::root_dir . "/" . settings::get_poster_dir() . "/" . $filename;
-		if (!file_exists($filename)) {
+		$full_path = self::get_tmp_path() . "/" . $filename;
+		if (!file_exists($full_path)) {
 			return array('RESULT'=>false);
 		}
 
@@ -92,29 +95,29 @@ class poster {
 		switch ($filetype) {
 
 			case 'pdf':
-				$result = self::create_image_imagemagick($filename);
+				$result = self::create_image_imagemagick($full_path);
 				break;
 			case 'jpg':
-				$result = self::create_image_imagemagick($filename);
+				$result = self::create_image_imagemagick($full_path);
 				break;
                         case 'jpeg':
-                                $result = self::create_image_imagemagick($filename);
+                                $result = self::create_image_imagemagick($full_path);
                                 break;
                         case 'tif':
-                                $result = self::create_image_imagemagick($filename);
+                                $result = self::create_image_imagemagick($full_path);
                                 break;
                         case 'tiff':
-                                $result = self::create_image_imagemagick($filename);
+                                $result = self::create_image_imagemagick($full_path);
                                 break;
 
 			case 'ppt':
-				$result = self::create_image_powerpoint($filename);
+				$result = self::create_image_powerpoint($full_path);
 				break;
 			case 'pptx':
-				$result = self::create_image_powerpoint($filename);
+				$result = self::create_image_powerpoint($full_path);
 				break;
 			case 'ai':
-				$result = self::create_image_imagemagick($filename);
+				$result = self::create_image_imagemagick($full_path);
                                 break;
 
 			default:
@@ -181,7 +184,7 @@ class poster {
                 $basename = basename($filename);
 		$basename = strtolower(reset(explode(".",$basename)));
                 $thumb_filename = "thumb_" . $basename . ".jpg";
-                $full_path = "/var/www/html/posterprinter/" . settings::get_poster_dir() . "/" . $thumb_filename;
+                $full_path = self::get_tmp_path() . "/" . $thumb_filename;
 		return $full_path;
 
 	}
@@ -190,7 +193,7 @@ class poster {
                 $basename = basename($filename);
                 $basename = strtolower(reset(explode(".",$basename)));
                 $thumb_filename = "fullsize_" . $basename . ".jpg";
-                $full_path = "/var/www/html/posterprinter/" . settings::get_poster_dir() . "/" . $thumb_filename;
+                $full_path = self::get_tmp_path() . "/" . $thumb_filename;
                 return $full_path;
 
         }
@@ -279,7 +282,15 @@ class poster {
 
 	}
 
+	public static function get_tmp_path() {
+		$tmp_path = self::get_root_path() . "/" . settings::get_poster_dir() . "/" . self::temp_dir;
+		return $tmp_path;
+	}
 
+	private static function get_root_path() {
+		$root_path = dirname(__DIR__);
+		return $root_path;
+	}
 }
 
 ?>

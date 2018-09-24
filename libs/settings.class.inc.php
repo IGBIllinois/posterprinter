@@ -7,6 +7,9 @@ class settings {
 		return __TITLE__;
 
 	}
+	public static function debug() {
+		return __DEBUG__;
+	}
 	public static function get_version() {
 		return __VERSION__;
 	}

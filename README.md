@@ -7,6 +7,9 @@ Poster Printer Submission and Accounting Program
 
 ### Prerequisites
 - PHP Composer
+- PHP Mysql
+- PHP LDAP
+- PHP Imagick
 
 ### Installation
 1.  Move the files into the a directory the webserver can see.

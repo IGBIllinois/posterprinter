@@ -11,8 +11,11 @@ if (isset($_POST['cancel'])) {
         $session->destroy_session();
         header('Location: index.php');
 }
-
-elseif ((isset($_GET['session'])) && ($_GET['session'] == $session->get_session_id())) {
+elseif (functions::get_referral_url() != functions::get_current_url_dir() . "step1.php") {
+        $session->destroy_session();
+        header('Location: index.php');
+}
+elseif ((isset($_GET['session'])) && ($_GET['session'] == $session->get_session_id()) && isset($_POST['step1'])) {
 
 	$session_vars = $session->get_all_vars();
 

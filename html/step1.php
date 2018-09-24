@@ -17,9 +17,12 @@ require_once 'includes/main.inc.php';
 
 if (isset($_POST['cancel'])) {
 	$session->destroy_session();
-	header('Location: index.php');
+	//header('Location: index.php');
 }
-
+elseif ((functions::get_referral_url() != functions::get_current_url_dir() . "index.php") && (functions::get_referral_url() != functions::get_current_url_dir())) {
+        $session->destroy_session();
+        //header('Location: index.php');
+}
 
 
 require_once 'includes/header.inc.php';
