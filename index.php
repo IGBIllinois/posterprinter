@@ -339,10 +339,10 @@ elseif (isset($_POST['step3'])) {
 	$sql .= "orders_length, orders_statusId, orders_paperTypesId, ";
 	$sql .= "orders_finishOptionsId, orders_comments, orders_posterTubeId, ";
 	$sql .= "orders_rushOrderId, orders_widthSwitched) ";
-	$sql .= "VALUES('" . $email . "','" . mysql_real_escape_string($name) . "',' ";
+	$sql .= "VALUES('" . $email . "','" . $name . "',' ";
 	$sql .= $posterFileName . "'," . $totalCost . ",'" . $cfop . "','";
 	$sql .= $activityCode . "'," . $posterWidth . "," . $posterLength . ",'1',";
-	$sql .= $paperTypesId . "," . $finishOptionsId . ",'" . mysql_real_escape_string($comments) . "',";
+	$sql .= $paperTypesId . "," . $finishOptionsId . ",'" . $comments . "',";
 	$sql .= $posterTubeId . "," .$rushOrderId . "," . $widthSwitched . ")";
 
 
