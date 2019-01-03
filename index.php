@@ -13,6 +13,7 @@
 
 //include files for the script to run
 require_once 'includes/settings.inc.php';
+require_once 'vendor/autoload.php';
 set_include_path(get_include_path() . ':libs');
 require_once 'db.class.inc.php';
 require_once 'mail.inc.php';

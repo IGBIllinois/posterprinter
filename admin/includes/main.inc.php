@@ -12,6 +12,7 @@
 //////////////////////////////////////////////////////
 
 require_once '../includes/settings.inc.php';
+require_once '../vendor/autoload.php';
 set_include_path(get_include_path() . ':../libs');
 
 
