@@ -1,5 +1,5 @@
 #### Settings File ####
 includes/settings.inc.php
-
+vendor/
 #### Poster Files ####
 posterfiles/*
