@@ -1,12 +1,12 @@
 <?php
-include_once 'includes/main.inc.php';
-include_once 'mail.inc.php';
-include_once 'order.class.inc.php';
-include_once 'orders.inc.php';
-include_once 'paperTypes.inc.php';
-include_once 'finishOptions.inc.php';
-include_once 'posterTube.inc.php';
-include_once 'rushOrder.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'mail.inc.php';
+require_once 'order.class.inc.php';
+require_once 'orders.inc.php';
+require_once 'paperTypes.inc.php';
+require_once 'finishOptions.inc.php';
+require_once 'posterTube.inc.php';
+require_once 'rushOrder.inc.php';
 
 if (isset($_POST['editOrder'])) {
 
@@ -158,7 +158,7 @@ if (isset($_GET['orderId']) && is_numeric($_GET['orderId'])) {
 				
 }
 
-include_once 'includes/header.inc.php';
+require_once 'includes/header.inc.php';
 
 ?>
 <script language="JavaScript">
@@ -206,4 +206,4 @@ else
 
 <?php if (isset($cfopMsg)){echo $cfopMsg; } ?>
 <?php if (isset($activityCodeMsg)){echo $activityCodeMsg; } ?>
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php require_once 'includes/footer.inc.php'; ?>

@@ -1,7 +1,7 @@
 <?php
 
-include_once 'db.class.inc.php';
-include_once 'orders.inc.php';
+require_once 'db.class.inc.php';
+require_once 'orders.inc.php';
 
 class order {
 
@@ -65,7 +65,14 @@ class order {
 	public function get_comments() { return $this->comments; }
 	public function get_status() { return $this->status; }
 	public function get_status_id() { return $this->status_id; }
-	
+
+	public function file_exists($poster_dir) {
+		$filename = dirname(__DIR__) . "/" . $poster_dir . "/" . $this->get_order_id() . "." . $this->get_filetype();
+		if ((file_exists($filename) && filesize($filename) > 0)) {
+			return true;
+		}
+		return false;
+	}	
 	public function set_status($status_id) {
 	
 		$time_finished = date( 'Y-m-d H:i:s');

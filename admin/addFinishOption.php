@@ -1,6 +1,6 @@
 <?php
-include_once 'includes/main.inc.php';
-include_once 'finishOptions.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'finishOptions.inc.php';
 
 
 if (isset($_POST['addFinishOption'])) {
@@ -18,7 +18,7 @@ if (isset($_POST['addFinishOption'])) {
 	
 }
 
-include_once 'includes/header.inc.php';
+require_once 'includes/header.inc.php';
 ?>
 
 <form action='addFinishOption.php' method='post'>
@@ -55,4 +55,4 @@ include_once 'includes/header.inc.php';
 
 	if (isset($result['MESSAGE'])){echo $result['MESSAGE']; }
 
-	include_once 'includes/footer.inc.php'; ?>
+	require_once 'includes/footer.inc.php'; ?>

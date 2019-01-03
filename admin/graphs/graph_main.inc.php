@@ -1,13 +1,13 @@
 <?php
-include_once '../../includes/settings.inc.php';
+require_once '../../includes/settings.inc.php';
 set_include_path(get_include_path() . ':../../libs');
-include_once 'db.class.inc.php';
-include_once 'statistics.class.inc.php';
-include_once 'jpgraph.php';
-include_once 'jpgraph_bar.php';
-include_once 'jpgraph_pie.php';
-include_once 'jpgraph_pie3d.php';
-include_once 'jpgraph_line.php';
+require_once 'db.class.inc.php';
+require_once 'statistics.class.inc.php';
+require_once 'jpgraph.php';
+require_once 'jpgraph_bar.php';
+require_once 'jpgraph_pie.php';
+require_once 'jpgraph_pie3d.php';
+require_once 'jpgraph_line.php';
 $db = new db(mysql_host,mysql_database,mysql_user,mysql_password);
 $theme_class = new SoftyTheme();
 

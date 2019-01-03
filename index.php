@@ -12,15 +12,15 @@
 //////////////////////////////////////////////////////
 
 //include files for the script to run
-include_once 'includes/settings.inc.php';
+require_once 'includes/settings.inc.php';
 set_include_path(get_include_path() . ':libs');
-include_once 'db.class.inc.php';
-include_once 'mail.inc.php';
-include_once 'orders.inc.php';
-include_once 'paperTypes.inc.php';
-include_once 'finishOptions.inc.php';
-include_once 'posterTube.inc.php';
-include_once 'rushOrder.inc.php';
+require_once 'db.class.inc.php';
+require_once 'mail.inc.php';
+require_once 'orders.inc.php';
+require_once 'paperTypes.inc.php';
+require_once 'finishOptions.inc.php';
+require_once 'posterTube.inc.php';
+require_once 'rushOrder.inc.php';
 
 //connects to database
 $db = new db(mysql_host,mysql_database,mysql_user,mysql_password);

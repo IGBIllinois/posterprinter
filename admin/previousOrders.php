@@ -1,8 +1,8 @@
 <?php
-include_once 'includes/main.inc.php';
+require_once 'includes/main.inc.php';
 
-include_once 'statistics.class.inc.php';
-include_once 'orders.inc.php';
+require_once 'statistics.class.inc.php';
+require_once 'orders.inc.php';
 
 if (isset($_POST['selectedDate'])) {
 	$year = $_POST['year'];
@@ -55,7 +55,7 @@ $endDate =  date('Y/m/d',strtotime('-1 second',strtotime('+1 month',strtotime($s
 $stats = new statistics($db,$startDate,$endDate);
 
 
-include_once 'includes/header.inc.php';
+require_once 'includes/header.inc.php';
 
 ?>
 
@@ -96,4 +96,4 @@ Monthly Total: $<?php echo $stats->pretty_cost(); ?>
 </select>
 <input type='submit' class='button_1' name='create_report' value='Create Report' />
 </form>
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php require_once 'includes/footer.inc.php'; ?>

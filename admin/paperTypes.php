@@ -1,6 +1,6 @@
 <?php
-include_once 'includes/main.inc.php';
-include_once 'paperTypes.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'paperTypes.inc.php';
 
 $paperTypes = getPaperTypes($db);
 
@@ -22,7 +22,7 @@ foreach ($paperTypes as $paperType) {
 
 }
 
-include_once 'includes/header.inc.php';
+require_once 'includes/header.inc.php';
 ?>
 
 <br>
@@ -43,4 +43,4 @@ include_once 'includes/header.inc.php';
 
 
 
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php require_once 'includes/footer.inc.php'; ?>

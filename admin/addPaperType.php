@@ -1,6 +1,6 @@
 <?php
-include_once 'includes/main.inc.php';
-include_once 'paperTypes.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'paperTypes.inc.php';
 
 if (isset($_POST['addPaperType'])) {
 
@@ -51,4 +51,4 @@ include 'includes/header.inc.php';
 	if (isset($result['MESSAGE'])){echo $result['MESSAGE']; }
 
 ?>
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php require_once 'includes/footer.inc.php'; ?>

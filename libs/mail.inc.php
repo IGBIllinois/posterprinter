@@ -13,8 +13,8 @@
 //
 ////////////////////////////////////////////////////////
 
-include_once 'db.class.inc.php';
-include_once 'order.class.inc.php';
+require_once 'db.class.inc.php';
+require_once 'order.class.inc.php';
 
 //mailNewOrder()
 //$db - database object

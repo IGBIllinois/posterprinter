@@ -1,6 +1,6 @@
 <?php
-include_once 'includes/main.inc.php';
-include_once 'finishOptions.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'finishOptions.inc.php';
 
 $finishOptions = getFinishOptions($db);
 
@@ -24,7 +24,7 @@ foreach ($finishOptions as $finishOption) {
 
 }
 
-include_once 'includes/header.inc.php';
+require_once 'includes/header.inc.php';
 ?>
 
 <br>
@@ -44,4 +44,4 @@ include_once 'includes/header.inc.php';
 <br />
 <input type='button' value='New Finish Option' onClick="location.href='addFinishOption.php';" />
 
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php require_once 'includes/footer.inc.php'; ?>

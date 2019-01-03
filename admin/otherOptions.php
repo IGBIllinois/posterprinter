@@ -1,8 +1,8 @@
 <?php
 
-include_once 'includes/main.inc.php';
-include_once 'posterTube.inc.php';
-include_once 'rushOrder.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'posterTube.inc.php';
+require_once 'rushOrder.inc.php';
 
 if (isset($_POST['updatePosterTube'])) {
 	$posterTubeCost = $_POST['posterTubeCost'];
@@ -62,4 +62,4 @@ else
 <?php 
 if (isset($result['MESSAGE'])) { echo $result['MESSAGE']; }
 
-include_once 'includes/footer.inc.php'; ?>
+require_once 'includes/footer.inc.php'; ?>

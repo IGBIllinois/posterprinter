@@ -1,5 +1,5 @@
 <?php
-include_once 'graph_main.inc.php';
+require_once 'graph_main.inc.php';
 
 $stats = new statistics($db,'','');
 $avgOrders = $stats->avgOrdersPerMonth();

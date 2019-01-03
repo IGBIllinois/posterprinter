@@ -13,9 +13,9 @@
 ///////////////////////////////////////////////
 //Include files for the script to run
 
-include_once 'includes/main.inc.php';
-include_once 'includes/header.inc.php';
-include_once 'orders.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'includes/header.inc.php';
+require_once 'orders.inc.php';
 
 
 $orders = getCurrentOrders($db);
@@ -65,4 +65,4 @@ else {
 
 </table>
 
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php require_once 'includes/footer.inc.php'; ?>

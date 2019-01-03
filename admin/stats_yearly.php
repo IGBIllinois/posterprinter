@@ -1,7 +1,7 @@
 <?php
-include_once 'includes/main.inc.php';
-include_once 'includes/header.inc.php';
-include_once 'statistics.class.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'includes/header.inc.php';
+require_once 'statistics.class.inc.php';
 
 
 if (isset($_GET['year'])) { $year = $_GET['year']; }
@@ -61,4 +61,4 @@ $graphForm .= "</form>";
 </table>
 </center>
 
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php require_once 'includes/footer.inc.php'; ?>

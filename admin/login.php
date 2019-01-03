@@ -12,10 +12,10 @@
 //
 /////////////////////////////////////////////
 
-include_once '../includes/settings.inc.php';
+require_once '../includes/settings.inc.php';
 set_include_path(get_include_path() . ':../libs');
-include_once 'db.class.inc.php';
-include_once 'authentication.inc.php';
+require_once 'db.class.inc.php';
+require_once 'authentication.inc.php';
 
 $db = new db(mysql_host,mysql_database,mysql_user,mysql_password);
 

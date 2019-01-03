@@ -1,5 +1,5 @@
 <?php
-include_once 'db.class.inc.php';
+require_once 'db.class.inc.php';
 
 //getPaperTypes()
 //$db - database object

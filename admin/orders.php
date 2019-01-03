@@ -1,8 +1,8 @@
 <?php
-include_once 'includes/main.inc.php';
-include_once 'mail.inc.php';
-include_once 'orders.inc.php';
-include_once 'order.class.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'mail.inc.php';
+require_once 'orders.inc.php';
+require_once 'order.class.inc.php';
 
 
 if ((isset($_GET['orderId'])) && is_numeric($_GET['orderId'])) {
@@ -66,7 +66,7 @@ else {
 	$edit_order_html .= "</form>";
 }
 
-include_once 'includes/header.inc.php';
+require_once 'includes/header.inc.php';
 
 ?>
 <table class='medium'>
@@ -74,7 +74,7 @@ include_once 'includes/header.inc.php';
 <tr><td class='right'>Order Number:</td><td class='left'><?php echo $orderId; ?></td></tr>
 <tr><td class='right'>Email: </td><td class='left'><?php echo $order->get_email() ?></td></tr>
 <tr><td class='right'>Full Name: </td><td class='left'><?php echo $order->get_name() ?></td></tr>
-<tr><td class='right'>File:</td><td class='left'><a href='download.php?orderId=<?php echo $order->get_order_id() ?>'><?php echo $order->get_filename() ?></a></td></tr>
+<tr><td class='right'>File:</td><td class='left'><a href='download.php?orderId=<?php echo $order->get_order_id(); ?>'><?php echo $order->get_filename(); ?></a> <?php if (!$order->file_exists(poster_dir)) { echo "<span class='error'>WARNING: Poster File doesn't exist</span>"; } ?></td></tr>
 <tr><td class='right'>CFOP:</td><td class='left'><?php echo $order->get_cfop(); ?></td></tr>
 <tr><td class='right'>Activity Code:</td><td class='left'><?php echo $order->get_activity_code(); ?></td></tr>
 <tr><td class='right'>Time Created:</td><td class='left'><?php echo $order->get_time_created(); ?></td></tr>
@@ -92,4 +92,4 @@ include_once 'includes/header.inc.php';
 <?php echo $edit_order_html; ?>
 
 
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php require_once 'includes/footer.inc.php'; ?>

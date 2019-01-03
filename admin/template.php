@@ -1,10 +1,10 @@
 <?php
-include_once 'includes/main.inc.php';
-include_once 'includes/header.inc.php';
+require_once 'includes/main.inc.php';
+require_once 'includes/header.inc.php';
 
 ?>
 
 
 
 
-<?php include_once 'includes/footer.inc.php'; ?>
+<?php require_once 'includes/footer.inc.php'; ?>
