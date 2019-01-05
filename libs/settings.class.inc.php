@@ -99,6 +99,10 @@ class settings {
 	public static function get_session_timeout() {
 		return __SESSION_TIMEOUT__;
 	}
+
+	public static function get_twig_dir() {
+		return __TWIG_DIR__;
+	}
 }
 
 ?>

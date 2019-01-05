@@ -17,7 +17,7 @@
 
 </HEAD>
 
-<body style='padding-top: 60px; padding-bottom: 60px;'>
+<body style='padding-top: 80px; padding-bottom: 60px;'>
 <nav class="navbar fixed-top navbar-dark bg-dark">
         <a class='navbar-brand' href='#'><?php echo settings::get_title(); ?> Administration</a>
                 <span class='navbar-text'>

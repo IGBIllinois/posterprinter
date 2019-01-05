@@ -3,36 +3,35 @@ require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
 require_once 'includes/header.inc.php';
 
+$year = date('Y');
+if (isset($_GET['year'])) { 
+	$year = $_GET['year']; 
+}
 
-if (isset($_GET['year'])) { $year = $_GET['year']; }
-else { $year = date('Y'); }
+$previous_year = $year -1;
+$next_year =$year +1;
+$start_date = $year . "/01/01";
+$end_date = $year . "/12/31";
 
-$previousYear = $year -1;
-$nextYear =$year +1;
-$startDate = $year . "/01/01";
-$endDate = $year . "/12/31";
-
-if (isset($_POST['graphType'])) {
+$graph_type = "finishOptions";
+if (isset($_POST['graph_type'])) {
 	
-	$graphType = $_POST['graphType'];
-	$graphImage = "<img class='mx-auto' src='graphs/graph_" . $graphType . ".php?startDate=" . $startDate . "&endDate=" . $endDate . "'>";
+	$graph_type = $_POST['graph_type'];
 
 }
-else {
-	$graphImage = "<img class='mx-auto' src='graphs/graph_finishOptions.php?startDate=" . $startDate . "&endDate=" . $endDate . "'>";
-	$graphType = "finishOptions";
-}
 
-$stats = new statistics($db,$startDate,$endDate);
+$graphImage = "<img class='mx-auto' src='graphs/graph_" . $graph_type . ".php?start_date=" . $start_date . "&end_date=" . $end_date . "'>";
+
+$stats = new statistics($db,$start_date,$end_date);
 
 $graphForm = "<form class='form' name='selectGraph' id='selectGraph' method='post' action='stats_yearly.php?year=" . $year . "'>";
-$graphForm .= "<div class='col-md-2'><select class='custom-select' name='graphType' onChange='document.selectGraph.submit();'>";
+$graphForm .= "<div class='col-md-2'><select class='custom-select' name='graph_type' onChange='document.selectGraph.submit();'>";
 
-if ($graphType == "finishOptions") { $graphForm .= "<option value='finishOptions' selected>Finish Options</option>"; }
+if ($graph_type == "finishOptions") { $graphForm .= "<option value='finishOptions' selected>Finish Options</option>"; }
 else { $graphForm .= "<option value='finishOptions'>Finish Options</option>"; }
-if ($graphType == "paperTypes") { $graphForm .= "<option value='paperTypes' selected>Paper Types</option>"; }
+if ($graph_type == "paperTypes") { $graphForm .= "<option value='paperTypes' selected>Paper Types</option>"; }
 else { $graphForm .= "<option value='paperTypes'>Paper Types</option>"; }
-if ($graphType == "inchesPerPaperType") { $graphForm .= "<option value='inchesPerPaperType' selected>Inches Per Paper Type</option>"; }
+if ($graph_type == "inchesPerPaperType") { $graphForm .= "<option value='inchesPerPaperType' selected>Inches Per Paper Type</option>"; }
 else { $graphForm .= "<option value='inchesPerPaperType'>Inches Per Paper Type</option>"; }
 
 $graphForm .= "</select></div>";
@@ -43,16 +42,16 @@ $graphForm .= "</form>";
 <h3>Yearly Statistics - <?php echo $year; ?></h3>
 <hr>
 <ul class='pagination justify-content-center'>
-<li class='page-item'><a class='page-link' href='stats_yearly.php?year=<?php echo $previousYear; ?>'>Previous</a></li>
+<li class='page-item'><a class='page-link' href='stats_yearly.php?year=<?php echo $previous_year; ?>'>Previous</a></li>
 <?php
-        $next_year = strtotime('+1 day', strtotime($endDate));
+        $next_year = strtotime('+1 day', strtotime($end_date));
 	$today = mktime(0,0,0,date('m'),date('d'),date('y'));
 
 	if ($next_year > $today) {
                 echo "<li class='page-item disabled'><a class='page-link' href='#'>Next</a></li>";
         }
         else {
-                echo "<li class='page-item'><a class='page-link' href='stats_yearly.php?year=" . $nextYear . "'>Next</a></li>";
+                echo "<li class='page-item'><a class='page-link' href='stats_yearly.php?year=" . $next_year . "'>Next</a></li>";
         }
 ?>
 

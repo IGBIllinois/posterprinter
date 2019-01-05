@@ -44,13 +44,13 @@ class session {
 	}
 
 	public function destroy_session() {
-		if ($this->is_session_started()) {
+//		if ($this->is_session_started()) {
 			unset($_SESSION);
 			session_unset();
 			session_destroy();
 			session_write_close();
 			session_regenerate_id(true);
-		}
+//		}
 	}
 
         public function set_session_var($name,$var) {

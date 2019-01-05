@@ -1,11 +1,11 @@
 <?php
 require_once 'graph_main.inc.php';
 
-if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
+if (isset($_GET['start_date']) && isset($_GET['end_date'])) {
 
-	$startDate = $_GET['startDate'];
-	$endDate = $_GET['endDate'];
-	$stats = new statistics($db,$startDate,$endDate);
+	$start_date = $_GET['start_date'];
+	$end_date = $_GET['end_date'];
+	$stats = new statistics($db,$start_date,$end_date);
 	$paperTypesData = $stats->paperTypesTotalInches();
 	
 	$data_legend;

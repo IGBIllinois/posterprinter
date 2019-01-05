@@ -34,6 +34,7 @@ class order {
 	const order_page = "order.php";
 	const wordwrap = 80;
 	const full_path = "/var/www/html/posterprinter/";
+
 ////////////////Public Functions///////////
 
 	public function __construct($db,$order_id) {
@@ -170,21 +171,16 @@ class order {
 	public function mailAdminsNewOrder() {
 	        
 		$requestUri = substr($_SERVER["REQUEST_URI"],0,strrpos($_SERVER["REQUEST_URI"], "/")+1);
-        	$urlAddress = "http://" . $_SERVER["SERVER_NAME"] . $requestUri;
+        	$urlAddress = "http://" . $_SERVER["SERVER_NAME"] . $requestUri . "admin/" . self::order_page . "?order_id=" . $this->get_order_id();
 	        $subject = "New Poster To Print - Order #" . $this->get_order_id();
         	$to = settings::get_admin_email();
-
-	        //html email
-	        $html_message = "<br>New Poster Printer Order From " . $this->get_email() . "\r\n";
-        	$html_message .= "<br>\r\n";
-	        $html_message .= "<br>" . nl2br($this->get_job_info(),false);
-        	$html_message .= "<br>To view the order <a href='" . $urlAddress . "admin/" . self::order_page . "?order_id=" . $this->get_order_id() . "'>click here</a>" . "\r\n";
-
-	        //plain text email
-	        $plain_message = "New Poster Printer Order From " . $this->get_email() . "\r\n\r\n";
-        	$plain_message .= $this->get_job_info();
-	        $plain_message .= "To view the order: " . $urlAddress . "admin/" . self::order_page . "?order_id=" . $this->get_order_id() . "\r\n";
-
+		$loader = new Twig_Loader_Filesystem(settings::get_twig_dir());
+	
+		$twig = new Twig_Environment($loader);
+		
+	
+		$html_message = $twig->render('order_new_admin.html.twig',$this->twig_variables);
+		$plain_message = $twig->render('order_new_admin.txt.twig',$this->twig_variables);
 
 		$extraheaders = array("From"=>$this->get_email(),
 					"Subject"=>$subject
@@ -206,24 +202,13 @@ class order {
 	        
 		$to = $this->get_email();
         	$subject = "Poster Order #" . $this->get_order_id();
+		$loader = new Twig_Loader_Filesystem(settings::get_twig_dir());
 
-	        //html email
-	        $html_message = "<br>Thank you for your poster order.\r\n";
-        	$html_message .= "For regular orders, we guarantee within 72 hours, excluding weekends.\r\n";
-	        $html_message .= "For rush orders, we guarantee within 24 hours, excluding weekends.\r\n";
-        	$html_message .= "We will email you when the poster is completed printing.\r\n";
-	        $html_message .= "<p>For your reference\r\n";
-        	$html_message .= "<br>\r\n";
-	        $html_message .= "<br>" . nl2br($this->get_job_info(),false);
+                $twig = new Twig_Environment($loader);
 
-        	///plain text email
-        	$plain_message = "Thank you for your poster order.\r\n";
-	        $plain_message .= "For regular orders, we guarantee within 72 hours, excluding weekends.\r\n";
-        	$plain_message .= "For rush orders, we guarantee within 24 hours, excluding weekends.\r\n";
-	        $plain_message .= "We will email you when the poster is completed printing.\r\n";
-        	$plain_message .= "For your reference\r\n\r\n";
-	        $plain_message .= $this->get_job_info();
 
+                $html_message = $twig->render('order_new_user.html.twig',$this->twig_variables);
+                $plain_message = $twig->render('order_new_user.txt.twig',$this->twig_variables);
 
 		$extraheaders = array("From"=>settings::get_admin_email(),
                                         "Subject"=>$subject
@@ -251,16 +236,13 @@ class order {
 
 	        $subject = "Poster Order #" . $this->get_order_id() . " Completed";
 
-	        //HTML Email
-	        $html_message = "<br>Your Poster Order #" . $this->get_order_id() . " is now completed.\r\n";
-        	$html_message .= "<br>You can come to Room 2626 to pick up your poster.\r\n";
-	        $html_message .= "<br>\r\n";
-        	$html_message .= "<br>" . nl2br($this->get_job_info(),false);
+		$loader = new Twig_Loader_Filesystem(settings::get_twig_dir());
 
-	        //Plain Text email
-	        $plain_message .= "Your Poster Order #" . $this->get_order_id() . " is now completed.\r\n";
-        	$plain_message .= "You can come to Room 2626 to pick up your poster.\r\n\r\n";
-	        $plain_message .= $this->get_job_info();
+                $twig = new Twig_Environment($loader);
+
+
+                $html_message = $twig->render('order_complete_user.html.twig',$this->twig_variables);
+                $plain_message = $twig->render('order_complte_user.txt.twig',$this->twig_variables);
 
 
 		$extraheaders = array("From"=>settings::get_admin_email(),
@@ -330,6 +312,19 @@ class order {
 
 	}
 
+	private function get_twig_variables() {
+                $twig_variables = array(
+                        'order.full_name' => $this->get_fullname(),
+                        'order.email' => $this->get_email(),
+                        'order.job_info' => $this->get_job_info(),
+                        'settings.regular_order' => settings::get_order_timeframe(),
+                        'settings.rush_order' => settings::get_rush_order_timeframe(),
+			'settings.admin_email' => settings::get_admin_email()
+                );
+
+		return $twig_variables;
+
+	}
 }
 
 ?>

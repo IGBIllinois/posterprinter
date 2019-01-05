@@ -11,7 +11,7 @@ Please contact your advisor or the business office if you do not know which CFOP
 <h4>Which filetypes do you accept?</h4>
 <p>We accept the following filetypes. 
 
-<table class='table table-bordered table-sm'>
+<table class='table table-borderless table-sm'>
 <?php echo html::get_filetypes_table(); ?>
 </table>
 

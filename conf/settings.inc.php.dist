@@ -12,7 +12,6 @@
 ////////////////////////////////////////////////
 
 define("__ENABLE__",TRUE);
-define("__VERSION__","2.0 Beta");
 define("__ADMIN_EMAIL__","");
 define("__MYSQL_HOST__","");
 define("__MYSQL_USER__","");
@@ -34,7 +33,6 @@ define("__SESSION_NAME__","");
 define("__SESSION_TIMEOUT__",300);
 define("__TITLE__","");
 define("__PRINTER__MAX_LENGTH__",200);
-define("__STATUS__","New,In Progress,Completed,Cancel,On Hold");
 define("__VALID_FILETYPES__","ppt,pptx,pdf,jpg,tiff");
 define("__BOA_CFOP__","");
 define("__BOA_ACTIVITY_CODE__","");
