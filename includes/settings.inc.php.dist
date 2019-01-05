@@ -27,5 +27,6 @@ define("ldap_group_ou","");
 define("ldap_group","");
 define("ldap_ssl",FALSE);
 define("ldap_port",389);
-
+define("boa_cfop","");
+define("boa_activity_code","");
 ?>

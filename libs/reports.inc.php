@@ -1,6 +1,4 @@
 <?php
-require_once 'PHPExcel.php';
-require_once 'PHPExcel/IOFactory.php';
 
 //create_excel_2003_report()
 //$data - double array - data values
@@ -12,7 +10,7 @@ function create_excel_2003_report($data,$filename) {
 	header("Content-Disposition: attachment;filename=" . $filename);
 	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 	header('Pragma: public');
-	$writer = PHPExcel_IOFactory::createWriter($excel_file,'Excel5');
+	$writer = PHPExcel_IOFactory::createWriter($excel_file,'Excel5');	
 	$writer->save('php://output');
 
 }
@@ -51,7 +49,7 @@ function create_generic_excel($data) {
 		$excel_file->getActiveSheet()->getColumnDimensionByColumn($i)->setAutoSize(true);
 	}
 	$rows = count($data);
-	$row = 3;
+	$row = 2;
 	foreach ($data as $row_data) {
 		$column=0;
 		foreach ($row_data as $key => $value) {
@@ -97,6 +95,7 @@ function create_csv_report($data,$filename) {
 	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 	header('Content-Type: application/vnd.ms-excel');
 	header("Content-Disposition:attachment; filename=" . $filename);
+	header('Content-Length: ' . filesize($file_link));
 	readfile($file_link);
 	unlink($file_link);
 
@@ -126,6 +125,4 @@ if ( !function_exists('sys_get_temp_dir')) {
 		}
 	}
 }
-
-
 ?>

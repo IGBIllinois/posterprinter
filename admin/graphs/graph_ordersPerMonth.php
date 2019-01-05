@@ -23,14 +23,11 @@ if (isset($_GET['year'])) {
 	}
 	$graph = new Graph(600,500,"auto");
 	$graph->SetScale("textlin");
-	$graph->SetTheme($theme_class);
 	$graph->yaxis->scale->SetGrace(20);
 	$graph->SetMarginColor('#ffffff');
 	$graph->title->Set("Orders Per Month");
-	$graph->title->SetFont(FF_ARIAL,FS_BOLD,12);
 	$graph->SetFrame(false,'#ffffff');
 	$graph->xaxis->SetTickLabels($datax);
-	$graph->xaxis->SetFont(FF_ARIAL,FS_NORMAL,10);
 
 	$graph->xaxis->SetLabelAngle('55');
 	$bplot = new BarPlot($datay);

@@ -45,7 +45,7 @@ function getOrdersReport($db,$month,$year) {
 	$sql = "SELECT tbl_orders.orders_id as 'Order Number', tbl_orders.orders_email as 'Email', ";
 	$sql .= "tbl_orders.orders_name as 'Full Name', tbl_orders.orders_timeCreated as 'Date', ";
 	$sql .= "tbl_orders.orders_cfop as 'CFOP', tbl_orders.orders_activityCode as 'Activity Code', ";
-	$sql .= "tbl_orders.orders_totalCost as 'Cost' ";
+	$sql .= "tbl_orders.orders_totalCost as 'Cost', ";
 	$sql .= "tbl_paperTypes.paperTypes_name as 'Paper Type', tbl_paperTypes.paperTypes_cost as 'Paper Type Cost (per Inch)', ";
 	$sql .= "tbl_finishOptions.finishOptions_name as 'Finish Option', tbl_finishOptions.finishOptions_cost as 'Finish Option Cost', ";
 	$sql .= "tbl_rushOrder.rushOrder_name as 'Rush Order', tbl_rushOrder.rushOrder_cost as 'Rush Order Cost', ";
@@ -61,6 +61,32 @@ function getOrdersReport($db,$month,$year) {
 	return $db->query($sql);
 }
 
+function get_boa_report($db,$month,$year) {
+
+                $sql = "SELECT '' as 'DATE', ";
+		$sql .= "tbl_orders.orders_email as 'NAME', ";
+                $sql .= "tbl_orders.orders_cfop as 'CFOP', ";
+		$sql .= "tbl_orders.orders_activityCode as 'ACTIVITY CODE', ";
+                $sql .= "tbl_orders.orders_totalCost as 'COST' ";
+                $sql .= "FROM tbl_orders ";
+		$sql .= "LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id ";
+                $sql .= "WHERE (YEAR(tbl_orders.orders_timeCreated)='" . $year . "' AND month(tbl_orders.orders_timeCreated)='" . $month . "') ";
+                $sql .= "AND tbl_status.status_name='Completed' ";
+                $sql .= "ORDER BY `CFOP` ASC, `ACTIVITY CODE` ASC";
+		$result = $db->query($sql);
+
+		$total_bill = 0;
+		foreach ($result as $num => $values) {
+			$total_bill += $values['COST'];
+		}			
+		$first_row = array(array('DATE'=>$month . "/" . $year,
+					'NAME'=>'IGB Posterprinter Report',
+					'CFOP'=>boa_cfop,
+					'ACTIVITY CODE'=>boa_activity_code,
+					'COST'=>"-" . $total_bill));
+
+                return array_merge($first_row,$result);
+        }
 //getAllStatus()
 //$db - database object
 //returns array of all the different possible order status.
