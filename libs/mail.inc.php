@@ -106,7 +106,8 @@ function mailUserOrderComplete($db,$orderId,$adminEmail) {
 	$subject = "Poster Order #" . $order->get_order_id() . " Completed";
 			
 	$message = "<br>Your Poster Order #" . $order->get_order_id() . " is now completed.\r\n";
-	$message .=	"<br>You can come to Room 2626 to pick up your poster.\r\n";
+	$message .=	"Your poster is located in room 149 in the IGB concourse."
+	$message .= 	"Please see Joyce Koeberlein (Room 138) or the CNRG group (Room 131) in the IGB concourse if you are unable to get into room 149.";
 	$message .=	"<p>Order Number: " . $order->get_order_id() . "\r\n";
 	$message .=	"<br>Poster File: " . $order->get_filename() . "\r\n";
 	$message .=	"<br>Poster Length: " . $order->get_length() . " inches \r\n";
