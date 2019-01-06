@@ -62,11 +62,11 @@ require_once 'includes/header.inc.php';
 <form class='form-inline' action='<?php echo $_SERVER['PHP_SELF']; ?>' method='post'>
 <div class='form-group'>
 	<label for='month'>Month:</label>
-	<?php echo $month_html; ?>
-</div>
+	&nbsp;<?php echo $month_html; ?>
+</div>&nbsp;
 <div class='form-group'>
 	<label for='year'>Year:</label>
-	 <?php echo $year_html; ?>
+	&nbsp; <?php echo $year_html; ?>
 </div>
 &nbsp;
 <div class='form-group'>
@@ -98,7 +98,6 @@ require_once 'includes/header.inc.php';
 <input type='hidden' name='year' value='<?php echo $year; ?>' />
 <select class='form-control' name='report_type'>
 <option value='xlsx'>Excel 2007</option>
-<option value='xls'>Excel 2003</option>
 <option value='csv'>CSV</option>
 </select>
 </div>

@@ -107,7 +107,7 @@ if ($_POST['rotated']) {
 
 <?php
 if (($_POST['posterThumbFileTmpName'] != "") && (file_exists(poster::get_tmp_path() . "/". $_POST['posterThumbFileTmpName']))) {
-	echo "<tr><td colspan='2'><img class='img-responsive img-thumbnail' src='image.php?image=" . $_POST['posterThumbFileTmpName'] . "'></td></tr>";
+	echo "<tr><td colspan='2'><img class='img-thumbnail mx-auto d-block' src='image.php?image=" . $_POST['posterThumbFileTmpName'] . "'></td></tr>";
 }
 else {
 	echo "<tr><td colspan='2'>No Preview</td></tr>";

@@ -4,8 +4,8 @@
 class poster {
 
 
-	const thumb_width = '800';
-	const thumb_height = '800';
+	const thumb_width = '400';
+	const thumb_height = '400';
 	const fullsize_width = '1000';
 	const fullsize_height = '1000';
 	const temp_dir = "tmp";
@@ -162,7 +162,9 @@ class poster {
 	public static function create_image_powerpoint($filename) {
 		$thumb_path = self::get_thumb_path($filename);
 		$fullsize_path = self::get_fullsize_path($filename);
-		$tmp_path = $fullsize_path . ".tmp";
+		$basename = basename($filename);
+		$basename = strtolower(reset(explode(".",$basename)));
+		$tmp_path = self::get_tmp_path() . "/" . $basename . ".jpg";
 		if (file_exists($fullsize_path)) {
 			unlink($fullsize_path);
 		}
@@ -170,14 +172,14 @@ class poster {
 			unlink($thumb_path);
 		}
 
-		if (settings::get_unoconv_exec()) {
-			$exec = settings::get_unoconv_exec() . " -f jpg -o " . $tmp_path . " " . $filename;
+			$exec = "source /etc/profile && libreoffice --headless --convert-to jpg --outdir " . self::get_tmp_path() . " " . $filename;
+			functions::debug($exec);
 			$exit_status = 1;
 			$output_array = array();
 			$output = exec($exec,$output_array,$exit_status);
 			if (($exit_status == 0) && file_exists($tmp_path)) {
 				self::create_imagemagick($tmp_path,$thumb_path,self::thumb_width,self::thumb_height);
-				self::create_imagemagick($tmp_path,$fullsize_path,self::fullsize_wdith,self::fullsize_height);
+				self::create_imagemagick($tmp_path,$fullsize_path,self::fullsize_width,self::fullsize_height);
 				unlink($tmp_path);
 				if (!file_exists($thumb_path)) {
 					$thumb_path = "";
@@ -188,7 +190,6 @@ class poster {
 				return array('RESULT'=>true,'FULL'=>basename($fullsize_path),'THUMB'=>basename($thumb_path));
 			}
 
-		}
 		return array('RESULT'=>false,'FULL'=>"",'THUMB'=>"");
 
 	}

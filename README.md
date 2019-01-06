@@ -46,7 +46,10 @@ composer install
 - memory_limit = 200M
 - max_input_time = 100
 - max_execution_time = 100
-7.  Reload the webserver.
+9.  To convert ppt/pptx files for preview, you need to install libreoffice and unoconv from
+```
+yum install libreoffice libreoffice-pyuno
+```
 8.  All Done!
 
 

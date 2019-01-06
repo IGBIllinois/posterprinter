@@ -1,17 +1,18 @@
 <style>
 {{ css }}
 </style>
-<div class='container'>
+<div class='container-fluid'>
         <div class='col-md-12 col-lg-12 col-xl-8'>
 {{ name }},
 
 <p>Thank you for your poster order.
-<br>For regular orders, we guarantee within <strong>{{ regular_order }}</strong> hours, excluding weekends, holidays, and breaks.
-<br>For rush orders, we guarantee within <strong>{{ rush_order }}</strong> hours, excluding weekends, holidays, and breaks.
+<br>For regular orders, we guarantee within <strong>{{ regular_order }} business hours</strong>, excluding weekends, holidays, and breaks.
+<br>For rush orders, we guarantee within <strong>{{ rush_order }} business hours</strong>, excluding weekends, holidays, and breaks.
 <br>We will email you when the poster is completed printing.
 <br>For your reference
 <p>
 {{ job_info }}
-	</div>
+<p><img class='img-responsive img-thumbnail' src='{{ thumbnail }}'>
+</div>
 </div>
 

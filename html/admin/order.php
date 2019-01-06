@@ -91,7 +91,7 @@ require_once 'includes/header.inc.php';
 
 <?php if (file_exists($order->get_thumbnail())) {
         echo "<tr><td colspan='2'>";
-        echo "<a href='image.php?image_path=" . $order->get_fullsize() . "'><img class='img-thumbnail' src='image.php?image_path=" . $order->get_thumbnail() . "'></a>";
+        echo "<a href='image.php?image_path=" . $order->get_fullsize() . "'><img class='img-thumbnail mx-auto d-block' src='image.php?image_path=" . $order->get_thumbnail() . "'></a>";
 
         echo "</td></tr>";
 }

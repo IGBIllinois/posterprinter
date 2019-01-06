@@ -21,9 +21,9 @@ Please contact your advisor or the business office if you do not know which CFOP
 <h4>Why did the width and length of my poster get flipped in my order?</h4>
 <p>We automatically flipped the width and length to maximize the use of the paper you select.  This way we use less paper and it will save you money.  Your poster's printed orientation will remain the same</p>
 <h4>How long will it take to print my poster?</h4>
-<p>For a standard order, we gurantee within <?php echo settings::get_order_timeframe(); ?> business hours.  This excludes weekends, holidays and breaks.</p>
+<p>For a standard order, we gurantee within <strong><?php echo settings::get_order_timeframe(); ?> business hours</strong>.  This excludes weekends, holidays and breaks.</p>
 <h4>How long does a rush order take?</h4>
-<p>For a rush order, we gurantee within <?php echo settings::get_rush_order_timeframe(); ?> business hours.  We will also make a best faith effort to get it done
+<p>For a rush order, we gurantee within <strong><?php echo settings::get_rush_order_timeframe(); ?> business hours</strong>.  We will also make a best faith effort to get it done
 sooner if need be.  This excludes weekends, holidays and breaks.</p>
 <h4>Can you print multiple copies of the same poster?</h4>
 <p>If you want multiple copies of the poster, please submit an order for each copy.</p>

@@ -188,13 +188,14 @@ class order {
 		$loader = new Twig_Loader_Filesystem(settings::get_twig_dir());
 	
 		$twig = new Twig_Environment($loader);
-		$html_message .= $twig->render('order_new_admin.html.twig',$this->get_twig_variables());
+		$html_message = $twig->render('order_new_admin.html.twig',$this->get_twig_variables());
 		$plain_message = $twig->render('order_new_admin.txt.twig',$this->get_twig_variables());
 
 		$extraheaders = array("From"=>$this->get_email(),
 					"Subject"=>$subject
 		);
 		$message = new Mail_mime();
+		$message->addHTMLImage($this->get_thumbnail());
 		$message->setHTMLBody($html_message);
 		$message->setTXTBody($plain_message);
 		$headers= $message->headers($extraheaders);
@@ -215,7 +216,7 @@ class order {
 
                 $twig = new Twig_Environment($loader);
 
-                $html_message .= $twig->render('order_new_user.html.twig',$this->get_twig_variables());
+                $html_message = $twig->render('order_new_user.html.twig',$this->get_twig_variables());
                 $plain_message = $twig->render('order_new_user.txt.twig',$this->get_twig_variables());
 
 		$extraheaders = array("From"=>settings::get_admin_email(),
@@ -227,6 +228,7 @@ class order {
 
 
                 $message = new Mail_mime();
+		$message->addHTMLImage($this->get_thumbnail());
                 $message->setHTMLBody($html_message);
                 $message->setTXTBody($plain_message);
                 $headers= $message->headers($extraheaders);
@@ -248,7 +250,7 @@ class order {
 
                 $twig = new Twig_Environment($loader);
 
-                $html_message .= $twig->render('order_complete_user.html.twig',$this->get_twig_variables());
+                $html_message = $twig->render('order_complete_user.html.twig',$this->get_twig_variables());
                 $plain_message = $twig->render('order_complete_user.txt.twig',$this->get_twig_variables());
 
 
@@ -260,6 +262,7 @@ class order {
                 }
 
                 $message = new Mail_mime();
+		$message->addHTMLImage($this->get_thumbnail());
                 $message->setHTMLBody($html_message);
                 $message->setTXTBody($plain_message);
                 $headers= $message->headers($extraheaders);
@@ -331,7 +334,8 @@ class order {
                         'regular_order' => settings::get_order_timeframe(),
                         'rush_order' => settings::get_rush_order_timeframe(),
 			'admin_email' => settings::get_admin_email(),
-			'url' => $url
+			'url' => $url,
+			'thumbnail'=>$this->get_thumbnail(),
                 );
 		return $twig_variables;
 
