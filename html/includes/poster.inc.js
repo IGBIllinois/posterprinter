@@ -35,18 +35,16 @@ function first_step() {
 	disableForm();
 	xhr.open("POST", "create.php",true);
 	xhr.responseType = "text";
-	//xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange  = function(){
                 if (xhr.readyState == 4 && xhr.status == 200) {
 			var result = xhr.response;
-                        console.log(xhr.response);
+			console.log(xhr.response)
                         var jsonObj = JSON.parse(xhr.response);
 			if (jsonObj.valid) {
                                 var parameters = jsonObj.post;
                                 var form = $('<form></form>');
                                 form.attr('method','post');
                                 form.attr('action','step2.php?session=' + session);
-                                console.log('session: ' + session);
                                 $.each(parameters,function(key,value) {
                                         var field = $('<input></input>');
 
@@ -96,16 +94,13 @@ function second_step() {
 	xhr.addEventListener("abort", uploadCanceled, false);
 	disableForm();
         xhr.open("POST", "create.php",true);
-	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	xhr.responseType = "text";
-	//var fd = new FormData();
         xhr.send(fd);
 	xhr.onreadystatechange  = function(){
 		if (xhr.readyState == 4 && xhr.status == 200) {
-
+			console.log(xhr.response)
 			// Javascript function JSON.parse to parse JSON data
 			var result = xhr.response;
-			console.log(xhr.response);
 			var jsonObj = JSON.parse(xhr.response);
 			var output = "";
 			for (property in jsonObj) {
@@ -119,7 +114,6 @@ function second_step() {
 				var form = $('<form></form>');
                                 form.attr('method','post');
                                 form.attr('action','step3.php?session=' + session);
-				console.log('session: ' + session);
                                 $.each(parameters,function(key,value) {
                                         var field = $('<input></input>');
 

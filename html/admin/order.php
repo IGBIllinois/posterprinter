@@ -88,9 +88,10 @@ require_once 'includes/header.inc.php';
 <tr><td class='text-right'>Rush Order</td><td><?php echo $order->get_rush_order_name(); ?></td></tr>
 <tr><td class='text-right'>Comments</td><td><?php echo $order->get_wordwrap_comments(); ?></td></tr>
 <tr><td class='text-right' style='vertical-align:middle;'>Status</td><td><?php echo $status_html; ?></td></tr>
+
 <?php if (file_exists($order->get_thumbnail())) {
         echo "<tr><td colspan='2'>";
-        echo "<a href='" . $order->get_fullsize() . "'><img class='img-thumbnail' src='" . $order->get_thumbnail() . "'></a>";
+        echo "<a href='image.php?image_path=" . $order->get_fullsize() . "'><img class='img-thumbnail' src='image.php?image_path=" . $order->get_thumbnail() . "'></a>";
 
         echo "</td></tr>";
 }

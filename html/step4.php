@@ -1,6 +1,7 @@
 <?php
 
 require_once 'includes/main.inc.php';
+require_once 'includes/session.inc.php';
 
 if (!(isset($_GET['session'])) || ($_GET['session'] != $session->get_session_id())) {
         $session->destroy_session();
@@ -27,23 +28,7 @@ elseif (isset($_POST['step4'])) {
         $orderId = functions::create_order($db,$_POST);
 
 
-        //gets the file type (ie .jpg, .bmp) of the uploaded poster file.
-        $fileType = poster::get_filetype($posterFileName);
-        $filename = $orderId . "." . $fileType;
-        $thumb_filename = "thumb_" . $orderId . ".jpg";
-        $fullsize_filename = "fullsize_" . $orderId . ".jpg";
-
-        //renames the temporary file to its permanent file name which is the orderId number plus the filetype extensions.
-        if (file_exists(settings::get_poster_dir() . "/" . $posterFileTmpName)) {
-                rename(settings::get_poster_dir() . "/" . $posterFileTmpName,settings::get_poster_dir() . "/" . $filename);
-        }
-        if (file_exists(settings::get_poster_dir() . "/" . $thumb_posterFileTmpName)) {
-                rename(settings::get_poster_dir() . "/" . $thumb_posterFileTmpName,settings::get_poster_dir() . "/" . $thumb_filename);
-        }
-        if (file_exists(settings::get_poster_dir() . "/" . $fullsize_posterFileTmpName)) {
-                rename(settings::get_poster_dir() . "/" . $fullsize_posterFileTmpName,settings::get_poster_dir() . "/" . $fullsize_filename);
-        }
-
+	poster::move_poster($orderId,$posterFileName,$posterFileTmpName,$thumb_posterFileTmpName,$fullsize_posterFileTmpName);
 
         $order = new order($db,$orderId);
         $order->mailNewOrder();
@@ -78,7 +63,7 @@ if ($order->get_rotated()) {
 <tr><td>Full Name</td><td><?php echo $order->get_name(); ?></td></tr>
 <tr><td>Email</td><td><?php echo $order->get_email(); ?></td></tr>
 <tr><td>Additional Emails</td><td><?php echo $order->get_cc_emails(); ?></td></tr>
-<tr><td>Order Number</td><td><?php echo $order->get_id(); ?></td></tr>
+<tr><td>Order Number</td><td><?php echo $order->get_order_id(); ?></td></tr>
 <tr><td>File</td><td><?php echo $order->get_filename(); ?></td></tr>
 <tr><td>Length</td><td><?php echo $order->get_length(); ?></td></tr>
 <tr><td>Width</td><td><?php echo $order->get_width(); ?></td></tr>

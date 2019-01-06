@@ -31,17 +31,14 @@ elseif (isset($_POST['step3'])) {
         $email = $_POST['email'];
         $name = stripslashes($_POST['name']);
         $comments = stripslashes($_POST['comments']);
+
+	$posterTube = 0;
         if (isset($_POST['posterTube'])) {
-                $posterTube = $_POST['posterTube'];
+                $posterTube = 1;
         }
-        else {
-                $posterTube = 0;
-        }
-        if (isset($_POST['rushOrder'])) {
-                $rushOrder = $_POST['rushOrder'];
-        }
-        else {
-                $rushOrder = 0;
+        $rushOrder = 0;
+	if (isset($_POST['rushOrder'])) {
+                $rushOrder = 1;
         }
 
 
@@ -124,20 +121,21 @@ $url = "step4.php?session=" . $_GET['session'];
 </div>
 <p></p>
 <div class='row'>
-	<form method='post' action='<?php echo $url; ?>'>
-	<?php 
-        $_POST['totalCost'] = $totalCost;
-        $_POST['rushOrderId'] = $rushOrderResult["id"];
-	$_POST['posterTubeId'] = $posterTubeResult["id"];
-	foreach ($_POST as $key=>$var) {
-		echo "<input type='hidden' name='" . $key . "' value='" . $var . "'>";
-	}
-	?>
 	<div class='mx-auto btn-toolbar'>
+        	<form method='post' action='<?php echo $url; ?>'>
+	        <?php
+        		$_POST['totalCost'] = $totalCost;
+		        $_POST['rushOrderId'] = $rushOrderResult["id"];
+		        $_POST['posterTubeId'] = $posterTubeResult["id"];
+		        foreach ($_POST as $key=>$var) {
+                		echo "<input type='hidden' name='" . $key . "' value='" . $var . "'>";
+		        }
+	        ?>
+
 		<button class='btn btn-warning' type='submit' name='cancel'>Cancel</button>&nbsp;
 		<button class='btn btn-primary' type='submit' name='step4'>Submit Order</button>
+		</form>
 	</div>
-	</form>
 </div>
 <?php require_once 'includes/footer.inc.php'; ?>
 

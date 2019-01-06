@@ -22,14 +22,15 @@ if (isset($_GET['orderId'])) {
 	$order = new order($db,$orderId);
 
 	//creates the link to the stored file
-	$linkToFile = "../" . poster_dir . "/" . $order->get_order_id() . "." . $order->get_filetype();
-	
+	$linkToFile = $order->get_file();	
 	//creates the html header that is used to download the file.
 	header('Pragma: public');
 	header('Expires: 0');
 	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-	header('Content-Type: application-download');
+	header('Content-Type: application/octet-stream');
 	header('Content-Disposition: attachment; filename="' . $order->get_filename() . '"');
+	header('Content-Length: ' . $order->get_filesize());
+	header('Content-Transfer-Encoding: binary');
 	//opens up the file so it can be downloaded.
 	readfile($linkToFile);
 

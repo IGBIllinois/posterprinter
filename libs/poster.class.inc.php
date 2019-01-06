@@ -299,6 +299,27 @@ class poster {
 		return $tmp_path;
 	}
 
+	public static function move_poster($order_id,$posterFileName,$posterFileTmpName,$thumb_posterFileTmpName,$fullsize_posterFileTmpName) {
+		$tmp_path = self::get_tmp_path();
+		$final_poster_path = self::get_root_path() . "/" . settings::get_poster_dir() . "/" . $order_id;
+	        $fileType = poster::get_filetype($posterFileName);
+		$filename = $order_id . "." . $fileType;
+		$thumb_filename = "thumb_" . $order_id . ".jpg";
+		$fullsize_filename = "fullsize_" . $order_id . ".jpg";
+
+		mkdir($final_poster_path);
+
+	        if (file_exists($tmp_path . "/" . $posterFileTmpName)) {
+	                rename($tmp_path . "/" . $posterFileTmpName,$final_poster_path . "/" . $filename);
+	        }
+        	if (file_exists($tmp_path . "/" . $thumb_posterFileTmpName)) {
+                	rename($tmp_path . "/" . $thumb_posterFileTmpName,$final_poster_path . "/" . $thumb_filename);
+        	}
+	        if (file_exists($tmp_path . "/" . $fullsize_posterFileTmpName)) {
+        	        rename($tmp_path . "/" . $fullsize_posterFileTmpName,$final_poster_path . "/" . $fullsize_filename);
+	        }			
+
+	}
 	private static function get_root_path() {
 		$root_path = dirname(__DIR__);
 		return $root_path;

@@ -1,9 +1,7 @@
 <?php
 
-error_reporting(E_ALL);
-
 require_once 'includes/main.inc.php';
-
+ini_set('display_errors', 0);
 
 $id = 0;
 $key = 0;
@@ -94,10 +92,10 @@ elseif (isset($_POST['step2'])) {
 		array_push($message,functions::alert("Please upload a valid filetype.  Valid filetypes are ." . implode(", ",settings::get_valid_filetypes()) . ".",0));
 		
 	}
-	functions::debug($errors,1);
 	if (!$errors) {
-	        
+		functions::debug("No Errors");	        
 		$posterFileTmpName = poster::move_tmp_file($_FILES['posterFile']['name'],$_FILES['posterFile']['tmp_name']);
+		functions::debug("Poster Tmp Name: " . $posterFileTmpName);
 		if (!$posterFileTmpName) {
 			array_push($message,functions::alert("Error in moving uploaded file",0));
 		}
@@ -125,10 +123,8 @@ $json_result = json_encode(array('valid'=>$valid,
 if (!$json_result) {
 	$json_result = json_encode(array('Error', json_last_error_msg()));
 }
-
 functions::debug($json_result);
 header('Content-type: application/javascript; charset=UTF-8',true);
 echo $json_result;
 
 ?>
-

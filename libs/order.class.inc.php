@@ -33,8 +33,8 @@ class order {
 
 	const order_page = "order.php";
 	const wordwrap = 80;
-	const full_path = "/var/www/html/posterprinter/";
-
+	const thumb_prefix = "thumb_";
+	const fullsize_prefix = "fullsize_";
 ////////////////Public Functions///////////
 
 	public function __construct($db,$order_id) {
@@ -53,14 +53,37 @@ class order {
 	}
 
 	public function get_filesize() {
-		$full_path = self::full_path . settings::get_poster_dir() . "/" . $this->get_order_id() . "." . $this->get_filetype();
-		if (file_exists($full_path)) {
-			$bytes = filesize($full_path);
+		$path = $this->get_file();
+		if (file_exists($path)) {
+			$bytes = filesize($path);
 			$megabytes = round($bytes / 1000000,2);
 			return $megabytes;
 		}
 		return 0;
-	}	
+	}
+	public function get_file() {
+		$path = $this->get_poster_path() . "/" . $this->get_order_id() . "." . $this->get_filetype();
+		if (file_exists($path)) {
+			return $path;
+		}
+		return false;
+	}
+	public function get_thumbnail() {
+		$path = $this->get_poster_path() . "/" . self::thumb_prefix . $this->get_order_id() . ".jpg";
+		if (file_exists($path)) {
+			return $path;
+		}
+		return false;
+	}
+	public function get_fullsize() {
+                $path = $this->get_poster_path() . "/" . self::fullsize_prefix . $this->get_order_id() . ".jpg";
+                if (file_exists($path)) {
+                        return $path;
+                }
+                return false;
+	}
+
+	
 	public function get_cfop() { return $this->cfop; }
 	public function get_cfop_college() { return substr($this->get_cfop(),0,1); }
 	public function get_cfop_fund() { return substr($this->get_cfop(),2,6); }
@@ -88,18 +111,6 @@ class order {
 	}
 	public function get_status() { return $this->status; }
 
-	public function get_thumbnail() {
-		$path = "../" . settings::get_poster_dir() . "/thumb_" . $this->get_order_id() . ".jpg";
-		if (file_exists($path)) {
-			return $path;
-		}
-	}
-        public function get_fullsize() {
-                $path = "../" . settings::get_poster_dir() . "/fullsize_" . $this->get_order_id() . ".jpg";
-                if (file_exists($path)) {
-                        return $path;
-                }
-        }	
 	public function set_status($status) {
 	
 		$time_finished = date( 'Y-m-d H:i:s');
@@ -177,10 +188,8 @@ class order {
 		$loader = new Twig_Loader_Filesystem(settings::get_twig_dir());
 	
 		$twig = new Twig_Environment($loader);
-		
-	
-		$html_message = $twig->render('order_new_admin.html.twig',$this->twig_variables);
-		$plain_message = $twig->render('order_new_admin.txt.twig',$this->twig_variables);
+		$html_message .= $twig->render('order_new_admin.html.twig',$this->get_twig_variables());
+		$plain_message = $twig->render('order_new_admin.txt.twig',$this->get_twig_variables());
 
 		$extraheaders = array("From"=>$this->get_email(),
 					"Subject"=>$subject
@@ -206,9 +215,8 @@ class order {
 
                 $twig = new Twig_Environment($loader);
 
-
-                $html_message = $twig->render('order_new_user.html.twig',$this->twig_variables);
-                $plain_message = $twig->render('order_new_user.txt.twig',$this->twig_variables);
+                $html_message .= $twig->render('order_new_user.html.twig',$this->get_twig_variables());
+                $plain_message = $twig->render('order_new_user.txt.twig',$this->get_twig_variables());
 
 		$extraheaders = array("From"=>settings::get_admin_email(),
                                         "Subject"=>$subject
@@ -240,9 +248,8 @@ class order {
 
                 $twig = new Twig_Environment($loader);
 
-
-                $html_message = $twig->render('order_complete_user.html.twig',$this->twig_variables);
-                $plain_message = $twig->render('order_complte_user.txt.twig',$this->twig_variables);
+                $html_message .= $twig->render('order_complete_user.html.twig',$this->get_twig_variables());
+                $plain_message = $twig->render('order_complete_user.txt.twig',$this->get_twig_variables());
 
 
 		$extraheaders = array("From"=>settings::get_admin_email(),
@@ -313,17 +320,26 @@ class order {
 	}
 
 	private function get_twig_variables() {
+		$requestUri = substr($_SERVER["REQUEST_URI"],0,strrpos($_SERVER["REQUEST_URI"], "/")+1);
+                $url = "http://" . $_SERVER["SERVER_NAME"] . $requestUri . "admin/" . self::order_page . "?order_id=" . $this->get_order_id();
                 $twig_variables = array(
-                        'order.full_name' => $this->get_fullname(),
-                        'order.email' => $this->get_email(),
-                        'order.job_info' => $this->get_job_info(),
-                        'settings.regular_order' => settings::get_order_timeframe(),
-                        'settings.rush_order' => settings::get_rush_order_timeframe(),
-			'settings.admin_email' => settings::get_admin_email()
+			'css' => file_get_contents(dirname(__DIR__) . "/vendor/twbs/bootstrap/dist/css/bootstrap.min.css"), 
+			'order_id' => $this->get_order_id(),
+                        'name' => $this->get_name(),
+                        'email' => $this->get_email(),
+                        'job_info' => $this->get_job_info(),
+                        'regular_order' => settings::get_order_timeframe(),
+                        'rush_order' => settings::get_rush_order_timeframe(),
+			'admin_email' => settings::get_admin_email(),
+			'url' => $url
                 );
-
 		return $twig_variables;
 
+	}
+
+	private function get_poster_path() {
+		$path = dirname(__DIR__) . "/" . settings::get_poster_dir() . "/" . $this->get_order_id();
+		return $path;
 	}
 }
 

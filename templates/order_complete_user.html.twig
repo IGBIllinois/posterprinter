@@ -1,5 +1,12 @@
-{{ order.fullname }},
+<style>
+{{ css }}
+</style>
+<div class='container'>
+        <div class='col-md-12 col-lg-12 col-xl-8'>
+		{{ name }},
 
-Your Poster Order #" . $this->get_order_id() . " is now completed.\r\n
+		<p>Your Poster Order #{{ order_id }} is now completed.
 
-{{ order.job_info }} 
+		<p>{{job_info }} 
+	</div>
+</div>

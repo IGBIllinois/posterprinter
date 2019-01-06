@@ -252,12 +252,13 @@ class functions {
 			switch ($log_level) {
 				case 0:
 					error_log("INFO: " . $message);
+					break;
 				case 1:
 					error_log("ERROR: " . $message);
+					break;
 				default:
 					error_log("INFO: " . $message);
-	
-
+					break;
 			}
 
                 }

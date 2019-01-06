@@ -101,7 +101,8 @@ class settings {
 	}
 
 	public static function get_twig_dir() {
-		return __TWIG_DIR__;
+		$dir = dirname(__DIR__) . "/" . __TWIG_DIR__;
+		return $dir;
 	}
 }
 

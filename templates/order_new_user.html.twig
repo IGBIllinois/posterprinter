@@ -1,10 +1,17 @@
-{{ order.full_name }} \r\n
+<style>
+{{ css }}
+</style>
+<div class='container'>
+        <div class='col-md-12 col-lg-12 col-xl-8'>
+{{ name }},
 
-Thank you for your poster order.\r\n
-For regular orders, we guarantee within {{settings.regular_order }} hours, excluding weekends, holidays, and breaks.\r\n
-For rush orders, we guarantee within {{ settings.rush_order }} hours, excluding weekends, holidays, and breaks.\r\n
-We will email you when the poster is completed printing.\r\n
-For your reference\r\n\r\n
-
-{{ order.job_info }}
+<p>Thank you for your poster order.
+<br>For regular orders, we guarantee within <strong>{{ regular_order }}</strong> hours, excluding weekends, holidays, and breaks.
+<br>For rush orders, we guarantee within <strong>{{ rush_order }}</strong> hours, excluding weekends, holidays, and breaks.
+<br>We will email you when the poster is completed printing.
+<br>For your reference
+<p>
+{{ job_info }}
+	</div>
+</div>
 
