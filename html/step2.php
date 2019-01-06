@@ -1,6 +1,7 @@
 <?php
 
 require_once 'includes/main.inc.php';
+require_once 'includes/session.inc.php';
 
 $paperTypes_html = "";
 $finishOptions_html = "";
@@ -8,10 +9,6 @@ $posterTube_html = "";
 $rushOrder_html = "";
 
 if (isset($_POST['cancel'])) {
-        $session->destroy_session();
-        header('Location: index.php');
-}
-elseif (functions::get_referral_url() != functions::get_current_url_dir() . "step1.php") {
         $session->destroy_session();
         header('Location: index.php');
 }

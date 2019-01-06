@@ -17,8 +17,10 @@
 </head>
 <body style='padding-top: 70px;'>
 <nav class="navbar fixed-top navbar-dark bg-dark">
-	<a class='navbar-brand' href='#'><?php echo settings::get_title(); ?></a>
-		<span class='navbar-text'>Version <?php echo settings::get_version(); ?></span>
+	<a class='navbar-brand py-0' href='#'><?php echo settings::get_title(); ?></a>
+		<span class='navbar-text py-0'>Version <?php echo settings::get_version(); ?>
+		<a class='btn btn-danger btn-sm' role='button' href='index.php' name='cancel'>Main Page</a>
+		</span>
 </nav>
 
 <div class='container'>

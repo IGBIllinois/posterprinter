@@ -35,6 +35,5 @@ if (settings::debug()) {
 //connects to database
 $db = new db(__MYSQL_HOST__,__MYSQL_DATABASE__,__MYSQL_USER__,__MYSQL_PASSWORD__);
 
-$session = new session(settings::get_session_name());
 
 ?>

@@ -19,8 +19,8 @@
 
 <body style='padding-top: 80px; padding-bottom: 60px;'>
 <nav class="navbar fixed-top navbar-dark bg-dark">
-        <a class='navbar-brand' href='#'><?php echo settings::get_title(); ?> Administration</a>
-                <span class='navbar-text'>
+        <a class='navbar-brand py-0' href='#'><?php echo settings::get_title(); ?> Administration</a>
+                <span class='navbar-text py-0'>
                 Version <?php echo settings::get_version(); ?>&nbsp;
 		<a class='btn btn-danger btn-sm' role='button' href='../'>Main Page</a></span>
                 </span>

@@ -14,6 +14,11 @@
 //include files for the script to run
 require_once 'includes/main.inc.php';
 
+$session = new session(settings::get_session_name());
+$session_vars = array('timeout'=>time(),
+	'ipaddress'=>$_SERVER['REMOTE_ADDR']
+);
+$session->set_session($session_vars);
 $paperTypes = functions::getPaperTypes($db);
 $paperTypes_html = "";
 foreach ($paperTypes as $paperType) {
@@ -55,8 +60,8 @@ foreach ($finishOptions as $finishOption) {
 </head>
 <body style='padding-top: 70px;'>
 <nav class="navbar fixed-top navbar-dark bg-dark">
-        <a class='navbar-brand' href='#'><?php echo settings::get_title(); ?></a>
-                <span class='navbar-text'>Version <?php echo settings::get_version(); ?>&nbsp;
+        <a class='navbar-brand py-0' href='#'><?php echo settings::get_title(); ?></a>
+                <span class='navbar-text py-0'>Version <?php echo settings::get_version(); ?>&nbsp;
                 <a class='btn btn-danger btn-sm' role='button' href='admin/'>Admin</a></span>
 </nav>
 
@@ -67,7 +72,7 @@ foreach ($finishOptions as $finishOption) {
 	<p class='lead'>Welcome to the IGB Poster Order Form
 	<br>Carl R. Woese Institute for Genomic Biology
 	<br>University of Illinois at Urbana-Champaign</p>
-	<p class='lead'><a class='btn btn-primary btn-lg' href='step1.php' role='button'>Start Order</a></p>
+	<p class='lead'><a class='btn btn-primary btn-lg' href='step1.php?session=<?php echo $session->get_session_id(); ?>' role='button'>Start Order</a></p>
 </div>
 <div class='row'>
 	<div class='col-md-6 col-lg-6 col-xl-6'>
@@ -94,7 +99,7 @@ foreach ($finishOptions as $finishOption) {
 </table>
 </div>
 <div class='col-md-6 col-lg-6 col-xl-6'>
-<table class='table table-bordered table-sm  col-md-4 col-lg-4 col-xl-4'>
+<table class='table table-bordered table-sm'>
 <thead>
 <tr><th colspan='3'>Available Finish Options</th></tr>
 <tr><td colspan='3'><em>Below are the available finish options along with the maximum width for that type of paper. The cost is a flat fee.</em></td></tr>
@@ -126,7 +131,7 @@ foreach ($finishOptions as $finishOption) {
 </div>
 <hr>
 <div class='row justify-content-center'>
-<a class='btn btn-primary' href='step1.php' role='button'>Start Order</a>
+<a class='btn btn-primary' href='step1.php?session=<?php echo $session->get_session_id(); ?>'' role='button'>Start Order</a>
 </div>
 
 <?php require_once 'includes/footer.inc.php'; ?>

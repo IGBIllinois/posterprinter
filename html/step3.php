@@ -1,6 +1,7 @@
 <?php
 
 require_once 'includes/main.inc.php';
+require_once 'includes/session.inc.php';
 
 functions::debug("Referer: " . $_SERVER['REQUEST_URI']);
 
@@ -10,10 +11,6 @@ if (!(isset($_GET['session'])) || ($_GET['session'] != $session->get_session_id(
 
 }
 elseif (isset($_POST['cancel'])) {
-        $session->destroy_session();
-        header('Location: index.php');
-}
-elseif (functions::get_referral_url() != functions::get_current_url_dir() . "step2.php") {
         $session->destroy_session();
         header('Location: index.php');
 }

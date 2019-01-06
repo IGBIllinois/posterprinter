@@ -37,12 +37,9 @@ function first_step() {
 	xhr.responseType = "text";
 	//xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange  = function(){
-		        window.alert("Status: " + xhr.status);
-			window.alert("Response: " * xhr.responseText);
                 if (xhr.readyState == 4 && xhr.status == 200) {
 			var result = xhr.response;
                         console.log(xhr.response);
-			window.alert(result);
                         var jsonObj = JSON.parse(xhr.response);
 			if (jsonObj.valid) {
                                 var parameters = jsonObj.post;

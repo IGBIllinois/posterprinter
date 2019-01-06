@@ -44,13 +44,13 @@ class session {
 	}
 
 	public function destroy_session() {
-//		if ($this->is_session_started()) {
-			unset($_SESSION);
+		if ($this->is_session_started()) {
 			session_unset();
 			session_destroy();
 			session_write_close();
+			setcookie($this->get_session_name(),'',0,'/');		
 			session_regenerate_id(true);
-//		}
+		}
 	}
 
         public function set_session_var($name,$var) {
@@ -70,11 +70,11 @@ class session {
                 session_start();
         }
 	private function is_session_started() {
-		$result = false;
+		
 		if ($this->get_session_id() != "") {
-			$result = true;
+			return true;
 		}
-		return $result;
+		return false;
 	}
 
 
