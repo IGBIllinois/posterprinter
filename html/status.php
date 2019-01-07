@@ -18,7 +18,7 @@ require_once 'includes/main.inc.php';
 if (isset($_GET['order_id']) && is_numeric($_GET['order_id']) && isset($_GET['key'])) {
 	$order = new order($db,$_GET['order_id']);
 	if (!$order->get_key() || ($order->get_key() != $_GET['key'])) {
-		//exit;
+		exit;
 	}
 }
 
@@ -48,6 +48,13 @@ require_once 'includes/header.inc.php';
 <tr><td>Comments</td><td><?php echo $order->get_comments(); ?></td></tr>
 <tr><td>Total Cost</td><td>$<?php echo $order->get_total_cost(); ?></td></tr>
 <tr><td>Status</td><td><?php echo $order->get_status(); ?></td></tr>
+<?php if (file_exists($order->get_thumbnail())) {
+        echo "<tr><td colspan='2'>";
+        echo "<a href='image.php?image_path=" . $order->get_fullsize() . "'><img class='img-thumbnail mx-auto d-block' src='image.php?image_path=" . $order->get_thumbnail() . "'></a>";
+
+        echo "</td></tr>";
+}
+?>
 </table>
 </div>
 

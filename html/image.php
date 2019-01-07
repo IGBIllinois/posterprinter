@@ -1,23 +1,13 @@
 <?php
-
 require_once 'includes/main.inc.php';
 
-if (isset($_GET['image'])) {
+if (isset($_GET['image_path'])) {
 
-	$full_path = poster::get_tmp_path() . "/" . $_GET['image'];
-	$contents = file_get_contents($full_path);
-	header('Content-type: image/jpeg');
-	echo $contents;
-
-
+	if (file_exists($_GET['image_path'])) {
+	header('Content-Type: image/jpeg');
+		readfile($_GET['image_path']);
+	}
 
 }
-
-
-
-
-
-
-
 
 ?>

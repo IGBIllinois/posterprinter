@@ -69,7 +69,7 @@ if (isset($_POST['login'])) {
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" type="text/css"
         href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="../vendor/fortawesome/font-awesome/css/font-awesome.css" type="text/css" />
+<link rel="stylesheet" href="../vendor/fortawesome/font-awesome/css/font-awesome.min.css" type="text/css" />
 
 <TITLE><?php echo settings::get_title(); ?> Login</TITLE>
 </HEAD>
@@ -88,28 +88,24 @@ if (isset($_POST['login'])) {
 <form class='form' role='form'  action='<?php echo $_SERVER['PHP_SELF']; ?>' method='post' name='login'>
 	<div class='form-group row'>
 		<label for='username' class='col-form-label'>Username</label>
-		<div class='col-md-8 col-lg-8 col-xl-8'>
 			<div class='input-group'> 
 			<input class='form-control' type='text'
 				name='username' tabindex='1' placeholder='Username'
 				value='<?php if (isset($username)) { echo $username; } ?>'>
 			<div class="input-group-append">
-				<span class='input-group-text'> <span class='fa fa-user'></span></span>
+				<span class='input-group-text'> <i class='fa fa-user'></i></span>
 			</div>
 			</div>
-		</div>
 	</div>
 	<div class='form-group row'>
 		<label for='password' class='col-form-label'>Password</label>
-		<div class='col-md-8 col-lg-8 col-xl-8'>
 			<div class='input-group'>
 			<input class='form-control' type='password' name='password' 
 			placeholder='Password' tabindex='2'>		
 			<div class='input-group-append'>
-				<span class='input-group-text'><span class='fa fa-lock'></span></span>
+				<span class='input-group-text'><i class='fa fa-lock'></i></span>
 			</div>
 			</div>
-		</div>
 
 	</div>
 	<div class='row'>
@@ -119,6 +115,7 @@ if (isset($_POST['login'])) {
 </form>
 <p></p>
 <?php if (isset($message)) { echo $message; } ?>
+</div>
 </div>
 </body>
 </html>

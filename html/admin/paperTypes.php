@@ -14,7 +14,7 @@ foreach ($paperTypes as $paperType) {
 	$paperTypes_html .= "<td>$" . $paperType['cost'] . "</td>";
 	$paperTypes_html .= "<td>" . $paperType['width'] . "\"</td>";
 	if ($paperType['paperTypes_default'] == 1) {
-		$paperTypes_html .= "<td><span class='glyphicon glyphicon-ok'></span></td></tr>";
+		$paperTypes_html .= "<td><i class='fa fa-check' aria-hidden='true'></i></td></tr>";
 	}
 	else {
 		$paperTypes_html .= "<td></td></tr>";

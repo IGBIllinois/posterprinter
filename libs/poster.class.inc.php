@@ -4,8 +4,8 @@
 class poster {
 
 
-	const thumb_width = '400';
-	const thumb_height = '400';
+	const thumb_width = '600';
+	const thumb_height = '600';
 	const fullsize_width = '1000';
 	const fullsize_height = '1000';
 	const temp_dir = "tmp";

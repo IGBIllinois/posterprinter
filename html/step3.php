@@ -3,7 +3,6 @@
 require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
 
-functions::debug("Referer: " . $_SERVER['REQUEST_URI']);
 
 if (!(isset($_GET['session'])) || ($_GET['session'] != $session->get_session_id())) {
 	$session->destroy_session();
@@ -107,7 +106,7 @@ if ($_POST['rotated']) {
 
 <?php
 if (($_POST['posterThumbFileTmpName'] != "") && (file_exists(poster::get_tmp_path() . "/". $_POST['posterThumbFileTmpName']))) {
-	echo "<tr><td colspan='2'><img class='img-thumbnail mx-auto d-block' src='image.php?image=" . $_POST['posterThumbFileTmpName'] . "'></td></tr>";
+	echo "<tr><td colspan='2'><img class='img-thumbnail mx-auto d-block' src='image.php?image_path=" . poster::get_tmp_path() . "/" . $_POST['posterThumbFileTmpName'] . "'></td></tr>";
 }
 else {
 	echo "<tr><td colspan='2'>No Preview</td></tr>";

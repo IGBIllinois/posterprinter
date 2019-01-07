@@ -32,6 +32,7 @@ class order {
 	private $key = false;
 
 	const order_page = "order.php";
+	const status_page = "status.php";
 	const wordwrap = 80;
 	const thumb_prefix = "thumb_";
 	const fullsize_prefix = "fullsize_";
@@ -324,7 +325,8 @@ class order {
 
 	private function get_twig_variables() {
 		$requestUri = substr($_SERVER["REQUEST_URI"],0,strrpos($_SERVER["REQUEST_URI"], "/")+1);
-                $url = "http://" . $_SERVER["SERVER_NAME"] . $requestUri . "admin/" . self::order_page . "?order_id=" . $this->get_order_id();
+                $order_url = "http://" . $_SERVER["SERVER_NAME"] . $requestUri . "admin/" . self::order_page . "?order_id=" . $this->get_order_id();
+		$status_url = "http://" . $_SERVER["SERVER_NAME"] . $requestUri . self::status_page . "?order_id=" . $this->get_order_id() . "&key=" . $this->get_key();
                 $twig_variables = array(
 			'css' => file_get_contents(dirname(__DIR__) . "/vendor/twbs/bootstrap/dist/css/bootstrap.min.css"), 
 			'order_id' => $this->get_order_id(),
@@ -334,7 +336,8 @@ class order {
                         'regular_order' => settings::get_order_timeframe(),
                         'rush_order' => settings::get_rush_order_timeframe(),
 			'admin_email' => settings::get_admin_email(),
-			'url' => $url,
+			'order_url' => $order_url,
+			'status_url' => $status_url,
 			'thumbnail'=>$this->get_thumbnail(),
                 );
 		return $twig_variables;

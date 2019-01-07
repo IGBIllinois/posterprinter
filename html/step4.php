@@ -8,15 +8,6 @@ if (!(isset($_GET['session'])) || ($_GET['session'] != $session->get_session_id(
         header('Location: index.php');
 
 }
-elseif (isset($_POST['cancel'])) {
-        $session->destroy_session();
-        header('Location: index.php');
-}
-elseif (functions::get_referral_url() != functions::get_current_url_dir() . "step3.php") {
-        $session->destroy_session();
-        header('Location: index.php');
-}
-
 elseif (isset($_POST['step4'])) {
 
         $posterFileName = $_POST['posterFileName'];

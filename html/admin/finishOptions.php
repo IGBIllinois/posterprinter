@@ -15,7 +15,7 @@ foreach ($finishOptions as $finishOption) {
 	$finishOptions_html .= "<td>" . $finishOption['maxWidth'] . "\"</td>";
 	$finishOptions_html .= "<td>" . $finishOption['maxLength'] . "\"</td>";
 	if ($finishOption['finishOptions_default'] == 1) {
-		$finishOptions_html .= "<td><span class='glyphicon glyphicon-ok'></span></td></tr>";
+		$finishOptions_html .= "<td><i class='fa fa-check' aria-hidden='true'></i></td></tr>";
 	}
 	else {
 		$finishOptions_html .= "<td></td></tr>";
