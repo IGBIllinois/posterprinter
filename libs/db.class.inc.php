@@ -75,6 +75,7 @@ class db {
 	public function insert_query($sql) {
 		$result = $this->link->exec($sql);
 		if ($result === false) {
+			functions::log("INSERT ERROR: " . $sql);
 		}
 		return $this->link->lastInsertId();
 
@@ -92,19 +93,35 @@ class db {
 		foreach ($data as $key=>$value) {
 			if ($count == 0) {
 				$columns_sql .= $key;
-				$values_sql .= "'" . $value . "'";
+				$values_sql .= ":" . $key;
 			}
 			else {
 				$columns_sql .= "," . $key;
-				$values_sql .= ",'" . $value . "'";
+				$values_sql .= ", :" . $key;
 			}
-
 			$count++;
 		}
+	
 		$values_sql .= ")";
 		$columns_sql .= ")";
-		$sql = $sql . $columns_sql . " " . $values_sql;
-		return $this->insert_query($sql);
+        
+       		$sql = $sql . $columns_sql . " " . $values_sql;
+		error_log($sql);
+		try {
+			$query = $this->link->prepare($sql,array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+			//foreach ($data as $key=>$value) {
+			//	$query->bindParam(":" . $key,$value);
+			//}
+			$query->execute($data);         
+			return $this->link->lastInsertId();
+		}
+		catch(Exception $e) {
+                        error_log("Error: " . __FUNCTION__ . "," . var_dump($e->getMessage()));
+			
+			return false;
+                }
+
+	
 	}
 
 	//non_select_query()

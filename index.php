@@ -334,56 +334,68 @@ elseif (isset($_POST['step3'])) {
 	$posterFileName = $_POST['posterFileName'];
 	$posterFileTmpName = $_POST['posterFileTmpName'];
 
-	$sql = "INSERT INTO tbl_orders(orders_email, ";
-	$sql .= "orders_name, orders_fileName, orders_totalCost, ";
-	$sql .= "orders_cfop, orders_activityCode, orders_width, ";
-	$sql .= "orders_length, orders_statusId, orders_paperTypesId, ";
-	$sql .= "orders_finishOptionsId, orders_comments, orders_posterTubeId, ";
-	$sql .= "orders_rushOrderId, orders_widthSwitched) ";
-	$sql .= "VALUES('" . $email . "','" . $name . "',' ";
-	$sql .= $posterFileName . "'," . $totalCost . ",'" . $cfop . "','";
-	$sql .= $activityCode . "'," . $posterWidth . "," . $posterLength . ",'1',";
-	$sql .= $paperTypesId . "," . $finishOptionsId . ",'" . $comments . "',";
-	$sql .= $posterTubeId . "," .$rushOrderId . "," . $widthSwitched . ")";
+	$data = array('orders_email'=>$email,
+                'orders_name'=>$name,
+                'orders_fileName'=>$posterFileName,
+                'orders_totalCost'=>$totalCost,
+                'orders_cfop'=>$cfop,
+                'orders_activityCode'=>$activityCode,
+                'orders_width'=>$posterWidth,
+                'orders_length'=>$posterLength,
+                'orders_statusId'=>1,
+                'orders_paperTypesId'=>$paperTypesId,
+                'orders_finishOptionsId'=>$finishOptionsId,
+                'orders_comments'=>$comments,
+                'orders_posterTubeId'=>$posterTubeId,
+                'orders_rushOrderId'=>$rushOrderId,
+                'orders_widthSwitched'=>$widthSwitched
+        );
+        $table = "tbl_orders";
+                
+        //runs query and gets the order_id
+        $orderId = $db->build_insert($table,$data);
 
+	if ($orderId) {
+		//gets the file type (ie .jpg, .bmp) of the uploaded poster file.
+		$fileType = end(explode(".",$posterFileName));
+		//sets the path to where the file will be saved.
+		$targetPath = poster_dir . "/" . $orderId . "." . $fileType;
 
-	//runs query and gets the order_id
-	$orderId = $db->insert_query($sql);
-	//gets the file type (ie .jpg, .bmp) of the uploaded poster file.
-	$fileType = end(explode(".",$posterFileName));
-	//sets the path to where the file will be saved.
-	$targetPath = poster_dir . "/" . $orderId . "." . $fileType;
+		//renames the temporary file to its permanent file name which is the orderId number plus the filetype extensions.
+		rename(poster_dir . "/" . $posterFileTmpName,$targetPath);
 
-	//renames the temporary file to its permanent file name which is the orderId number plus the filetype extensions.
-	rename(poster_dir . "/" . $posterFileTmpName,$targetPath);
+		//mail new order to users and admins
+		mailNewOrder($db,$orderId,admin_email);
 
-	//mail new order to users and admins
-	mailNewOrder($db,$orderId,admin_email);
+		$form_html = "<table class='medium_center'>";
+		$form_html .= "<tr><td colspan='2' class='header'>Order Information</td></tr>";
+		$form_html .= "<tr><td colspan='2' class='description'>Thank you for your order.  Your order will be processed as soon as possible.  It could take up to three days.";
+		$form_html .= "An email has been sent to you at " . $email . " with this information. We will email you when the poster is completed printing.</td></tr>";
 
-	$form_html = "<table class='medium_center'>";
-	$form_html .= "<tr><td colspan='2' class='header'>Order Information</td></tr>";
-	$form_html .= "<tr><td colspan='2' class='description'>Thank you for your order.  Your order will be processed as soon as possible.  It could take up to three days.";
-	$form_html .= "An email has been sent to you at " . $email . " with this information. We will email you when the poster is completed printing.</td></tr>";
+		if ($widthSwitched == 1) {
+			$form_html .= "<tr><td colspan='2' class='description'>Your width and length have been flipped to save paper and money.  This won't affect the size of your poster.</td></tr>";
+		}
 
-	if ($widthSwitched == 1) {
-		$form_html .= "<tr><td colspan='2' class='description'>Your width and length have been flipped to save paper and money.  This won't affect the size of your poster.</td></tr>";
+		$form_html .= "	<tr><td class='right'>Full Name:</td><td>" . $name . "</td></tr>";
+		$form_html .= "<tr><td class='right'>Order Number:</td><td>" . $orderId . "</td></tr>";
+		$form_html .= "<tr><td class='right'>File:</td><td>" . $posterFileName . "</td></tr>";
+		$form_html .= "<tr><td class='right'>Length:</td><td>" . $posterLength . "\"</td></tr>";
+		$form_html .= "<tr><td class='right'>Width:</td><td>" . $posterWidth . "\"</td></tr>";
+		$form_html .= "<tr><td class='right'>Paper Type:</td><td>" . $paperTypeName . "</td></tr>";
+		$form_html .= "<tr><td class='right'>Finish Option:</td><td>" . $finishOptionName . "</td></tr>";
+		$form_html .= "<tr><td class='right'>Poster Tube:</td><td>" . $posterTubeName . "</td></tr>";
+		$form_html .= "<tr><td class='right'>Rush Order:</td><td>" . $rushOrderName . "</td></tr>";
+		$form_html .= "<tr><td class='right' valign='top'>Comments:</td><td>" . $comments . "</td></tr>";
+		$form_html .= "<tr><td class='right'>CFOP:</td><td>" . $cfop . "</td></tr>";
+		$form_html .= "<tr><td class='right'>Activity Code:</td><td>" . $activityCode . "</td></tr>";
+		$form_html .= "<tr><td class='right'>Total Cost:</td><td>$" . $totalCost . "</td></tr>";
+		$form_html .= "<tr><td class='description' colspan='2'>If you have any questions please contact us at " . admin_email ."</td></tr>";
+		$form_html .= "</table>";
 	}
-
-	$form_html .= "	<tr><td class='right'>Full Name:</td><td>" . $name . "</td></tr>";
-	$form_html .= "<tr><td class='right'>Order Number:</td><td>" . $orderId . "</td></tr>";
-	$form_html .= "<tr><td class='right'>File:</td><td>" . $posterFileName . "</td></tr>";
-	$form_html .= "<tr><td class='right'>Length:</td><td>" . $posterLength . "\"</td></tr>";
-	$form_html .= "<tr><td class='right'>Width:</td><td>" . $posterWidth . "\"</td></tr>";
-	$form_html .= "<tr><td class='right'>Paper Type:</td><td>" . $paperTypeName . "</td></tr>";
-	$form_html .= "<tr><td class='right'>Finish Option:</td><td>" . $finishOptionName . "</td></tr>";
-	$form_html .= "<tr><td class='right'>Poster Tube:</td><td>" . $posterTubeName . "</td></tr>";
-	$form_html .= "<tr><td class='right'>Rush Order:</td><td>" . $rushOrderName . "</td></tr>";
-	$form_html .= "<tr><td class='right' valign='top'>Comments:</td><td>" . $comments . "</td></tr>";
-	$form_html .= "<tr><td class='right'>CFOP:</td><td>" . $cfop . "</td></tr>";
-	$form_html .= "<tr><td class='right'>Activity Code:</td><td>" . $activityCode . "</td></tr>";
-	$form_html .= "<tr><td class='right'>Total Cost:</td><td>$" . $totalCost . "</td></tr>";
-	$form_html .= "<tr><td class='description' colspan='2'>If you have any questions please contact us at " . admin_email ."</td></tr>";
-	$form_html .= "</table>";
+	else {
+		$form_html = "Error Submitting Oorder";
+		
+	}
 		
 }
 
