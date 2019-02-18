@@ -4,6 +4,7 @@ require_once 'mail.inc.php';
 require_once 'orders.inc.php';
 require_once 'order.class.inc.php';
 
+$message = "";
 
 if ((isset($_GET['orderId'])) && is_numeric($_GET['orderId'])) {
 	$orderId = $_GET['orderId'];
@@ -27,7 +28,13 @@ if (isset($_POST['changeStatus'])) {
 		header("Location: index.php");
 	}
 	//else if status is set to "Cancel"
-	elseif ($statusId == 4) { header("Location: index.php"); }
+	elseif ($statusId == 4) { 
+		header("Location: index.php"); 
+
+	}
+	else {
+		$message = "<br><b class='error'>Status sucessfully updated to " . $order->get_status() . "</b>";
+	}
 	
 }
 //get last day of previous month
@@ -74,7 +81,16 @@ require_once 'includes/header.inc.php';
 <tr><td class='right'>Order Number:</td><td class='left'><?php echo $orderId; ?></td></tr>
 <tr><td class='right'>Email: </td><td class='left'><?php echo $order->get_email() ?></td></tr>
 <tr><td class='right'>Full Name: </td><td class='left'><?php echo $order->get_name() ?></td></tr>
-<tr><td class='right'>File:</td><td class='left'><a href='download.php?orderId=<?php echo $order->get_order_id(); ?>'><?php echo $order->get_filename(); ?></a> <?php if (!$order->file_exists(poster_dir)) { echo "<span class='error'>WARNING: Poster File doesn't exist</span>"; } ?></td></tr>
+<tr><td class='right'>File:</td><td class='left'>
+<?php if (!$order->file_exists(poster_dir)) { 
+	echo "<span class='error'>WARNING: Poster File " . $order->get_filename() . " does not exist</span>";
+}
+else {
+	echo "<a href='download.php?orderId=" . $order->get_order_id() . "'>" . $order->get_filename() . "</a>";
+}
+
+?>
+</td></tr>
 <tr><td class='right'>CFOP:</td><td class='left'><?php echo $order->get_cfop(); ?></td></tr>
 <tr><td class='right'>Activity Code:</td><td class='left'><?php echo $order->get_activity_code(); ?></td></tr>
 <tr><td class='right'>Time Created:</td><td class='left'><?php echo $order->get_time_created(); ?></td></tr>
@@ -91,5 +107,6 @@ require_once 'includes/header.inc.php';
 <br>		
 <?php echo $edit_order_html; ?>
 
+<?php if (isset($message)) { echo $message; } ?>
 
 <?php require_once 'includes/footer.inc.php'; ?>

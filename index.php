@@ -443,11 +443,9 @@ else {
 }
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <HTML>
 <HEAD>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta charset="UTF-8">
 	<link rel="stylesheet" type="text/css" href="includes/stylesheet.css"
 		media='screen'>
 
@@ -458,13 +456,19 @@ else {
 </head>
 
 <body OnLoad="document.posterInfo.posterWidth.focus();">
-	<div id='container'>
-		<div id="order">
+	<div class='order_container'>
+		<div class="order">
 			<h2>Poster Printer Order Submit Form</h2>
 
 			<?php echo $form_html; ?>
 
 		</div>
+	</div>
+	<div class='order_footer'>
+		<br>Computer & Network Resource Group - Carl R. Woese Institute for Genomic Biology
+                <br>If you have any questions, please email us at <a href='mailto:'<?php echo admin_email; ?>'><?php echo admin_email; ?></a>
+                <br><a href='https://www.vpaa.uillinois.edu/resources/web_privacy'>University of Illinois System Web Privacy Notice</a>
+                <br>&copy; 2007-<?php echo date('Y'); ?> University of Illinois Board of Trustees
 	</div>
 </body>
 

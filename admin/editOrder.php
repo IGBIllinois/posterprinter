@@ -177,7 +177,16 @@ else
 	<tr><td class='right'>Order Number:</td><td class='left'><?php echo $order->get_order_id(); ?></td></tr>
 	<tr><td class='right'>Email: </td><td class='left'><?php echo $order->get_email(); ?></td></tr>
 	<tr><td class='right'>Full Name: </td><td class='left'><?php echo $order->get_name(); ?></td></tr>
-	<tr><td class='right'>File:</td><td class='left'><a href='download.php?orderId=<?php echo $order->get_order_id(); ?>'><?php echo $order->get_filename();  ?></a></td></tr>
+	<tr><td class='right'>File:</td><td class='left'>
+	<?php if (!$order->file_exists(poster_dir)) {
+        	echo "<span class='error'>WARNING: Poster File " . $order->get_filename() . " does not exist</span>";
+	}
+	else {
+        	echo "<a href='download.php?orderId=" . $order->get_order_id() . "'>" . $order->get_filename() . "</a>";
+	}
+
+	?>
+	</td></tr>
 	<tr><td class='right'>CFOP:</td>
 		<td class='left'>
 		<input type='text' name='cfop1' id='cfop1' maxlength='1' class='cfop_1' onKeyUp='cfopAdvance1()' value='<?php echo $order->get_cfop_college(); ?>'> - 

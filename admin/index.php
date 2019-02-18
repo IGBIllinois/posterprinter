@@ -14,7 +14,6 @@
 //Include files for the script to run
 
 require_once 'includes/main.inc.php';
-require_once 'includes/header.inc.php';
 require_once 'orders.inc.php';
 
 
@@ -46,11 +45,11 @@ else {
 	}
 }
 
-
+require_once 'includes/header.inc.php';
 ?>
 
-
-<table class='wide'>
+<br>
+<table class='medium'>
 	<tr>
 		<td class='header_center'>Order Number</td>
 		<td class='header_center'>Email</td>
@@ -64,5 +63,4 @@ else {
 
 
 </table>
-
 <?php require_once 'includes/footer.inc.php'; ?>

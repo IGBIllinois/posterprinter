@@ -1,21 +1,18 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <HTML>
 <HEAD>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-	<link rel="stylesheet" type="text/css"
-		href="../includes/stylesheet.css"></link>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="../includes/stylesheet.css"></link>
 
-	<TITLE>Poster Printer Orders</TITLE>
+<TITLE>Poster Printer Orders</TITLE>
 
 </HEAD>
 
 <BODY>
-	<div id='container'>
 		<div id="header">
 			<br><center>Poster Printer Administration Center</center>
-		
+					
 		</div>
+	<div id='container'>
 		<div id='content_left'>
 			<ul>
 				<li><a href='index.php'>Current Orders</a></li>

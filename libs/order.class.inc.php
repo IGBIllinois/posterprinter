@@ -83,7 +83,7 @@ class order {
 		$this->db->non_select_query($sql);
 		$this->time_finished = $time_finished;
 		$this->status_id = $status_id;
-		$this->status_name = getStatusName($this->db,$status_id);
+		$this->status  = getStatusName($this->db,$status_id);
 		
 	}
 	

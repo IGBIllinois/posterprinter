@@ -50,11 +50,9 @@ if (isset($_POST['login'])) {
 }
 
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <HTML>
 <HEAD>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta charset="UTF-8">
 <link rel="stylesheet" type="text/css" href="../includes/stylesheet.css">
 <TITLE>IGB Poster Printer Admin Login</TITLE>
 </HEAD>
