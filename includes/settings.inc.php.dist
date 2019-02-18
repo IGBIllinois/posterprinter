@@ -12,7 +12,7 @@
 ////////////////////////////////////////////////
 
 define("enable",TRUE);
-define("app_version","1.2.2");
+define("app_version","1.2.3");
 define("admin_email","");
 define("mysql_host","");
 define("mysql_user","");
