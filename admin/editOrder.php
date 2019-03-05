@@ -27,11 +27,11 @@ if (isset($_POST['editOrder'])) {
 	$activityCode = strtoupper(trim(rtrim($activityCode)));
 	
 	$error = false;
-	if (!eregi('^1-[0-9]{6}-[0-9]{6}-[0-9]{6}$',$cfop)) {
+	if (!preg_match('/^1-[0-9]{6}-[0-9]{6}-[0-9]{6}$/',$cfop)) {
 		$error = true;
 		$cfopMsg = "<br><b class='error'>Invalid CFOP Number</b>";
 	}
-	elseif (!eregi('^[a-zA-Z0-9]{6}',$activityCode) && (strlen($activityCode) > 0)) {
+	elseif (!preg_match('/^[a-zA-Z0-9]{3,6}/',$activityCode) && (strlen($activityCode) > 0)) {
 		$error = true;
 		$activityCodeMsg = 	"<b><b class='error'>Invalid Activity Code</b>";
 	}

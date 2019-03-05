@@ -46,12 +46,12 @@ function addPaperType($db,$name,$cost,$width,$default = 0) {
 		$message .= "<br><b class='error'>Please enter finish option name</b>";
 		$errors++;
 	}
-	if (($cost == "") || !eregi('^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$',$cost)) {
+	if (($cost == "") || !preg_match('/^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$/',$cost)) {
 		$message .= "<br><b class='error'>Please enter a valid cost</b>";
 		$errors++;
 	}
 	
-	if (($width == "") || ($width > max_printer_width) || !(eregi("^[0-9]{1,2}$", $width))) {
+	if (($width == "") || ($width > max_printer_width) || !(preg_match("/^[0-9]{1,2}$/", $width))) {
 		$message .= "<br><b class='error'>Please enter a valid Width.  Maximum is " . max_printer_width . "</b>";
 		$errors++;
 	}

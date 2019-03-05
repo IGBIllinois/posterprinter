@@ -32,7 +32,7 @@ function getRushOrderInfo($db) {
 
 function updateRushOrder($db, $cost) {
 
-	if (($cost == "") || !eregi('^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$',$cost)) {
+	if (($cost == "") || !preg_match('/^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$/',$cost)) {
 		$message = "<b class='error'>Please enter a valid rush order cost</b>";
 		return array('RESULT'=>FALSE,
 					'MESSAGE'=>$message);

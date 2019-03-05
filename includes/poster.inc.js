@@ -92,7 +92,7 @@ function validateCFOP(cfop) {
 }
 
 function validateActivityCode(activityCode) {
-	var activityCodeRegex = /^[a-zA-Z0-9]{6}/;
+	var activityCodeRegex = /^[a-zA-Z0-9]{3,6}/;
 	if ((activityCode != "") && (!activityCode.match(activityCodeRegex))) {
 		document.getElementById('activityCodeWarning').innerHTML = "Please enter a valid activity code.";
 		return false;

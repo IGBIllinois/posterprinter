@@ -50,16 +50,16 @@ function addFinishOption($db,$name,$cost,$maxWidth,$maxLength,$default = 0) {
 		$message .= "<br><b class='error'>Pleae enter finish option name</b>";
 		$errors++;
 	}
-	if (($cost == "") || !eregi('^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$',$cost)) {
+	if (($cost == "") || !preg_match('/^[0-9]{1}[0-9]*[.]{1}[0-9]{2}$/',$cost)) {
 		$message .= "<br><b class='error'>Please enter a valid cost</b>";
 		$errors++;
 	}
 	
-	if (($maxWidth == "") || ($maxWidth > max_printer_width) || !(eregi("^[0-9]{1,2}$", $maxWidth))) {
+	if (($maxWidth == "") || ($maxWidth > max_printer_width) || !(preg_match("/^[0-9]{1,2}$/", $maxWidth))) {
 		$message .= "<br><b class='error'>Please enter a valid Max Width. Maximum is " . max_printer_width . " inches</b>";
 		$errors++;
 	}
-	if (($maxLength == "") || !(eregi("^[0-9]{1,3}$", $maxLength))) {
+	if (($maxLength == "") || !(preg_match("/^[0-9]{1,3}$/", $maxLength))) {
 		$message .= "<br><b class='error'>Please enter a valid Max Length</b>";
 		$errors++;
 	}
