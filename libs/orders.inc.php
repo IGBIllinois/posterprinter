@@ -67,7 +67,8 @@ function get_boa_report($db,$month,$year) {
 		$sql .= "tbl_orders.orders_email as 'NAME', ";
                 $sql .= "tbl_orders.orders_cfop as 'CFOP', ";
 		$sql .= "tbl_orders.orders_activityCode as 'ACTIVITY CODE', ";
-                $sql .= "tbl_orders.orders_totalCost as 'COST' ";
+                $sql .= "tbl_orders.orders_totalCost as 'COST', ";
+		$sql .= "CONCAT('Poster Order #',tbl_orders.orders_id) as 'DESCRIPTION' ";
                 $sql .= "FROM tbl_orders ";
 		$sql .= "LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id ";
                 $sql .= "WHERE (YEAR(tbl_orders.orders_timeCreated)='" . $year . "' AND month(tbl_orders.orders_timeCreated)='" . $month . "') ";
@@ -83,7 +84,9 @@ function get_boa_report($db,$month,$year) {
 					'NAME'=>'IGB Posterprinter Report',
 					'CFOP'=>boa_cfop,
 					'ACTIVITY CODE'=>boa_activity_code,
-					'COST'=>"-" . $total_bill));
+					'COST'=>"-" . $total_bill,
+					'DESCRIPTION'=>'',
+					));
 
                 return array_merge($first_row,$result);
         }

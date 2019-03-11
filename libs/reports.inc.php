@@ -5,6 +5,7 @@
 //$filename - string - name of the file to create
 //prompts to save an excel 2003 report.
 function create_excel_2003_report($data,$filename) {
+	ob_clean();
 	$excel_file = create_generic_excel($data);
 	header('Content-Type: application/vnd.ms-excel');
 	header("Content-Disposition: attachment;filename=" . $filename);
@@ -20,7 +21,7 @@ function create_excel_2003_report($data,$filename) {
 //$filename = string - name of the file to create
 //prompts to save an excel 2007 report.
 function create_excel_2007_report($data,$filename) {
-
+	ob_clean();
 	$excel_file = create_generic_excel($data);
 	header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 	header("Content-Disposition: attachment;filename=" . $filename);
@@ -78,6 +79,7 @@ function create_generic_excel($data) {
 //$filename - name of file to create
 //creates a csv file with data and prompts you to save it.
 function create_csv_report($data,$filename) {
+	ob_clean();
 	$delimiter = ",";
 	$file_link = sys_get_temp_dir() . "/" . $filename;
 	@unlink($file_link);
