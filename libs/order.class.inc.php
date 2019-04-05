@@ -95,7 +95,6 @@ class order {
 		$sql .= "orders_paperTypesId='" . $paperTypeId . "', ";
 		$sql .= "orders_posterTubeId='" . $posterTubeId . "', ";
 		$sql .= "orders_rushOrderId='" . $rushOrderId . "', ";
-		$sql .= "orders_widthSwitched='" . $widthSwitched . "', ";
 		$sql .= "orders_totalCost='" . $totalCost . "' ";
 		$sql .= "WHERE orders_id='" . $this->get_order_id() . "' LIMIT 1 ";
 		$this->db->non_select_query($sql);

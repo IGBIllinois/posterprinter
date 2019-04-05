@@ -106,7 +106,6 @@ class db {
 		$columns_sql .= ")";
         
        		$sql = $sql . $columns_sql . " " . $values_sql;
-		error_log($sql);
 		try {
 			$query = $this->link->prepare($sql,array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 			//foreach ($data as $key=>$value) {
