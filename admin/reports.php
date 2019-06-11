@@ -31,7 +31,7 @@ elseif (isset($_POST['create_boa_report'])) {
         elseif ($type == 'excel2007') {
                 $ext = 'xlsx';
         }
-	$filename =  "BoaPosterReport-" . $month . "-" . $year . "." . $type;
+	$filename =  "BoaPosterReport-" . $month . "-" . $year . "." . $ext;
 }
 
 switch ($type) {
