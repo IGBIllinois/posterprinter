@@ -55,7 +55,7 @@ function create_generic_excel($data) {
 		$column=0;
 		foreach ($row_data as $key => $value) {
 			$excel_file->getActiveSheet()->setCellValueByColumnAndRow($column,$row,$value);
-			if ($key == 'Cost') {
+			if (($key == 'Cost') || ($key == 'COST')) {
 				$excel_file->getActiveSheet()->getStyleByColumnAndRow($column,$row)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
 			}
 			else {

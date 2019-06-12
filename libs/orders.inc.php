@@ -67,7 +67,7 @@ function get_boa_report($db,$month,$year) {
 		$sql .= "tbl_orders.orders_email as 'NAME', ";
                 $sql .= "tbl_orders.orders_cfop as 'CFOP', ";
 		$sql .= "tbl_orders.orders_activityCode as 'ACTIVITY CODE', ";
-                $sql .= "tbl_orders.orders_totalCost as 'COST', ";
+                $sql .= "ROUND(tbl_orders.orders_totalCost,2) as 'COST', ";
 		$sql .= "CONCAT('Poster Order #',tbl_orders.orders_id) as 'DESCRIPTION' ";
                 $sql .= "FROM tbl_orders ";
 		$sql .= "LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id ";
