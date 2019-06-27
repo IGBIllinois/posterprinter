@@ -189,7 +189,9 @@ elseif (isset($_POST['step2'])) {
 
 
 	//gets the file type (ie .jpg, .bmp) of the uploaded poster file.
-	$fileType = end(explode(".",$_FILES['posterFile']['name']));
+        $file_array = explode(".",$_FILES['posterFile']['name']);
+        $fileType = end($file_array);
+
 	//creates a temp file name for the file
 	$posterFileTmpName = "tmp_" . mt_rand(100000000,999999999) . "." . $fileType;
 	//makes the path for the file
@@ -358,7 +360,8 @@ elseif (isset($_POST['step3'])) {
 
 	if ($orderId) {
 		//gets the file type (ie .jpg, .bmp) of the uploaded poster file.
-		$fileType = end(explode(".",$posterFileName));
+	        $file_array = explode(".",$posterFileName);
+	        $fileType = end($file_array);
 		//sets the path to where the file will be saved.
 		$targetPath = poster_dir . "/" . $orderId . "." . $fileType;
 
