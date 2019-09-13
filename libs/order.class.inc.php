@@ -43,7 +43,10 @@ class order {
 	public function get_email() { return $this->email; }
 	public function get_name() { return $this->name; }
 	public function get_filename() { return $this->filename; }
-	public function get_filetype() { return end(explode(".",$this->get_filename())); }
+	public function get_filetype() { 
+		$filetype = explode(".",$this->get_filename()); 
+		return end($filetype);
+	}
 	public function get_cfop() { return $this->cfop; }
 	public function get_cfop_college() { return substr($this->get_cfop(),0,1); }
 	public function get_cfop_fund() { return substr($this->get_cfop(),2,6); }

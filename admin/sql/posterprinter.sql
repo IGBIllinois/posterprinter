@@ -51,7 +51,7 @@ CREATE TABLE tbl_posterTube (
 
 CREATE TABLE tbl_orders (
 	orders_id INT NOT NULL AUTO_INCREMENT,
-	orders_email VARCHAR(30),
+	orders_email VARCHAR(100),
 	orders_name VARCHAR(50),
 	orders_timeCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	orders_timeFinished DATETIME,
