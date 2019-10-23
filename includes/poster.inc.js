@@ -1,8 +1,8 @@
 function validateStep1() {
 	var frm = document.forms["posterInfo"];
-	var width = frm.posterWidth.value;
-	var length = frm.posterLength.value;
-	var maxPrinterWidth = frm.maxPrinterWidth.value;
+	var width = parseInt(frm.posterWidth.value);
+	var length = parseInt(frm.posterLength.value);
+	var maxPrinterWidth = parseInt(frm.maxPrinterWidth.value);
 	return validateDimensions(width,length,maxPrinterWidth);
 
 }
