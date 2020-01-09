@@ -38,6 +38,10 @@ function mailAdminsNewOrder($db,$order,$adminEmail) {
 	$requestUri = substr($_SERVER["REQUEST_URI"],0,strrpos($_SERVER["REQUEST_URI"], "/")+1);
 	$urlAddress = "http://" . $_SERVER["SERVER_NAME"] . $requestUri; 
 	$subject = "New Poster To Print. Order #" . $order->get_order_id();
+	if ($order->get_rush_order_name() == 'Yes') {
+		$subject = "RUSH ORDER - New Poster To Print. Order #" . $order->get_order_id();
+	}
+
 	$to = $adminEmail;
 	$message = "<br>New Poster Printer Order From " . $order->get_email() . "\r\n";
 	$message .= "<p>Full Name: " . $order->get_name() . "\r\n";
@@ -71,9 +75,13 @@ function mailUserNewOrder($db,$order,$adminEmail) {
 
 	$to = $order->get_email();
 	$subject = "Poster Order #" . $order->get_order_id();
+        if ($order->get_rush_order_name() == 'Yes') {
+                $subject = "RUSH ORDER - Poster Order #" . $order->get_order_id();
+        }
 	
-	$message = "<br>Thank you for your order.  Your order will be processed as soon as possible.   ";
-	$message .= "It could take up to three days.  We will email you when the poster is completed printing.\r\n";
+	$message = "<br>Thank you for your order.  Your order will be processed as soon as possible.\r\n";
+	$message .= "For regular orders, we guarantee within 72 hours.  For rush orders, we guarantee within 24 hours.  This excludes weekends and holidays.\r\n";
+	$message .= "We will email you when the poster is completed printing.\r\n\r\n";
 	$message .= "<p>For your reference\r\n";
 	$message .= "<br>Full Name: " . $order->get_name() . "\r\n";
 	$message .= "<br>Order Number: " . $order->get_order_id() . "\r\n";
@@ -104,7 +112,9 @@ function mailUserOrderComplete($db,$orderId,$adminEmail) {
 	$order = new order($db,$orderId);
 	$to = $order->get_email();
 	$subject = "Poster Order #" . $order->get_order_id() . " Completed";
-			
+	if ($order->get_rush_order_name() == 'Yes') {
+                $subject = "RUSH ORDER - Poster Order #" . $order->get_order_id() . " Completed";
+        }
 	$message = "<br>Your Poster Order #" . $order->get_order_id() . " is now completed.\r\n";
 	$message .=	"Your poster is located in room 149 in the IGB concourse.\r\n";
 	$message .= 	"Please see Joyce Koeberlein (Room 138) or the CNRG group (Room 131) in the IGB concourse if you are unable to get into room 149.\r\n";

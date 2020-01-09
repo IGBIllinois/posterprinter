@@ -3,7 +3,7 @@
 Store Application Variables
 */
 
-define("app_version","1.2.7");
+define("app_version","1.2.9");
 
 
 ?>

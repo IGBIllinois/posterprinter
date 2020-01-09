@@ -373,7 +373,7 @@ elseif (isset($_POST['step3'])) {
 
 		$form_html = "<table class='medium_center'>";
 		$form_html .= "<tr><td colspan='2' class='header'>Order Information</td></tr>";
-		$form_html .= "<tr><td colspan='2' class='description'>Thank you for your order.  Your order will be processed as soon as possible.  It could take up to three days.";
+		$form_html .= "<tr><td colspan='2' class='description'>Thank you for your order.  Your order will be processed as soon as possible. For regular orders, we guarantee within 72 hours.  For rush orders, we guarantee within 24 hours.  This excludes weekends and holidays.";
 		$form_html .= "An email has been sent to you at " . $email . " with this information. We will email you when the poster is completed printing.</td></tr>";
 
 		if ($widthSwitched == 1) {
