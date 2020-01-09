@@ -38,17 +38,17 @@ require_once 'rushOrder.inc.php';
 <p>We only accept CFOPs as payment.  We are not able to accept credit cards, checks or cash.  A CFOP is the University's Account Number.  
 Please contact your advisor or the business office if you do not know which CFOP you should use.</p>
 <h3>Which filetypes do you accept?</h3>
-<p>We accept all file types but strongly recommend PDFs. </p>
+<p>We accept all file types but strongly recommend PDFs. The most popular are PDFs and PPTX (Powerpoint).</p>
 <h3>Which file format is best?</h3>
 <p>PDFs are by far the best file format.  They produce the best accuracy.</p>
-<h3>Can I have my poster printed using different dimension than the poster file is set at?</h3>
+<h3>Can I have my poster printed using different dimensions than the poster file is set at?</h3>
 <p>The poster file length and width should be the same as the length and width you submitted the order at.  If we were to print it using different dimensions, pixelation and distrortions will occur. </p>
 <h3>Why did the width and length of my poster get flipped in my order?</h3>
 <p>We automatically flipped the width and length to maximize the use of the paper you select.  This way we use less paper and it will save you money.  Your poster's printed orientation will remain the same</p>
 <h3>How long will it take to print my poster?</h3>
-<p>For a standard order, we gurantee within <strong>72 business hours</strong>.  This excludes weekends, holidays and breaks.</p>
+<p>For a standard order, we guarantee within <strong>72 business hours (3 Days)</strong>.  This excludes weekends, holidays and breaks.</p>
 <h3>How long does a rush order take?</h3>
-<p>For a rush order, we gurantee within <strong>24 business hours</strong>.  We will also make a best faith effort to get it done
+<p>For a rush order, we guarantee within <strong>24 business hours (1 Day)</strong>.  We will also make a best faith effort to get it done
 sooner if need be.  This excludes weekends, holidays and breaks.</p>
 <h3>Can you print multiple copies of the same poster?</h3>
 <p>If you want multiple copies of the poster, please submit an order for each copy.</p>
