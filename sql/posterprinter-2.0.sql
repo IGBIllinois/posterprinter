@@ -53,7 +53,7 @@ CREATE TABLE orders (
 	orders_activityCode VARCHAR(6),
 	orders_width INT,
 	orders_length INT,
-	orders_status ENUM('New','In Progress','Completed','Cancel','On Hold') AFTER orders_statusId,
+	orders_status ENUM('New','In Progress','Completed','Cancel','On Hold') DEFAULT 'New',
 	orders_paperTypesId INT REFERENCES paperTypes(paperTypes_id),
 	orders_finishOptionsId INT REFERENCES finishOptions(finishOptions_id),
 	orders_posterTubeId INT REFERENCES posterTube(posterTube_id),
