@@ -58,7 +58,7 @@ sooner if need be.  This excludes weekends, holidays and breaks.</p>
 <p>Please email us at <a href='mailto:'<?php echo admin_email; ?>'><?php echo admin_email; ?></a> and we will get back to you.</p>
 <div class='row justify-content-center'>
 <table class='center'>
-	<td><a href='index.php'>Go Back</a></td>
+	<td><a href='index.php'>Submit Order</a></td>
 </table>
 </div>
    </div>
