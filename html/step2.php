@@ -12,9 +12,8 @@ if (isset($_POST['cancel'])) {
         $session->destroy_session();
         header('Location: index.php');
 }
-elseif ((isset($_GET['session'])) && ($_GET['session'] == $session->get_session_id()) && isset($_POST['step1'])) {
+elseif (isset($_POST['step1'])) {
 
-	$session_vars = $session->get_all_vars();
 
 	$paperTypes = functions::getValidPaperTypes($db,$_POST['width'],$_POST['length']);
 	//takes the result and formats it into html into the paperTypeHTML variable.

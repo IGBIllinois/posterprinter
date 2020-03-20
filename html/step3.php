@@ -4,12 +4,7 @@ require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
 
 
-if (!(isset($_GET['session'])) || ($_GET['session'] != $session->get_session_id())) {
-	$session->destroy_session();
-	header('Location: index.php');
-
-}
-elseif (isset($_POST['cancel'])) {
+if (isset($_POST['cancel'])) {
         $session->destroy_session();
         header('Location: index.php');
 }

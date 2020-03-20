@@ -1,6 +1,3 @@
-CREATE database posterprinter
-	CHARACTER SET utf8;
-USE posterprinter;
 
 CREATE TABLE paperTypes (
 	paperTypes_id INT NOT NULL AUTO_INCREMENT,

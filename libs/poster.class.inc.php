@@ -149,12 +149,16 @@ class poster {
 		if (file_exists($output)) {
 			unlink($output);
 		}
-		$image = new Imagick($input);
-		$image->scaleImage($width,$height,true);
-		$image->setImageFormat('jpeg');
-		$image->writeImage($output);
-		$image->clear();
-		$image->destroy();
+		try {
+			$image = new Imagick($input);
+			$image->scaleImage($width,$height,true);
+			$image->setImageFormat('jpeg');
+			$image->writeImage($output);
+			$image->clear();
+			$image->destroy();
+		} catch (Exception $e) {
+			functions::debug("Error creating image: " . $e->getMessage(),1);
+		}
 		return true;
 	}
 
@@ -171,25 +175,28 @@ class poster {
 		if (file_exists($thumb_path)) {
 			unlink($thumb_path);
 		}
-
-			$exec = "source /etc/profile && libreoffice --headless --convert-to jpg --outdir " . self::get_tmp_path() . " " . $filename;
-			functions::debug($exec);
-			$exit_status = 1;
-			$output_array = array();
-			$output = exec($exec,$output_array,$exit_status);
-			if (($exit_status == 0) && file_exists($tmp_path)) {
-				self::create_imagemagick($tmp_path,$thumb_path,self::thumb_width,self::thumb_height);
-				self::create_imagemagick($tmp_path,$fullsize_path,self::fullsize_width,self::fullsize_height);
-				unlink($tmp_path);
-				if (!file_exists($thumb_path)) {
-					$thumb_path = "";
+			try {
+				$exec = "source /etc/profile && libreoffice --headless --convert-to jpg --outdir " . self::get_tmp_path() . " " . $filename;
+				functions::debug($exec);
+				$exit_status = 1;
+				$output_array = array();
+				$output = exec($exec,$output_array,$exit_status);
+				if (($exit_status == 0) && file_exists($tmp_path)) {
+					self::create_imagemagick($tmp_path,$thumb_path,self::thumb_width,self::thumb_height);
+					self::create_imagemagick($tmp_path,$fullsize_path,self::fullsize_width,self::fullsize_height);
+					unlink($tmp_path);
+					if (!file_exists($thumb_path)) {
+						$thumb_path = "";
+					}
+					if (!file_exists($fullsize_path)) {
+						$fullsize_path = "";
+					}
+					return array('RESULT'=>true,'FULL'=>basename($fullsize_path),'THUMB'=>basename($thumb_path));
 				}
-				if (!file_exists($fullsize_path)) {
-					$fullsize_path = "";
-				}
-				return array('RESULT'=>true,'FULL'=>basename($fullsize_path),'THUMB'=>basename($thumb_path));
+			} catch (Exception $e) {
+				functions::debug("Error converting powerpoint: " . $e->getMessage(),1);
 			}
-
+		
 		return array('RESULT'=>false,'FULL'=>"",'THUMB'=>"");
 
 	}

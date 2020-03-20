@@ -140,9 +140,9 @@ function second_step() {
 function uploadProgress(evt) {
         if (evt.lengthComputable) {
 		var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-		document.getElementById('progress_bar').innerHTML = "Uploading File: " + percentComplete.toString() + "%";
+		document.getElementById('progress_bar').innerHTML = "Uploading and Processing File: " + percentComplete.toString() + "%";
 		document.getElementById('progress_bar').style= "width: " + percentComplete.toString() + "%;";
-		document.getElementById('progress_bar').getAttribute("aria-valuenow").vlaue = percentComplete.toString();
+		document.getElementById('progress_bar').getAttribute("aria-valuenow").value = percentComplete.toString();
         }
         else {
           document.getElementById('progres_bar').innerHTML = 'Error';

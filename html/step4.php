@@ -3,12 +3,7 @@
 require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
 
-if (!(isset($_GET['session'])) || ($_GET['session'] != $session->get_session_id())) {
-        $session->destroy_session();
-        header('Location: index.php');
-
-}
-elseif (isset($_POST['step4'])) {
+if (isset($_POST['step4'])) {
 
         $posterFileName = $_POST['posterFileName'];
         $posterFileTmpName = $_POST['posterFileTmpName'];
