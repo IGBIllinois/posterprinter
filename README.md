@@ -1,6 +1,8 @@
 # Posterprinter
+![Travis](https://travis-ci.com/IGBIllinois/posterprinter.svg?branch=version_1)
 
 Poster Printer Submission and Accounting Program
+
 This is for Version 1.X.X of the program
 
 
