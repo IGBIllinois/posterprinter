@@ -43,7 +43,8 @@ function getCurrentOrders($db) {
 function getOrdersReport($db,$month,$year) {
 
 	$sql = "SELECT tbl_orders.orders_id as 'Order Number', tbl_orders.orders_email as 'Email', ";
-	$sql .= "tbl_orders.orders_name as 'Full Name', tbl_orders.orders_timeCreated as 'Date', ";
+	$sql .= "tbl_orders.orders_name as 'Full Name', tbl_orders.orders_timeCreated as 'Time Created', ";
+	$sql .= "tbl_orders.orders_timeFinished as 'Time Completed', ";
 	$sql .= "tbl_orders.orders_cfop as 'CFOP', tbl_orders.orders_activityCode as 'Activity Code', ";
 	$sql .= "tbl_orders.orders_totalCost as 'Cost', ";
 	$sql .= "tbl_paperTypes.paperTypes_name as 'Paper Type', tbl_paperTypes.paperTypes_cost as 'Paper Type Cost (per Inch)', ";
@@ -55,7 +56,7 @@ function getOrdersReport($db,$month,$year) {
 	$sql .= "LEFT JOIN tbl_finishOptions ON tbl_orders.orders_finishOptionsId=tbl_finishOptions.finishOptions_id "; 
 	$sql .= "LEFT JOIN tbl_posterTube ON tbl_orders.orders_posterTubeId=tbl_posterTube.posterTube_id ";
 	$sql .= "LEFT JOIN tbl_rushOrder ON tbl_orders.orders_rushOrderId=tbl_rushOrder.rushOrder_id ";
-	$sql .= "WHERE (YEAR(orders_timeCreated)='" . $year . "' AND month(orders_timeCreated)='" . $month . "') ";
+	$sql .= "WHERE (YEAR(orders_timeFinished)='" . $year . "' AND month(orders_timeFinished)='" . $month . "') ";
 	$sql .= "AND status_name='Completed' ";
 	$sql .= "ORDER BY orders_id ASC";
 	return $db->query($sql);
@@ -71,7 +72,7 @@ function get_boa_report($db,$month,$year) {
 		$sql .= "CONCAT('Poster Order #',tbl_orders.orders_id) as 'DESCRIPTION' ";
                 $sql .= "FROM tbl_orders ";
 		$sql .= "LEFT JOIN tbl_status ON tbl_orders.orders_statusId=tbl_status.status_id ";
-                $sql .= "WHERE (YEAR(tbl_orders.orders_timeCreated)='" . $year . "' AND month(tbl_orders.orders_timeCreated)='" . $month . "') ";
+                $sql .= "WHERE (YEAR(tbl_orders.orders_timeFinished)='" . $year . "' AND month(tbl_orders.orders_timeFinished)='" . $month . "') ";
                 $sql .= "AND tbl_status.status_name='Completed' ";
                 $sql .= "ORDER BY `CFOP` ASC, `ACTIVITY CODE` ASC";
 		$result = $db->query($sql);
