@@ -94,6 +94,7 @@ else {
 <tr><td class='right'>CFOP:</td><td class='left'><?php echo $order->get_cfop(); ?></td></tr>
 <tr><td class='right'>Activity Code:</td><td class='left'><?php echo $order->get_activity_code(); ?></td></tr>
 <tr><td class='right'>Time Created:</td><td class='left'><?php echo $order->get_time_created(); ?></td></tr>
+<tr><td class='right'>Time Finished:</td><td class='left'><?php echo $order->get_time_finished(); ?></td</tr>
 <tr><td class='right'>Total Cost:</td><td class='left'><?php echo $order->get_total_cost(); ?></td></tr>
 <tr><td class='right'>Width:</td><td class='left'><?php echo $order->get_width(); ?>''</td></tr>
 <tr><td class='right'>Length:</td><td class='left'><?php echo $order->get_length(); ?>''</td></tr>

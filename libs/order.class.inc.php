@@ -54,6 +54,7 @@ class order {
 	public function get_cfop_program() { return substr($this->get_cfop(),16,6); }
 	public function get_activity_code() { return $this->activity_code; }
 	public function get_time_created() { return $this->time_created; }
+	public function get_time_finished() { return $this->time_finished; }
 	public function get_total_cost() { return $this->total_cost; }
 	public function get_width() { return $this->width; }
 	public function get_length() { return $this->length; }
