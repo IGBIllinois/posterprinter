@@ -50,6 +50,8 @@ Please contact your advisor or the business office if you do not know which CFOP
 <h3>How long does a rush order take?</h3>
 <p>For a rush order, we guarantee within <strong>24 business hours (1 Day)</strong>.  We will also make a best faith effort to get it done
 sooner if need be.  This excludes weekends, holidays and breaks.</p>
+<h3>I want to take my poster on a plane.  Which paper type should I choose?</h3>
+<p>You should use Graphic Matte Canvas.  It is a foldable paper that can be placed in your luggage.  Then you do not have to pay an extra carry on luggage charge.  If you must use a non-foldable paper, make sure to select a poster tube to protect the paper.
 <h3>Can you print multiple copies of the same poster?</h3>
 <p>If you want multiple copies of the poster, please submit an order for each copy.</p>
 <h3>Can I get a proof of my poster?</h3>

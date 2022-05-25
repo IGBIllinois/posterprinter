@@ -466,7 +466,7 @@ else {
 
 			<?php echo $form_html; ?>
 			<table class='center'>
-				<td><a href='faq.php'>Frequently Asked Questions</a></td>
+				<td><a href='https://help.igb.illinois.edu/Poster_Printing_FAQ'>Frequently Asked Questions</a></td>
 			</table>
 		</div>
 	</div>
