@@ -8,12 +8,12 @@
 </HEAD>
 
 <BODY>
-		<div id="header">
+		<div class="header">
 			<br><center>Poster Printer Administration Center</center>
 					
 		</div>
-	<div id='container'>
-		<div id='content_left'>
+	<div class='container'>
+		<div class='content_left'>
 			<ul>
 				<li><a href='index.php'>Current Orders</a></li>
 				<li><a href='previousOrders.php'>Previous Orders</a></li>
@@ -30,4 +30,4 @@
 			
 			</ul>
 		</div>
-		<div id="content_center">
+		<div class="content_center">

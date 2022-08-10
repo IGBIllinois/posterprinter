@@ -420,6 +420,20 @@ else {
 		$paperTypes_html .= "<td class='left'>" . $paperType['width'] . "''</td>";
 		$paperTypes_html .= "</tr>";
 	}
+
+	$finishOptions = getFinishOptions($db);
+        $finishOptions_html = "";
+	foreach ($finishOptions as $finishOption) {
+		if ($finishOption['name'] == 'None') {
+			break;
+		}
+               	$finishOptions_html .= "<tr>";
+	        $finishOptions_html .= "<td class='right'>$" . $finishOption['cost'] . "</td>";
+                $finishOptions_html .= "<td class='center'>" . $finishOption['name'] . "</td>";
+		$finishOptions_html .= "</tr>";
+        }
+
+
 	$form_html = "<br><form action='index.php' method='post' id='posterInfo' onsubmit='return validateStep1()' name='posterInfo'>";
 	$form_html .= "<input type='hidden' name='maxPrinterWidth' value='" . max_printer_width . "'>";
 	$form_html .= "<table class='medium_center'>";
@@ -436,6 +450,13 @@ else {
 	$form_html .= "<tr><td colspan='3' class='description'>Below are the available paper types along with the maximum width for that type of paper. The cost is per an inch.</td></tr>";
 	$form_html .= $paperTypes_html;
 	$form_html .= "</table>";
+	$form_html .= "<br>";
+	$form_html .= "<table class='medium_center'>";
+	$form_html .= "<tr><td colspan='3' class='header'>Available Finish Options</td></tr>";
+	$form_html .= "<tr><td colspan='3' class='description'>Below are the available finishing options</td></tr>";
+	$form_html .= $finishOptions_html;
+	$form_html .= "</table>";
+	$form_html .= "<br>";
 	$form_html .= "<table class='center'>";
 	$form_html .= "<tr><td style='padding:5px 0px 10px 0px;'>";
 	$form_html .= "<button onclick='window.location.href=window.location.href'>Cancel</button></td>";
