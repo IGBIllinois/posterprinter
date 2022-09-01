@@ -83,7 +83,8 @@ require_once 'includes/header.inc.php';
 
 
 </table>
-Monthly Total: $<?php echo $stats->pretty_cost(); ?>
+<br>Monthly Total: $<?php echo $stats->pretty_cost(); ?>
+<br>Total Orders: <?php echo $stats->orders(); ?>
 <br />
 <br />
 <form action='reports.php' method='post'>
