@@ -1,4 +1,7 @@
 {
+	"name": "igbillinois/posterprinter",
+	"description": "A web interface to submit posters for printing and billing",
+	"license": "GPL-3.0-only",
 	"repositories" : [
         {
                 "type": "vcs",
