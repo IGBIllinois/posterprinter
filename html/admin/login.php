@@ -14,7 +14,7 @@
 
 require_once 'includes/main.inc.php';
 
-$session = new session(__SESSION_NAME__);
+$session = new \IGBIllinois\session(settings::get_session_name());
 $message = "";
 $webpage = $dir = dirname($_SERVER['PHP_SELF']) . "/index.php";
 if ($session->get_var('webpage') != "") {
@@ -39,7 +39,11 @@ if (isset($_POST['login'])) {
         }
         if ($error == false) {
 
-		$success = functions::authenticate($username,$password);
+		$ldap = new \IGBIllinois\ldap(LDAP_HOST,LDAP_BASE_DN,LDAP_PORT,LDAP_SSL,LDAP_TLS);
+		if ((LDAP_BIND_USER != "") && (LDAP_BIND_PASS != "")) {
+			$ldap->bind(LDAP_BIND_USER,LDAP_BIND_PASS);
+		}
+		$success = $ldap->authenticate($username,$password,LDAP_GROUP);
 	
 		if ($success) {
 		
@@ -73,7 +77,7 @@ if (isset($_POST['login'])) {
 
 <TITLE><?php echo settings::get_title(); ?> Login</TITLE>
 </HEAD>
-<body style='padding-top: 70px; padding-bottom: 60px;'>
+<body style='padding-top: 70px; padding-bottom: 60px;' OnLoad="document.login.username.focus();">
 <nav class="navbar fixed-top navbar-dark bg-dark">
         <a class='navbar-brand py-0' href='#'><?php echo settings::get_title(); ?> Administration</a>
 	<span class='navbar-text py-0'>Version <?php echo settings::get_version(); ?>&nbsp;
@@ -89,7 +93,7 @@ if (isset($_POST['login'])) {
 	<div class='form-group row'>
 		<label for='username' class='col-form-label'>Username</label>
 			<div class='input-group'> 
-			<input class='form-control' type='text'
+			<input class='form-control' type='text' autocapitalize='off' tabindex='1' 
 				name='username' tabindex='1' placeholder='Username'
 				value='<?php if (isset($username)) { echo $username; } ?>'>
 			<div class="input-group-append">
@@ -100,7 +104,7 @@ if (isset($_POST['login'])) {
 	<div class='form-group row'>
 		<label for='password' class='col-form-label'>Password</label>
 			<div class='input-group'>
-			<input class='form-control' type='password' name='password' 
+			<input class='form-control' type='password' name='password' tabindex='2'
 			placeholder='Password' tabindex='2'>		
 			<div class='input-group-append'>
 				<span class='input-group-text'><i class='fa fa-lock'></i></span>

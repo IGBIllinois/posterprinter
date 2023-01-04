@@ -23,8 +23,9 @@ if (isset($_GET['start_date']) && isset($_GET['end_date'])) {
 	
 	
 	}
-	
-	$graph = new PieGraph(900,600,"auto");
+
+	\IGBIllinois\graphs::pie_graph($paperTypesData,"Paper Types");	
+	/*$graph = new PieGraph(900,600,"auto");
 	$graph->title->Set("Paper Types");
 	$graph->title->SetColor("#000000");
 	$p1 = new PiePlot3d($data);
@@ -35,7 +36,7 @@ if (isset($_GET['start_date']) && isset($_GET['end_date'])) {
 	$graph->legend->SetPos(0.6,0.2,"left","top");
 	$graph->legend->SetLayout("LEGEND_VERT");
 	$graph->Add($p1);
-	$graph->Stroke();
+	$graph->Stroke();*/
 }
 
 

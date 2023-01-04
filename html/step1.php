@@ -36,10 +36,16 @@ require_once 'includes/header.inc.php';
 </thead>
 <tr><td class='text-right' style='vertical-align:middle;'>Width:</td>
 <td class='left'>
-<div class='input-group col-md-5'><input class='form-control' text='text' name='width' id='width' maxlength='6' size='6'><div class='input-group-append'><span class='input-group-text'>&nbsp; Inches</span></div></div></td></tr>
+<div class='input-group col-md-5'>
+	<input class='form-control' text='text' name='width' id='width' maxlength='6' size='6'><div class='input-group-append' tabindex='1'>
+	<span class='input-group-text'>&nbsp; Inches</span></div></div>
+</td></tr>
 <tr><td class='text-right' style='vertical-align:middle;'>Length:</td>
 <td class='left'>
-<div class='input-group col-md-5'><input class='form-control' type='text' name='length' id='length' maxlength='6' size='6'><div class='input-group-append'><span class='input-group-text'>&nbsp; Inches</span></div></div></td></tr>
+	<div class='input-group col-md-5'>
+		<input class='form-control' type='text' name='length' id='length' maxlength='6' size='6'><div class='input-group-append' tabindex='2'>
+		<span class='input-group-text'>&nbsp; Inches</span></div></div>
+</td></tr>
 
 </table>
 </div>

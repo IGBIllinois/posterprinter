@@ -11,7 +11,7 @@
 //						//
 //////////////////////////////////////////////////
 
-$session = new session(settings::get_session_name());
+$session = new \IGBIllinois\session(settings::get_session_name());
 
 //If not logged in
 if (!($session->get_var('login'))) {

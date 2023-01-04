@@ -11,7 +11,7 @@
 //						//
 //////////////////////////////////////////////////
 
-$session = new session(settings::get_session_name());
+$session = new \IGBIllinois\session(settings::get_session_name());
 
 //If session timeout is reach
 if (time() > $session->get_var('timeout') + settings::get_session_timeout()) {

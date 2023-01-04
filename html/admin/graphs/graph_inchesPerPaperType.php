@@ -21,8 +21,9 @@ if (isset($_GET['start_date']) && isset($_GET['end_date'])) {
 		$data[0] = 1;
 		$data_legend[0] = "None";
 	}
-	
-	$graph = new PieGraph(900,600,"auto");
+
+	\IGBIllinois\graphs::pie_graph($paperTypesData,"Inches Per Paper Type");	
+	/*$graph = new PieGraph(900,600,"auto");
 	$graph->SetShadow();
 	$graph->title->Set("Inches Per Paper Type");
 	$graph->title->SetColor("#000000");
@@ -34,7 +35,7 @@ if (isset($_GET['start_date']) && isset($_GET['end_date'])) {
 	$graph->legend->SetLayout("LEGEND_VERT");
 	$p1->SetLegends($data_legend);
 	$graph->Add($p1);
-	$graph->Stroke();
+	$graph->Stroke();*/
 	
 }
 ?>

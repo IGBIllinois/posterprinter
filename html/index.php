@@ -14,7 +14,7 @@
 //include files for the script to run
 require_once 'includes/main.inc.php';
 
-$session = new session(settings::get_session_name());
+$session = new \IGBIllinois\session(settings::get_session_name());
 $session_vars = array('timeout'=>time(),
 	'ipaddress'=>$_SERVER['REMOTE_ADDR']
 );

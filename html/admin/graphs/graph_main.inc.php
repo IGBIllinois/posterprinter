@@ -1,5 +1,6 @@
 <?php
 
+require_once '../../../conf/app.inc.php';
 require_once '../../../conf/settings.inc.php';
 require_once '../../../vendor/autoload.php';
 
@@ -15,12 +16,12 @@ function my_autoloader($class_name) {
 spl_autoload_register('my_autoloader');
 
 
-$db = new db(__MYSQL_HOST__,__MYSQL_DATABASE__,__MYSQL_USER__,__MYSQL_PASSWORD__);
+$db = new \IGBIllinois\db(MYSQL_HOST,MYSQL_DATABASE,MYSQL_USER,MYSQL_PASSWORD);
 
-JpGraph\JpGraph::load();
-JpGraph\JpGraph::module('bar');
-JpGraph\JpGraph::module('pie');
-JpGraph\JpGraph::module('pie3d');
-JpGraph\JpGraph::module('line');
+//JpGraph\JpGraph::load();
+//JpGraph\JpGraph::module('bar');
+//JpGraph\JpGraph::module('pie');
+//JpGraph\JpGraph::module('pie3d');
+//JpGraph\JpGraph::module('line');
 
 ?>

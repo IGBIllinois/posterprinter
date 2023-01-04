@@ -21,28 +21,6 @@ class functions {
 
         }
 
-	public static function authenticate($username,$password) {
-
-	        $connect;
-		$ldap_uri = "ldap://";
-        	if (settings::get_ldap_ssl() == 1) { 
-			$ldap_uri = "ldaps://";
-		}	
-		$connect = ldap_connect($ldap_uri . settings::get_ldap_host(),settings::get_ldap_port());
-
-        	$bindDN = "uid=" . $username . "," . settings::get_ldap_people_ou();
-	        $bind_success = @ldap_bind($connect, $bindDN, $password);
-        	$success = 0;
-	        if ($bind_success) {
-        	        $filter = "(&(cn=" . settings::get_ldap_group() . ")(memberUid=" . $username . "))";
-                	$search = ldap_search($connect,settings::get_ldap_group_ou(),$filter);
-	                $result = ldap_get_entries($connect,$search);
-        	        if ($result["count"]) { $success = 1; }
-	        }
-        	ldap_unbind($connect);
-	        return $success;
-	}
-
 	public static function alert($message, $success = 1) {
 		$alert = "";
 		if ($success) {
