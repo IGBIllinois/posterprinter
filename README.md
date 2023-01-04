@@ -1,5 +1,7 @@
 # Posterprinter
-![Travis](https://travis-ci.com/IGBIllinois/posterprinter.svg?branch=master)
+
+
+[![Build Status](https://github.com/IGBIllinois/posterprinter/actions/workflows/main.yml/badge.svg)](https://github.com/IGBIllinois/posterprinter/actions/workflows/main.yml)
 
 Poster Printer Submission and Accounting Program
 
