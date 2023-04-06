@@ -1,6 +1,8 @@
-includes/settings.inc.php
+/conf/settings.inc.php
+/conf/log_rotate.conf
 /vendor
 /html/vendor
-posters/*
-/conf/settings.inc.php
-composer.lock
+/log/*
+/posters/*
+
+!.gitkeep
