@@ -23,35 +23,63 @@ switch ($graph_type) {
 
 	case 'finishoptions':
 		$stats = new statistics($db,$start_date,$end_date);
-		$data = $stats->popularFinishOptions();
+		$finishoptions_data = $stats->popularFinishOptions();
+		$data;
+		$i = 0;
+		foreach ($finishoptions_data as $row)
+        	{
+                	$data[$i]['legend'] = $row['finishOptions_name'];
+			$data[$i]['value'] = $row['count'];
+			$i++;
+	        }
 		$title = "Finish Options";
-		graphs::pie_graph($data,$title);
+		\IGBIllinois\graphs::pie_graph($data,$title);
 		break;
 
 	case 'inches_per_papertype':
 		$stats = new statistics($db,$start_date,$end_date);
-	        $data = $stats->paperTypesTotalInches();
+		$total_inches = $stats->paperTypesTotalInches();
+		$data;
+                $i = 0;
+                foreach ($total_inches as $row)
+                {
+                        $data[$i]['legend'] = $row['paperTypes_name'];
+                        $data[$i]['value'] = $row['totalLength'];
+                        $i++;
+                }
+
 		$title = "Inches Per Paper Type";
-		graphs::pie_graph($data,$title);
+		\IGBIllinois\graphs::pie_graph($data,$title);
 		break;
 
 	case 'monthly_avg':
 		$stats = new statistics($db,'','');
 		$data = $stats->avgOrdersPerMonth();
 		$title = "Average Number of Orders";
-		graphs::line_graph($data,$title);
+		\IGBIllinois\graphs::line_graph($data,$title);
 		break;
 	case 'orders_per_month':
 	        $stats = new statistics($db,'','');
 		$data = $stats->ordersPerMonth($year);
+		$xaxis = "month_name";
+		$yaxis = "count";
 		$title = "Orders Per Month";
-		graphs::barplot($data,$title);
+		\IGBIllinois\graphs::bar_graph($data,$xaxis,$yaxis,$title);
 		break;
 	case 'papertypes':
 		$stats = new statistics($db,$start_date,$end_date);
-		$data = $stats->popularPaperTypes();
+		$papertypes_data = $stats->popularPaperTypes();
+		$data;
+                $i = 0;
+                foreach ($papertypes_data as $row)
+                {
+                        $data[$i]['legend'] = $row['paperTypes_name'];
+                        $data[$i]['value'] = $row['count'];
+                        $i++;
+                }
+
 		$title = "Paper Types";
-		graphs::pie_graph($data,$title);
+		\IGBIllinois\graphs::pie_graph($data,$title);
 		break;
 }
 

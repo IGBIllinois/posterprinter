@@ -32,33 +32,33 @@ $previousStartDate = $previousEndYear . "/" . $previousEndMonth . "/01";
 $nextStartDate = date('Y/m/d',strtotime('+1 day', strtotime($end_date)));
 $nextEndDate =  date('Y/m/d',strtotime('-1 second',strtotime('+1 month',strtotime($nextStartDate))));
 
-$graph_type = "finishOptions";
+$graph_type = "finishoptions";
 if (isset($_POST['graph_type'])) {	
 	$graph_type = $_POST['graph_type'];
 }
 
-$graphImage = "<img class='mx-auto' src='graphs/graph_" . $graph_type . ".php?start_date=" . $start_date . "&end_date=" . $end_date . "'>";
+$graphImage = "<img class='mx-auto' src='graph.php?graph_type=" . $graph_type . "&start_date=" . $start_date . "&end_date=" . $end_date . "'>";
 
 $graphForm = "<form class='form' name='selectGraph' method='post' action='stats_monthly.php?start_date=" . $start_date . "&end_date=" . $end_date . "'>";
 $graphForm .= "<div class='col-md-2'><select class='custom-select' name='graph_type' onChange='document.selectGraph.submit();'>";
 
-if ($graph_type == "finishOptions") { 
+if ($graph_type == "finishoptions") { 
 	$graphForm .= "<option value='finishoptions' selected>Finish Options</option>"; 
 }
 else { 
-	$graphForm .= "<option value='finishOptions'>Finish Options</option>"; 
+	$graphForm .= "<option value='finishoptions'>Finish Options</option>"; 
 }
-if ($graph_type == "paperTypes") { 
+if ($graph_type == "papertypes") { 
 	$graphForm .= "<option value='papertypes' selected>Paper Types</option>"; 
 }
 else { 
-	$graphForm .= "<option value='paperTypes'>Paper Types</option>"; 
+	$graphForm .= "<option value='papertypes'>Paper Types</option>"; 
 }
-if ($graph_type == "inchesPerPaperType") { 
+if ($graph_type == "inches_per_papertype") { 
 	$graphForm .= "<option value='inches_per_papertype' selected>Inches Per Paper Type</option>"; 
 }
 else { 
-	$graphForm .= "<option value='inchesPerPaperType'>Inches Per Paper Type</option>"; 
+	$graphForm .= "<option value='inches_per_papertype'>Inches Per Paper Type</option>"; 
 }
 
 $graphForm .= "</select></div>";

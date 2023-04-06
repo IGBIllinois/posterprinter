@@ -83,7 +83,6 @@ class statistics {
                         ':start_date'=>$this->startDate,
                         ':end_date'=>$this->endDate
                 );
-
 		return $this->db->query($sql,$parameters);
 
 	}
@@ -146,7 +145,7 @@ class statistics {
 	}
 
 	public function ordersPerMonth($year) {
-		$sql = "SELECT orders_timeCreated,COUNT(1) AS count ";
+		$sql = "SELECT MONTH(orders_timeCreated) as month,COUNT(1) AS count ";
 		$sql .= "FROM orders ";
 		$sql .= "LEFT JOIN rushOrder ON orders.orders_rushOrderId=rushOrder.rushOrder_id ";
 		$sql .= "WHERE YEAR(orders_timeCreated)=:year ";
@@ -155,37 +154,8 @@ class statistics {
 		$parameters = array(
 			':year'=>$year
 		);
-		$ordersData = $this->db->query($sql,$parameters);
-		$newOrdersData;
-		for($i=1;$i<=12;$i++){
-			$exists = false;
-
-			if (count($ordersData) > 0) {
-				foreach($ordersData as $row) {
-					$timeCreated = strtotime($row['orders_timeCreated']);
-					$month = date('m',$timeCreated);
-
-					if ($month == $i) {
-						$monthName = date('F',$timeCreated);
-						$newOrdersData[$monthName] = $row['count'];
-
-						$exists = true;
-						break(1);
-					}
-
-
-				}
-			}
-			if ($exists == false) {
-
-				$monthName = date('F',strtotime('2008-' . $i . '-01'));
-				$newOrdersData[$monthName] = 0;
-
-			}
-			$exists = false;
-
-		}
-		return $newOrdersData;
+		$result = $this->db->query($sql,$parameters);
+		return $this->get_month_array($result,"month","count");
 	}
 	public function avgOrdersPerMonth() {
 		$sql = "SELECT MONTH(a.timeCreated) as month, MONTHNAME(a.timeCreated) as month_name, AVG(a.count) as avg FROM ( ";
@@ -284,6 +254,31 @@ class statistics {
 		return number_format($averageCost,2,'.','');
 	}
 
+	public static function get_month_array($data,$month_column,$data_column) {
+		$new_data = array();
+		for($i=1;$i<=12;$i++){
+			$exists = false;
+			if (count($data) > 0) {
+				foreach($data as $row) {
+					$month = $row[$month_column];
+					if ($month == $i) {
+						$month_name = date('F', mktime(0,0,0,$month,1));
+						array_push($new_data,array('month_name'=>$month_name,
+									$data_column=>$row[$data_column]));
+						$exists = true;
+						break(1);
+					}
+				}
+			}
+			if (!$exists) {
+				$month_name = date('F', mktime(0,0,0,$i,1));
+				array_push($new_data,array('month_name'=>$month_name,
+                                                                        $data_column=>0));
+			}
+			$exists = false;
+		}
+		return $new_data;
+	}
 }
 
 ?>

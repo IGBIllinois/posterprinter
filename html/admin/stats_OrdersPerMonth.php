@@ -13,7 +13,7 @@ $startDate = $year . "/01/01";
 $endDate = $year . "/12/31";
 
 $stats = new statistics($db,$startDate,$endDate);
-
+$graph_type = "orders_per_month";
 
 ?>
 <h3>Orders Per Month - <?php echo $year; ?></h3>
@@ -39,7 +39,7 @@ $stats = new statistics($db,$startDate,$endDate);
     <tr><td>Total Orders:</td><td><?php echo $stats->orders(); ?></td></tr>
 </table>
 <div class='row'>
-<img class='mx-auto' src='graphs/graph_ordersPerMonth.php?year=<?php echo $year; ?>' />
+<img class='mx-auto' src='graph.php?graph_type=<?php echo $graph_type; ?>&year=<?php echo $year; ?>' />
 </div>
 
 

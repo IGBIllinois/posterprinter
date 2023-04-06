@@ -46,7 +46,7 @@
 			<li class='nav-item'><a class='nav-link' href='stats_fiscal.php'>Fiscal Statistics</a></li>
 			<li class='nav-item'><a class='nav-link' href='stats_OrdersPerMonth.php'>Orders Per Month</a></li>
 			<li class='nav-item'><a class='nav-link' href='stats_avg.php'>Monthly Averages</a></li>
-			<li class='nav-item'><a class='nav-link' href='log.php'>Log</a></li>
+			<li class='nav-item'><a class='nav-link' href='log.php'>View Log</a></li>
 			<li class='nav-item'><a class='nav-link' href='logout.php'>Log Out</a></li>
 			
 		</ul>

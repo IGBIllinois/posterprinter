@@ -24,13 +24,13 @@ $next_year =$year +1;
 $start_date = $year -1 . "/07/01";
 $end_date = $year . "/06/30";
 
-$graph_type = "finishOptions";
+$graph_type = "finishoptions";
 if (isset($_POST['graph_type'])) {
 	
 	$graph_type = $_POST['graph_type'];
 
 }
-$graphImage = "<img class='mx-auto' src='graphs/graph_" . $graph_type . ".php?start_date=" . $start_date . "&end_date=" . $end_date . "'>";
+$graphImage = "<img class='mx-auto' src='graph.php?graph_type=" . $graph_type . "&start_date=" . $start_date . "&end_date=" . $end_date . "'>";
 
 $stats = new statistics($db,$start_date,$end_date);
 
@@ -38,12 +38,12 @@ $stats = new statistics($db,$start_date,$end_date);
 $graphForm = "<form class='form' name='selectGraph' id='selectGraph' method='post' action='stats_fiscal.php?year=" . $year . "'>";
 $graphForm .= "<div class='col-md-2'><select class='custom-select' name='graph_type' onChange='document.selectGraph.submit();'>";
 
-if ($graph_type == "finishOptions") { $graphForm .= "<option value='finishOptions' selected>Finish Options</option>"; }
-else { $graphForm .= "<option value='finishOptions'>Finish Options</option>"; }
-if ($graph_type == "paperTypes") { $graphForm .= "<option value='paperTypes' selected>Paper Types</option>"; }
-else { $graphForm .= "<option value='paperTypes'>Paper Types</option>"; }
-if ($graph_type == "inchesPerPaperType") { $graphForm .= "<option value='inchesPerPaperType' selected>Inches Per Paper Type</option>"; }
-else { $graphForm .= "<option value='inchesPerPaperType'>Inches Per Paper Type</option>"; }
+if ($graph_type == "finishoptions") { $graphForm .= "<option value='finishoptions' selected>Finish Options</option>"; }
+else { $graphForm .= "<option value='finishoptions'>Finish Options</option>"; }
+if ($graph_type == "papertypes") { $graphForm .= "<option value='papertypes' selected>Paper Types</option>"; }
+else { $graphForm .= "<option value='papertypes'>Paper Types</option>"; }
+if ($graph_type == "inches_per_papertype") { $graphForm .= "<option value='inches_per_papertype' selected>Inches Per Paper Type</option>"; }
+else { $graphForm .= "<option value='inches_per_papertype'>Inches Per Paper Type</option>"; }
 
 $graphForm .= "</select></div>";
 $graphForm .= "</form>";
@@ -69,12 +69,12 @@ $graphForm .= "</form>";
 <table class='table table-bordered table-sm table-striped'>
 
 	<tr><td>Fiscal Yearly Total:</td><td>$<?php echo $stats->pretty_cost(); ?></td></tr>
-    <tr><td>Total Orders:</td><td><?php echo $stats->orders(); ?></td></tr>
-    <tr><td>Rush Order Percentage:</td><td><?php echo $stats->percentRushOrder(); ?>%</td></tr>
-    <tr><td>Poster Tube Percentage:</td><td><?php echo $stats->percentPosterTube(); ?>%</td></tr>
-    <tr><td>Total Inches Printed:</td><td><?php echo $stats->pretty_totalInches(); ?>"</td></tr>
-    <tr><td>Average Poster Cost:</td><td>$<?php echo $stats->averagePosterCost(); ?></td></tr>
-    <tr><td colspan='2'><?php echo $graphForm; ?></td></tr>
+	<tr><td>Total Orders:</td><td><?php echo $stats->orders(); ?></td></tr>
+	<tr><td>Rush Order Percentage:</td><td><?php echo $stats->percentRushOrder(); ?>%</td></tr>
+	<tr><td>Poster Tube Percentage:</td><td><?php echo $stats->percentPosterTube(); ?>%</td></tr>
+	<tr><td>Total Inches Printed:</td><td><?php echo $stats->pretty_totalInches(); ?>"</td></tr>
+	<tr><td>Average Poster Cost:</td><td>$<?php echo $stats->averagePosterCost(); ?></td></tr>
+	<tr><td colspan='2'><?php echo $graphForm; ?></td></tr>
 </table>
 <div class='row'><?php echo $graphImage; ?></div>
 

@@ -50,7 +50,7 @@ if (isset($_POST['login'])) {
 		$success = $ldap->authenticate($username,$password,settings::get_ldap_group());
 	
 		if ($success) {
-		
+			$log->send_log("User " . $username . " logged in");
                         $session_vars = array('login'=>true,
 	                        'username'=>$username,
         	                'timeout'=>time(),
@@ -64,6 +64,7 @@ if (isset($_POST['login'])) {
 	
 		}
 		else {
+			$log->send_log("User " . $username . " failed logging in",\IGBIllinois\log::ERROR);
 			$message = functions::alert("Invalid Username or Password",false);
 	
 		}
