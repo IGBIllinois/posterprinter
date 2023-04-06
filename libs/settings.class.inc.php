@@ -173,6 +173,13 @@ class settings {
 		return false;
 
 	}
+	public static function get_admin_name() {
+		if (defined("ADMIN_NAME")) {
+			return ADMIN_NAME;
+		}
+		return "";
+
+	}
 	public static function get_smtp_host() {
 		if (defined("SMTP_HOST")) {
 				return SMTP_HOST;
@@ -260,7 +267,13 @@ class settings {
                 }
                 return LOG_FILE;
 
-        }
+	}
+	public static function get_timezone() {
+		if (defined("TIMEZONE") && (TIMEZONE != "")) {
+			return TIMEZONE;
+		}
+		return self::TIMEZONE;
+	}
 }
 
 ?>

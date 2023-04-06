@@ -29,7 +29,7 @@ class statistics {
 			':start_date'=>$this->startDate,
 			':end_date'=>$this->endDate
 		);
-		$result = $this->db->query($sql.$parameters);
+		$result = $this->db->query($sql,$parameters);
 		if (count($result) > 0) { return $result[0]['totalCost']; }
 		else { return 0; }
 	}

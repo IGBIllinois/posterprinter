@@ -17,8 +17,10 @@ define("SESSION_NAME","");
 define("SESSION_TIMEOUT",300);
 define("LOG_FILE","");
 define("ENABLE_LOG",false);
+define("TIMEZONE","UTC");
 
 define("ADMIN_EMAIL","");
+define("ADMIN_NAME","");
 
 //Database Settings
 define("MYSQL_HOST","");
