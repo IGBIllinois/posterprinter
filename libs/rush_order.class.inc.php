@@ -20,8 +20,11 @@ class rush_order {
 	}
 
 	public static function getRushOrder($db,$rushOrderId) {
-		$sql = "SELECT * FROM rushOrder WHERE rushOrder_id='" . $rushOrderId . "' LIMIT 1";
-		return $db->query($sql);
+		$sql = "SELECT * FROM rushOrder WHERE rushOrder_id=:rushorder_id LIMIT 1";
+		$parameters = array(
+			':rushorder_id'=>$rushOrderId
+		);
+		return $db->query($sql.$parameters);
 
 	}
 
@@ -40,8 +43,11 @@ class rush_order {
 	        }
 
 		$sql = "SELECT rushOrder_id as id, rushOrder_name as name, rushOrder_cost as cost ";
-		$sql .= "FROM rushOrder WHERE rushOrder_available='1' and rushOrder_name='" . $name . "' LIMIT 1";
-		$result = $db->query($sql);
+		$sql .= "FROM rushOrder WHERE rushOrder_available='1' and rushOrder_name=:name LIMIT 1";
+		$parameters = array(
+			':name'=>$name
+		);
+		$result = $db->query($sql,$parameters);
 		if (count($result)) {
 			return $result[0];
 		}
@@ -61,10 +67,16 @@ class rush_order {
 
 			$result = getRushOrderInfo($db);
 			$rushOrder_id = $result[0]['id'];
-			$update_sql = "UPDATE rushOrder SET rushOrder_available=0 WHERE rushOrder_id='" . $rushOrder_id . "'";
-			$db->non_select_query($update_sql);
-			$insert_sql = "INSERT INTO rushOrder(rushOrder_name,rushOrder_cost,rushOrder_available) VALUES('Yes','" . $cost . "',1)";
-			$insert_id = $db->insert_query($insert_sql);
+			$update_sql = "UPDATE rushOrder SET rushOrder_available=0 WHERE rushOrder_id=:rushorder_id";
+			$update_parameters = array(
+				':rushorder_id'=>$rushOrder_id
+			);
+			$db->non_select_query($update_sql,$update_parameters);
+			$insert_sql = "INSERT INTO rushOrder(rushOrder_name,rushOrder_cost,rushOrder_available) VALUES('Yes',:cost,1)";
+			$insert_parameters = array(
+				':cost'=>$cost
+			);
+			$insert_id = $db->insert_query($insert_sql,$insert_parameters);
 			$message = "Rush Order cost successfully updated.";
 			return array('RESULT'=>TRUE,
 				'ID'=>insert_id,

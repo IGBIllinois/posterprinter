@@ -22,10 +22,14 @@ class statistics {
 
 		$sql = "SELECT SUM(orders_totalCost) AS totalCost ";
 		$sql .= "FROM orders ";
-		$sql .= "WHERE DATE(orders_timeCreated) BETWEEN '" . $this->startDate . "' AND '" . $this->endDate . "' ";
+		$sql .= "WHERE DATE(orders_timeCreated) BETWEEN :start_date AND :end_date ";
 		$sql .= "AND orders.orders_status='Completed' ";
 		$sql .= "GROUP BY orders.orders_status";
-		$result = $this->db->query($sql);
+		$parameters = array(
+			':start_date'=>$this->startDate,
+			':end_date'=>$this->endDate
+		);
+		$result = $this->db->query($sql.$parameters);
 		if (count($result) > 0) { return $result[0]['totalCost']; }
 		else { return 0; }
 	}
@@ -39,10 +43,14 @@ class statistics {
 		$sql = "SELECT paperTypes_id,paperTypes_name,COUNT(*) AS count ";
 		$sql .= "FROM orders ";
 		$sql .= "LEFT JOIN paperTypes ON orders.orders_paperTypesId=paperTypes.paperTypes_id ";
-		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
+		$sql .= "WHERE (orders_timeCreated >= :start_date AND orders_timeCreated <= :end_date) ";
 		$sql .= "AND orders.orders_status='Completed' ";
 		$sql .= "GROUP BY paperTypes_name ORDER BY count DESC";
-		return $this->db->query($sql);
+		$parameters = array(
+                        ':start_date'=>$this->startDate,
+                        ':end_date'=>$this->endDate
+                );
+		return $this->db->query($sql,$parameters);
 
 	}
 
@@ -52,10 +60,14 @@ class statistics {
 		$sql = "SELECT paperTypes_name,SUM(orders.orders_length) AS totalLength ";
 		$sql .= "FROM orders ";
 		$sql .= "LEFT JOIN paperTypes ON orders.orders_paperTypesId=paperTypes.paperTypes_id ";
-		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
+		$sql .= "WHERE (orders_timeCreated >= :start_date AND orders_timeCreated <= :end_date) ";
 		$sql .= "AND orders.orders_status='Completed' ";
 		$sql .= "GROUP BY paperTypes_name ORDER BY totalLength DESC";
-		return $this->db->query($sql);
+		$parameters = array(
+                        ':start_date'=>$this->startDate,
+                        ':end_date'=>$this->endDate
+                );
+		return $this->db->query($sql,$parameters);
 
 	}
 
@@ -64,10 +76,15 @@ class statistics {
 		$sql = "SELECT finishOptions_id,finishOptions_name,COUNT(*) AS count ";
 		$sql .= "FROM orders ";
 		$sql .= "LEFT JOIN finishOptions ON orders.orders_finishOptionsId=finishOptions.finishOptions_id ";
-		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
+		$sql .= "WHERE (orders_timeCreated >=:start_date AND orders_timeCreated <=:end_date) ";
 		$sql .= "AND orders.orders_status='Completed' ";
 		$sql .= "GROUP BY finishOptions_name ORDER BY count DESC";
-		return $this->db->query($sql);
+		$parameters = array(
+                        ':start_date'=>$this->startDate,
+                        ':end_date'=>$this->endDate
+                );
+
+		return $this->db->query($sql,$parameters);
 
 	}
 
@@ -77,18 +94,28 @@ class statistics {
 		$sql = "SELECT finishOptions_name,SUM(orders.orders_length) AS totalLength ";
 		$sql .= "FROM orders ";
 		$sql .= "LEFT JOIN finishOptions ON orders.orders_finishOptionsId=finishOptions.finishOptions_id ";
-		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
+		$sql .= "WHERE (orders_timeCreated >=:start_date AND orders_timeCreated <=:end_date) ";
 		$sql .= "AND orders.orders_status='Completed'";
-		return $this->db->query($sql);
+		$parameters = array(
+                        ':start_date'=>$this->startDate,
+                        ':end_date'=>$this->endDate
+                );
+
+		return $this->db->query($sql,$parameters);
 
 	}
 
 	public function totalInches() {
 		$sql = "SELECT SUM(orders.orders_length) AS total ";
 		$sql .= "FROM orders ";
-		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
+		$sql .= "WHERE (orders_timeCreated >=:start_date AND orders_timeCreated <=:end_date) ";
 		$sql .= "AND orders.orders_status='Completed'";
-		$result = $this->db->query($sql);
+		$parameters = array(
+                        ':start_date'=>$this->startDate,
+                        ':end_date'=>$this->endDate
+                );
+
+		$result = $this->db->query($sql,$parameters);
 		$total = $result[0]['total'];
 		if ($total == "") {
 			$total = 0;
@@ -106,9 +133,14 @@ class statistics {
 
 		$sql = "SELECT COUNT(1) As count ";
 		$sql .= "FROM orders ";
-		$sql .= "WHERE DATE(orders_timeCreated) BETWEEN '" . $this->startDate . "' AND '" . $this->endDate . "' ";
+		$sql .= "WHERE DATE(orders_timeCreated) BETWEEN :start_date AND :end_date ";
 		$sql .= "AND orders.orders_status='Completed'";
-		$ordersData = $this->db->query($sql);
+		$parameters = array(
+                        ':start_date'=>$this->startDate,
+                        ':end_date'=>$this->endDate
+                );
+
+		$ordersData = $this->db->query($sql,$parameters);
 		$count = $ordersData[0]['count'];
 		return $count;
 	}
@@ -117,10 +149,13 @@ class statistics {
 		$sql = "SELECT orders_timeCreated,COUNT(1) AS count ";
 		$sql .= "FROM orders ";
 		$sql .= "LEFT JOIN rushOrder ON orders.orders_rushOrderId=rushOrder.rushOrder_id ";
-		$sql .= "WHERE YEAR(orders_timeCreated)='" . $year . "' ";
+		$sql .= "WHERE YEAR(orders_timeCreated)=:year ";
 		$sql .= "AND orders.orders_status='Completed' ";
 		$sql .= "GROUP BY MONTH(orders_timeCreated)";
-		$ordersData = $this->db->query($sql);
+		$parameters = array(
+			':year'=>$year
+		);
+		$ordersData = $this->db->query($sql,$parameters);
 		$newOrdersData;
 		for($i=1;$i<=12;$i++){
 			$exists = false;
@@ -168,10 +203,14 @@ class statistics {
 		$sql = "SELECT rushOrder.rushOrder_name,COUNT(1) AS count ";
 		$sql .= "FROM orders ";
 		$sql .= "LEFT JOIN rushOrder ON orders.orders_rushOrderId=rushOrder.rushOrder_id ";
-		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
+		$sql .= "WHERE (orders_timeCreated >=:start_date AND orders_timeCreated <=:end_date) ";
 		$sql .= "AND orders.orders_status='Completed' ";
 		$sql .= "GROUP BY rushOrder_name";
-		$result = $this->db->query($sql);
+		$parameters = array(
+			':start_date'=>$this->startDate,
+			':end_date'=>$this->endDate
+		);
+		$result = $this->db->query($sql,$parameters);
 		$rushOrderYes = 0;
 		$rushOrderNo = 0;
 		for ($i=0;$i<count($result);$i++) {
@@ -199,10 +238,14 @@ class statistics {
 		$sql = "SELECT posterTube.posterTube_name,COUNT(1) AS count ";
 		$sql .= "FROM orders ";
 		$sql .= "LEFT JOIN posterTube ON orders.orders_posterTubeId=posterTube.posterTube_id ";
-		$sql .= "WHERE (orders_timeCreated >= '" . $this->startDate . "' AND orders_timeCreated <= '" . $this->endDate . "') ";
+		$sql .= "WHERE (orders_timeCreated >=:start_date AND orders_timeCreated <=:end_date) ";
 		$sql .= "AND orders.orders_status='Completed' ";
 		$sql .= "GROUP BY posterTube_name";
-		$result = $this->db->query($sql);
+		$parameters = array(
+                        ':start_date'=>$this->startDate,
+                        ':end_date'=>$this->endDate
+                );
+		$result = $this->db->query($sql,$parameters);
 		$posterTubeYes = 0;
 		$posterTubeNo = 0;
 		for ($i=0;$i<count($result);$i++) {

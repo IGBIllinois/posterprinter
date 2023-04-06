@@ -89,8 +89,11 @@ class papertype {
         //delet()
         //deletes paper type
 	public function delete() {
-		$sql = "UPDATE paperTypes SET paperTypes_available=0 WHERE paperTypes_id='" . $this->get_id() . "' LIMIT 1";
-                return $this->db->non_select_query($sql);
+		$sql = "UPDATE paperTypes SET paperTypes_available=0 WHERE paperTypes_id=:papertype_id LIMIT 1";
+		$parameters = array(
+			':papertype_id'=>$this->get_id()
+		);
+                return $this->db->non_select_query($sql,$parameters);
 
 
 	}
@@ -128,8 +131,12 @@ class papertype {
 
 	public function set_default() {
 		$this->remove_default_papertype();
-                $sql = "UPDATE paperTypes SET paperTypes_default=1 WHERE paperTypes_id='" . $this->get_id() . "'";
-                return $this->db->non_select_query($sql);
+		$sql = "UPDATE paperTypes SET paperTypes_default=1 WHERE paperTypes_id=:papertype_id";
+		$parameters = array(
+                        ':papertype_id'=>$this->get_id()
+                );
+
+                return $this->db->non_select_query($sql,$parameters);
 
 
 
@@ -140,8 +147,11 @@ class papertype {
 
 	private function get_papertype($id) {
 
-		$sql = "SELECT * FROM paperTypes WHERE paperTypes_id='" . $id . "' LIMIT 1";
-		$result = $this->db->query($sql);
+		$sql = "SELECT * FROM paperTypes WHERE paperTypes_id=:papertype_id LIMIT 1";
+		$parameters = array(
+                        ':papertype_id'=>$id
+                );
+		$result = $this->db->query($sql,$parameters);
 		if (count($result)) {
 			$this->id = $result[0]['paperTypes_id'];
 			$this->name = $result[0]['paperTypes_name'];

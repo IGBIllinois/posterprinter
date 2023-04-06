@@ -19,8 +19,11 @@ class poster_tube {
 	}
 
 	public static function getPosterTube($db,$posterTubeId) {
-		$sql = "SELECT * FROM posterTube WHERE posterTube_id='" . $posterTubeId . "' LIMIT 1"; 
-		return $db->query($sql);
+		$sql = "SELECT * FROM posterTube WHERE posterTube_id=:postertube_id LIMIT 1";
+		$parameters = array(
+			':postertube_id'=>$posterTubeId
+		);	
+		return $db->query($sql,$parameters);
 
 
 	}
@@ -39,8 +42,11 @@ class poster_tube {
 		}
 		$sql = "SELECT posterTube_id as id, posterTube_name as name, posterTube_cost as cost, posterTube_maxWidth as max_width, ";
 		$sql .= "posterTube_maxLength as max_length ";
-		$sql .= " FROM posterTube WHERE posterTube_available=1 AND posterTube_name='" . $name . "' LIMIT 1";
-		$result = $db->query($sql);
+		$sql .= " FROM posterTube WHERE posterTube_available=1 AND posterTube_name=:name LIMIT 1";
+		$parameters = array(
+			':name'=>$name
+		);
+		$result = $db->query($sql,$parameters);
 		if (count($result)) {
 			return $result[0];
 		}
@@ -59,10 +65,16 @@ class poster_tube {
 		else {
 			$result = getPosterTubeInfo($db);
 			$posterTube_id = $result[0]['id'];
-			$update_sql = "UPDATE posterTube SET posterTube_available=0 WHERE posterTube_id='" . $posterTube_id . "' LIMIT 1";
-			$db->non_select_query($update_sql);
-			$insert_sql = "INSERT INTO posterTube(posterTube_name,posterTube_cost,posterTube_available) VALUES('Yes','" . $cost . "',1)";
-			$insert_id = $db->insert_query($insert_sql);
+			$update_sql = "UPDATE posterTube SET posterTube_available=0 WHERE posterTube_id=:postertube_id LIMIT 1";
+			$update_parameters = array(
+				':postertube_id'=>$posterTube_id
+			);
+			$db->non_select_query($update_sql,$update_parameters);
+			$insert_sql = "INSERT INTO posterTube(posterTube_name,posterTube_cost,posterTube_available) VALUES('Yes',:cost,1)";
+			$insert_parameters = array(
+				':cost'=>$cost
+			);
+			$insert_id = $db->insert_query($insert_sql,$insert_parameters);
 			$message = "Poster Tube cost successfully updated.";
 			return array('RESULT'=>TRUE,
 					'ID'=>$insert_id,

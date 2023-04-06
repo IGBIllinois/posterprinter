@@ -72,10 +72,14 @@ class functions {
 	        $sql .= "FROM orders ";
         	$sql .= "LEFT JOIN paperTypes ON orders.orders_paperTypesId=paperTypes.paperTypes_id ";
 	        $sql .= "LEFT JOIN finishOptions ON orders.orders_finishOptionsId=finishOptions.finishOptions_id ";
-        	$sql .= "WHERE (YEAR(orders_timeCreated)='" . $year ."' AND month(orders_timeCreated)='" . $month ."') ";
+        	$sql .= "WHERE (YEAR(orders_timeCreated)=:year AND month(orders_timeCreated)=:month) ";
 	        $sql .= "AND (orders.orders_status='Completed' OR orders.orders_status='Cancel') ";
-        	$sql .= "ORDER BY orders_id ASC";
-	        return $db->query($sql);
+		$sql .= "ORDER BY orders_id ASC";
+		$parameters = array(
+			':month'=>$month,
+			':year'=>$year
+		);
+	        return $db->query($sql,$parameters);
 	}
 
 	//getCurrentOrders()
@@ -114,10 +118,14 @@ class functions {
         	$sql .= "LEFT JOIN finishOptions ON orders.orders_finishOptionsId=finishOptions.finishOptions_id ";
 	        $sql .= "LEFT JOIN posterTube ON orders.orders_posterTubeId=posterTube.posterTube_id ";
         	$sql .= "LEFT JOIN rushOrder ON orders.orders_rushOrderId=rushOrder.rushOrder_id ";
-	        $sql .= "WHERE (YEAR(orders_timeCreated)='" . $year . "' AND month(orders_timeCreated)='" . $month . "') ";
+	        $sql .= "WHERE (YEAR(orders_timeCreated)=:year AND month(orders_timeCreated)=:month) ";
         	$sql .= "AND orders.orders_status='Completed' ";
-	        $sql .= "ORDER BY orders_id ASC";
-        	return $db->query($sql);
+		$sql .= "ORDER BY orders_id ASC";
+		$parameters = array(
+			':month'=>$month,
+			':year'=>$year
+		);
+        	return $db->query($sql,$parameters);
 	}
 
         public static function get_boa_report($db,$month,$year) {
@@ -128,10 +136,15 @@ class functions {
 		$sql .= "orders.orders_activityCode as 'ACTIVITY CODE', ";
                 $sql .= "orders.orders_totalCost as 'COST' ";
                 $sql .= "FROM orders ";
-                $sql .= "WHERE (YEAR(orders_timeCreated)='" . $year . "' AND month(orders_timeCreated)='" . $month . "') ";
+                $sql .= "WHERE (YEAR(orders_timeCreated)=:year AND month(orders_timeCreated)=:month) ";
                 $sql .= "AND orders.orders_status='Completed' ";
-                $sql .= "ORDER BY `CFOP` ASC, `ACTIVITY CODE` ASC";
-		$result = $db->query($sql);
+		$sql .= "ORDER BY `CFOP` ASC, `ACTIVITY CODE` ASC";
+		$parameters = array(
+                        ':month'=>$month,
+                        ':year'=>$year
+                );
+
+		$result = $db->query($sql,$parameters);
 
 		$total_bill = 0;
 		foreach ($result as $num => $values) {
@@ -172,9 +185,13 @@ class functions {
                 $sql .= "paperTypes_default ";
                 $sql .= "FROM paperTypes ";
                 $sql .= "WHERE paperTypes_available='1' ";
-                $sql .= "AND (paperTypes_width>='" . $width  . "' OR paperTypes_width>='" . $length . "') ";
-                $sql .= "ORDER BY paperTypes_cost ASC";;
-                return $db->query($sql);
+		$sql .= "AND (paperTypes_width>=:width OR paperTypes_width>=:length) ";
+		$sql .= "ORDER BY paperTypes_cost ASC";
+		$parameters = array(
+			':width'=>$width,
+			':length'=>$length
+		);
+                return $db->query($sql,$parameters);
 
         }
 
@@ -204,10 +221,14 @@ class functions {
                 $sql .= "finishOptions_maxLength as maxLength, finishOptions_default ";
                 $sql .= "FROM finishOptions ";
                 $sql .= "WHERE finishOptions_available='1' ";
-                $sql .= "AND finishOptions_maxLength>='" . $length . "' ";
-                $sql .= "AND (finishOptions_maxWidth>='" . $width . "' OR finishOptions_maxWidth>='" . $length . "') ";
-                $sql .= "ORDER BY finishOptions_name ASC";
-                return $db->query($sql);
+                $sql .= "AND finishOptions_maxLength>=:length ";
+                $sql .= "AND (finishOptions_maxWidth>=:width OR finishOptions_maxWidth>=:length) ";
+		$sql .= "ORDER BY finishOptions_name ASC";
+		$parameters = array(
+                        ':width'=>$width,
+                        ':length'=>$length
+                );
+                return $db->query($sql,$parameters);
 
         }
 

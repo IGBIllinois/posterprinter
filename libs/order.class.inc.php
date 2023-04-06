@@ -115,13 +115,17 @@ class order {
 	public function set_status($status) {
 	
 		$time_finished = date( 'Y-m-d H:i:s');
+		$parameters = array(
+			':status'=>$status
+		);
 		$sql = "UPDATE orders ";
-		$sql .= "SET orders_status='" . $status . "' ";
+		$sql .= "SET orders_status=:status ";
 		if ($status == 'Completed') {
-			$sql .= ",orders_timeFinished='" . $time_finished . "' ";
+			$sql .= ",orders_timeFinished=:time_finished ";
+			$paramters[':time_finished'] = $time_finished;
 		}
 		$sql .= "WHERE orders_id='" . $this->get_order_id() . "' LIMIT 1";
-		$result = $this->db->non_select_query($sql);
+		$result = $this->db->non_select_query($sql,$parameters);
 		if ($result) {
 			if ($status == 'Completed') {
 				$this->time_finished = $time_finished;
@@ -135,16 +139,27 @@ class order {
 	
 	public function edit($cfop, $activityCode, $finishOptionId, $paperTypeId, $posterTubeId, $rushOrderId, $totalCost) {
 		
-		$sql = "UPDATE orders SET orders_cfop='" . $cfop . "', ";
-		$sql .= "orders_activityCode='" . $activityCode . "', ";
-		$sql .= "orders_finishOptionsId='" . $finishOptionId . "', ";
-		$sql .= "orders_paperTypesId='" . $paperTypeId . "', ";
-		$sql .= "orders_posterTubeId='" . $posterTubeId . "', ";
-		$sql .= "orders_rushOrderId='" . $rushOrderId . "', ";
-		$sql .= "orders_widthSwitched='" . $widthSwitched . "', ";
-		$sql .= "orders_totalCost='" . $totalCost . "' ";
-		$sql .= "WHERE orders_id='" . $this->get_order_id() . "' LIMIT 1 ";
-		$this->db->non_select_query($sql);
+		$sql = "UPDATE orders SET orders_cfop=:cfop, ";
+		$sql .= "orders_activityCode=:activity_code, ";
+		$sql .= "orders_finishOptionsId=:finishoption_id, ";
+		$sql .= "orders_paperTypesId=:papertype_id, ";
+		$sql .= "orders_posterTubeId=:postertube_id, ";
+		$sql .= "orders_rushOrderId=:rushorder_id, ";
+		$sql .= "orders_widthSwitched=:widthswitched, ";
+		$sql .= "orders_totalCost=:totalcost ";
+		$sql .= "WHERE orders_id=:order_id LIMIT 1 ";
+		$parameters = array(
+			':cfop'=>$cfop,
+			':activity_code'=>$activity_code,
+			':finishoption_id'=>$finishOptionId,
+			':papertype_id'=>$paperTypeId,
+			':postertube_id'=>$posterTubeId,
+			':rushorder_id'=>$rushOrderId,
+			':widthswitched'=>$widthSwitched,
+			':totalcost'=>$totalCost,
+			':order_id'=>$this->get_order_id()
+		);
+		$this->db->non_select_query($sql,$parameters);
 		$this->get_order();
 		return true;
 	}
@@ -284,8 +299,11 @@ class order {
 		$sql .= "LEFT JOIN finishOptions ON orders.orders_finishOptionsId=finishOptions.finishOptions_id ";
 		$sql .= "LEFT JOIN posterTube ON orders.orders_posterTubeId=posterTube.posterTube_id ";
 		$sql .= "LEFT JOIN rushOrder ON orders.orders_rushOrderId=rushOrder.rushOrder_id ";
-		$sql .= "WHERE orders_id='" . $this->get_order_id() . "'";
-		$result = $this->db->query($sql);
+		$sql .= "WHERE orders_id=:order_id";
+		$parameters = array(
+			':order_id'=>$this->get_order_id()
+		);
+		$result = $this->db->query($sql,$parameters);
 		if (count($result)) {
 			$this->email = $result[0]["orders_email"];
 			$this->cc_emails = $result[0]['orders_cc_emails'];
