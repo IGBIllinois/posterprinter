@@ -100,8 +100,11 @@ class finishoption {
 	//delete()
         //returns true on success of deletion of finish option
 	public function delete() {
-		$sql = "UPDATE finishOptions SET finishOptions_available=0 WHERE finishOptions_id='" . $this->get_id() . "' LIMIT 1";
-                return $this->db->non_select_query($sql);
+		$sql = "UPDATE finishOptions SET finishOptions_available=0 WHERE finishOptions_id=:finishoption_id LIMIT 1";
+		$parameters = array(
+			':finishoption_id'=>$this->get_id()
+		);
+                return $this->db->non_select_query($sql,$parameters);
 
 	}
 
@@ -143,8 +146,11 @@ class finishoption {
         public function set_default() {
 
                 $this->remove_default_finishoption();
-                $sql =  "UPDATE finishOptions SET finishOptions_default=1 WHERE finishOptions_id='" . $this->get_id() . "' LIMIT 1";
-                return $this->db->non_select_query($sql);
+		$sql =  "UPDATE finishOptions SET finishOptions_default=1 WHERE finishOptions_id=:finishoptions_id LIMIT 1";
+		$parameters = array(
+                        ':finishoption_id'=>$this->get_id()
+                );
+                return $this->db->non_select_query($sql,$parameters);
 
         }
 
@@ -153,8 +159,11 @@ class finishoption {
 
 
 	private function get_finishoption($id) {
-		$sql = "SELECT * FROM finishOptions WHERE finishOptions_id='" . $id . "' LIMIT 1";
-		$result = $this->db->query($sql);
+		$sql = "SELECT * FROM finishOptions WHERE finishOptions_id=:finishoptions_id LIMIT 1";
+		$parameters = array(	
+			':finishoptions_id'=>$id
+		);
+		$result = $this->db->query($sql,$parameters);
 		if (count($result)) {
 			$this->id = $result[0]['finishOptions_id'];
 			$this->name = $result[0]['finishOptions_name'];
@@ -173,7 +182,7 @@ class finishoption {
 	//remove_default_finishoption()
         //removes the default finish option.  This is a helper function.
         private function remove_default_finishoption() {
-                $sql = "UPDATE finishOptions SET finishOptions_default=0";
+		$sql = "UPDATE finishOptions SET finishOptions_default=0";
                 return $this->db->non_select_query($sql);
         }
 
