@@ -63,16 +63,11 @@ elseif (isset($_POST['step2'])) {
 		$errors = true;
 		array_push($message,functions::alert("Please eneter valid email addresses",0));
 	}
-	if (!verify::verify_cfop($cfop)) {
+	if (!\IGBIllinois\cfop::verify_format($cfop,$_POST['activityCode'])) {
 		$errors = true;
 		array_push($message,functions::alert("Please enter a valid CFOP",0));
 	}
 
-	if (!verify::verify_activity_code($_POST['activityCode'])) {
-		$errors = true;
-		array_push($message,functions::alert("Please enter a valid activity code",0));
-
-	}
 	if ($_FILES['posterFile']['name'] == "") {
 		$errors = true;
 		array_push($message,functions::alert("Please select a poster file to upload",0));

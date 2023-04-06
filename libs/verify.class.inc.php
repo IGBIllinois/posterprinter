@@ -4,22 +4,6 @@
 class verify {
 
 
-	public static function verify_cfop($cfop) {
-                if (preg_match('^[1-9]{1}-[0-9]{6}-[0-9]{6}-[0-9]{6}$^',$cfop)) {
-                        return true;
-                }
-                return false;
-        }
-
-        public static function verify_activity_code($activity) {
-                if ((strlen($activity) == 0) || (preg_match('^[a-zA-Z0-9]^',$activity)
-                                && (strlen($activity) <= 6))) {
-                        return true;
-                }
-                return false;
-        }
-
-
         public static function verify_email($email) {
                 $email = strtolower($email);
                 $hostname = "";
