@@ -5,6 +5,7 @@ class settings {
 	private const TITLE = "Poster Printer";
 	private const DEBUG = false;
 	private const ENABLED = true;
+	private const ENABLE_LOG = false;
 	private const SMTP_PORT = 25;
 	private const SMTP_HOST = "localhost";
 	private const SMTP_USERNAME = "";
@@ -17,6 +18,10 @@ class settings {
 	private const LDAP_TLS = false;
 	private const LDAP_BIND_USER = "";
 	private const LDAP_BIND_PASS = "";
+	private const MYSQL_HOST = "localhost";
+	private const MYSQL_PORT = 3306;
+	private const MYSQL_SSL = false;
+	private const TIMEZONE = "UTC";
 
 	public static function get_title() {
 		if (defined("TITLE") && (TITLE != "")) {
@@ -197,6 +202,65 @@ class settings {
 		return false;
 
 	}
+
+	public static function get_mysql_host() {
+		if (defined("MYSQL_HOST")) {
+			return MYSQL_HOST;
+		}
+		return self::MYSQL_HOST;
+
+	}
+
+	public static function get_mysql_user() {
+		if (defined("MYSQL_USER")) {
+			return MYSQL_USER;
+		}
+		return false;
+	}
+
+	public static function get_mysql_password() {
+		if (defined("MYSQL_PASSWORD")) {
+			return MYSQL_PASSWORD;
+		}
+		return false;
+	}
+	public static function get_mysql_port() {
+		if (defined("MYSQL_PORT")) {
+			return MYSQL_PORT;
+		}
+		return self::MYSQL_PORT;
+
+	}
+
+	public static function get_mysql_database() {
+		if (defined("MYSQL_DATABASE")) {
+			return MYSQL_DATABASE;
+		}
+		return false;
+	}
+
+	public static function get_mysql_ssl() {
+		if (defined("MYSQL_SSL")) {
+			return MYSQL_SSL;
+		}
+		return self::MYSQL_SSL;
+
+	}
+
+	public static function get_log_enabled() {
+		if (defined("ENABLE_LOG") && (is_bool(ENABLE_LOG))) {
+			return ENABLE_LOG;
+		}
+		return self::ENABLE_LOG;
+	}
+
+	public static function get_logfile() {
+                if (self::get_log_enabled() && !file_exists(LOG_FILE)) {
+                        touch(LOG_FILE);
+                }
+                return LOG_FILE;
+
+        }
 }
 
 ?>

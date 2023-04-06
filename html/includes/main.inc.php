@@ -32,8 +32,17 @@ if (settings::debug()) {
 
 }
 
-//connects to database
-$db = new \IGBIllinois\db(MYSQL_HOST,MYSQL_DATABASE,MYSQL_USER,MYSQL_PASSWORD);
+date_default_timezone_set(settings::get_timezone());
+
+$db = new \IGBIllinois\db(settings::get_mysql_host(),
+			settings::get_mysql_database(),
+			settings::get_mysql_user(),
+			settings::get_mysql_password(),
+			settings::get_mysql_ssl(),
+			settings::get_mysql_port()
+		);
+
+$log = new \IGBIllinois\log(settings::get_log_enabled(),settings::get_logfile());
 
 
 ?>

@@ -15,6 +15,8 @@ define("ENABLE",TRUE);
 define("TITLE","");
 define("SESSION_NAME","");
 define("SESSION_TIMEOUT",300);
+define("LOG_FILE","");
+define("ENABLE_LOG",false);
 
 define("ADMIN_EMAIL","");
 

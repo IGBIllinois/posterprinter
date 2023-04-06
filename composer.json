@@ -10,10 +10,13 @@
         ],
 	"require": {
 		"php": ">=7.2",
-		"components/jquery": "3.5.1",
+		"ext-pdo": "*",
+		"ext-mysqlnd": "*",
+		"ext-ldap": "*",
+		"components/jquery": "3.6.0",
 		"components/jqueryui": "1.12.1",
-		"twbs/bootstrap": "v4.6.0",
-		"fortawesome/font-awesome": "5.15.3",
+		"twbs/bootstrap": "v4.6.2",
+		"fortawesome/font-awesome": "5.15.4",
 		"twig/twig":"3.4.3",
 		"igbillinois/igbillinois-php": "dev-main"
 		

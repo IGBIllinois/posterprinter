@@ -1,0 +1,8 @@
+/var/www/posterprinter/log/*.log {
+    monthly
+    rotate 10
+    notifempty
+    missingok
+    create 0660 apache apache
+}
+
