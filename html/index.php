@@ -54,6 +54,7 @@ foreach ($finishOptions as $finishOption) {
 
 <link rel='stylesheet' type='text/css' href='vendor/components/jqueryui/themes/base/jquery-ui.css'>
 <link rel="stylesheet" type="text/css" href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="vendor/fortawesome/font-awesome/css/all.min.css">
 
 <title><?php echo settings::get_title(); ?></title>
 
@@ -62,7 +63,7 @@ foreach ($finishOptions as $finishOption) {
 <nav class="navbar fixed-top navbar-dark bg-dark">
         <a class='navbar-brand py-0' href='#'><?php echo settings::get_title(); ?></a>
                 <span class='navbar-text py-0'>Version <?php echo settings::get_version(); ?>&nbsp;
-                <a class='btn btn-danger btn-sm' role='button' href='admin/'>Admin</a></span>
+                <a class='btn btn-danger btn-sm' role='button' href='admin/'><i class='fas fa-lock'></i> Admin</a></span>
 </nav>
 
 <div class='container'>

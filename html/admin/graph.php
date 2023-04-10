@@ -56,7 +56,9 @@ switch ($graph_type) {
 		$stats = new statistics($db,'','');
 		$data = $stats->avgOrdersPerMonth();
 		$title = "Average Number of Orders";
-		\IGBIllinois\graphs::line_graph($data,$title);
+		$xaxis = "month_name";
+		$yaxis = "avg";
+		\IGBIllinois\graphs::bar_graph($data,$xaxis,$yaxis,$title);
 		break;
 	case 'orders_per_month':
 	        $stats = new statistics($db,'','');

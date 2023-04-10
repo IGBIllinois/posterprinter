@@ -14,7 +14,7 @@
 define("ENABLE",TRUE);
 define("TITLE","");
 define("SESSION_NAME","");
-define("SESSION_TIMEOUT",300);
+define("SESSION_TIMEOUT",3600);
 define("LOG_FILE","");
 define("ENABLE_LOG",false);
 define("TIMEZONE","UTC");

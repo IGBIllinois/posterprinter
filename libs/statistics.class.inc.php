@@ -166,7 +166,8 @@ class statistics {
 		$sql .= "orders.orders_status='Completed' ";
 		$sql .= "GROUP BY MONTH(orders_timeCreated),YEAR(orders_timeCreated)) a ";
 		$sql .= "GROUP BY month ORDER BY month ASC";
-		return $this->db->query($sql);
+		$result = $this->db->query($sql);
+		return $this->get_month_array($result,"month","avg");
 	}
 	
 	public function percentRushOrder() {

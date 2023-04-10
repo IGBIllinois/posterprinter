@@ -10,7 +10,7 @@ class settings {
 	private const SMTP_HOST = "localhost";
 	private const SMTP_USERNAME = "";
 	private const SMTP_PASSWORD = "";
-	private const SESSION_TIMEOUT = 300;
+	private const SESSION_TIMEOUT = 3600;
 	private const LDAP_HOST = "localhost";
 	private const LDAP_PORT = 389;
 	private const LDAP_BASE_DN = "";
