@@ -4,11 +4,11 @@
 class poster {
 
 
-	const thumb_width = '600';
-	const thumb_height = '600';
-	const fullsize_width = '1000';
-	const fullsize_height = '1000';
-	const temp_dir = "tmp";
+	const THUMB_WIDTH = '600';
+	const THUMB_HEIGHT = '600';
+	const FULLSIZE_WIDTH = '1000';
+	const FULLSIZE_HEIGHT = '1000';
+	const TEMP_DIR = "tmp";
 
 	public static function move_tmp_file($filename,$tmp_name) {
 		functions::debug('move_tmp_file');
@@ -131,8 +131,8 @@ class poster {
 	public static function create_image_imagemagick($filename) {
 		$thumb_path = self::get_thumb_path($filename);
 		$fullsize_path = self::get_fullsize_path($filename);
-		if (self::create_imagemagick($filename,$thumb_path,self::thumb_width,self::thumb_height) &&
-			self::create_imagemagick($filename,$fullsize_path,self::fullsize_width,self::fullsize_height)) {
+		if (self::create_imagemagick($filename,$thumb_path,self::THUMB_WIDTH,self::THUMB_HEIGHT) &&
+			self::create_imagemagick($filename,$fullsize_path,self::FULLSIZE_WIDTH,self::FULLSIZE_HEIGHT)) {
 
 			if (!file_exists($thumb_path)) {
 				$thumb_path = "";
@@ -182,8 +182,8 @@ class poster {
 				$output_array = array();
 				$output = exec($exec,$output_array,$exit_status);
 				if (($exit_status == 0) && file_exists($tmp_path)) {
-					self::create_imagemagick($tmp_path,$thumb_path,self::thumb_width,self::thumb_height);
-					self::create_imagemagick($tmp_path,$fullsize_path,self::fullsize_width,self::fullsize_height);
+					self::create_imagemagick($tmp_path,$thumb_path,self::THUMB_WIDTH,self::THUMB_HEIGHT);
+					self::create_imagemagick($tmp_path,$fullsize_path,self::FULLSIZE_WIDTH,self::FULLSIZE_HEIGHT);
 					unlink($tmp_path);
 					if (!file_exists($thumb_path)) {
 						$thumb_path = "";
@@ -303,14 +303,14 @@ class poster {
 	}
 
 	public static function get_tmp_path() {
-		$tmp_path = self::get_root_path() . "/" . settings::get_poster_dir() . "/" . self::temp_dir;
+		$tmp_path = self::get_root_path() . "/" . settings::get_poster_dir() . "/" . self::TEMP_DIR;
 		return $tmp_path;
 	}
 
 	public static function move_poster($order_id,$posterFileName,$posterFileTmpName,$thumb_posterFileTmpName,$fullsize_posterFileTmpName) {
 		$tmp_path = self::get_tmp_path();
 		$final_poster_path = self::get_root_path() . "/" . settings::get_poster_dir() . "/" . $order_id;
-	        $fileType = poster::get_filetype($posterFileName);
+	        $fileType = self::get_filetype($posterFileName);
 		$filename = $order_id . "." . $fileType;
 		$thumb_filename = "thumb_" . $order_id . ".jpg";
 		$fullsize_filename = "fullsize_" . $order_id . ".jpg";

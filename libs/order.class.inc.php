@@ -31,11 +31,11 @@ class order {
 	private $rotated;
 	private $key = false;
 
-	const order_page = "order.php";
-	const status_page = "status.php";
-	const wordwrap = 80;
-	const thumb_prefix = "thumb_";
-	const fullsize_prefix = "fullsize_";
+	const ORDER_PAGE = "order.php";
+	const STATUS_PAGE = "status.php";
+	const LINE_WIDTH = 80;
+	const THUMB_PREFIX = "thumb_";
+	const FULLSIZE_PREFIX = "fullsize_";
 ////////////////Public Functions///////////
 
 	public function __construct($db,$order_id) {
@@ -70,14 +70,14 @@ class order {
 		return false;
 	}
 	public function get_thumbnail() {
-		$path = $this->get_poster_path() . "/" . self::thumb_prefix . $this->get_order_id() . ".jpg";
+		$path = $this->get_poster_path() . "/" . self::THUMB_PREFIX . $this->get_order_id() . ".jpg";
 		if (file_exists($path)) {
 			return $path;
 		}
 		return false;
 	}
 	public function get_fullsize() {
-                $path = $this->get_poster_path() . "/" . self::fullsize_prefix . $this->get_order_id() . ".jpg";
+                $path = $this->get_poster_path() . "/" . self::FULLSIZE_PREFIX . $this->get_order_id() . ".jpg";
                 if (file_exists($path)) {
                         return $path;
                 }
@@ -107,7 +107,7 @@ class order {
 	public function get_rotated() { return $this->rotated; }
 	public function get_key() { return $this->key; }
 	public function get_wordwrap_comments() { 
-		return wordwrap($this->comments,self::wordwrap,"<br>");
+		return wordwrap($this->comments,self::LINE_LENGTH,"<br>");
 
 	}
 	public function get_status() { return $this->status; }
@@ -198,7 +198,7 @@ class order {
 	public function mailAdminsNewOrder() {
 	        
 		$requestUri = substr($_SERVER["REQUEST_URI"],0,strrpos($_SERVER["REQUEST_URI"], "/")+1);
-        	$urlAddress = "http://" . $_SERVER["SERVER_NAME"] . $requestUri . "admin/" . self::order_page . "?order_id=" . $this->get_order_id();
+        	$urlAddress = "http://" . $_SERVER["SERVER_NAME"] . $requestUri . "admin/" . self::ORDER_PAGE . "?order_id=" . $this->get_order_id();
 	        $subject = "New Poster To Print - Order #" . $this->get_order_id();
         	$to = settings::get_admin_email();
 		$loader = new Twig_Loader_Filesystem(settings::get_twig_dir());
@@ -343,8 +343,8 @@ class order {
 
 	private function get_twig_variables() {
 		$requestUri = substr($_SERVER["REQUEST_URI"],0,strrpos($_SERVER["REQUEST_URI"], "/")+1);
-                $order_url = "http://" . $_SERVER["SERVER_NAME"] . $requestUri . "admin/" . self::order_page . "?order_id=" . $this->get_order_id();
-		$status_url = "http://" . $_SERVER["SERVER_NAME"] . $requestUri . self::status_page . "?order_id=" . $this->get_order_id() . "&key=" . $this->get_key();
+                $order_url = "http://" . $_SERVER["SERVER_NAME"] . $requestUri . "admin/" . self::ORDER_PAGE . "?order_id=" . $this->get_order_id();
+		$status_url = "http://" . $_SERVER["SERVER_NAME"] . $requestUri . self::STATUS_PAGE . "?order_id=" . $this->get_order_id() . "&key=" . $this->get_key();
                 $twig_variables = array(
 			'css' => file_get_contents(dirname(__DIR__) . "/vendor/twbs/bootstrap/dist/css/bootstrap.min.css"), 
 			'order_id' => $this->get_order_id(),
