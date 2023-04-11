@@ -22,7 +22,7 @@ if (isset($_POST['editOrder'])) {
 	$activityCode = strtoupper(trim(rtrim($activityCode)));
 	
 	$error = false;
-	if (!\IGBIllinois\cfop::verify_format($cfop,$activityCode) {
+	if (!\IGBIllinois\cfop::verify_format($cfop,$activityCode)) {
                 $errors = true;
                 $message = functions::alert("Please enter a valid CFOP",0);
         }

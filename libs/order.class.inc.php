@@ -128,7 +128,7 @@ class order {
 		$sql .= "SET orders_status=:status ";
 		if ($status == self::STATUS['COMPLETED']) {
 			$sql .= ",orders_timeFinished=:time_finished ";
-			$paramters[':time_finished'] = $time_finished;
+			$parameters[':time_finished'] = $time_finished;
 		}
 		$sql .= "WHERE orders_id='" . $this->get_order_id() . "' LIMIT 1";
 		$result = $this->db->non_select_query($sql,$parameters);
@@ -143,7 +143,7 @@ class order {
 			
 	}
 	
-	public function edit($cfop, $activityCode, $finishOptionId, $paperTypeId, $posterTubeId, $rushOrderId, $totalCost) {
+	public function edit($cfop, $activity_code, $finishOptionId, $paperTypeId, $posterTubeId, $rushOrderId, $totalCost) {
 		
 		$sql = "UPDATE orders SET orders_cfop=:cfop, ";
 		$sql .= "orders_activityCode=:activity_code, ";
@@ -151,7 +151,6 @@ class order {
 		$sql .= "orders_paperTypesId=:papertype_id, ";
 		$sql .= "orders_posterTubeId=:postertube_id, ";
 		$sql .= "orders_rushOrderId=:rushorder_id, ";
-		$sql .= "orders_widthSwitched=:widthswitched, ";
 		$sql .= "orders_totalCost=:totalcost ";
 		$sql .= "WHERE orders_id=:order_id LIMIT 1 ";
 		$parameters = array(
@@ -161,7 +160,6 @@ class order {
 			':papertype_id'=>$paperTypeId,
 			':postertube_id'=>$posterTubeId,
 			':rushorder_id'=>$rushOrderId,
-			':widthswitched'=>$widthSwitched,
 			':totalcost'=>$totalCost,
 			':order_id'=>$this->get_order_id()
 		);
@@ -203,8 +201,6 @@ class order {
 	//emails admin of the new order
 	public function mailAdminsNewOrder() {
 	        
-		$requestUri = substr($_SERVER["REQUEST_URI"],0,strrpos($_SERVER["REQUEST_URI"], "/")+1);
-        	$urlAddress = "http://" . $_SERVER["SERVER_NAME"] . $requestUri . "admin/" . self::ORDER_PAGE . "?order_id=" . $this->get_order_id();
 	        $subject = "New Poster To Print - Order #" . $this->get_order_id();
         	$to = settings::get_admin_email();
 		$loader = new Twig_Loader_Filesystem(settings::get_twig_dir());
@@ -245,7 +241,7 @@ class order {
                                         "Subject"=>$subject
                 );
                 if ($this->get_cc_emails() != "") {
-                        $extraheadeders['Cc'] = $this->get_cc_emails();
+                        $extraheaders['Cc'] = $this->get_cc_emails();
                 }
 
 
@@ -280,7 +276,7 @@ class order {
                                         "Subject"=>$subject
                 );
                 if ($this->get_cc_emails() != "") {
-                        $extraheadeders['Cc'] = $this->get_cc_emails();
+                        $extraheaders['Cc'] = $this->get_cc_emails();
                 }
 
                 $message = new Mail_mime();
@@ -343,14 +339,6 @@ class order {
 		}
 	}
 	
-
-	private function generate_key() {
-	        $key = uniqid (rand (),true);
-        	$hash = sha1($key);
-	        return $hash;
-
-	}
-
 	private function get_twig_variables() {
 		$requestUri = substr($_SERVER["REQUEST_URI"],0,strrpos($_SERVER["REQUEST_URI"], "/")+1);
                 $order_url = "http://" . $_SERVER["SERVER_NAME"] . $requestUri . "admin/" . self::ORDER_PAGE . "?order_id=" . $this->get_order_id();

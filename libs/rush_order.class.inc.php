@@ -79,7 +79,7 @@ class rush_order {
 			$insert_id = $db->insert_query($insert_sql,$insert_parameters);
 			$message = "Rush Order cost successfully updated.";
 			return array('RESULT'=>TRUE,
-				'ID'=>insert_id,
+				'ID'=>$insert_id,
 				'MESSAGE'=>$message);
 
 		}

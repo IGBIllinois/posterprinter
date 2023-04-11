@@ -26,6 +26,7 @@ function update_posterfile_name() {
 }
 
 function first_step() {
+	alert("First Step");
         var fd = new FormData();
         fd.append('width',document.getElementById('width').value);
         fd.append('length',document.getElementById('length').value);

@@ -8,7 +8,7 @@ class verify {
                 $email = strtolower($email);
                 $hostname = "";
                 if (strpos($email,"@")) {
-                        list($prefix,$hostname) = explode("@",$email);
+                        list('',$hostname) = explode("@",$email);
                 }
 
                 $valid = 1;
@@ -27,7 +27,9 @@ class verify {
 		$valid = 1;
 		if (count($email_array)) {
 			foreach ($email_array as $email) {
-				$result = self::verify_email($email);
+				if (!self::verify_email($email)) {
+					$valid = 0;
+				}
 			}
 		}
 		return $valid;	

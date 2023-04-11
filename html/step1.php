@@ -25,7 +25,7 @@ require_once 'includes/header.inc.php';
 
 ?>
 
-<form action='' method='post' id='posterInfo' name='posterInfo'>
+<form action='' method='post' id='posterInfo' name='posterInfo' enctype='multipart/form-data'>
 <fieldset id='poster_field'>
 <input type='hidden' name='session' id='session' value='<?php echo $session->get_session_id(); ?>'>
 <div class='row'>

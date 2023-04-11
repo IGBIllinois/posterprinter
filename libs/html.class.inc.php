@@ -3,7 +3,7 @@
 class html {
 
 
-	public static function get_filetypes_table($columns = 1) {
+	public static function get_filetypes_table() {
 
 		$filetypes = settings::get_valid_filetypes();
 

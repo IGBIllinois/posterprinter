@@ -10,6 +10,7 @@ $valid = 0;
 $post = array();
 
 if (isset($_POST['step1'])) {
+	error_log("step 1");
 	foreach ($_POST as $var) {
 		$var = trim(rtrim($var));
 	}
@@ -119,6 +120,7 @@ elseif (isset($_POST['step2'])) {
 		$valid = true;
 	}
 }
+
 $json_result = json_encode(array('valid'=>$valid,
                         'post'=>$post,
                         'key'=>$key,

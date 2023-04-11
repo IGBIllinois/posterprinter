@@ -33,7 +33,9 @@
 
                 ]
 
-        }
-
+        },
+	"require-dev": {
+		"phpmd/phpmd": "^2.13"
+	}
 }
 

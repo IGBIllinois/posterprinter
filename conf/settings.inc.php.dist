@@ -43,7 +43,7 @@ define("PRINTER_MAX_WIDTH",60);
 define("UNOCONV_EXEC","/usr/bin/unoconv");
 define("ORDER_TIME",72);
 define("RUSH_ORDER_TIME",24);
-define("PRINTER__MAX_LENGTH",200);
+define("PRINTER_MAX_LENGTH",200);
 define("VALID_FILETYPES","ppt,pptx,pdf,jpg,tiff");
 define("BOA_CFOP","");
 define("BOA_ACTIVITY_CODE","");

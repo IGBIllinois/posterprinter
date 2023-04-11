@@ -180,7 +180,7 @@ class poster {
 				functions::debug($exec);
 				$exit_status = 1;
 				$output_array = array();
-				$output = exec($exec,$output_array,$exit_status);
+				$exec($exec,$output_array,$exit_status);
 				if (($exit_status == 0) && file_exists($tmp_path)) {
 					self::create_imagemagick($tmp_path,$thumb_path,self::THUMB_WIDTH,self::THUMB_HEIGHT);
 					self::create_imagemagick($tmp_path,$fullsize_path,self::FULLSIZE_WIDTH,self::FULLSIZE_HEIGHT);

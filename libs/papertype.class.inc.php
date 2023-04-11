@@ -9,7 +9,7 @@ class papertype {
 	private $name;
 	private $cost;
 	private $width;
-	private $avaiable;
+	private $available;
 	private $default;
 
 ////////////////Public Functions///////////
