@@ -274,6 +274,13 @@ class settings {
 		}
 		return self::TIMEZONE;
 	}
+
+	public static function get_cfop_api_key() {
+		if (defined("CFOP_API_KEY")) {
+			return CFOP_API_KEY;
+		}
+		return false;
+	}
 }
 
 ?>

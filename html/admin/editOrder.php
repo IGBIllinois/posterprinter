@@ -22,15 +22,21 @@ if (isset($_POST['editOrder'])) {
 	$activityCode = strtoupper(trim(rtrim($activityCode)));
 	
 	$error = false;
-	if (!eregi('^1-[0-9]{6}-[0-9]{6}-[0-9]{6}$',$cfop)) {
-		$error = true;
-		$message = functions::alert("Invalid CFOP Number",0);
-	}
-	elseif (!eregi('^[a-zA-Z0-9]{6}',$activityCode) && (strlen($activityCode) > 0)) {
-		$error = true;
-		$message .= functions::alert("Invalid Activity Code",0);
-	}
-	
+	if (!\IGBIllinois\cfop::verify_format($cfop,$activityCode) {
+                $errors = true;
+                $message = functions::alert("Please enter a valid CFOP",0);
+        }
+
+        try {
+                $cfop_obj =  new \IGBIllinois\cfop(settings::get_cfop_api_key(),settings::get_debug());
+                $cfop_obj->validate_cfop($cfop,$activityCode);
+
+        }
+        catch (\Exception $e) {
+                $error = true;
+                $message = functions::alert($e->getMessage(),0);
+        }
+
 	if ($error == false) {
 		
 	

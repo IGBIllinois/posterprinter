@@ -68,6 +68,16 @@ elseif (isset($_POST['step2'])) {
 		array_push($message,functions::alert("Please enter a valid CFOP",0));
 	}
 
+	try {
+		$cfop_obj =  new \IGBIllinois\cfop(settings::get_cfop_api_key(),settings::get_debug());
+		$cfop_obj->validate_cfop($cfop,$_POST['activityCode']);
+			
+	}
+	catch (\Exception $e) {
+		$error = true;
+		array_push($message,functions::alert($e->getMessage(),0));
+	}
+
 	if ($_FILES['posterFile']['name'] == "") {
 		$errors = true;
 		array_push($message,functions::alert("Please select a poster file to upload",0));
