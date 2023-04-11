@@ -18,13 +18,13 @@ if (isset($_POST['changeStatus'])) {
 	
 	$message = "<div class='alert alert-success' role='alert'>" . $result['MESSAGE'] . "</div>";
 	//if status is set to "Complete", then it will email the user saying to come pick up the poster
-	if ($_POST['status'] == 'Completed') {
+	if ($_POST['status'] == order::STATUS['COMPLETED']) {
 					
 		$order->mailUserOrderComplete();
 		header("Location: index.php");
 	}
 	//else if status is set to "Cancel"
-	elseif ($_POST['status'] == 'Cancel') { header("Location: index.php"); }
+	elseif ($_POST['status'] == order::STATUS['CANCEL']) { header("Location: index.php"); }
 	
 }
 //get last day of previous month
@@ -41,7 +41,7 @@ else {
 	$status_html . "<div class='form-group'><div class='col-md-4'>";
 	$status_html .= "<select class='form-control' name='status'>";
 
-	foreach (settings::get_status() as $possible_status) {
+	foreach (order::get_all_statuses() as $possible_status) {
 		
 		//used to have the current status of the order be the one selected in the drop down box
 		$status_html .= "<option value='" . $possible_status . "'";

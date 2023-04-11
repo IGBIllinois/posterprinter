@@ -71,10 +71,6 @@ class settings {
 		return PRINTER_MAX_LENGTH;
 	}
 
-	public static function get_status() {
-		return explode(',',STATUS);
-	}
-
 	public static function get_order_timeframe() {
 		return ORDER_TIME;
 	}

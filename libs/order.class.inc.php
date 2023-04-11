@@ -36,6 +36,12 @@ class order {
 	const LINE_WIDTH = 80;
 	const THUMB_PREFIX = "thumb_";
 	const FULLSIZE_PREFIX = "fullsize_";
+	const STATUS = array('NEW'=>'New',
+			'IN_PROGRESS'=>'In Progress',
+			'COMPLETED'=>'Completed',
+			'CANCEL'=>'Cancel',
+			'ON_HOLD'=>'On Hold'
+		);
 ////////////////Public Functions///////////
 
 	public function __construct($db,$order_id) {
@@ -107,7 +113,7 @@ class order {
 	public function get_rotated() { return $this->rotated; }
 	public function get_key() { return $this->key; }
 	public function get_wordwrap_comments() { 
-		return wordwrap($this->comments,self::LINE_LENGTH,"<br>");
+		return wordwrap($this->comments,self::LINE_WIDTH,"<br>");
 
 	}
 	public function get_status() { return $this->status; }
@@ -120,14 +126,14 @@ class order {
 		);
 		$sql = "UPDATE orders ";
 		$sql .= "SET orders_status=:status ";
-		if ($status == 'Completed') {
+		if ($status == self::STATUS['COMPLETED']) {
 			$sql .= ",orders_timeFinished=:time_finished ";
 			$paramters[':time_finished'] = $time_finished;
 		}
 		$sql .= "WHERE orders_id='" . $this->get_order_id() . "' LIMIT 1";
 		$result = $this->db->non_select_query($sql,$parameters);
 		if ($result) {
-			if ($status == 'Completed') {
+			if ($status == self::STATUS['COMPLETED']) {
 				$this->time_finished = $time_finished;
 			}
 			$this->status = $status;
@@ -289,7 +295,11 @@ class order {
 
 	}
 
-	
+	public static function get_all_statuses() {
+		$status_array = array_values(self::STATUS);	
+		return $status_array;
+
+	}	
 	/////////////////Private Functions///////////
 	
 	private function get_order() {
