@@ -279,6 +279,20 @@ class functions {
 
 
 	}
+
+	public static function get_minimal_year($db) {
+		$sql = "SELECT MIN(YEAR(orders_timeCreated)) as year ";
+		$sql .= "FROM orders ";
+		$result = $db->query($sql);
+		if (count($result)) {
+			return $result[0]['year'];
+
+		}
+		return date("Y");
+
+
+
+	}
 }
 
 

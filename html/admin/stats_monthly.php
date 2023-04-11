@@ -3,101 +3,126 @@ require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
 require_once 'includes/header.inc.php';
 
+$selected_month = new DateTime(date('Y-m-01 00:00:00'));
 
-if (isset($_GET['start_date']) && isset($_GET['end_date'])) {
-	$start_date = $_GET['start_date'];
-	$end_date = $_GET['end_date'];
-	$month = date('m',strtotime($start_date));
-	$year = date('Y',strtotime($start_date));
-	$monthName = date('F',strtotime($start_date));
-}
-else {
-
-	$day = date('d');
-	$month = date('m');
-	$year = date('Y');
-	$startMonth = $year . "/" . $month . "/01";
-	$startYear = $year . "/01/01";
-	$monthName = date('F');
-	$start_date = $year . "/" . $month . "/01";
-	$end_date = date('Y/m/d',strtotime('-1 second',strtotime('+1 month',strtotime($start_date))));
-
+if (isset($_GET['year']) && isset($_GET['month'])) {
+        $year = $_GET['year'];
+        $month = $_GET['month'];
+        $selected_month = DateTime::createFromFormat("Y-m-d H:i:s",$year . "-" . $month . "-01 00:00:00");
 }
 
-$previousEndDate = date('Y/m/d',strtotime('-1 second', strtotime($start_date)));
-$previousEndMonth = substr($previousEndDate,5,2);
-$previousEndYear = substr($previousEndDate,0,4);
-$previousStartDate = $previousEndYear . "/" . $previousEndMonth . "/01";
-	
-$nextStartDate = date('Y/m/d',strtotime('+1 day', strtotime($end_date)));
-$nextEndDate =  date('Y/m/d',strtotime('-1 second',strtotime('+1 month',strtotime($nextStartDate))));
+$month_name = $selected_month->format('F');
+$month = $selected_month->format('m');
+$year = $selected_month->format('Y');
+$next_month = DateTime::createFromFormat('Y-m',$year . "-" . $month);
+$next_month->modify('first day of next month');
+$current_month = new DateTime();
+
+//////Year////////
+$min_year = functions::get_minimal_year($db);
+$year_html = "<select class='form-control' name='year'>";
+for ($i=$min_year; $i<=date("Y");$i++) {
+        if ($i == $year) { $year_html .= "<option value='" . $i . "' selected='true'>" . $i . "</option>"; }
+        else { $year_html .= "<option value='" . $i . "'>" . $i . "</option>"; }
+}
+$year_html .= "</select>";
+
+///////Month///////
+$month_html = "<select class='form-control' name='month'>";
+for ($i=1;$i<=12;$i++) {
+        if ($i == $month) { $month_html .= "<option value='$i' selected='true'>" . $i . " - " . date('F', mktime(0, 0, 0, $i, 10)) . "</option>"; }
+        else { $month_html .= "<option value='$i'>" . $i . " - " . date('F', mktime(0, 0, 0, $i, 10)) . "</option>"; }
+}
+$month_html .= "</select>";
+
+
+$url_navigation = html::get_url_navigation_month($_SERVER['PHP_SELF'],$year,$month);
 
 $graph_type = "finishoptions";
 if (isset($_POST['graph_type'])) {	
 	$graph_type = $_POST['graph_type'];
+
 }
 
-$graphImage = "<img class='mx-auto' src='graph.php?graph_type=" . $graph_type . "&start_date=" . $start_date . "&end_date=" . $end_date . "'>";
+$graph_type_array[0]['type'] = 'finishoptions';
+$graph_type_array[0]['title'] = 'Finish Options';
+$graph_type_array[1]['type'] = 'papertypes';
+$graph_type_array[1]['title'] = 'Paper Types';
+$graph_type_array[2]['type'] = 'inches_per_papertype';
+$graph_type_array[2]['title'] = 'Inches Per Paper Type';
 
-$graphForm = "<form class='form' name='selectGraph' method='post' action='stats_monthly.php?start_date=" . $start_date . "&end_date=" . $end_date . "'>";
-$graphForm .= "<div class='col-md-2'><select class='custom-select' name='graph_type' onChange='document.selectGraph.submit();'>";
+$graph_get_array = array('graph_type'=>$graph_type,
+		'start_date'=>$selected_month->format('Y-m-01'),
+		'end_date'=>$selected_month->format('Y-m-t')
+	);
+$graphImage = "<img class='mx-auto' src='graph.php?" . http_build_query($graph_get_array) . "'>";
 
-if ($graph_type == "finishoptions") { 
-	$graphForm .= "<option value='finishoptions' selected>Finish Options</option>"; 
-}
-else { 
-	$graphForm .= "<option value='finishoptions'>Finish Options</option>"; 
-}
-if ($graph_type == "papertypes") { 
-	$graphForm .= "<option value='papertypes' selected>Paper Types</option>"; 
-}
-else { 
-	$graphForm .= "<option value='papertypes'>Paper Types</option>"; 
-}
-if ($graph_type == "inches_per_papertype") { 
-	$graphForm .= "<option value='inches_per_papertype' selected>Inches Per Paper Type</option>"; 
-}
-else { 
-	$graphForm .= "<option value='inches_per_papertype'>Inches Per Paper Type</option>"; 
-}
+$stats = new statistics($db,$selected_month->format('Y-m-01'),$selected_month->format('Y-m-t'));
 
-$graphForm .= "</select></div>";
-$graphForm .= "</form>";
+$graph_form = "<select class='custom-select' name='graph_type' onChange='document.selectGraph.submit();'>";
 
-$stats = new statistics($db,$start_date,$end_date);
+foreach ($graph_type_array as $graph) {
+        $graph_form .= "<option value='" . $graph['type'] . "' ";
+        if ($graph_type == $graph['type']) {
+                $graph_form .= "selected='selected'";
+        }
+        $graph_form .= ">" . $graph['title'] . "</option>\n";
 
-$url = "stats_monthly.php";
-$backUrl = $url . "?start_date=" . htmlspecialchars($previousStartDate,ENT_QUOTES) . "&end_date=" . htmlspecialchars($previousEndDate,ENT_QUOTES);
-$forwardUrl = $url . "?start_date=" . htmlspecialchars($nextStartDate,ENT_QUOTES) . "&end_date=" . htmlspecialchars($nextEndDate,ENT_QUOTES);
+
+}
+$graph_form .= "</select>";
 
 ?>
-<h3>Monthly Statistics - <?php echo $monthName . " " . $year; ?></h3>
-<hr>
-<ul class='pagination justify-content-center'>
-<li class='page-item'><a class='page-link' href='<?php echo $backUrl; ?>'>Previous</a></li>
-<?php
-	$next_month = strtotime('+1 day', strtotime($end_date));
-	$today = mktime(0,0,0,date('m'),date('d'),date('y'));
-	if ($next_month > $today) {
-		echo "<li class='page-item disabled'><a class='page-link' href='#'>Next</a></li>";
-	}
-	else {
-		echo "<li class='page-item'><a class='page-link' href='" . $forwardUrl . "'>Next</a></li>";
-	}
-?>
 
-</ul>
 
+<h3>Yearly Statistics - <?php echo $year; ?></h3>
+<form class='form-inline' action='<?php echo $_SERVER['PHP_SELF']; ?>' method='get'>
+<div class='form-group'>
+        <label for='month'>Month:</label>
+        &nbsp;<?php echo $month_html; ?>
+</div>&nbsp;
+<div class='form-group'>
+        <label for='year'>Year:</label>
+        &nbsp; <?php echo $year_html; ?>
+</div>
+&nbsp;
+<div class='form-group'>
+        <input type='submit' class='btn btn-primary' value='Get Records'>
+</div>
+</form>
+<p>
+<div class='row'>
+        <div class='col-sm-12 col-md-12 col-lg-12 col-xl-12'>
+        <a class='btn btn-sm btn-primary' href='<?php echo $url_navigation['back_url']; ?>'>Previous Month</a>
+
+        <?php
+                if ($next_month > $current_month) {
+                        echo "<div class='float-right'><a class='btn btn-sm btn-primary' onclick='return false;'>Next Month</a></div>";
+                }
+                else {
+                        echo "<div class='float-right'><a class='btn btn-sm btn-primary' href='" . $url_navigation['forward_url'] . "'>Next Month</a></div>";
+                }
+        ?>
+        </div>
+</div>
+<p>
 <table class='table table-bordered table-sm table-striped'>
-
-  	<tr><td>Monthly Total:</td><td>$<?php echo $stats->pretty_cost(); ?></td></tr>
-    <tr><td>Total Orders:</td><td><?php echo $stats->orders(); ?></td></tr>
+	<tr><td>Yearly Total:</td><td>$<?php echo $stats->pretty_cost(); ?></td></tr>
+	<tr><td>Total Orders:</td><td><?php echo $stats->orders(); ?></td></tr>
     <tr><td>Rush Order Percentage:</td><td><?php echo $stats->percentRushOrder(); ?>%</td></tr>
     <tr><td>Poster Tube Percentage:</td><td><?php echo $stats->percentPosterTube(); ?>%</td></tr>
     <tr><td>Total Inches Printed:</td><td><?php echo $stats->pretty_totalInches(); ?>"</td></tr>
     <tr><td>Average Poster Cost:</td><td>$<?php echo $stats->averagePosterCost(); ?></td></tr>
-	<tr><td colspan='2'><?php echo $graphForm; ?></td></tr>
+    <tr><td colspan='2'>
+	<form class='form' name='selectGraph' id='selectGraph' method='post' action='<?php echo $_SERVER['PHP_SELF'] . "?year=" . $year; ?>'>
+		<div class='col-sm-2 col-md-2'>
+			 <?php echo $graph_form; ?>
+		</div>
+	</form>
+</td></tr>
 </table>
- <div class='row'><?php echo $graphImage; ?></div>
+
+<div class='row'><?php echo $graphImage; ?></div>
+
 
 <?php require_once 'includes/footer.inc.php'; ?>
