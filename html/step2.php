@@ -126,8 +126,8 @@ require_once 'includes/header.inc.php';
 		</tr>
 		<tr>
 			<td class='text-right' style='vertical-align:middle;'>File (Max <?php echo ini_get('post_max_size'); ?>)</td>
-			<td><div class='custom-file'><input class='form-control-file' type='file' name='posterFile' id='posterFile' onChange='update_posterfile_name()'>
-			<label class="custom-file-label" id='posterfile-label' for="posterFile">Choose file</label>
+			<td><div class='custom-file'><input class='custom-file-input' type='file' name='posterFile' id='posterFile' onChange='update_posterfile_name()'>
+			<label class="custom-file-label" id='posterfile-label' for="posterFile">Choose File...</label>
 			</div>
 			</td>
 		</tr>

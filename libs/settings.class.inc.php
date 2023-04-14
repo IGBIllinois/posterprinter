@@ -31,7 +31,7 @@ class settings {
 
 	}
 	public static function debug() {
-		if (defined("DEBUG") && (DEBUG != "")) {
+		if (defined("DEBUG") && is_bool(DEBUG)) {
                         return DEBUG;
                 }
                 return self::DEBUG;
@@ -46,7 +46,7 @@ class settings {
 	}
 
 	public static function site_enabled() {
-		if (defined("ENABLED") && (ENABLED != "")) {
+		if (defined("ENABLED") && is_bool(ENABLED)) {
                         return ENABLED;
                 }
                 return self::ENABLE;
@@ -276,6 +276,14 @@ class settings {
 			return CFOP_API_KEY;
 		}
 		return false;
+	}
+
+	public static function get_faq_url() {
+		if (defined("FAQ_URL")) {
+			return FAQ_URL;
+		}
+		return false;
+
 	}
 }
 

@@ -83,7 +83,7 @@ foreach ($finishOptions as $finishOption) {
 	</div>
         <div class='col-md-6 col-lg-6 col-xl-6'>
 		<h2>Fequently Asked Questions</h2>
-		<p>Check out the <a href='faq.php'>Frequently Asked Questions</a> for answers to common questions</p>
+		<p>Check out the <a target='_blank' href='<?php echo settings::get_faq_url(); ?>'>Frequently Asked Questions</a> for answers to common questions</p>
         </div>
 </div>
 

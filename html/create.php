@@ -8,7 +8,6 @@ $key = 0;
 $message = array(functions::alert("No Submitted Variables",0));
 $valid = 0;
 $post = array();
-
 if (isset($_POST['step1'])) {
 	error_log("step 1");
 	foreach ($_POST as $var) {
@@ -25,7 +24,7 @@ if (isset($_POST['step1'])) {
 		$post = $_POST;
 		$valid = 1;	
         }
-
+	error_log('in step 1');
 }
 
 elseif (isset($_POST['step2'])) {
@@ -130,8 +129,8 @@ $json_result = json_encode(array('valid'=>$valid,
 if (!$json_result) {
 	$json_result = json_encode(array('Error', json_last_error_msg()));
 }
-functions::debug($json_result);
-header('Content-type: application/javascript; charset=UTF-8',true);
+//functions::debug($json_result);
+header('Content-type: application/json; charset=UTF-8',true);
 echo $json_result;
 
 ?>

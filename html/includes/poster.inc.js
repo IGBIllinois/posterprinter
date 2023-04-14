@@ -35,7 +35,9 @@ function first_step() {
 	var xhr = new XMLHttpRequest();
 	disableForm();
 	xhr.open("POST", "create.php",true);
-	xhr.responseType = "text";
+	xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+	xhr.responseType = "json";
+	xhr.send(fd);
         xhr.onreadystatechange  = function(){
                 if (xhr.readyState == 4 && xhr.status == 200) {
 			var result = xhr.response;
@@ -66,7 +68,6 @@ function first_step() {
 
 		}
 	};
-	xhr.send(fd);
 }
 function second_step() {
 	var fd = new FormData();
@@ -95,7 +96,8 @@ function second_step() {
 	xhr.addEventListener("abort", uploadCanceled, false);
 	disableForm();
         xhr.open("POST", "create.php",true);
-	xhr.responseType = "text";
+	xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+	xhr.responseType = "json";
         xhr.send(fd);
 	xhr.onreadystatechange  = function(){
 		if (xhr.readyState == 4 && xhr.status == 200) {
