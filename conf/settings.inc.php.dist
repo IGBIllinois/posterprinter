@@ -49,5 +49,6 @@ define("BOA_CFOP","");
 define("BOA_ACTIVITY_CODE","");
 define("CFOP_API_KEY","");
 define("FAQ_URL","");
+define('PASSWORD_RESET_URL','');
 
 ?>

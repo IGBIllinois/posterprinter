@@ -224,4 +224,4 @@ else
 </form>
 <br>
 <?php if (isset($message)){echo $message; } ?>
-<?php require_once 'includes/footer.inc.php'; ?>
+<?php require_once '../includes/footer.inc.php'; ?>

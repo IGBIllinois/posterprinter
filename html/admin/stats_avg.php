@@ -11,4 +11,4 @@ require_once 'includes/header.inc.php';
 <img class='mx-auto' src='graph.php?graph_type=monthly_avg'/>
 </div>
 
-<?php require_once 'includes/footer.inc.php'; ?>
+<?php require_once '../includes/footer.inc.php'; ?>

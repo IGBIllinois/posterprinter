@@ -105,4 +105,4 @@ require_once 'includes/header.inc.php';
 <button type='submit' class='btn btn-primary' name='create_boa_report'>Create BOA Report</button>
 </div>
 </form>
-<?php require_once 'includes/footer.inc.php'; ?>
+<?php require_once '../includes/footer.inc.php'; ?>

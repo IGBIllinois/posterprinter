@@ -51,4 +51,4 @@ include 'includes/header.inc.php';
 	if (isset($result['MESSAGE'])){echo $result['MESSAGE']; }
 
 ?>
-<?php require_once 'includes/footer.inc.php'; ?>
+<?php require_once '../includes/footer.inc.php'; ?>

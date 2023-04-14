@@ -66,4 +66,4 @@ $graph_type = "orders_per_month";
 </div>
 
 
-<?php require_once 'includes/footer.inc.php'; ?>
+<?php require_once '../includes/footer.inc.php'; ?>

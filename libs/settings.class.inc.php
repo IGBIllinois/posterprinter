@@ -279,11 +279,22 @@ class settings {
 	}
 
 	public static function get_faq_url() {
-		if (defined("FAQ_URL")) {
+		if (defined("FAQ_URL") && (FAQ_URL != "") && 
+			filter_var(PASSWORD_RESET_URL,FILTER_VALIDATE_URL,FILTER_FLAG_SCHEME_REQUIRED)) {
+
 			return FAQ_URL;
 		}
 		return false;
 
+	}
+
+	public static function get_password_reset_url() {
+		if (defined('PASSWORD_RESET_URL') && (PASSWORD_RESET_URL != "") &&
+			filter_var(PASSWORD_RESET_URL,FILTER_VALIDATE_URL,FILTER_FLAG_SCHEME_REQUIRED)) {
+
+			return PASSWORD_RESET_URL;
+		}
+		return false;
 	}
 }
 

@@ -45,4 +45,4 @@ require_once 'includes/header.inc.php';
 <br>
 <input class='btn btn-primary' type='button' value='New Finish Option' onClick="location.href='addFinishOption.php';" />
 
-<?php require_once 'includes/footer.inc.php'; ?>
+<?php require_once '../includes/footer.inc.php'; ?>

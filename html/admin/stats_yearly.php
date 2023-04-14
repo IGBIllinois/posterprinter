@@ -107,4 +107,4 @@ $graph_form .= "</select>";
 <div class='row'><?php echo $graphImage; ?></div>
 
 
-<?php require_once 'includes/footer.inc.php'; ?>
+<?php require_once '../includes/footer.inc.php'; ?>

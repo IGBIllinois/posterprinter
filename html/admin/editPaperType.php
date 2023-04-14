@@ -102,5 +102,6 @@ else
 <br>
 <?php 
 
-	if (isset($result['MESSAGE'])){echo $result['MESSAGE']; }
-	require_once 'includes/footer.inc.php'; ?>
+if (isset($result['MESSAGE'])){echo $result['MESSAGE']; }
+
+require_once '../includes/footer.inc.php'; ?>
