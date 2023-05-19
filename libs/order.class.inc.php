@@ -203,25 +203,27 @@ class order {
 	        
 	        $subject = "New Poster To Print - Order #" . $this->get_order_id();
         	$to = settings::get_admin_email();
-		$loader = new Twig_Loader_Filesystem(settings::get_twig_dir());
-	
-		$twig = new Twig_Environment($loader);
+		$loader = new \Twig\Loader\FilesystemLoader(settings::get_twig_dir());
+		$twig = new \Twig\Environment($loader);
 		$html_message = $twig->render('order_new_admin.html.twig',$this->get_twig_variables());
-		$plain_message = $twig->render('order_new_admin.txt.twig',$this->get_twig_variables());
+		$txt_message = $twig->render('order_new_admin.txt.twig',$this->get_twig_variables());
 
-		$extraheaders = array("From"=>$this->get_email(),
-					"Subject"=>$subject
+		$email = new \IGBIllinois\email(settings::get_smtp_host(),
+						settings::get_smtp_port(),
+						settings::get_smtp_username(),
+						settings::get_smtp_password()
 		);
-		$message = new Mail_mime();
-		$message->addHTMLImage($this->get_thumbnail());
-		$message->setHTMLBody($html_message);
-		$message->setTXTBody($plain_message);
-		$headers= $message->headers($extraheaders);
-		$body = $message->get();
-		$mail = Mail::factory("mail");
-		$mail->send($to,$headers,$body);
+		$email->set_to_emails($to);
 
+		try {
+			$result = $email->send_email($this->get_email(),$subject,$txt_message,$html_message);
+			$message = "Email successfully sent to " . $this->get_email();
 
+		} catch (Exception $e) {
+			throw new \Exception("Email Error sending mail. " . $e->getMessage());
+			return false;;
+		}
+		return $result;
 	}
 
 	//mailUserNewOrder()
@@ -230,31 +232,30 @@ class order {
 	        
 		$to = $this->get_email();
         	$subject = "Poster Order #" . $this->get_order_id();
-		$loader = new Twig_Loader_Filesystem(settings::get_twig_dir());
-
-                $twig = new Twig_Environment($loader);
+		$loader = new \Twig\Loader\FilesystemLoader(settings::get_twig_dir());
+                $twig = new \Twig\Environment($loader);
 
                 $html_message = $twig->render('order_new_user.html.twig',$this->get_twig_variables());
-                $plain_message = $twig->render('order_new_user.txt.twig',$this->get_twig_variables());
+                $txt_message = $twig->render('order_new_user.txt.twig',$this->get_twig_variables());
 
-		$extraheaders = array("From"=>settings::get_admin_email(),
-                                        "Subject"=>$subject
+		$email = new \IGBIllinois\email(settings::get_smtp_host(),
+                                                settings::get_smtp_port(),
+                                                settings::get_smtp_username(),
+                                                settings::get_smtp_password()
                 );
-                if ($this->get_cc_emails() != "") {
-                        $extraheaders['Cc'] = $this->get_cc_emails();
+		$email->set_to_emails($to);
+		if ($this->get_cc_emails() != "") {
+			$email->set_cc_emails($this->get_cc_emails());
+		}
+                try {
+                        $result = $email->send_email($this->get_admin_email(),$subject,$txt_message,$html_message);
+                        $message = "Email successfully sent to " . $this->get_email();
+
+                } catch (Exception $e) {
+                        throw new \Exception("Email Error sending mail. " . $e->getMessage());
+                        return false;;
                 }
-
-
-                $message = new Mail_mime();
-		$message->addHTMLImage($this->get_thumbnail());
-                $message->setHTMLBody($html_message);
-                $message->setTXTBody($plain_message);
-                $headers= $message->headers($extraheaders);
-                $body = $message->get();
-                $mail = Mail::factory("mail");
-                $mail->send($to,$headers,$body);
-
-
+                return $result;
 	}
 
 	//mailuserOrderComplete()
@@ -264,12 +265,12 @@ class order {
 
 	        $subject = "Poster Order #" . $this->get_order_id() . " Completed";
 
-		$loader = new Twig_Loader_Filesystem(settings::get_twig_dir());
+		$loader = new \Twig\Loader\FilesystemLoader(settings::get_twig_dir());
 
-                $twig = new Twig_Environment($loader);
+                $twig = new \Twig\Environment($loader);
 
                 $html_message = $twig->render('order_complete_user.html.twig',$this->get_twig_variables());
-                $plain_message = $twig->render('order_complete_user.txt.twig',$this->get_twig_variables());
+                $txt_message = $twig->render('order_complete_user.txt.twig',$this->get_twig_variables());
 
 
 		$extraheaders = array("From"=>settings::get_admin_email(),
@@ -278,16 +279,25 @@ class order {
                 if ($this->get_cc_emails() != "") {
                         $extraheaders['Cc'] = $this->get_cc_emails();
                 }
+		$email = new \IGBIllinois\email(settings::get_smtp_host(),
+                                                settings::get_smtp_port(),
+                                                settings::get_smtp_username(),
+                                                settings::get_smtp_password()
+                );
 
-                $message = new Mail_mime();
-		$message->addHTMLImage($this->get_thumbnail());
-                $message->setHTMLBody($html_message);
-                $message->setTXTBody($plain_message);
-                $headers= $message->headers($extraheaders);
-                $body = $message->get();
-                $mail = Mail::factory("mail");
-                $mail->send($to,$headers,$body);
+		$email->set_to_emails($to);
+                if ($this->get_cc_emails() != "") {
+                        $email->set_cc_emails($this->get_cc_emails());
+                }
+                try {
+                        $result = $email->send_email($this->get_admin_email(),$subject,$txt_message,$html_message);
+                        $message = "Email successfully sent to " . $this->get_email();
 
+                } catch (Exception $e) {
+                        throw new \Exception("Email Error sending mail. " . $e->getMessage());
+                        return false;;
+                }
+                return $result;
 
 	}
 

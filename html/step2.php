@@ -210,21 +210,27 @@ $( document ).ready(function() {
                         contentType: false,
                         enctype: 'multipart/form-data',
                         success: function(response) {
-                                if (!response.valid) {
-                                        document.getElementById("message").innerHTML =  response.message;
-                                        enableForm();
+				if (response.valid) {
+                                	var parameters = response.post;
+					var form = $('<form></form>');
+					form.attr('method','post');
+					form.attr('action','step3.php?session=' + session);
+					$.each(parameters,function(key,value) {
+						var field = $('<input></input>');
+						field.attr("type", "hidden");
+						field.attr("name", key);
+						field.attr("value", value);
+						form.append(field);
+					});
+					$(document.body).append(form);
+					form.submit();
 
-                                }
-                                else {
-                                        var url = 'step3.php?session=' + session;
-                                        var form = $('<form action="' + url + '" method="post">' +
-                                                '<input type="text" name="step1" value="1">' +
-                                                '<input type="text" name="width" value="' + width + '">' +
-                                                '<input type="text" name="length" value="' + length + '"></form>'
-                                                );
-                                        $('body').append(form);
-                                        //form.submit();
-                                }
+
+				}
+				else {
+					document.getElementById("message").innerHTML =  response.message;
+                                        enableForm();
+				}
 
                         },
                         error: function(response) {
