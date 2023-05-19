@@ -205,8 +205,15 @@ class order {
         	$to = settings::get_admin_email();
 		$loader = new \Twig\Loader\FilesystemLoader(settings::get_twig_dir());
 		$twig = new \Twig\Environment($loader);
-		$html_message = $twig->render('order_new_admin.html.twig',$this->get_twig_variables());
-		$txt_message = $twig->render('order_new_admin.txt.twig',$this->get_twig_variables());
+
+		if (file_exists(settings::get_twig_dir() . "/custom/order_new_admin.html.twig")) {
+		$html_message = $twig->render('/custom/order_new_admin.html.twig',$this->get_twig_variables());
+		$txt_message = $twig->render('/custom/order_new_admin.txt.twig',$this->get_twig_variables());
+		}
+		else {
+			$html_message = $twig->render('/default/order_new_admin.html.twig',$this->get_twig_variables());
+	                $txt_message = $twig->render('/default/order_new_admin.txt.twig',$this->get_twig_variables());
+		}
 
 		$email = new \IGBIllinois\email(settings::get_smtp_host(),
 						settings::get_smtp_port(),
@@ -235,9 +242,15 @@ class order {
 		$loader = new \Twig\Loader\FilesystemLoader(settings::get_twig_dir());
                 $twig = new \Twig\Environment($loader);
 
-                $html_message = $twig->render('order_new_user.html.twig',$this->get_twig_variables());
-                $txt_message = $twig->render('order_new_user.txt.twig',$this->get_twig_variables());
+		if (file_exists(settings::get_twig_dir() . "/custom/order_new_user.html.twig")) {
+	                $html_message = $twig->render('/custom/order_new_user.html.twig',$this->get_twig_variables());
+        	        $txt_message = $twig->render('/custom/order_new_user.txt.twig',$this->get_twig_variables());
+		}
+		else {
+			$html_message = $twig->render('/default/order_new_user.html.twig',$this->get_twig_variables());
+			$txt_message = $twig->render('/default/order_new_user.txt.twig',$this->get_twig_variables());
 
+		}
 		$email = new \IGBIllinois\email(settings::get_smtp_host(),
                                                 settings::get_smtp_port(),
                                                 settings::get_smtp_username(),
@@ -248,7 +261,7 @@ class order {
 			$email->set_cc_emails($this->get_cc_emails());
 		}
                 try {
-                        $result = $email->send_email($this->get_admin_email(),$subject,$txt_message,$html_message);
+                        $result = $email->send_email(settings::get_admin_email(),$subject,$txt_message,$html_message);
                         $message = "Email successfully sent to " . $this->get_email();
 
                 } catch (Exception $e) {
@@ -269,13 +282,17 @@ class order {
 
                 $twig = new \Twig\Environment($loader);
 
-                $html_message = $twig->render('order_complete_user.html.twig',$this->get_twig_variables());
-                $txt_message = $twig->render('order_complete_user.txt.twig',$this->get_twig_variables());
+		if (file_exists(settings::get_twig_dir() . "/custom/order_commplete_user.html.twig")) {
+                $html_message = $twig->render('/custom/order_complete_user.html.twig',$this->get_twig_variables());
+		$txt_message = $twig->render('/custom/order_complete_user.txt.twig',$this->get_twig_variables());
+		}
+		else {
+			$html_message = $twig->render('/default/order_complete_user.html.twig',$this->get_twig_variables());
+	                $txt_message = $twig->render('/default/order_complete_user.txt.twig',$this->get_twig_variables());
+
+		}
 
 
-		$extraheaders = array("From"=>settings::get_admin_email(),
-                                        "Subject"=>$subject
-                );
                 if ($this->get_cc_emails() != "") {
                         $extraheaders['Cc'] = $this->get_cc_emails();
                 }
@@ -290,7 +307,7 @@ class order {
                         $email->set_cc_emails($this->get_cc_emails());
                 }
                 try {
-                        $result = $email->send_email($this->get_admin_email(),$subject,$txt_message,$html_message);
+                        $result = $email->send_email(settings::get_admin_email(),$subject,$txt_message,$html_message);
                         $message = "Email successfully sent to " . $this->get_email();
 
                 } catch (Exception $e) {

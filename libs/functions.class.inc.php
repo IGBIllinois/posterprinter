@@ -3,7 +3,7 @@
 
 class functions {
 
-	const BYTES_TO_MEGABYTES = 1048576;
+	private const BYTES_TO_MEGABYTES = 1048576;
 
 	//Possible errors when you upload a file
         private static $upload_errors = array(
