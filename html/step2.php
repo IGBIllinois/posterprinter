@@ -12,7 +12,8 @@ if (isset($_POST['cancel'])) {
         $session->destroy_session();
         header('Location: index.php');
 }
-elseif (isset($_POST['step1'])) {
+
+if (isset($_POST['step1'])) {
 
 
 	$paperTypes = functions::getValidPaperTypes($db,$_POST['width'],$_POST['length']);
@@ -51,17 +52,17 @@ elseif (isset($_POST['step1'])) {
 }
 else {
 	$session->destroy_session();
-	header('Location: index.php');
+	//header('Location: index.php');
 }
 
 require_once 'includes/header.inc.php';
 
 ?>
-	<form action='' method='post' id='posterInfo' enctype='multipart/form-data'>
-	<fieldset id='poster_field'>
-		<input type='hidden' id='width' name='width' value='<?php echo $_POST['width']; ?>'>
-		<input type='hidden' id='length' name='length' value='<?php echo  $_POST['length']; ?>'>
-		<input type='hidden' id='session' name='session' value='<?php echo $_GET['session']; ?>'>
+<form action='' method='post' id='posterInfo' enctype='multipart/form-data'>
+<fieldset id='poster_field'>
+<input type='hidden' id='width' name='width' value='<?php echo $_POST['width']; ?>'>
+<input type='hidden' id='length' name='length' value='<?php echo  $_POST['length']; ?>'>
+<input type='hidden' id='session' name='session' value='<?php echo $_GET['session']; ?>'>
 <div class='row'>
 	<table class='table table-bordered table-sm table-hover'>
 		<thead>
@@ -147,8 +148,8 @@ require_once 'includes/header.inc.php';
 <p></p>
 <div class='row'>
 	<div class='mx-auto btn-toolbar'>
-		<button class='btn btn-warning' type='submit' name='cancel'>Cancel</button>&nbsp;
-		<button class='btn btn-primary' type='submit' name='step2' onClick='second_step()'>Next</button>
+		<button class='btn btn-warning' type='submit' name='cancel' id='cancel'>Cancel</button>&nbsp;
+		<button class='btn btn-primary' type='submit' name='step2' id='step2'>Next</button>
 	</div>
 </div>
 </fieldset>
@@ -158,5 +159,85 @@ require_once 'includes/header.inc.php';
 		<?php if (isset($message)) { echo $message; } ?>
 	</div>
 <?php require_once 'includes/footer.inc.php'; ?>
+
+<script type="application/javascript">
+$( document ).ready(function() {
+        $('#step2').on('click', function(event) {
+                disableForm();
+                var width = document.getElementById('width').value;
+                var length = document.getElementById('length').value;
+		var session = document.getElementById('session').value;
+		var paperTypesId = document.querySelector('input[name="paperTypesId"]:checked').value;
+		var finishOptionsId = document.querySelector('input[name="finishOptionsId"]:checked').value;
+		var cfop1 = document.getElementById('cfop1').value;
+		var cfop2 = document.getElementById('cfop2').value;
+		var cfop3 = document.getElementById('cfop3').value;
+		var cfop4 = document.getElementById('cfop4').value;
+		var activityCode = document.getElementById('activityCode').value;
+		var email = document.getElementById('email').value;
+		var additional_emails = document.getElementById('additional_emails').value;
+		var name = document.getElementById('name').value;
+		var comments = document.getElementById('comments').value;
+		var posterTube = document.getElementById('posterTube').checked;
+		var rushOrder = document.getElementById('rushOrder').checked;
+		var session = document.getElementById('session').value;
+		var posterFile = document.getElementById('posterFile');
+		var formData = new FormData();
+		formData.append('step2','1');
+		formData.append('width',width);
+		formData.append('length',length);
+		formData.append('paperTypesId',paperTypesId);
+		formData.append('finishOptionsId',finishOptionsId);
+		formData.append('cfop1',cfop1);
+		formData.append('cfop2',cfop2);
+		formData.append('cfop3',cfop3);
+		formData.append('cfop4',cfop4);
+		formData.append('activityCode',activityCode);
+		formData.append('email',email);
+		formData.append('additional_emails',additional_emails);
+		formData.append('name',name);
+		formData.append('comments',comments);
+		formData.append('posterTube',posterTube);
+		formData.append('rushOrder',rushOrder);
+		formData.append('posterFile',posterFile.files[0],posterFile.files[0].name);
+
+                $.ajax({
+                        url: 'create.php',
+                        type: 'POST',
+                        data: formData,
+			dataType: 'json',
+			processData: false,
+                        contentType: false,
+                        enctype: 'multipart/form-data',
+                        success: function(response) {
+                                if (!response.valid) {
+                                        document.getElementById("message").innerHTML =  response.message;
+                                        enableForm();
+
+                                }
+                                else {
+                                        var url = 'step3.php?session=' + session;
+                                        var form = $('<form action="' + url + '" method="post">' +
+                                                '<input type="text" name="step1" value="1">' +
+                                                '<input type="text" name="width" value="' + width + '">' +
+                                                '<input type="text" name="length" value="' + length + '"></form>'
+                                                );
+                                        $('body').append(form);
+                                        //form.submit();
+                                }
+
+                        },
+                        error: function(response) {
+                                document.getElementById("message").innerHTML =  response.message;
+                                enableForm();
+                        }
+
+                });
+
+        return false;
+
+        });
+});
+</script>
 
 

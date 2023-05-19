@@ -93,7 +93,6 @@ if (isset($_POST['login'])) {
 <div class='container'>
 
 <div class='col-sm-6 col-md-6 col-lg-6 col-xl-6 offset-md-3 offset-lg-3 offset-xl-3'>
-<br>Only Poster Printer Administrators are allowed to login
 <form class='form' role='form'  action='<?php echo $_SERVER['PHP_SELF']; ?>' method='post' name='login'>
 	<div class='form-group'>
 		<label for='username' class='col-form-label'>Username</label>

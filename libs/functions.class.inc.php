@@ -3,7 +3,7 @@
 
 class functions {
 
-	const bytes_in_megabyte = 1048576;
+	const BYTES_TO_MEGABYTES = 1048576;
 
 	//Possible errors when you upload a file
         private static $upload_errors = array(
@@ -233,7 +233,7 @@ class functions {
         }
 
 	public static function convert_bytes_to_megabytes($bytes) {
-		return round($bytes/self::bytes_in_megabyte,2);
+		return round($bytes/self::BYTES_TO_MEGABYTES,2);
 
 
 	}
@@ -247,7 +247,7 @@ class functions {
 
 	public static function debug($message,$log_level = 0) {
 		
-                if (settings::debug()) {
+                if (settings::get_debug()) {
 			switch ($log_level) {
 				case 0:
 					error_log("INFO: " . $message);

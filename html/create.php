@@ -1,18 +1,25 @@
 <?php
+ob_start();
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Max-Age: 3600");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 require_once 'includes/main.inc.php';
-ini_set('display_errors', 0);
 
+
+error_log("Post Count:" . count($_POST));
+$_POST = array_map('trim',$_POST);
 $id = 0;
 $key = 0;
-$message = array(functions::alert("No Submitted Variables",0));
+$message = array(functions::alert("ERROR: No Submitted Variables",0));
 $valid = 0;
 $post = array();
+$response_code = 200;
+
+
 if (isset($_POST['step1'])) {
-	error_log("step 1");
-	foreach ($_POST as $var) {
-		$var = trim(rtrim($var));
-	}
         $result = poster::verify_dimensions($db,$_POST['width'],$_POST['length']);
 	$message = array();
         if (!$result['RESULT']) {
@@ -21,17 +28,15 @@ if (isset($_POST['step1'])) {
 
         }
         else {
-		$post = $_POST;
+		$post = array('width'=>$_POST['width'],
+				'length'=>$_POST['length']
+		);
 		$valid = 1;	
         }
-	error_log('in step 1');
 }
 
 elseif (isset($_POST['step2'])) {
-	foreach ($_POST as $var) {
-                $var = trim(rtrim($var));
-        }
-
+	error_log('step2');
         $posterFileName = $_FILES['posterFile']['name'];
 	//makes the complete CFOP number
         $cfop = $_POST['cfop1'] . "-" . $_POST['cfop2'] . "-" . $_POST['cfop3'] . "-" . $_POST['cfop4'];
@@ -61,14 +66,14 @@ elseif (isset($_POST['step2'])) {
 
 	if (!verify::verify_cc_emails($_POST['additional_emails'])) {
 		$errors = true;
-		array_push($message,functions::alert("Please eneter valid email addresses",0));
+		array_push($message,functions::alert("Please enter valid additional email addresses",0));
 	}
 	if (!\IGBIllinois\cfop::verify_format($cfop,$_POST['activityCode'])) {
 		$errors = true;
 		array_push($message,functions::alert("Please enter a valid CFOP",0));
 	}
 
-	try {
+	/*try {
 		$cfop_obj =  new \IGBIllinois\cfop(settings::get_cfop_api_key(),settings::get_debug());
 		$cfop_obj->validate_cfop($cfop,$_POST['activityCode']);
 			
@@ -76,7 +81,7 @@ elseif (isset($_POST['step2'])) {
 	catch (\Exception $e) {
 		$error = true;
 		array_push($message,functions::alert($e->getMessage(),0));
-	}
+	}*/
 
 	if ($_FILES['posterFile']['name'] == "") {
 		$errors = true;
@@ -129,8 +134,10 @@ $json_result = json_encode(array('valid'=>$valid,
 if (!$json_result) {
 	$json_result = json_encode(array('Error', json_last_error_msg()));
 }
-//functions::debug($json_result);
-header('Content-type: application/json; charset=UTF-8',true);
+error_log($json_result);
+
+ob_clean();
+http_response_code((int)$response_code);
 echo $json_result;
 
 ?>

@@ -67,9 +67,11 @@ $file_link = "<a href='download.php?orderId=" . $order->get_order_id() . "'>" . 
 require_once 'includes/header.inc.php';
 
 ?>
-<div class='col-sm-8 col-md-8'>
-<table class='table table-bordered table-sm'>
+<div class='col-sm-8 col-md-8 col-lg-8 col-xl-8'>
+<table class='table table-bordered table-striped table-sm'>
+<thead>
 <tr><th colspan='2'>Order Information</th></tr>
+</thead>
 <tr><td class='text-right'>Order Number</td><td><?php echo $order->get_order_id(); ?></td></tr>
 <tr><td class='text-right'>Email </td><td><?php echo $order->get_email() ?></td></tr>
 <tr><td class='text-right'>Additional Emails </td><td><?php echo $order->get_cc_emails() ?></td></tr>

@@ -5,10 +5,10 @@ class verify {
 
 
         public static function verify_email($email) {
-                $email = strtolower($email);
+		$email = strtolower($email);
                 $hostname = "";
                 if (strpos($email,"@")) {
-                        list('',$hostname) = explode("@",$email);
+                        list($username,$hostname) = explode("@",$email);
                 }
 
                 $valid = 1;
@@ -23,15 +23,18 @@ class verify {
         }
 
 	public static function verify_cc_emails($cc_emails) {
-		$email_array=explode(",",$cc_emails);
 		$valid = 1;
-		if (count($email_array)) {
-			foreach ($email_array as $email) {
-				if (!self::verify_email($email)) {
-					$valid = 0;
+		if (strlen($cc_emails)) {
+			$email_array=explode(",",$cc_emails);
+			if (count($email_array)) {
+				foreach ($email_array as $email) {
+					if (!self::verify_email($email)) {
+						$valid = 0;
+					}
 				}
 			}
 		}
+	
 		return $valid;	
 
 
