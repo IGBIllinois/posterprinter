@@ -168,25 +168,6 @@ class order {
 		return true;
 	}
 
-	public function get_job_info() {
-
-		$message = "Order Number: " . $this->get_order_id() . "\r\n";
-        	$message .= "Full Name: " . $this->get_name() . "\r\n";
-	        $message .= "Email: " . $this->get_email() . "\r\n";
-        	$message .= "Poster File: " . $this->get_filename() . "\r\n";
-	        $message .= "Poster Length: " . $this->get_length() . " inches \r\n";
-        	$message .= "Poster Width: " . $this->get_width() . " inches \r\n";
-	        $message .= "CFOP: " .  $this->get_cfop() . "\r\n";
-        	$message .= "Activity Code: " . $this->get_activity_code() . "\r\n";
-	        $message .= "Paper Type: " . $this->get_paper_type_name() . "\r\n";
-        	$message .= "Finish Option: " . $this->get_finish_option_name() . "\r\n";
-	        $message .= "Poster Tube: " . $this->get_poster_tube_name() . "\r\n";
-        	$message .= "Rush Order: " . $this->get_rush_order_name() . "\r\n";
-	        $message .= "Comments: " . $this->get_comments() . "\r\n";
-        	$message .= "Total Cost: $" . $this->get_total_cost() . "\r\n";
-		return $message;
-	}
-
 	//mailNewOrder()
 	//emails the user and admins that a new order has been made
 	public function mailNewOrder() {
@@ -374,8 +355,18 @@ class order {
 			'css' => file_get_contents(dirname(__DIR__) . "/vendor/twbs/bootstrap/dist/css/bootstrap.min.css"), 
 			'order_id' => $this->get_order_id(),
                         'name' => $this->get_name(),
-                        'email' => $this->get_email(),
-                        'job_info' => $this->get_job_info(),
+			'email' => $this->get_email(),
+			'poster_file'=>$this->get_filename(),
+			'length'=>$this->get_length(),
+			'width'=>$this->get_width(),
+			'cfop'=>$this->get_cfop(),
+			'activity_code'=>$this->get_activity_code(),
+			'paper_type'=>$this->get_paper_type_name(),
+			'finish_option'=>$this->get_finish_option_name(),
+			'poster_tube'=>$this->get_poster_tube_name(),
+			'rush_order'=>$this->get_rush_order_name(),
+			'comments'=>$this->get_comments(),
+			'total_cost'=>$this->get_total_cost(),
                         'regular_order' => settings::get_order_timeframe(),
                         'rush_order' => settings::get_rush_order_timeframe(),
 			'admin_email' => settings::get_admin_email(),

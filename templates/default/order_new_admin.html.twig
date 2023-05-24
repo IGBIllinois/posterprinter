@@ -1,12 +1,27 @@
+<html>
 <style> 
 {{ css }}
 </style>
 <div class='container-fluid'>
 <div class='col-md-12 col-lg-12 col-xl-8'>
 <p>New Poster Printer Order From {{ email }}
-<p>{{ job_info }}
+<p>Order Number: {{ order_id }}
+<br>Full Name: {{ name }}
+<br>Email: {{ email }}
+<br>Poster File: {{ poster_file }}
+<br>Poster Length: {{ length }}
+<br>Poster Width: {{ width }}
+<br>CFOP: {{ cfop }}
+<br>Activity Code: {{ activity_code }}
+<br>Paper Type: {{ paper_type }}
+<br>Finish Option: {{ finish_option }}
+<br>Poster Tube: {{ poster_tube }}
+<br>Rush Order: {{ rush_order }}
+<br>Comments: {{ comments }}
+<br>Total Cost: {{ total_cost }}
+
 <p>To view the order: <a href='{{ order_url }}'>{{ order_url }}</a>
 <p><img class='img-responsive img-thumbnail' src='{{ thumbnail }}'>
 	</div>
 </div>
-
+</html>
