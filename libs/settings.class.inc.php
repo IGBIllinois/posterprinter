@@ -104,14 +104,14 @@ class settings {
 		return self::LDAP_BASE_DN;
 	}
 	public static function get_ldap_ssl() {
-		if (defined("LDAP_SSL")) {
+		if (defined("LDAP_SSL") && (is_bool(LDAP_SSL))) {
 			return LDAP_SSL;
 		}
 		return self::LDAP_SSL;
 	}
 
 	public static function get_ldap_tls() {
-		if (defined("LDAP_TLS")) {
+		if (defined("LDAP_TLS") && (is_bool(LDAP_TLS))) {
 			return LDAP_TLS;
 		}
 		return self::LDAP_TLS;
@@ -243,7 +243,7 @@ class settings {
 	}
 
 	public static function get_mysql_ssl() {
-		if (defined("MYSQL_SSL")) {
+		if (defined("MYSQL_SSL") && (is_bool(MYSQL_SSL))) {
 			return MYSQL_SSL;
 		}
 		return self::MYSQL_SSL;

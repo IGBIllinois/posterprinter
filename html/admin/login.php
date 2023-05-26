@@ -27,7 +27,6 @@ if (isset($_POST['login'])) {
 	
         $username = trim(rtrim($_POST['username']));
         $password = $_POST['password'];
-
 	$error = false;
         if ($username == "") {
                 $error = true;
@@ -43,12 +42,12 @@ if (isset($_POST['login'])) {
                         settings::get_ldap_base_dn(),
                         settings::get_ldap_port(),
                         settings::get_ldap_ssl(),
-                        settings::get_ldap_tls());
+			settings::get_ldap_tls()
+		);
 		if (settings::get_ldap_bind_user() != "") {
 			$ldap->bind(settings::get_ldap_bind_user(),settings::get_ldap_bind_password());
 		}
 		$success = $ldap->authenticate($username,$password,settings::get_ldap_group());
-	
 		if ($success) {
 			$log->send_log("User " . $username . " logged in");
                         $session_vars = array('login'=>true,

@@ -28,12 +28,10 @@ if (count($orders) == 0) {
 }
 else {
 	foreach ($orders as $order) {
-		
-		$rushOrderName = $order["rushOrder_name"];
-		if ($rushOrderName == "Yes") {
-			$orders_html .= "<tr class='danger'>";
+		if ($order["rushOrder_name"] == "Yes") {
+			$orders_html .= "<tr class='table-danger'>";
 		}
-		elseif ($rushOrderName == "No") {
+		else {
 			$orders_html .= "<tr>";
 		}
 		$orders_html .= "<td><a href='order.php?order_id=" . $order["orders_id"] . "'>" . $order["orders_id"] . "</a></td>";

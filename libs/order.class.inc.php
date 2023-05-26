@@ -202,7 +202,7 @@ class order {
 						settings::get_smtp_password()
 		);
 		$email->set_to_emails($to);
-
+		$email->attach_files($this->get_thumbnail());
 		try {
 			$result = $email->send_email($this->get_email(),$subject,$txt_message,$html_message);
 			$message = "Email successfully sent to " . $this->get_email();
@@ -241,6 +241,7 @@ class order {
 		if ($this->get_cc_emails() != "") {
 			$email->set_cc_emails($this->get_cc_emails());
 		}
+		$email->attach_files($this->get_thumbnail());
                 try {
                         $result = $email->send_email(settings::get_admin_email(),$subject,$txt_message,$html_message);
                         $message = "Email successfully sent to " . $this->get_email();
@@ -284,6 +285,7 @@ class order {
                 );
 
 		$email->set_to_emails($to);
+		$email->attach_files($this->get_thumbnail());
                 if ($this->get_cc_emails() != "") {
                         $email->set_cc_emails($this->get_cc_emails());
                 }

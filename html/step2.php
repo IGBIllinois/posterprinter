@@ -201,7 +201,24 @@ $( document ).ready(function() {
 		formData.append('rushOrder',rushOrder);
 		formData.append('posterFile',posterFile.files[0],posterFile.files[0].name);
 
-                $.ajax({
+		$.ajax({
+			xhr: function() {
+				var xhr = new window.XMLHttpRequest();
+			        // Upload progress
+				xhr.upload.addEventListener("progress", function(evt){
+					if (evt.lengthComputable) {
+						var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+						document.getElementById('progress_bar').innerHTML = "Uploading and Processing File: " + percentComplete.toString() + "%";
+						document.getElementById('progress_bar').style= "width: " + percentComplete.toString() + "%;";
+						document.getElementById('progress_bar').getAttribute("aria-valuenow").value = percentComplete.toString();
+
+					}
+				}, false);
+
+
+				return xhr;
+
+			},
                         url: 'create.php',
                         type: 'POST',
                         data: formData,

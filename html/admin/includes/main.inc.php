@@ -27,7 +27,7 @@ function my_autoloader($class_name) {
 
 spl_autoload_register('my_autoloader');
 
-if (settings::debug()) {
+if (settings::get_debug()) {
 	error_reporting(E_ALL);
 	ini_set('display_errors', 1);
 	ini_set('log_errors',1);
