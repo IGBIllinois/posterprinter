@@ -25,8 +25,8 @@
 		<span class='navbar-text py-0'>
 		Version <?php echo settings::get_version(); ?>&nbsp;
 		<button type='button' class='btn btn-sm btn-secondary' data-toggle='modal' data-target='#aboutModal'><i class='fas fa-info-circle'></i> About</button>
-		<a class='btn btn-danger btn-sm' role='button' href='../'>Main Page</a></span>
-                </span>
+		<a class='btn btn-danger btn-sm' role="button" href='logout.php'><i class='fas fa-sign-out-alt'></i>Logout</a>
+		</span>
 
 </nav>
 
@@ -47,7 +47,6 @@
 			<li class='nav-item'><a class='nav-link' href='stats_OrdersPerMonth.php'>Orders Per Month</a></li>
 			<li class='nav-item'><a class='nav-link' href='stats_avg.php'>Monthly Averages</a></li>
 			<li class='nav-item'><a class='nav-link' href='log.php'>View Log</a></li>
-			<li class='nav-item'><a class='nav-link' href='logout.php'>Log Out</a></li>
 			
 		</ul>
 		</div>

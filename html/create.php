@@ -9,7 +9,6 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 require_once 'includes/main.inc.php';
 
 
-error_log("Post Count:" . count($_POST));
 $_POST = array_map('trim',$_POST);
 $id = 0;
 $key = 0;
@@ -36,7 +35,6 @@ if (isset($_POST['step1'])) {
 }
 
 elseif (isset($_POST['step2'])) {
-	error_log('step2');
         $posterFileName = $_FILES['posterFile']['name'];
 	//makes the complete CFOP number
         $cfop = $_POST['cfop1'] . "-" . $_POST['cfop2'] . "-" . $_POST['cfop3'] . "-" . $_POST['cfop4'];
@@ -144,7 +142,6 @@ $json_result = json_encode(array('valid'=>$valid,
 if (!$json_result) {
 	$json_result = json_encode(array('Error', json_last_error_msg()));
 }
-error_log($json_result);
 
 ob_clean();
 http_response_code((int)$response_code);

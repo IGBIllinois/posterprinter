@@ -183,7 +183,7 @@ require_once 'includes/header.inc.php';
 	<tr><td class='text-right'>Email</td><td><?php echo $order->get_email(); ?></td></tr>
 	<tr><td class='text-right'>Additional Emails </td><td><?php echo $order->get_cc_emails() ?></td></tr>
 	<tr><td class='text-right'>Full Name</td><td><?php echo $order->get_name(); ?></td></tr>
-	<tr><td class='text-right'>File</td><td><a href='download.php?orderId=<?php echo $order->get_order_id(); ?>'><?php echo $order->get_filename();  ?></a></td></tr>
+	<tr><td class='text-right'>File</td><td><?php echo $order->get_filename();  ?></td></tr>
 	<tr><td class='text-right' style='vertical-align:middle;'>CFOP</td>
 		<td>
 		<div class='row'>

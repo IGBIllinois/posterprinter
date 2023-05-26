@@ -86,7 +86,6 @@ class verify {
 		$poster_size = poster::get_poster_size($filename);
 		$poster_width = $poster_size['width'];
 		$poster_length = $poster_size['length'];
-		error_log('width: ' . $poster_width . " length: " . $poster_length);
 		$valid= true;
 		if (($poster_width < $submitted_width - 1) || ($poster_width > $submitted_width)) {
 			$valid = false;
