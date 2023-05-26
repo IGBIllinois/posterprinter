@@ -14,7 +14,6 @@ elseif (isset($_POST['step3'])) {
 		
                 $var = trim(rtrim($var));
         }
-	functions::debug(implode(",",$_POST));
         $width = $_POST['width'];
         $length = $_POST['length'];
         $paperTypesId = $_POST['paperTypesId'];

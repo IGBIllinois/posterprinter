@@ -168,7 +168,7 @@ class functions {
                 $sql .= "paperTypes_default ";
                 $sql .= "FROM paperTypes ";
                 $sql .= "WHERE paperTypes_available=1 ";
-                $sql .= "ORDER BY paperTypes_name ASC";
+                $sql .= "ORDER BY paperTypes_cost ASC";
                 return $db->query($sql);
 
         }
@@ -205,7 +205,7 @@ class functions {
                 $sql .= "finishOptions_maxLength as maxLength, finishOptions_default ";
                 $sql .= "FROM finishOptions ";
                 $sql .= "WHERE finishOptions_available=1 ";
-                $sql .= "ORDER BY finishOptions_name ASC";
+                $sql .= "ORDER BY finishOptions_cost ASC";
                 return $db->query($sql);
         }
 
@@ -244,24 +244,6 @@ class functions {
 		return $hash;
 
 	}
-
-	public static function debug($message,$log_level = 0) {
-		
-                if (settings::get_debug()) {
-			switch ($log_level) {
-				case 0:
-					error_log("INFO: " . $message);
-					break;
-				case 1:
-					error_log("ERROR: " . $message);
-					break;
-				default:
-					error_log("INFO: " . $message);
-					break;
-			}
-
-                }
-        }
 
 	public static function get_referral_url() {
 		$pos = strpos($_SERVER['HTTP_REFERER'],"?");

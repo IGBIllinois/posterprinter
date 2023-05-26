@@ -11,7 +11,6 @@ class poster {
 	const TEMP_DIR = "tmp";
 
 	public static function move_tmp_file($filename,$tmp_name) {
-		functions::debug('move_tmp_file');
 		//gets the file type (ie .jpg, .bmp) of the uploaded poster file.
 		$filetype = self::get_filetype($filename);
 		//creates a temp file name for the file
@@ -23,9 +22,6 @@ class poster {
 		$target_path = self::get_tmp_path() . "/" . $posterFileTmpName;
 		//moves file to temporary location
 		$result = 0;
-		functions::debug("Tmp: " . $tmp_name . " Exists: " . file_exists($tmp_name));
-		functions::debug("Uploaded File: " . is_uploaded_file($tmp_name));
-		functions::debug("Target Path: " . $target_path);
 		if (file_exists($tmp_name) && is_uploaded_file($tmp_name)) {
 						$result = move_uploaded_file($tmp_name,$target_path);
 		}
@@ -157,7 +153,6 @@ class poster {
 			$image->clear();
 			$image->destroy();
 		} catch (Exception $e) {
-			functions::debug("Error creating image: " . $e->getMessage(),1);
 		}
 		return true;
 	}
@@ -177,7 +172,6 @@ class poster {
 		}
 			try {
 				$exec = "source /etc/profile && libreoffice --headless --convert-to jpg --outdir " . self::get_tmp_path() . " " . $filename;
-				functions::debug($exec);
 				$exit_status = 1;
 				$output_array = array();
 				$exec($exec,$output_array,$exit_status);
@@ -194,7 +188,6 @@ class poster {
 					return array('RESULT'=>true,'FULL'=>basename($fullsize_path),'THUMB'=>basename($thumb_path));
 				}
 			} catch (Exception $e) {
-				functions::debug("Error converting powerpoint: " . $e->getMessage(),1);
 			}
 		
 		return array('RESULT'=>false,'FULL'=>"",'THUMB'=>"");

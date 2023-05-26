@@ -101,7 +101,6 @@ elseif (isset($_POST['step2'])) {
 		
 	}
 	$posterFileTmpName = poster::move_tmp_file($_FILES['posterFile']['name'],$_FILES['posterFile']['tmp_name']);
-	functions::debug("Poster Tmp Name: " . $posterFileTmpName);
 	$verify_poster_size = verify::verify_poster_size(poster::get_tmp_path() . "/" . $posterFileTmpName,$_POST['width'],$_POST['length']);
 	if (!$verify_poster_size['valid']) {
 		$errors = true;
@@ -112,16 +111,11 @@ elseif (isset($_POST['step2'])) {
 
 	}
 	if (!$errors) {
-		functions::debug("No Errors");	        
-		functions::debug("Poster Tmp Name: " . $posterFileTmpName);
 		if (!$posterFileTmpName) {
 			array_push($message,functions::alert("Error in moving uploaded file",0));
 		}
 		$posterThumbFileTmpName = poster::create_image($posterFileTmpName);
 		$thumb_result = poster::create_image($posterFileTmpName);
-		if (!$thumb_result['RESULT']) {
-			functions::debug('Error making thumbnail',1);
-		}
 		$_POST['posterThumbFileTmpName'] = $posterThumbFileTmpName['THUMB'];
 		$post = $_POST;
 		$post['cfop'] = $cfop;
