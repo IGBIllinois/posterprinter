@@ -102,9 +102,19 @@ elseif (isset($_POST['step2'])) {
 		array_push($message,functions::alert("Please upload a valid filetype.  Valid filetypes are ." . implode(", ",settings::get_valid_filetypes()) . ".",0));
 		
 	}
+	$posterFileTmpName = poster::move_tmp_file($_FILES['posterFile']['name'],$_FILES['posterFile']['tmp_name']);
+	functions::debug("Poster Tmp Name: " . $posterFileTmpName);
+	$verify_poster_size = verify::verify_poster_size(poster::get_tmp_path() . "/" . $posterFileTmpName,$_POST['width'],$_POST['length']);
+	if (!$verify_poster_size['valid']) {
+		$errors = true;
+		$err_message = "Submitted poster is not same size as the width and length that was specified.";
+		$err_message .= "<br>Please adjust the size of your poster or submit a new order with correct width and length.";
+		$err_message .= "<br>Poster width and length is " . $verify_poster_size['width'] . "x" . $verify_poster_size['length'] . ". Submitted width and length is " . $_POST['width'] . "x" . $_POST['length'];
+		array_push($message,functions::alert($err_message,0));
+
+	}
 	if (!$errors) {
 		functions::debug("No Errors");	        
-		$posterFileTmpName = poster::move_tmp_file($_FILES['posterFile']['name'],$_FILES['posterFile']['tmp_name']);
 		functions::debug("Poster Tmp Name: " . $posterFileTmpName);
 		if (!$posterFileTmpName) {
 			array_push($message,functions::alert("Error in moving uploaded file",0));

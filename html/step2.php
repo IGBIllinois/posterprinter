@@ -113,17 +113,17 @@ require_once 'includes/header.inc.php';
 		<tr>
 			<td class='text-right' style='vertical-align:middle;'>CFOP Number</td>
 			<td>
-				<div class='form-group row'>
+				<div class='row'>
 				<div class='col-md-2'><input type='text' name='cfop1' id='cfop1' maxlength='1' class='form-control' onKeyUp='cfopAdvance1()'></div> - 
-				<div class='col-md-3'><input type='text' name='cfop2' id='cfop2' maxlength='6' size='6' class='form-control' onKeyUp='cfopAdvance2()'></div> - 
-				<div class='col-md-3'><input type='text' name='cfop3' id='cfop3' maxlength='6' size='6' class='form-control' onKeyUp='cfopAdvance3()'></div> - 
-				<div class='col-md-3'><input type='text' name='cfop4' id='cfop4' maxlength='6' size='6' class='form-control'></div>
+				<div class='col-md-3'><input type='text' name='cfop2' id='cfop2' maxlength='6' class='form-control' onKeyUp='cfopAdvance2()'></div> - 
+				<div class='col-md-3'><input type='text' name='cfop3' id='cfop3' maxlength='6' class='form-control' onKeyUp='cfopAdvance3()'></div> - 
+				<div class='col-md-3'><input type='text' name='cfop4' id='cfop4' maxlength='6' class='form-control'></div>
 				</div>
 			</td>
 		</tr>
 		<tr>
 			<td class='text-right' style='vertical-align:middle;'>Activity Code (optional)</td>
-			<td><div class='col-md-3'><input type='text' class='form-control' name='activityCode' id='activityCode' maxlength='6'></div></td>
+			<td><div class='row'><div class='col-md-3'><input type='text' class='form-control' name='activityCode' id='activityCode' maxlength='6'></div></div></td>
 		</tr>
 		<tr>
 			<td class='text-right' style='vertical-align:middle;'>File (Max <?php echo ini_get('post_max_size'); ?>)</td>
@@ -139,7 +139,7 @@ require_once 'includes/header.inc.php';
 	</table>
 </div>
 <div class='row'>
-	<div class='progress col-md-12 col-lg-12 col-xl-12' style="height: 30px;">
+	<div class='progress w-100' style="height: 30px;">
 	<div id='progress_bar' class='progress-bar progress-bar-striped progress-bar-animated' role='progressbar' 
 		aria-valuenow='0' aria-valuemin='0' aria-valuemax='100'>
 	</div>

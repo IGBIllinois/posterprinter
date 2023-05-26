@@ -21,7 +21,7 @@ class poster {
 			mkdir (self::get_tmp_path(),0777);
 		}
 		$target_path = self::get_tmp_path() . "/" . $posterFileTmpName;
-					//moves file to temporary location
+		//moves file to temporary location
 		$result = 0;
 		functions::debug("Tmp: " . $tmp_name . " Exists: " . file_exists($tmp_name));
 		functions::debug("Uploaded File: " . is_uploaded_file($tmp_name));
@@ -274,7 +274,7 @@ class poster {
 		$resolution = $image->getImageResolution();
 		$inches = array();
 		if (!empty($resolution['y'])) {
-			$inches['height'] = round($dimensions['height'] / $resolution['y'],2);
+			$inches['length'] = round($dimensions['height'] / $resolution['y'],2);
 		}
 		if (!empty($resolution['x'])) {
 			$inches['width'] = round($dimensions['width'] / $resolution['x'],2);

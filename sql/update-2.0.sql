@@ -11,4 +11,9 @@ ALTER TABLE orders CHANGE orders_widthSwitched orders_rotated BOOL DEFAULT 0;
 UPDATE orders,tbl_status SET orders_status=tbl_status.status_name WHERE orders_statusId=tbl_status.status_id;
 ALTER TABLE orders DROP COLUMN orders_statusId;
 DROP TABLE tbl_status;
+ALTER TABLE orders ENGINE=InnoDB;
+ALTER TABLE finishOptions ENGINE=InnoDB;
+AlTER TABLE paperTypes ENGINE=InnoDB;
+ALTER TABLE posterTube ENGINE=InnoDB;
+ALTER TABLE rushOrder ENGINE=InnoDB;
 

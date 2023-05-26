@@ -81,6 +81,27 @@ class verify {
 		return false;
 
 	}
+
+	public static function verify_poster_size($filename,$submitted_width,$submitted_length) {
+		$poster_size = poster::get_poster_size($filename);
+		$poster_width = $poster_size['width'];
+		$poster_length = $poster_size['length'];
+		error_log('width: ' . $poster_width . " length: " . $poster_length);
+		$valid= true;
+		if (($poster_width < $submitted_width - 1) || ($poster_width > $submitted_width)) {
+			$valid = false;
+		}
+		elseif (($poster_length < $submitted_length -1) || ($poster_width > $submitted_width)) {
+			$valid = false;
+
+		}
+		$result = array('valid'=>$valid,
+			'width'=>$poster_width,
+			'length'=>$poster_length
+		);
+		return $result;
+
+	}
 }
 
 ?>
