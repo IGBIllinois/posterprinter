@@ -6,6 +6,7 @@ CREATE TABLE paperTypes (
 	paperTypes_width INT,
 	paperTypes_available BOOLEAN,
 	paperTypes_default BOOLEAN DEFAULT 0,
+	paperTypes_timeCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (paperTypes_id)
 );
 
@@ -17,6 +18,7 @@ CREATE TABLE finishOptions (
 	finishOptions_maxLength INT,
 	finishOptions_available BOOLEAN,
 	finishOptions_default BOOLEAN DEFAULT 0,
+	finishOptions_timeCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (finishOptions_id)
 
 );
@@ -28,6 +30,7 @@ CREATE TABLE rushOrder (
 	rushOrder_cost DECIMAL(5,2),
 	rushOrder_available BOOLEAN,
 	rushOrder_default BOOLEAN DEFAULT 0,
+	rushOrder_timeCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (rushOrder_id)
 );
 
@@ -37,6 +40,7 @@ CREATE TABLE posterTube (
 	posterTube_cost DECIMAL(5,2),
 	posterTube_available BOOLEAN,
 	posterTube_default BOOLEAN DEFAULT 0,
+	posterTube_timeCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (posterTube_id)
 );
 

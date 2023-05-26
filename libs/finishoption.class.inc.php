@@ -13,6 +13,7 @@ class finishoption {
 	private $max_length;
         private $available;
         private $default;
+	private $time_creatd;
 
 ////////////////Public Functions///////////
 
@@ -95,7 +96,9 @@ class finishoption {
         public function get_default() {
                 return $this->default;
         }
-
+	public function get_time_created() {
+		return $this->time_created;
+	}
 
 	//delete()
         //returns true on success of deletion of finish option
@@ -172,7 +175,7 @@ class finishoption {
 			$this->max_length = $result[0]['finishOptions_maxLength'];
 			$this->available = $result[0]['finishOptions_available'];
 			$this->default = $result[0]['finishOptions_default'];
-
+			$this->time_created = $result[0]['finishOptions_timeCreated'];
 
 		}
 

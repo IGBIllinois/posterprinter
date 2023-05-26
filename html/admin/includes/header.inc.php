@@ -7,7 +7,7 @@
 <script src='../vendor/components/jquery/jquery.min.js' type='text/javascript'></script>
 <script src='../vendor/components/jqueryui/jquery-ui.min.js' type='text/javascript'></script>
 <script src='../vendor/twbs/bootstrap/dist/js/bootstrap.min.js'></script>
-<script src='vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js' type='text/javascript'></script>
+<script src='../vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js' type='text/javascript'></script>
 
 <link rel="stylesheet" type="text/css" href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 <link rel='stylesheet' type="text/css" href='../vendor/components/jqueryui/themes/base/jquery-ui.css'>

@@ -17,3 +17,11 @@ AlTER TABLE paperTypes ENGINE=InnoDB;
 ALTER TABLE posterTube ENGINE=InnoDB;
 ALTER TABLE rushOrder ENGINE=InnoDB;
 
+ALTER TABLE finishOptions ADD finishOptions_timeCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE paperTypes ADD paperTypes_timeCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE posterTube ADD posterTube_timeCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE rushOrder ADD rushOrder_timeCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+UPDATE finishOptions SET finishOptions_timeCreated="0000-00-00 00:00:00";
+UPDATE paperTypes SET paperTypes_timeCreated="0000-00-00 00:00:00";
+UPDATE posterTube SET posterTube_timeCreated="0000-00-00 00:00:00";
+UPDATE rushOrder SET rushOrder_timeCreated="0000-00-00 00:00:00";

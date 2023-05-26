@@ -31,7 +31,7 @@ require_once 'includes/header.inc.php';
 <input type='hidden' name='session' id='session' value='<?php echo $session_id; ?>'>
 <div class='row'>
 <table class='table table-bordered table-sm'>
-<thead>
+<thead class='thead-dark'>
 <tr><th colspan='2'>Paper Size</th></tr>
 <tr><td colspan='2'><em>Please choose a width and length for your poster.  The maximum width is <?php echo poster::get_max_poster_width($db); ?> inches.</em></td></tr>
 </thead>

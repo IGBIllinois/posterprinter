@@ -23,7 +23,7 @@ if (isset($_POST['step1'])) {
 		$paperTypes_html .= "<tr>";
 		$paperTypes_html .= "<td class='text-right'>$" . $paperType['cost'] . "</td>";
 		$paperTypes_html .= "<td>" .  $paperType['name'] . "</td>";
-		if (($paperType['paperTypes_default']) || (count($paperTypes) == 1)) {
+		if ($paperType['paperTypes_default']) {
 			$paperTypes_html .= "<td class='left'><input type='radio' name='paperTypesId' checked='true' value='" . $paperType['id'] . "'></td></tr>\n";
 		}
 		else {
@@ -37,7 +37,7 @@ if (isset($_POST['step1'])) {
 		$finishOptions_html .= "<tr>";
 		$finishOptions_html .= "<td class='text-right'>$" . $finishOption['cost'] . "</td>\n";
 		$finishOptions_html .= "<td class='center'>" . $finishOption['name'] . "</td>\n";
-		if (($finishOption['finishOptions_default']) || (count($finishOptions))) {
+		if ($finishOption['finishOptions_default']) {
 			$finishOptions_html .= "<td class='left'> <input type='radio' name='finishOptionsId' checked='checked' value='" . $finishOption['id'] . "'></td></tr>\n";
 		}
 		else {
@@ -65,7 +65,7 @@ require_once 'includes/header.inc.php';
 <input type='hidden' id='session' name='session' value='<?php echo $_GET['session']; ?>'>
 <div class='row'>
 	<table class='table table-bordered table-sm table-hover'>
-		<thead>
+		<thead class='thead-dark'>
 		<tr><th colspan='3'>Paper Types</th></tr>
 		<tr><td colspan='3'><em>Please choose a paper type for your poster.  The cost is per an inch.</em></td></tr>
 		</thead>
@@ -75,7 +75,7 @@ require_once 'includes/header.inc.php';
 </div>
 <div class='row'>	
 	<table class='table table-bordered table-sm table-hover'>
-		<thead>
+		<thead class='thead-dark'>
 		<tr><th colspan='3'>Finish Options</th></tr>
 		<tr><td colspan='3'><em>Please choose a finish option for your poster.  The cost is a flat rate.</em></td></tr>
 		</thead>
@@ -84,7 +84,7 @@ require_once 'includes/header.inc.php';
 </div>	
 <div class='row'>
 	<table class='table table-bordered table-sm table-hover'>
-		<thead>
+		<thead class='thead-dark'>
 		<tr><th colspan='3'>Other Options</th></tr>
 		<tr><td colspan='3'><em>Please select any additional options.  Rush orders will be completed within <strong><?php echo settings::get_rush_order_timeframe(); ?> business hours</strong>.</em></td></tr>
 	</thead>
@@ -94,7 +94,7 @@ require_once 'includes/header.inc.php';
 </div>
 <div class='row'>
 	<table class='table table-bordered table-sm'>
-		<thead>
+		<thead class='thead-dark'>
 		<tr><th colspan='3'>Required Information</th></tr>
 		<tr><td colspan='3'><em>Please fill in the following information.</em></td></tr>
 		</thead>

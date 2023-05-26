@@ -223,7 +223,7 @@ class functions {
                 $sql .= "WHERE finishOptions_available='1' ";
                 $sql .= "AND finishOptions_maxLength>=:length ";
                 $sql .= "AND (finishOptions_maxWidth>=:width OR finishOptions_maxWidth>=:length) ";
-		$sql .= "ORDER BY finishOptions_name ASC";
+		$sql .= "ORDER BY finishOptions_cost ASC";
 		$parameters = array(
                         ':width'=>$width,
                         ':length'=>$length

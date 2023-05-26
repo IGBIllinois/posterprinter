@@ -2,7 +2,7 @@
 
 class papertype {
 
-////////////////Private Variables//////////
+	////////////////Private Variables//////////
 
         private $db; //mysql database object
         private $id;
@@ -11,8 +11,9 @@ class papertype {
 	private $width;
 	private $available;
 	private $default;
+	private $time_created;
 
-////////////////Public Functions///////////
+	////////////////Public Functions///////////
 
         public function __construct($db,$id = 0) {
                 $this->db = $db;
@@ -86,6 +87,10 @@ class papertype {
 		return $this->default;
 	}
 
+	public function get_time_created() {
+		return $this->time_created;
+	
+	}
         //delet()
         //deletes paper type
 	public function delete() {
@@ -159,7 +164,7 @@ class papertype {
 			$this->width = $result[0]['paperTypes_width'];
 			$this->available = $result[0]['paperTypes_available'];
 			$this->default = $result[0]['paperTypes_default'];
-
+			$this->time_created = $result[0]['paperTypes_timeCreated'];
 
 
 
