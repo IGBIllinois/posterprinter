@@ -95,7 +95,7 @@ if (isset($_POST['step1'])) {
 	<br>
 	<table class='medium_center'>
 		<tr><td colspan='3' class='header'>Other Options</td></tr>
-		<tr><td colspan='3' class='description'>Please select any additional options.<br>A normal order will be completed within 3 business days.<br>A <b>Rush Order</b> will be done within 24 hours during the business week only.</td></tr>" . 
+		<tr><td colspan='3' class='description'>Please select any additional options.<br>A normal order will be completed within 72 business hours.<br>A <b>Rush Order</b> will be done within 24 hours during the business week only.</td></tr>" . 
 	$posterTube_html .
 	$rushOrder_html . "</table>
 	
@@ -270,7 +270,7 @@ elseif (isset($_POST['step2'])) {
 		$form_html .= "<br>Since this is a rush order, this order will be completed within 1 business days.";
 	}
 	else {
-		$form_html .= "<br>This order will be completed within 3 business days. If you need it sooner, please select <b>Cancel</b> and submit a new order and select <b>Rush Order</b>";
+		$form_html .= "<br>This order will be completed within 72 business hours. If you need it sooner, please select <b>Cancel</b> and submit a new order and select <b>Rush Order</b>";
 
 	}
 	$form_html .= "</td?</tr>";

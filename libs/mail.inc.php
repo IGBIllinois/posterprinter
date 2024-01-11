@@ -115,21 +115,28 @@ function mailUserOrderComplete($db,$orderId,$adminEmail) {
 	if ($order->get_rush_order_name() == 'Yes') {
                 $subject = "RUSH ORDER - Poster Order #" . $order->get_order_id() . " Completed";
         }
+	
 	$message = "<br>Your Poster Order #" . $order->get_order_id() . " is now completed.\r\n";
-	$message .=	"Your poster is located in room 149 in the IGB concourse.\r\n";
-	$message .= 	"Please see Hannah McClellan (Room 138) or the CNRG group (Room 131) in the IGB concourse if you are unable to get into room 149.\r\n";
-	$message .=	"<p>Order Number: " . $order->get_order_id() . "\r\n";
-	$message .=	"<br>Poster File: " . $order->get_filename() . "\r\n";
-	$message .=	"<br>Poster Length: " . $order->get_length() . " inches \r\n";
-	$message .=	"<br>Poster Width: " . $order->get_width() . " inches \r\n";
-	$message .=	"<br>CFOP: " .  $order->get_cfop() . "\r\n";
-	$message .=	"<br>Activity Code: " . $order->get_activity_code() . "\r\n";
-	$message .=	"<br>Paper Type: " . $order->get_paper_type_name() . "\r\n";
-	$message .=	"<br>Finish Option: " . $order->get_finish_option_name() . "\r\n"; 
-	$message .=	"<br>Poster Tube: " . $order->get_poster_tube_name() . "\r\n";
-	$message .=	"<br>Rush Order: " . $order->get_rush_order_name() . "\r\n";
-	$message .=	"<br>Comments: " . $order->get_comments() . "\r\n";
-	$message .=	"<br>Total Cost: $" . $order->get_total_cost() . "\r\n";
+        $message .=     "<br>Your poster is located at \r\n";
+        $message .=     "<br>&nbsp;&nbsp;&nbsp;Carl R. Woese Institute for Genomic Biology \r\n";
+        $message .=     "<br>&nbsp;&nbsp;&nbsp;1206 W. Gregory Dr.\r\n";
+        $message .=     "<br>&nbsp;&nbsp;&nbsp;Urbana, IL 61801\r\n";
+        $message .=     "<br>&nbsp;&nbsp;&nbsp;Room 149 in the IGB concourse (basement)\r\n";
+        $message .=     "<p>Your poster is located in room 149 in the IGB concourse (basement).\r\n";
+        $message .=     "<br>If you are not able to get into the room, please see the CNRG group in room 131.\r\n";
+        $message .=     "<br>We are open from 8AM to 4:30PM\r\n";
+        $message .=     "<p>Order Number: " . $order->get_order_id() . "\r\n";
+        $message .=     "<br>Poster File: " . $order->get_filename() . "\r\n";
+        $message .=     "<br>Poster Length: " . $order->get_length() . " inches \r\n";
+        $message .=     "<br>Poster Width: " . $order->get_width() . " inches \r\n";
+        $message .=     "<br>CFOP: " .  $order->get_cfop() . "\r\n";
+        $message .=     "<br>Activity Code: " . $order->get_activity_code() . "\r\n";
+        $message .=     "<br>Paper Type: " . $order->get_paper_type_name() . "\r\n";
+        $message .=     "<br>Finish Option: " . $order->get_finish_option_name() . "\r\n";
+        $message .=     "<br>Poster Tube: " . $order->get_poster_tube_name() . "\r\n";
+        $message .=     "<br>Rush Order: " . $order->get_rush_order_name() . "\r\n";
+        $message .=     "<br>Comments: " . $order->get_comments() . "\r\n";
+        $message .=     "<br>Total Cost: $" . $order->get_total_cost() . "\r\n";
 	
 	$headers = "From: " . $adminEmail . "\r\n";
 	$headers .= "Cc: " . $adminEmail . "\r\n";
