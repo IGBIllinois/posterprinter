@@ -95,7 +95,7 @@ if (isset($_POST['step1'])) {
 	<br>
 	<table class='medium_center'>
 		<tr><td colspan='3' class='header'>Other Options</td></tr>
-		<tr><td colspan='3' class='description'>Please select any additional options.  Rush order will be done within 24 hours during the business week only.</td></tr>" . 
+		<tr><td colspan='3' class='description'>Please select any additional options.<br>A normal order will be completed within 3 business days.<br>A <b>Rush Order</b> will be done within 24 hours during the business week only.</td></tr>" . 
 	$posterTube_html .
 	$rushOrder_html . "</table>
 	
@@ -264,7 +264,16 @@ elseif (isset($_POST['step2'])) {
 	//outputs the order information to confirm the order.
 	$form_html = "<table class='medium_center'>";
 	$form_html .= "<tr><td colspan='2' class='header'>Review</td></tr>";
-	$form_html .= "<tr><td colspan='2' class='description'>Please review your order below, then click \"Submit Order\" to send your order</td></tr>";
+	$form_html .= "<tr><td colspan='2' class='description'>Please review your order below, then click <b>Submit Order</b> to submit your order.";
+	if ($rushOrder) {
+
+		$form_html .= "<br>Since this is a rush order, this order will be completed within 1 business days.";
+	}
+	else {
+		$form_html .= "<br>This order will be completed within 3 business days. If you need it sooner, please select <b>Cancel</b> and submit a new order and select <b>Rush Order</b>";
+
+	}
+	$form_html .= "</td?</tr>";
 
 	if ($widthSwitched == 1) {
 		$form_html .= "<tr><td colspan='2' class='description'>Your width and length have been flipped to save paper and money.  This won't affect the size of your poster.</td></tr>";
