@@ -485,13 +485,14 @@ else {
 
 		<script type="text/javascript" src="includes/poster.inc.js"></script>
 
-		<title>Poster Printer Submit Page</title>
+		<title>Carl R. Woes Institute for Genomic Biology Poster Printer Submit Page</title>
 
 </head>
 
 <body OnLoad="document.posterInfo.posterWidth.focus();">
 	<div class='order_container'>
 		<div class="order">
+			<h2>Carl R. Woese Institute for Genomic Biology</h2>
 			<h2>Poster Printer Order Submit Form</h2>
 
 			<?php echo $form_html; ?>
