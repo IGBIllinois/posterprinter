@@ -38,7 +38,7 @@ if (isset($_POST['changeStatus'])) {
 	
 }
 //get last day of previous month
-$startDate = date('Y/m',strtotime('-1 month')) . "/01";
+$startDate = date('Y/m',strtotime('-2 month')) . "/01";
 $previous_date = strtotime('-1 second', strtotime($startDate));
 
 if (strtotime($order->get_time_created()) < $previous_date) {
