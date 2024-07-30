@@ -77,7 +77,7 @@ if (isset($_POST['step1'])) {
 	$form_html = "<br \>
 			
 	<br>
-	<form action='index.php' method='post' id='posterInfo' enctype='multipart/form-data' onsubmit='return validateStep2()'>
+	<form action='index.php' method='post' name='posterInfo' id='posterInfo' enctype='multipart/form-data' onsubmit='return validateStep2()'>
 	 	<input type='hidden' name='MAX_FILE_SIZE' value='209715200'>
 		<input type='hidden' name='posterWidth' value='" . $posterWidth . "'>
 		<input type='hidden' name='posterLength' value='" . $posterLength . "'>
@@ -145,21 +145,23 @@ if (isset($_POST['step1'])) {
 		</tr>
 	</table>
 	</form>
+	<center>
 	<div id='paperTypesWarning' class='error'></div>
 	<div id='finishOptionsWarning' class='error'></div>
 	<div id='nameWarning' class='error'></div>
 	<div id='emailWarning' class='error'></div>
 	<div id='cfopWarning' class='error'></div>
 	<div id='activityCodeWarning' class='error'></div>
-	<div id='posterFileWarning' class='error'></div>";
+	<div id='posterFileWarning' class='error'></div>
+	</center>";
 
 
 }
 
 //paper type, finish option, cfop, and file submission, confirms order
 elseif (isset($_POST['step2'])) {
-	$posterWidth = $_POST['posterWidth'];
-	$posterLength = $_POST['posterLength'];
+	$posterWidth = round($_POST['posterWidth'],0);
+	$posterLength = round($_POST['posterLength'],0);
 	$paperTypesId = $_POST['paperTypesId'];
 	$finishOptionsId = $_POST['finishOptionsId'];
 	$cfop1 = $_POST['cfop1'];
@@ -449,9 +451,9 @@ else {
 	$form_html .= "<tr><td colspan='2' class='header'>Paper Size</td></tr>";
 	$form_html .= "<tr><td colspan='2' class='description' width='400'>Please choose a width and length for your poster.  The width maximum is " . max_printer_width . " inches.</td></tr>";
 	$form_html .= "<tr><td class='right'>Width:</td>";
-	$form_html .= "<td class='left'><input type='text' name='posterWidth' id='posterWidth' maxlength='6' size='6'>\"</td></tr>";
+	$form_html .= "<td class='left'><input type='text' name='posterWidth' id='posterWidth' maxlength='6' size='6'>&nbspinches</td></tr>";
 	$form_html .= "<tr><td class='right'>Length:</td>";
-	$form_html .= "<td class='left'><input type='text' name='posterLength' id='posterLength' maxlength='6' size='6'>\"</td></tr>";
+	$form_html .= "<td class='left'><input type='text' name='posterLength' id='posterLength' maxlength='6' size='6'>&nbspinches</td></tr>";
 	$form_html .= "</table>";
 	$form_html .= "<br>";
 	$form_html .= "<table class='medium_center'>";
@@ -471,14 +473,15 @@ else {
 	$form_html .= "<button onclick='window.location.href=window.location.href'>Cancel</button></td>";
 	$form_html .= "<td style='padding:5px 0px 10px 0px;'><input class='button_1' type='submit'  value='Next' name='step1'></td>";
 	$form_html .= "</tr></table></form>";
-	$form_html .= "<div id='widthWarning' class='error'></div>";
-	$form_html .= "<div id='lengthWarning' class='error'></div>";
+	$form_html .= "<center><div id='widthWarning' class='error'></div></center>";
+	$form_html .= "<center><div id='lengthWarning' class='error'></div></center>";
 
 }
 
 ?>
-<HTML>
-<HEAD>
+<!DOCTYPE html>
+<html lang='en'>
+<head>
 <meta charset="UTF-8">
 	<link rel="stylesheet" type="text/css" href="includes/stylesheet.css"
 		media='screen'>

@@ -1,4 +1,5 @@
-<HTML>
+<!DOCTYPE html>
+<HTML lang='en'>
 <HEAD>
 <meta charset="UTF-8">
 <link rel="stylesheet" type="text/css" href="../includes/stylesheet.css"></link>

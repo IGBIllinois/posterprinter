@@ -1,14 +1,14 @@
 function validateStep1() {
-	var frm = document.forms["posterInfo"];
-	var width = parseInt(frm.posterWidth.value);
-	var length = parseInt(frm.posterLength.value);
+	var frm = document.forms.posterInfo;
+	var width = parseFloat(frm.posterWidth.value);
+	var length = parseFloat(frm.posterLength.value);
 	var maxPrinterWidth = parseInt(frm.maxPrinterWidth.value);
 	return validateDimensions(width,length,maxPrinterWidth);
 
 }
 
 function validateStep2() {
-	var frm = document.forms["posterInfo"];
+	var frm = document.forms.posterInfo;
 	var cfop1 = frm.cfop1.value;
 	var cfop2 = frm.cfop2.value;
 	var cfop3 = frm.cfop3.value;
@@ -40,9 +40,8 @@ function validateStep2() {
 function validateDimensions(width,length,maxPrinterWidth) {
 	var widthValid;
 	var lengthValid;
-	
 	if ((width == "") || (width % 1 != 0) || (width <= 0)){
-		document.getElementById('widthWarning').innerHTML = "Please enter a valid poster width.";
+		document.getElementById('widthWarning').innerHTML = "Please enter a valid poster width.  Only whole numbers are allowed";
 		widthValid = false;
 	}
 	else if ((width > maxPrinterWidth) && (length > maxPrinterWidth)) {
@@ -55,7 +54,7 @@ function validateDimensions(width,length,maxPrinterWidth) {
 	}
 	
 	if ((length == "") || (length % 1 != 0) || (length <=0)){
-		document.getElementById('lengthWarning').innerHTML = "Please enter a valid poster length.";
+		document.getElementById('lengthWarning').innerHTML = "Please enter a valid poster length. Only whole number are allowed";
 		lengthValid = false;
 	}
 	else if (length > 200) {
