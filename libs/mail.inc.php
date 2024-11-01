@@ -121,9 +121,8 @@ function mailUserOrderComplete($db,$orderId,$adminEmail) {
         $message .=     "<br>&nbsp;&nbsp;&nbsp;Carl R. Woese Institute for Genomic Biology \r\n";
         $message .=     "<br>&nbsp;&nbsp;&nbsp;1206 W. Gregory Dr.\r\n";
         $message .=     "<br>&nbsp;&nbsp;&nbsp;Urbana, IL 61801\r\n";
-        $message .=     "<br>&nbsp;&nbsp;&nbsp;Room 149 in the IGB concourse (basement)\r\n";
-        $message .=     "<p>Your poster is located in room 149 in the IGB concourse (basement).\r\n";
-        $message .=     "<br>If you are not able to get into the room, please see the CNRG group in room 131.\r\n";
+        $message .=     "<br>&nbsp;&nbsp;&nbsp;Room 131 in the IGB concourse (basement)\r\n";
+        $message .=     "<p>Your poster is located in room 131, CNRG group,  in the IGB concourse (basement).\r\n";
         $message .=     "<br>We are open from 8AM to 4:30PM\r\n";
         $message .=     "<p>Order Number: " . $order->get_order_id() . "\r\n";
         $message .=     "<br>Poster File: " . $order->get_filename() . "\r\n";
