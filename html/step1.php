@@ -38,7 +38,7 @@ require_once 'includes/header.inc.php';
 <tr><td class='text-right' style='vertical-align:middle;'>Width:</td>
 <td class='left'>
 <div class='input-group col-md-5'>
-<input class='form-control' text='text' name='width' id='width' maxlength='6' size='6' value='<?php if (isset($_POST['width'])) { echo $_POST['width']; } ?>'><div class='input-group-append' tabindex='1'>
+<input autofocus class='form-control' text='text' name='width' id='width' maxlength='6' size='6' value='<?php if (isset($_POST['width'])) { echo $_POST['width']; } ?>'><div class='input-group-append' tabindex='1'>
 	<span class='input-group-text'>&nbsp; Inches</span></div></div>
 </td></tr>
 <tr><td class='text-right' style='vertical-align:middle;'>Length:</td>
@@ -53,7 +53,7 @@ require_once 'includes/header.inc.php';
 
 <div class='row'>
 	<div class='mx-auto btn-toolbar'>
-		<p><button class='btn btn-warning' type='submit' name='cancel' id='cancel'>Cancel</button>
+		<p><button class='btn btn-warning' type='submit' name='cancel' id='cancel'>Cancel Order</button>
 		<button class='btn btn-primary' type='submit' name='step1' id='step1'>Next</button>
 		</p>
 	</div>

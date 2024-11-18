@@ -148,7 +148,7 @@ require_once 'includes/header.inc.php';
 <p></p>
 <div class='row'>
 	<div class='mx-auto btn-toolbar'>
-		<button class='btn btn-warning' type='submit' name='cancel' id='cancel'>Cancel</button>&nbsp;
+		<button class='btn btn-warning' type='submit' name='cancel' id='cancel'>Cancel Order</button>&nbsp;
 		<button class='btn btn-primary' type='submit' name='step2' id='step2'>Next</button>
 	</div>
 </div>

@@ -125,7 +125,7 @@ $url = "step4.php?session=" . $_GET['session'];
 		        }
 	        ?>
 
-		<button class='btn btn-warning' type='submit' name='cancel'>Cancel</button>&nbsp;
+		<button class='btn btn-warning' type='submit' name='cancel'>Cancel Order</button>&nbsp;
 		<button class='btn btn-primary' type='submit' name='step4'>Submit Order</button>
 		</form>
 	</div>
