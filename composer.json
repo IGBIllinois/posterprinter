@@ -16,7 +16,7 @@
 		"ext-imagick": "*",
 		"components/jquery": "3.6.0",
 		"components/jqueryui": "1.12.1",
-		"twbs/bootstrap": "v4.6.2",
+		"twbs/bootstrap": "v5.0.0",
 		"fortawesome/font-awesome": "5.15.4",
 		"twig/twig":"v3.14.2",
 		"igbillinois/igbillinois-php": "1.4.3"
