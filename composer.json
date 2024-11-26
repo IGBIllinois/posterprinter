@@ -19,7 +19,7 @@
 		"twbs/bootstrap": "v4.6.2",
 		"fortawesome/font-awesome": "5.15.4",
 		"twig/twig":"v3.14.2",
-		"igbillinois/igbillinois-php": "1.4.2"
+		"igbillinois/igbillinois-php": "1.4.3"
 		
 	},
 	"scripts": {
