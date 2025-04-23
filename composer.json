@@ -6,7 +6,7 @@
 		"ext-ldap": "*",
 		"ext-zip": "*",
 		"phpoffice/phpexcel": "1.8.1",
-		"jpgraph/jpgraph": "4.0.2"
+		"mitoteam/jpgraph": "10.4.4"
 	}
 }
 

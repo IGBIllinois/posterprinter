@@ -36,6 +36,7 @@ else {
 			$orders_html .= "<tr>";
 		}
 		$orders_html .= "<td><a href='orders.php?orderId=" . $order["orders_id"] . "'>" . $order["orders_id"] . "</a></td>";
+		$orders_html .= "<td>". $order["paperTypes_name"] . "</td>";
 		$orders_html .= "<td>" . $order["orders_email"] . "</td>";
 		$orders_html .= "<td>" . $order["orders_totalCost"] . "</td>";
 		$orders_html .= "<td><a href='download.php?orderId=" . $order["orders_id"] . "'>" . $order["orders_fileName"] . "</a></td>";
@@ -52,6 +53,7 @@ require_once 'includes/header.inc.php';
 <table class='medium'>
 	<tr>
 		<td class='header_center'>Order Number</td>
+		<td class='header_center'>Paper Type</td>
 		<td class='header_center'>Email</td>
 		<td class='header_center'>Total Cost</td>
 		<td class='header_center'>File Name</td>

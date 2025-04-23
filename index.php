@@ -500,7 +500,7 @@ else {
 
 			<?php echo $form_html; ?>
 			<table class='center'>
-				<td><a href='https://help.igb.illinois.edu/Poster_Printing_FAQ'>Frequently Asked Questions</a></td>
+				<tr><td><a href='https://help.igb.illinois.edu/Poster_Printing_FAQ'>Frequently Asked Questions</a></td></tr>
 			</table>
 		</div>
 	</div>

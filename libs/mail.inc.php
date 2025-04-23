@@ -122,7 +122,11 @@ function mailUserOrderComplete($db,$orderId,$adminEmail) {
         $message .=     "<br>&nbsp;&nbsp;&nbsp;1206 W. Gregory Dr.\r\n";
         $message .=     "<br>&nbsp;&nbsp;&nbsp;Urbana, IL 61801\r\n";
         $message .=     "<br>&nbsp;&nbsp;&nbsp;Room 131 in the IGB concourse (basement)\r\n";
+<<<<<<< HEAD
         $message .=     "<p>Your poster is located in room 131, CNRG group,  in the IGB concourse (basement).\r\n";
+=======
+        $message .=     "<p>Your poster is located in room 131 in the IGB concourse (basement).\r\n";
+>>>>>>> a15a0db (Updated jpgraph to use mitoteam/jpgraph)
         $message .=     "<br>We are open from 8AM to 4:30PM\r\n";
         $message .=     "<p>Order Number: " . $order->get_order_id() . "\r\n";
         $message .=     "<br>Poster File: " . $order->get_filename() . "\r\n";
