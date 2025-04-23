@@ -5,6 +5,7 @@
 		"ext-mysqlnd": "*",
 		"ext-ldap": "*",
 		"ext-zip": "*",
+		"ext-gd": "*",
 		"phpoffice/phpexcel": "1.8.1",
 		"mitoteam/jpgraph": "10.4.4"
 	}
