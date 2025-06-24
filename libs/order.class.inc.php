@@ -87,7 +87,7 @@ class order {
 	
 		$sql = "UPDATE tbl_orders ";
 		$sql .= "SET orders_statusId='" . $status_id . "' ";
-		if ($status_id = self::STATUS['COMPLETED']) {
+		if ($status_id == self::STATUS['COMPLETED']) {
 			$time_finished = date( 'Y-m-d H:i:s');
 			$sql .= ",orders_timeFinished='" . $time_finished . "', ";
 			$sql .= "orders_completedBy='" . $username . "' ";
