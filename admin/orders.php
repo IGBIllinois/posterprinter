@@ -19,7 +19,7 @@ if (isset($_POST['changeStatus'])) {
 	$statusId = $_POST['statusId'];
 	
 	//updates the order to the new status
-	$order->set_status($statusId);
+	$order->set_status($statusId,$username);
 
 	//if status is set to "Complete", then it will email the user saying to come pick up the poster
 	if ($statusId == 3) {

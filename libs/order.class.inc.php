@@ -31,6 +31,12 @@ class order {
 	private $status;
 	private $status_id;
 
+	const STATUS = array('NEW'=>'1',
+			'IN_PROGRESS'=>'2',
+			'COMPLETED'=>'3',
+			'CANCEL'=>'4',
+			'ON_HOLD'=>'5'
+	);
 ////////////////Public Functions///////////
 
 	public function __construct($db,$order_id) {
@@ -77,12 +83,16 @@ class order {
 		}
 		return false;
 	}	
-	public function set_status($status_id) {
+	public function set_status($status_id,$username = "") {
 	
-		$time_finished = date( 'Y-m-d H:i:s');
 		$sql = "UPDATE tbl_orders ";
-		$sql .= "SET orders_statusId='" . $status_id . "', ";
-		$sql .= "orders_timeFinished='" . $time_finished . "' ";
+		$sql .= "SET orders_statusId='" . $status_id . "' ";
+		if ($status_id = self::STATUS['COMPLETED']) {
+			$time_finished = date( 'Y-m-d H:i:s');
+			$sql .= ",orders_timeFinished='" . $time_finished . "', ";
+			$sql .= "orders_completedBy='" . $username . "' ";
+
+		}
 		$sql .= "WHERE orders_id='" . $this->get_order_id() . "' LIMIT 1";
 		$this->db->non_select_query($sql);
 		$this->time_finished = $time_finished;
