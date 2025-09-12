@@ -14,7 +14,7 @@ $end_date = $year . "/12/31";
 
 //////Year////////
 $min_year = functions::get_minimal_year($db);
-$year_html = "<select class='form-control' name='year'>";
+$year_html = "<select class="form-select" name='year'>";
 for ($i=$min_year; $i<=date("Y");$i++) {
         if ($i == $year) { $year_html .= "<option value='" . $i . "' selected='true'>" . $i . "</option>"; }
         else { $year_html .= "<option value='" . $i . "'>" . $i . "</option>"; }
@@ -29,13 +29,13 @@ $graph_type = "orders_per_month";
 
 ?>
 <h3>Orders Per Month - <?php echo $year; ?></h3>
-<form class='form-inline' action='<?php echo $_SERVER['PHP_SELF']; ?>' method='get'>
-<div class='form-group'>
+<form class='d-flex align-items-center' action='<?php echo $_SERVER['PHP_SELF']; ?>' method='get'>
+<div class='mb-3'>
         <label for='year'>Year:</label>
         &nbsp; <?php echo $year_html; ?>
 </div>
 &nbsp;
-<div class='form-group'>
+<div class='mb-3'>
         <input type='submit' class='btn btn-primary' value='Get Records'>
 </div>
 </form>
@@ -46,10 +46,10 @@ $graph_type = "orders_per_month";
 
         <?php
                 if ($next_year > $year) {
-                        echo "<div class='float-right'><a class='btn btn-sm btn-primary' onclick='return false;'>Next Year</a></div>";
+                        echo "<div class='float-end'><a class='btn btn-sm btn-primary' onclick='return false;'>Next Year</a></div>";
                 }
                 else {
-                        echo "<div class='float-right'><a class='btn btn-sm btn-primary' href='" . $url_navigation['forward_url'] . "'>Next Year</a></div>";
+                        echo "<div class='float-end'><a class='btn btn-sm btn-primary' href='" . $url_navigation['forward_url'] . "'>Next Year</a></div>";
                 }
         ?>
         </div>

@@ -24,7 +24,7 @@
         <a class='navbar-brand py-0' href='#'><?php echo settings::get_title(); ?> Administration</a>
 		<span class='navbar-text py-0'>
 		Version <?php echo settings::get_version(); ?>&nbsp;
-		<button type='button' class='btn btn-sm btn-secondary' data-toggle='modal' data-target='#aboutModal'><i class='fas fa-info-circle'></i> About</button>
+		<button type='button' class='btn btn-sm btn-secondary' data-bs-toggle='modal' data-bs-target='#aboutModal'><i class='fas fa-info-circle'></i> About</button>
 		<a class='btn btn-danger btn-sm' role="button" href='logout.php'><i class='fas fa-sign-out-alt'></i>Logout</a>
 		</span>
 

@@ -37,9 +37,9 @@ if (strtotime($order->get_time_created()) < $previous_date) {
 }
 else {
 	//gets the different possible status options
-	$status_html = "<form class='form-inline' action='" . $_SERVER['PHP_SELF'] . "?order_id=" . $order_id . "' method='post'>";
-	$status_html . "<div class='form-group'><div class='col-md-4'>";
-	$status_html .= "<select class='form-control' name='status'>";
+	$status_html = "<form class='d-flex align-items-center' action='" . $_SERVER['PHP_SELF'] . "?order_id=" . $order_id . "' method='post'>";
+	$status_html . "<div class='mb-3'><div class='col-md-4'>";
+	$status_html .= "<select class="form-select" name='status'>";
 
 	foreach (order::get_all_statuses() as $possible_status) {
 		
@@ -72,24 +72,24 @@ require_once 'includes/header.inc.php';
 <thead>
 <tr><th colspan='2'>Order Information</th></tr>
 </thead>
-<tr><td class='text-right'>Order Number</td><td><?php echo $order->get_order_id(); ?></td></tr>
-<tr><td class='text-right'>Email </td><td><?php echo $order->get_email() ?></td></tr>
-<tr><td class='text-right'>Additional Emails </td><td><?php echo $order->get_cc_emails() ?></td></tr>
-<tr><td class='text-right'>Full Name </td><td><?php echo $order->get_name() ?></td></tr>
-<tr><td class='text-right'>File</td><td><?php echo $file_link; ?></td></tr>
-<tr><td class='text-right'>File Size</td><td><?php echo $order->get_filesize(); ?>MB</td></tr>
-<tr><td class='text-right'>CFOP</td><td><?php echo $order->get_cfop(); ?></td></tr>
-<tr><td class='text-right'>Activity Code</td><td><?php echo $order->get_activity_code(); ?></td></tr>
-<tr><td class='text-right'>Time Created</td><td><?php echo $order->get_time_created(); ?></td></tr>
-<tr><td class='text-right'>Total Cost</td><td>$<?php echo $order->get_total_cost(); ?></td></tr>
-<tr><td class='text-right'>Width</td><td><?php echo $order->get_width(); ?>''</td></tr>
-<tr><td class='text-right'>Length</td><td><?php echo $order->get_length(); ?>''</td></tr>
-<tr><td class='text-right'>Paper Type</td><td><?php echo$order->get_paper_type_name(); ?></td></tr>
-<tr><td class='text-right'>Finish Option</td><td><?php echo $order->get_finish_option_name(); ?></td></tr>
-<tr><td class='text-right'>Poster Tube</td><td><?php echo $order->get_poster_tube_name(); ?></td></tr>
-<tr><td class='text-right'>Rush Order</td><td><?php echo $order->get_rush_order_name(); ?></td></tr>
-<tr><td class='text-right'>Comments</td><td><?php echo $order->get_wordwrap_comments(); ?></td></tr>
-<tr><td class='text-right' style='vertical-align:middle;'>Status</td><td><?php echo $status_html; ?></td></tr>
+<tr><td class='text-end'>Order Number</td><td><?php echo $order->get_order_id(); ?></td></tr>
+<tr><td class='text-end'>Email </td><td><?php echo $order->get_email() ?></td></tr>
+<tr><td class='text-end'>Additional Emails </td><td><?php echo $order->get_cc_emails() ?></td></tr>
+<tr><td class='text-end'>Full Name </td><td><?php echo $order->get_name() ?></td></tr>
+<tr><td class='text-end'>File</td><td><?php echo $file_link; ?></td></tr>
+<tr><td class='text-end'>File Size</td><td><?php echo $order->get_filesize(); ?>MB</td></tr>
+<tr><td class='text-end'>CFOP</td><td><?php echo $order->get_cfop(); ?></td></tr>
+<tr><td class='text-end'>Activity Code</td><td><?php echo $order->get_activity_code(); ?></td></tr>
+<tr><td class='text-end'>Time Created</td><td><?php echo $order->get_time_created(); ?></td></tr>
+<tr><td class='text-end'>Total Cost</td><td>$<?php echo $order->get_total_cost(); ?></td></tr>
+<tr><td class='text-end'>Width</td><td><?php echo $order->get_width(); ?>''</td></tr>
+<tr><td class='text-end'>Length</td><td><?php echo $order->get_length(); ?>''</td></tr>
+<tr><td class='text-end'>Paper Type</td><td><?php echo$order->get_paper_type_name(); ?></td></tr>
+<tr><td class='text-end'>Finish Option</td><td><?php echo $order->get_finish_option_name(); ?></td></tr>
+<tr><td class='text-end'>Poster Tube</td><td><?php echo $order->get_poster_tube_name(); ?></td></tr>
+<tr><td class='text-end'>Rush Order</td><td><?php echo $order->get_rush_order_name(); ?></td></tr>
+<tr><td class='text-end'>Comments</td><td><?php echo $order->get_wordwrap_comments(); ?></td></tr>
+<tr><td class='text-end' style='vertical-align:middle;'>Status</td><td><?php echo $status_html; ?></td></tr>
 
 <?php if (file_exists($order->get_thumbnail())) {
         echo "<tr><td colspan='2'>";

@@ -26,7 +26,7 @@ $end_date = $year . "/06/30";
 
 //////Year////////
 $min_year = functions::get_minimal_year($db);
-$year_html = "<select class='form-control' name='year'>";
+$year_html = "<select class="form-select" name='year'>";
 for ($i=$min_year; $i<=date("Y");$i++) {
         if ($i == $year) { $year_html .= "<option value='" . $i . "' selected='true'>" . $i . "</option>"; }
         else { $year_html .= "<option value='" . $i . "'>" . $i . "</option>"; }
@@ -56,7 +56,7 @@ $graphImage = "<img class='mx-auto' src='graph.php?" . http_build_query($graph_g
 
 $stats = new statistics($db,$start_date,$end_date);
 
-$graph_form = "<select class='custom-select' name='graph_type' onChange='document.selectGraph.submit();'>";
+$graph_form = "<select class='form-select' name='graph_type' onChange='document.selectGraph.submit();'>";
 
 foreach ($graph_type_array as $graph) {
         $graph_form .= "<option value='" . $graph['type'] . "' ";
@@ -73,13 +73,13 @@ $graph_form .= "</select>";
 
 
 <h3>Yearly Statistics - <?php echo $year; ?></h3>
-<form class='form-inline' action='<?php echo $_SERVER['PHP_SELF']; ?>' method='get'>
-<div class='form-group'>
+<form class='d-flex align-items-center' action='<?php echo $_SERVER['PHP_SELF']; ?>' method='get'>
+<div class='mb-3'>
         <label for='year'>Year:</label>
         &nbsp; <?php echo $year_html; ?>
 </div>
 &nbsp;
-<div class='form-group'>
+<div class='mb-3'>
         <input type='submit' class='btn btn-primary' value='Get Records'>
 </div>
 </form>
@@ -90,10 +90,10 @@ $graph_form .= "</select>";
 
         <?php
                 if ($next_year > $year) {
-                        echo "<div class='float-right'><a class='btn btn-sm btn-primary' onclick='return false;'>Next Year</a></div>";
+                        echo "<div class='float-end'><a class='btn btn-sm btn-primary' onclick='return false;'>Next Year</a></div>";
                 }
                 else {
-                        echo "<div class='float-right'><a class='btn btn-sm btn-primary' href='" . $url_navigation['forward_url'] . "'>Next Year</a></div>";
+                        echo "<div class='float-end'><a class='btn btn-sm btn-primary' href='" . $url_navigation['forward_url'] . "'>Next Year</a></div>";
                 }
         ?>
         </div>

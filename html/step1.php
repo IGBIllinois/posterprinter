@@ -35,13 +35,13 @@ require_once 'includes/header.inc.php';
 <tr><th colspan='2'>Paper Size</th></tr>
 <tr><td colspan='2'><em>Please choose a width and length for your poster.  The maximum width is <?php echo poster::get_max_poster_width($db); ?> inches.</em></td></tr>
 </thead>
-<tr><td class='text-right' style='vertical-align:middle;'>Width:</td>
+<tr><td class='text-end' style='vertical-align:middle;'>Width:</td>
 <td class='left'>
 <div class='input-group col-md-5'>
 <input autofocus class='form-control' text='text' name='width' id='width' maxlength='6' size='6' value='<?php if (isset($_POST['width'])) { echo $_POST['width']; } ?>'><div class='input-group-append' tabindex='1'>
 	<span class='input-group-text'>&nbsp; Inches</span></div></div>
 </td></tr>
-<tr><td class='text-right' style='vertical-align:middle;'>Length:</td>
+<tr><td class='text-end' style='vertical-align:middle;'>Length:</td>
 <td class='left'>
 	<div class='input-group col-md-5'>
 		<input class='form-control' type='text' name='length' id='length' maxlength='6' size='6' value='<?php if (isset($_POST['length'])) { echo $_POST['length']; } ?>'><div class='input-group-append' tabindex='2'>
