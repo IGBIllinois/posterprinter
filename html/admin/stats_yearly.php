@@ -15,7 +15,7 @@ $end_date = $year . "/12/31";
 
 //////Year////////
 $min_year = functions::get_minimal_year($db);
-$year_html = "<select class="form-select" name='year'>";
+$year_html = "<select class='form-select' name='year'>";
 for ($i=$min_year; $i<=date("Y");$i++) {
         if ($i == $year) { $year_html .= "<option value='" . $i . "' selected='true'>" . $i . "</option>"; }
         else { $year_html .= "<option value='" . $i . "'>" . $i . "</option>"; }
