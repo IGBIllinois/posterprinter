@@ -14,11 +14,20 @@ $start_date = $year . "/01/01";
 $end_date = $year . "/12/31";
 
 //////Year////////
-$min_year = functions::get_minimal_year($db);
+// $min_year = functions::get_minimal_year($db);
+// $year_html = "<select class='form-select' name='year'>";
+// for ($i=$min_year; $i<=date("Y");$i++) {
+//         if ($i == $year) { $year_html .= "<option value='" . $i . "' selected='true'>" . $i . "</option>"; }
+//         else { $year_html .= "<option value='" . $i . "'>" . $i . "</option>"; }
+// }
+// $year_html .= "</select>";
+$min_year = max(functions::get_minimal_year($db), date("Y") - 50); // Last 20 years max
+$current_year = date("Y");
+
 $year_html = "<select class='form-select' name='year'>";
-for ($i=$min_year; $i<=date("Y");$i++) {
-        if ($i == $year) { $year_html .= "<option value='" . $i . "' selected='true'>" . $i . "</option>"; }
-        else { $year_html .= "<option value='" . $i . "'>" . $i . "</option>"; }
+for ($i = $min_year; $i <= $current_year; $i++) {
+    $selected = ($i == $year) ? 'selected' : '';
+    $year_html .= "<option value='$i' $selected>$i</option>";
 }
 $year_html .= "</select>";
 
