@@ -14,24 +14,15 @@ $start_date = $year . "/01/01";
 $end_date = $year . "/12/31";
 
 //////Year////////
-// $min_year = functions::get_minimal_year($db);
-// $year_html = "<select class='form-select' name='year'>";
-// for ($i=$min_year; $i<=date("Y");$i++) {
-//         if ($i == $year) { $year_html .= "<option value='" . $i . "' selected='true'>" . $i . "</option>"; }
-//         else { $year_html .= "<option value='" . $i . "'>" . $i . "</option>"; }
-// }
-// $year_html .= "</select>";
 $min_year = max(functions::get_minimal_year($db), date("Y") - 50); // Last 20 years max
 $current_year = date("Y");
 
-$year_html = "<select class='form-select' name='year'>";
+$year_html = "<select class='form-select' name='year' onchange='this.form.submit();'>";
 for ($i = $min_year; $i <= $current_year; $i++) {
     $selected = ($i == $year) ? 'selected' : '';
     $year_html .= "<option value='$i' $selected>$i</option>";
 }
 $year_html .= "</select>";
-
-$url_navigation = html::get_url_navigation_year($_SERVER['PHP_SELF'],$year);
 
 $graph_type = "finishoptions";
 if (isset($_POST['graph_type'])) {	
@@ -69,31 +60,19 @@ $graph_form .= "</select>";
 
 ?>
 
-
-<h3>Yearly Statistics - <?php echo $year; ?></h3>
+<h3>Yearly Statistics</h3>
 <form class='d-flex align-items-center' action='<?php echo $_SERVER['PHP_SELF']; ?>' method='get'>
 <div class='mb-3'>
         <label for='year'>Year:</label>
         &nbsp; <?php echo $year_html; ?>
 </div>
 &nbsp;
-<div class='mb-3'>
-        <input type='submit' class='btn btn-primary' value='Get Records'>
-</div>
 </form>
 <p>
 <div class='row'>
         <div class='col-sm-12 col-md-12 col-lg-12 col-xl-12'>
-        <a class='btn btn-sm btn-primary' href='<?php echo $url_navigation['back_url']; ?>'>Previous Year</a>
-
-        <?php
-                if ($next_year > $year) {
-                        echo "<div class='float-end'><a class='btn btn-sm btn-primary' onclick='return false;'>Next Year</a></div>";
-                }
-                else {
-                        echo "<div class='float-end'><a class='btn btn-sm btn-primary' href='" . $url_navigation['forward_url'] . "'>Next Year</a></div>";
-                }
-        ?>
+                <a class='btn btn-sm btn-primary' href='<?php echo $_SERVER['PHP_SELF'] . "?year=" . $previous_year; ?>'>Previous Year</a>
+                <a class='btn btn-sm btn-primary' href='<?php echo $_SERVER['PHP_SELF'] . "?year=" . $next_year; ?>'>Next Year</a>
         </div>
 </div>
 <p>
