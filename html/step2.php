@@ -15,35 +15,66 @@ if (isset($_POST['cancel'])) {
 
 if (isset($_POST['step1'])) {
 
-
 	$paperTypes = functions::getValidPaperTypes($db,$_POST['width'],$_POST['length']);
+	
+	// Determine which paper type is selected
+	$selectedPaperTypeId = null;
+	foreach ($paperTypes as $paperType) {
+		if ($paperType['paperTypes_default']) {
+			$selectedPaperTypeId = $paperType['id'];
+			break;
+		}
+	}
+	
+	// Check if selected paper type is Graphic Matte Canvas (1) or Fine Art Watercolor (4)
+	$restrictLamination = in_array($selectedPaperTypeId, [1, 4]);
+	
 	//takes the result and formats it into html into the paperTypeHTML variable.
 	$paperTypes_html = "";
 	foreach ($paperTypes as $paperType) {
 		$paperTypes_html .= "<tr>";
 		$paperTypes_html .= "<td class='text-end'>$" . $paperType['cost'] . "</td>";
 		$paperTypes_html .= "<td>" .  $paperType['name'] . "</td>";
+		
+		// Add data attribute to identify special paper types
+		$dataAttr = in_array($paperType['id'], [1, 4]) ? " data-restrict-lamination='true'" : "";
+		
 		if ($paperType['paperTypes_default']) {
-			$paperTypes_html .= "<td class='left'><input type='radio' name='paperTypesId' checked='true' value='" . $paperType['id'] . "'></td></tr>\n";
+			$paperTypes_html .= "<td class='left'><input type='radio' name='paperTypesId' checked='true' value='" . $paperType['id'] . "'" . $dataAttr . "></td></tr>\n";
 		}
 		else {
-			$paperTypes_html .= "<td class='left'><input type='radio' name='paperTypesId' value='" . $paperType['id'] . "'></td></tr>\n";
+			$paperTypes_html .= "<td class='left'><input type='radio' name='paperTypesId' value='" . $paperType['id'] . "'" . $dataAttr . "></td></tr>\n";
 		}
 	}
+	
 	$finishOptions = functions::getValidFinishOptions($db,$_POST['width'],$_POST['length']);
+	
 	//takes the result and formats it into html into the finishOptionsHTML variable.
 	$finishOptions_html = "";
 	foreach ($finishOptions as $finishOption) {
 		$finishOptions_html .= "<tr>";
 		$finishOptions_html .= "<td class='text-end'>$" . $finishOption['cost'] . "</td>\n";
 		$finishOptions_html .= "<td class='center'>" . $finishOption['name'] . "</td>\n";
-		if ($finishOption['finishOptions_default']) {
-			$finishOptions_html .= "<td class='left'> <input type='radio' name='finishOptionsId' checked='checked' value='" . $finishOption['id'] . "'></td></tr>\n";
+		
+		// If this is lamination (id=2) and a restricted paper type is selected
+		if ($finishOption['id'] == 2 && $restrictLamination) {
+			// Disable lamination option and don't check it
+			$finishOptions_html .= "<td class='left'><input type='radio' name='finishOptionsId' value='" . $finishOption['id'] . "' disabled='disabled'></td></tr>\n";
+		}
+		// If this is "none" (id=1) and lamination should be restricted
+		elseif ($finishOption['id'] == 1 && $restrictLamination) {
+			// Force "none" to be selected
+			$finishOptions_html .= "<td class='left'><input type='radio' name='finishOptionsId' checked='checked' value='" . $finishOption['id'] . "'></td></tr>\n";
+		}
+		// Normal handling for other options
+		elseif ($finishOption['finishOptions_default'] && !$restrictLamination) {
+			$finishOptions_html .= "<td class='left'><input type='radio' name='finishOptionsId' checked='checked' value='" . $finishOption['id'] . "'></td></tr>\n";
 		}
 		else {
-			$finishOptions_html .= "<td class='left'> <input type='radio' name='finishOptionsId' value='" . $finishOption['id'] . "'></td></tr>\n";
+			$finishOptions_html .= "<td class='left'><input type='radio' name='finishOptionsId' value='" . $finishOption['id'] . "'></td></tr>\n";
 		}
 	}
+	
 	$posterTube_html = "<tr><td class='right'>Poster Tube</td><td class='right'>$" . poster_tube::getPosterTubeCost($db) . "</td>\n";
 	$posterTube_html .= "<td class='left'><input type='checkbox' id='posterTube' name='posterTube' value='1'></td></tr>\n";
 	$rushOrder_html = "<tr><td class='right'>Rush Order</td><td class='right'>$" .rush_order:: getRushOrderCost($db) ."</td>\n";
@@ -161,6 +192,82 @@ require_once 'includes/header.inc.php';
 <?php require_once 'includes/footer.inc.php'; ?>
 
 <script type="application/javascript">
+// Paper Type and Finish Option Dynamic Update
+document.addEventListener('DOMContentLoaded', function() {
+	// Get all paper type radio buttons
+	const paperTypeRadios = document.querySelectorAll('input[name="paperTypesId"]');
+	
+	// Function to update finish options based on selected paper type
+	function updateFinishOptions() {
+		// Get the currently selected paper type
+		const selectedPaperType = document.querySelector('input[name="paperTypesId"]:checked');
+		
+		if (!selectedPaperType) return;
+		
+		const paperTypeId = parseInt(selectedPaperType.value);
+		
+		// Check if selected paper type is Graphic Matte Canvas (1) or Fine Art Watercolor (4)
+		const restrictLamination = (paperTypeId === 1 || paperTypeId === 4);
+		
+		// Get all finish option radio buttons
+		const finishOptionRadios = document.querySelectorAll('input[name="finishOptionsId"]');
+		
+		finishOptionRadios.forEach(function(radio) {
+			const finishOptionId = parseInt(radio.value);
+			
+			if (restrictLamination) {
+				// If lamination (id=2), disable it
+				if (finishOptionId === 2) {
+					radio.disabled = true;
+					radio.checked = false;
+					// Add visual styling to the row
+					const row = radio.closest('tr');
+					if (row) {
+						row.style.opacity = '0.5';
+						row.style.cursor = 'not-allowed';
+					}
+				}
+				// If none (id=1), select it
+				else if (finishOptionId === 1) {
+					radio.disabled = false;
+					radio.checked = true;
+					const row = radio.closest('tr');
+					if (row) {
+						row.style.opacity = '1';
+						row.style.cursor = 'default';
+					}
+				}
+				// Other options remain enabled but unchecked
+				else {
+					radio.disabled = false;
+					const row = radio.closest('tr');
+					if (row) {
+						row.style.opacity = '1';
+						row.style.cursor = 'default';
+					}
+				}
+			} else {
+				// No restrictions - enable all options
+				radio.disabled = false;
+				const row = radio.closest('tr');
+				if (row) {
+					row.style.opacity = '1';
+					row.style.cursor = 'default';
+				}
+			}
+		});
+	}
+	
+	// Add event listeners to all paper type radio buttons
+	paperTypeRadios.forEach(function(radio) {
+		radio.addEventListener('change', updateFinishOptions);
+	});
+	
+	// Run once on page load to set initial state
+	updateFinishOptions();
+});
+
+// Existing jQuery code for form submission
 $( document ).ready(function() {
         $('#step2').on('click', function(event) {
                 disableForm();
@@ -262,5 +369,3 @@ $( document ).ready(function() {
         });
 });
 </script>
-
-
