@@ -77,8 +77,15 @@ if (isset($_POST['step1'])) {
 	
 	$posterTube_html = "<tr><td class='right'>Poster Tube</td><td class='right'>$" . poster_tube::getPosterTubeCost($db) . "</td>\n";
 	$posterTube_html .= "<td class='left'><input type='checkbox' id='posterTube' name='posterTube' value='1'></td></tr>\n";
-	$rushOrder_html = "<tr><td class='right'>Rush Order</td><td class='right'>$" .rush_order:: getRushOrderCost($db) ."</td>\n";
-	$rushOrder_html .= "<td class='left'><input type='checkbox' id='rushOrder' name='rushOrder' value='1'></td></tr>\n";
+	
+	// Modified rush order to be a pickup date selector
+	$rushOrder_html = "<tr id='pickupDateRow'><td class='right'>Pick Up Date</td><td class='right'>";
+	$rushOrder_html .= "<input type='date' class='form-control' id='pickupDate' name='pickupDate' required>";
+	$rushOrder_html .= "</td><td class='left'></td></tr>\n";
+	$rushOrder_html .= "<tr id='rushOrderRow' style='display:none;'><td class='right'>Rush Order Fee</td>";
+	$rushOrder_html .= "<td class='right' id='rushOrderCost'>$" . rush_order::getRushOrderCost($db) . "</td>\n";
+	$rushOrder_html .= "<td class='left'><span id='rushOrderIndicator' style='color:red; font-weight:bold;'>APPLIED</span></td></tr>\n";
+	$rushOrder_html .= "<input type='hidden' id='rushOrder' name='rushOrder' value='0'>\n";
 
 }
 else {
@@ -117,7 +124,7 @@ require_once 'includes/header.inc.php';
 	<table class='table table-bordered table-sm table-hover'>
 		<thead class='thead-dark'>
 		<tr><th colspan='3'>Other Options</th></tr>
-		<tr><td colspan='3'><em>Please select any additional options.  Rush orders will be completed within <strong><?php echo settings::get_rush_order_timeframe(); ?> business hours</strong>.</em></td></tr>
+		<tr><td colspan='3'><em>Please select your desired pick up date. Rush order fee applies if pickup is needed within 24 business hours (Mon 8am - Fri 4:30pm, excluding weekends and holidays).</em></td></tr>
 	</thead>
 	<?php echo $posterTube_html; ?>
 	<?php echo $rushOrder_html; ?>
@@ -265,6 +272,114 @@ document.addEventListener('DOMContentLoaded', function() {
 	
 	// Run once on page load to set initial state
 	updateFinishOptions();
+	
+	// ============================================
+	// Pickup Date and Rush Order Logic
+	// ============================================
+	
+	const pickupDateInput = document.getElementById('pickupDate');
+	const rushOrderRow = document.getElementById('rushOrderRow');
+	const rushOrderHidden = document.getElementById('rushOrder');
+	
+	// List of holidays (you can modify this array as needed)
+	// Format: 'YYYY-MM-DD'
+	const holidays = [
+		// Add your holidays here, for example:
+		// '2025-01-01', // New Year's Day
+		// '2025-07-04', // Independence Day
+		// '2025-12-25', // Christmas
+	];
+	
+	function isHoliday(date) {
+		const dateStr = date.toISOString().split('T')[0];
+		return holidays.includes(dateStr);
+	}
+	
+	function isWeekend(date) {
+		const day = date.getDay();
+		return day === 0 || day === 6; // 0 = Sunday, 6 = Saturday
+	}
+	
+	function addBusinessHours(startDate, hours) {
+		let current = new Date(startDate);
+		let hoursToAdd = hours;
+		
+		while (hoursToAdd > 0) {
+			// Move to next hour
+			current.setHours(current.getHours() + 1);
+			
+			// Skip weekends and holidays
+			while (isWeekend(current) || isHoliday(current)) {
+				current.setDate(current.getDate() + 1);
+				current.setHours(8); // Start at 8am
+			}
+			
+			// Only count hours within business hours (8am - 4:30pm)
+			const hour = current.getHours();
+			const minutes = current.getMinutes();
+			const timeInMinutes = hour * 60 + minutes;
+			
+			// Business hours: 8:00am (480 min) to 4:30pm (16.5 * 60 = 990 min)
+			if (timeInMinutes >= 480 && timeInMinutes < 990) {
+				hoursToAdd--;
+			} else if (timeInMinutes >= 990) {
+				// If past 4:30pm, move to next business day at 8am
+				current.setDate(current.getDate() + 1);
+				current.setHours(8);
+				current.setMinutes(0);
+				
+				// Skip weekends and holidays
+				while (isWeekend(current) || isHoliday(current)) {
+					current.setDate(current.getDate() + 1);
+				}
+			} else if (timeInMinutes < 480) {
+				// If before 8am, set to 8am
+				current.setHours(8);
+				current.setMinutes(0);
+			}
+		}
+		
+		return current;
+	}
+	
+	function checkRushOrder() {
+		const selectedDate = pickupDateInput.value;
+		
+		if (!selectedDate) {
+			rushOrderRow.style.display = 'none';
+			rushOrderHidden.value = '0';
+			return;
+		}
+		
+		const pickupDateTime = new Date(selectedDate + 'T00:00:00');
+		const now = new Date();
+		
+		// Calculate 24 business hours from now
+		const rushDeadline = addBusinessHours(now, 24);
+		
+		// Check if pickup date is before the rush deadline
+		if (pickupDateTime <= rushDeadline) {
+			// Show rush order fee with red highlight
+			rushOrderRow.style.display = 'table-row';
+			rushOrderRow.style.backgroundColor = '#ffcccc';
+			rushOrderHidden.value = '1';
+		} else {
+			// Hide rush order fee
+			rushOrderRow.style.display = 'none';
+			rushOrderRow.style.backgroundColor = '';
+			rushOrderHidden.value = '0';
+		}
+	}
+	
+	// Set minimum date to today
+	const today = new Date().toISOString().split('T')[0];
+	pickupDateInput.setAttribute('min', today);
+	
+	// Add event listener for pickup date changes
+	pickupDateInput.addEventListener('change', checkRushOrder);
+	
+	// Check on page load if there's already a date selected
+	checkRushOrder();
 });
 
 // Existing jQuery code for form submission
@@ -286,7 +401,8 @@ $( document ).ready(function() {
 		var name = document.getElementById('name').value;
 		var comments = document.getElementById('comments').value;
 		var posterTube = document.getElementById('posterTube').checked;
-		var rushOrder = document.getElementById('rushOrder').checked;
+		var rushOrder = document.getElementById('rushOrder').value; // Changed to get value instead of checked
+		var pickupDate = document.getElementById('pickupDate').value; // Added pickup date
 		var session = document.getElementById('session').value;
 		var posterFile = document.getElementById('posterFile');
 		var formData = new FormData();
@@ -306,6 +422,7 @@ $( document ).ready(function() {
 		formData.append('comments',comments);
 		formData.append('posterTube',posterTube);
 		formData.append('rushOrder',rushOrder);
+		formData.append('pickupDate',pickupDate); // Added pickup date to form data
 		formData.append('posterFile',posterFile.files[0],posterFile.files[0].name);
 
 		$.ajax({
