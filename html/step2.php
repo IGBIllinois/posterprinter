@@ -389,9 +389,13 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	}
 	
-	// Set minimum date to today
-	const today = new Date().toISOString().split('T')[0];
-	pickupDateInput.setAttribute('min', today);
+	// Set minimum date to today (in yyyy-mm-dd format)
+	const today = new Date();
+	const year = today.getFullYear();
+	const month = String(today.getMonth() + 1).padStart(2, '0');
+	const day = String(today.getDate()).padStart(2, '0');
+	const todayFormatted = `${year}-${month}-${day}`;
+	pickupDateInput.setAttribute('min', todayFormatted);
 	
 	// Add event listener for pickup date changes
 	pickupDateInput.addEventListener('change', checkRushOrder);
