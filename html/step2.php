@@ -389,12 +389,12 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	}
 	
-	// Set minimum date to today (in yyyy-mm-dd format)
+	// Set minimum date to today (in mm/dd/yyyy format)
 	const today = new Date();
-	const year = today.getFullYear();
 	const month = String(today.getMonth() + 1).padStart(2, '0');
 	const day = String(today.getDate()).padStart(2, '0');
-	const todayFormatted = `${year}-${month}-${day}`;
+	const year = today.getFullYear();
+	const todayFormatted = `${month}/${day}/${year}`;
 	pickupDateInput.setAttribute('min', todayFormatted);
 	
 	// Add event listener for pickup date changes
@@ -410,9 +410,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	const cancelButton = document.getElementById('cancel');
 	if (cancelButton) {
 		cancelButton.addEventListener('click', function(event) {
-			// Set a default date (1999-01-01) so form validation passes
-			// This date indicates the order was cancelled
-			pickupDateInput.value = '1999-01-01';
+			// Only set default date if pickup date is empty
+			// This allows form validation to pass when cancelling
+			if (!pickupDateInput.value) {
+				pickupDateInput.value = '01/01/1999';
+			}
 		});
 	}
 
