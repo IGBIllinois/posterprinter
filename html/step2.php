@@ -173,19 +173,28 @@ require_once 'includes/header.inc.php';
 		<tr id='dimensionsRow' style='display:none;'>
 			<td class='text-end' style='vertical-align:middle;'>Detected Dimensions</td>
 			<td>
-				<div class='row'>
-					<div class='col-md-3'>
-						<label for='detectedWidth' class='form-label'>Width (inches)</label>
+				<div class='row align-items-end'>
+					<div class='col-md-2'>
+						<label for='detectedWidth' class='form-label'>Width (in)</label>
 						<input type='text' class='form-control' id='detectedWidth' name='detectedWidth' readonly style='background-color:#f0f0f0;'>
 					</div>
-					<div class='col-md-3'>
-						<label for='detectedHeight' class='form-label'>Height (inches)</label>
+					<div class='col-md-2'>
+						<label for='detectedHeight' class='form-label'>Height (in)</label>
 						<input type='text' class='form-control' id='detectedHeight' name='detectedHeight' readonly style='background-color:#f0f0f0;'>
 					</div>
-					<div class='col-md-6'>
+					<div class='col-md-4' id='dimensionButtonsCol'>
+						<button type='button' class='btn btn-success btn-sm' id='confirmDimensions' style='display:none;'>
+							<i class='fa fa-check'></i> Confirm
+						</button>
+						<button type='button' class='btn btn-danger btn-sm' id='rejectDimensions' style='display:none;'>
+							<i class='fa fa-times'></i> Wrong Size
+						</button>
+					</div>
+					<div class='col-md-4'>
 						<span id='dimensionStatus' style='font-style:italic; color:#666;'></span>
 					</div>
 				</div>
+				<input type='hidden' id='dimensionsConfirmed' name='dimensionsConfirmed' value='0'>
 			</td>
 		</tr>
 		<tr>
@@ -424,13 +433,49 @@ document.addEventListener('DOMContentLoaded', function() {
 	const detectedWidthInput = document.getElementById('detectedWidth');
 	const detectedHeightInput = document.getElementById('detectedHeight');
 	const dimensionStatus = document.getElementById('dimensionStatus');
+	const confirmDimensionsBtn = document.getElementById('confirmDimensions');
+	const rejectDimensionsBtn = document.getElementById('rejectDimensions');
+	const dimensionsConfirmedInput = document.getElementById('dimensionsConfirmed');
+	const posterFileLabel = document.getElementById('posterfile-label');
 
-	posterFileInput.addEventListener('change', function() {
-		// Reset dimension fields
+	function resetDimensionFields() {
 		detectedWidthInput.value = '';
 		detectedHeightInput.value = '';
 		dimensionStatus.textContent = '';
 		dimensionsRow.style.display = 'none';
+		confirmDimensionsBtn.style.display = 'none';
+		rejectDimensionsBtn.style.display = 'none';
+		dimensionsConfirmedInput.value = '0';
+	}
+
+	function clearFileInput() {
+		posterFileInput.value = '';
+		posterFileLabel.textContent = 'Choose File...';
+		resetDimensionFields();
+	}
+
+	// Confirm dimensions button handler
+	confirmDimensionsBtn.addEventListener('click', function() {
+		dimensionsConfirmedInput.value = '1';
+		confirmDimensionsBtn.style.display = 'none';
+		rejectDimensionsBtn.style.display = 'none';
+		dimensionStatus.textContent = '✓ Dimensions confirmed';
+		dimensionStatus.style.color = '#28a745';
+		detectedWidthInput.style.backgroundColor = '#d4edda';
+		detectedHeightInput.style.backgroundColor = '#d4edda';
+	});
+
+	// Reject dimensions button handler
+	rejectDimensionsBtn.addEventListener('click', function() {
+		clearFileInput();
+		document.getElementById("message").innerHTML = '<div class="alert alert-warning">File removed. Please upload a file with the correct dimensions for your poster.</div>';
+	});
+
+	posterFileInput.addEventListener('change', function() {
+		// Reset dimension fields
+		resetDimensionFields();
+		detectedWidthInput.style.backgroundColor = '#f0f0f0';
+		detectedHeightInput.style.backgroundColor = '#f0f0f0';
 
 		// Check if a file was selected
 		if (!posterFileInput.files || posterFileInput.files.length === 0) {
@@ -467,16 +512,19 @@ document.addEventListener('DOMContentLoaded', function() {
 			if (data.success) {
 				detectedWidthInput.value = data.width;
 				detectedHeightInput.value = data.height;
-				dimensionStatus.textContent = 'Dimensions detected automatically';
-				dimensionStatus.style.color = '#28a745'; // Green
+				dimensionStatus.textContent = 'Please confirm these dimensions are correct:';
+				dimensionStatus.style.color = '#856404';
+				// Show confirm/reject buttons
+				confirmDimensionsBtn.style.display = 'inline-block';
+				rejectDimensionsBtn.style.display = 'inline-block';
 			} else {
 				dimensionStatus.textContent = 'Could not extract dimensions: ' + data.message;
-				dimensionStatus.style.color = '#dc3545'; // Red
+				dimensionStatus.style.color = '#dc3545';
 			}
 		})
 		.catch(error => {
 			dimensionStatus.textContent = 'Error detecting dimensions';
-			dimensionStatus.style.color = '#dc3545'; // Red
+			dimensionStatus.style.color = '#dc3545';
 			console.error('Dimension extraction error:', error);
 		});
 	});
@@ -512,6 +560,13 @@ $( document ).ready(function() {
                 }
                 if (!posterFile.files || posterFile.files.length === 0) {
                         errors.push('Please select a file to upload.');
+                }
+                
+                // Check if dimensions were detected and confirmed
+                var dimensionsConfirmed = document.getElementById('dimensionsConfirmed').value;
+                var detectedWidth = document.getElementById('detectedWidth').value;
+                if (detectedWidth && dimensionsConfirmed !== '1') {
+                        errors.push('Please confirm the detected dimensions are correct.');
                 }
                 
                 // If there are errors, show them and don't proceed

@@ -71,16 +71,6 @@ elseif (isset($_POST['step2'])) {
 		array_push($message,functions::alert("Please enter a valid CFOP",0));
 	}
 
-	/*try {
-		$cfop_obj =  new \IGBIllinois\cfop(settings::get_cfop_api_key(),settings::get_debug());
-		$cfop_obj->validate_cfop($cfop,$_POST['activityCode']);
-			
-	}
-	catch (\Exception $e) {
-		$error = true;
-		array_push($message,functions::alert($e->getMessage(),0));
-	}*/
-
 	if ($_FILES['posterFile']['name'] == "") {
 		$errors = true;
 		array_push($message,functions::alert("Please select a poster file to upload",0));
@@ -100,20 +90,22 @@ elseif (isset($_POST['step2'])) {
 		array_push($message,functions::alert("Please upload a valid filetype.  Valid filetypes are ." . implode(", ",settings::get_valid_filetypes()) . ".",0));
 		
 	}
-	$posterFileTmpName = poster::move_tmp_file($_FILES['posterFile']['name'],$_FILES['posterFile']['tmp_name']);
-	$verify_poster_size = verify::verify_poster_size(poster::get_tmp_path() . "/" . $posterFileTmpName,$_POST['width'],$_POST['length']);
-	if (!$verify_poster_size['valid']) {
-		$errors = true;
-		$err_message = "Submitted poster is not same size as the width and length that was specified.";
-		$err_message .= "<br>Please adjust the size of your poster or submit a new order with correct width and length.";
-		$err_message .= "<br>Poster width and length is " . $verify_poster_size['width'] . "x" . $verify_poster_size['length'] . ". Submitted width and length is " . $_POST['width'] . "x" . $_POST['length'];
-		array_push($message,functions::alert($err_message,0));
 
+	// Validate that dimensions were provided (detected from file in step2.php)
+	if (empty($_POST['width']) || empty($_POST['length']) || $_POST['width'] <= 0 || $_POST['length'] <= 0) {
+		$errors = true;
+		array_push($message,functions::alert("Could not determine poster dimensions. Please ensure you uploaded a valid file and confirmed the dimensions.",0));
 	}
+
 	if (!$errors) {
+		$posterFileTmpName = poster::move_tmp_file($_FILES['posterFile']['name'],$_FILES['posterFile']['tmp_name']);
 		if (!$posterFileTmpName) {
 			array_push($message,functions::alert("Error in moving uploaded file",0));
+			$errors = true;
 		}
+	}
+
+	if (!$errors) {
 		$posterThumbFileTmpName = poster::create_image($posterFileTmpName);
 		$thumb_result = poster::create_image($posterFileTmpName);
 		$_POST['posterThumbFileTmpName'] = $posterThumbFileTmpName['THUMB'];
