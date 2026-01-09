@@ -400,6 +400,19 @@ document.addEventListener('DOMContentLoaded', function() {
 	checkRushOrder();
 
 	// ============================================
+	// Cancel Button Handler - Set Default Date
+	// ============================================
+
+	const cancelButton = document.getElementById('cancel');
+	if (cancelButton) {
+		cancelButton.addEventListener('click', function(event) {
+			// Set a default date (1999-01-01) so form validation passes
+			// This date indicates the order was cancelled
+			pickupDateInput.value = '1999-01-01';
+		});
+	}
+
+	// ============================================
 	// Automatic Dimension Detection from File Upload
 	// ============================================
 
