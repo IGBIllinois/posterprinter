@@ -204,8 +204,8 @@ require_once 'includes/header.inc.php';
 <p></p>
 <div class='row'>
 	<div class='mx-auto btn-toolbar'>
-		<button class='btn btn-warning' type='submit' name='cancel' id='cancel'>Cancel Order</button>&nbsp;
-		<button class='btn btn-primary' type='submit' name='step2' id='step2'>Next</button>
+		<button class='btn btn-warning' type='submit' name='cancel' id='cancel' formnovalidate>Cancel Order</button>&nbsp;
+		<button class='btn btn-primary' type='button' name='step2' id='step2'>Next</button>
 	</div>
 </div>
 </fieldset>
@@ -389,12 +389,28 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	}
 	
-	// Set minimum date to today
-	const today = new Date().toISOString().split('T')[0];
-	pickupDateInput.setAttribute('min', today);
+	// Set minimum date to next business day
+	let minDate = new Date();
+	while (isWeekend(minDate) || isHoliday(minDate)) {
+		minDate.setDate(minDate.getDate() + 1);
+	}
+	pickupDateInput.setAttribute('min', minDate.toISOString().split('T')[0]);
 
-	// Add event listener for pickup date changes
-	pickupDateInput.addEventListener('change', checkRushOrder);
+	// Add event listener for pickup date changes - validate business days
+	pickupDateInput.addEventListener('change', function() {
+		const selectedDate = new Date(pickupDateInput.value + 'T00:00:00');
+		
+		// Validate it's a business day
+		if (isWeekend(selectedDate) || isHoliday(selectedDate)) {
+			alert('Please select a business day (Monday-Friday, excluding holidays).');
+			pickupDateInput.value = '';
+			rushOrderRow.style.display = 'none';
+			rushOrderHidden.value = '0';
+			return;
+		}
+		
+		checkRushOrder();
+	});
 
 	// Check on page load if there's already a date selected
 	checkRushOrder();
@@ -469,6 +485,13 @@ document.addEventListener('DOMContentLoaded', function() {
 // Existing jQuery code for form submission
 $( document ).ready(function() {
         $('#step2').on('click', function(event) {
+                // Validate pickup date before proceeding
+                var pickupDate = document.getElementById('pickupDate').value;
+                if (!pickupDate) {
+                        document.getElementById("message").innerHTML = '<div class="alert alert-danger">Please select a pickup date.</div>';
+                        return false;
+                }
+                
                 disableForm();
                 // Use detected dimensions if available, otherwise fall back to step1 values
                 var detectedWidth = document.getElementById('detectedWidth').value;
@@ -488,8 +511,7 @@ $( document ).ready(function() {
 		var name = document.getElementById('name').value;
 		var comments = document.getElementById('comments').value;
 		var posterTube = document.getElementById('posterTube').checked;
-		var rushOrder = document.getElementById('rushOrder').value; // Changed to get value instead of checked
-		var pickupDate = document.getElementById('pickupDate').value; // Added pickup date
+		var rushOrder = document.getElementById('rushOrder').value;
 		var session = document.getElementById('session').value;
 		var posterFile = document.getElementById('posterFile');
 		var formData = new FormData();
@@ -509,7 +531,7 @@ $( document ).ready(function() {
 		formData.append('comments',comments);
 		formData.append('posterTube',posterTube);
 		formData.append('rushOrder',rushOrder);
-		formData.append('pickupDate',pickupDate); // Added pickup date to form data
+		formData.append('pickupDate',pickupDate);
 		formData.append('posterFile',posterFile.files[0],posterFile.files[0].name);
 
 		$.ajax({
