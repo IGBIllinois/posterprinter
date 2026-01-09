@@ -80,7 +80,7 @@ if (isset($_POST['step1'])) {
 	
 	// Modified rush order to be a pickup date selector
 	$rushOrder_html = "<tr id='pickupDateRow'><td class='right'>Pick Up Date</td><td class='right'>";
-	$rushOrder_html .= "<input type='date' class='form-control' id='pickupDate' name='pickupDate' required>";
+	$rushOrder_html .= "<input type='date' class='form-control' id='pickupDate' name='pickupDate'>";
 	$rushOrder_html .= "</td><td class='left'></td></tr>\n";
 	$rushOrder_html .= "<tr id='rushOrderRow' style='display:none;'><td class='right'>Rush Order Fee</td>";
 	$rushOrder_html .= "<td class='right' id='rushOrderCost'>$" . rush_order::getRushOrderCost($db) . "</td>\n";
@@ -389,34 +389,15 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	}
 	
-	// Set minimum date to today (in mm/dd/yyyy format)
-	const today = new Date();
-	const month = String(today.getMonth() + 1).padStart(2, '0');
-	const day = String(today.getDate()).padStart(2, '0');
-	const year = today.getFullYear();
-	const todayFormatted = `${month}/${day}/${year}`;
-	pickupDateInput.setAttribute('min', todayFormatted);
-	
+	// Set minimum date to today
+	const today = new Date().toISOString().split('T')[0];
+	pickupDateInput.setAttribute('min', today);
+
 	// Add event listener for pickup date changes
 	pickupDateInput.addEventListener('change', checkRushOrder);
-	
+
 	// Check on page load if there's already a date selected
 	checkRushOrder();
-
-	// ============================================
-	// Cancel Button Handler - Set Default Date
-	// ============================================
-
-	const cancelButton = document.getElementById('cancel');
-	if (cancelButton) {
-		cancelButton.addEventListener('click', function(event) {
-			// Only set default date if pickup date is empty
-			// This allows form validation to pass when cancelling
-			if (!pickupDateInput.value) {
-				pickupDateInput.value = '01/01/1999';
-			}
-		});
-	}
 
 	// ============================================
 	// Automatic Dimension Detection from File Upload
