@@ -170,6 +170,24 @@ require_once 'includes/header.inc.php';
 			</div>
 			</td>
 		</tr>
+		<tr id='dimensionsRow' style='display:none;'>
+			<td class='text-end' style='vertical-align:middle;'>Detected Dimensions</td>
+			<td>
+				<div class='row'>
+					<div class='col-md-3'>
+						<label for='detectedWidth' class='form-label'>Width (inches)</label>
+						<input type='text' class='form-control' id='detectedWidth' name='detectedWidth' readonly style='background-color:#f0f0f0;'>
+					</div>
+					<div class='col-md-3'>
+						<label for='detectedHeight' class='form-label'>Height (inches)</label>
+						<input type='text' class='form-control' id='detectedHeight' name='detectedHeight' readonly style='background-color:#f0f0f0;'>
+					</div>
+					<div class='col-md-6'>
+						<span id='dimensionStatus' style='font-style:italic; color:#666;'></span>
+					</div>
+				</div>
+			</td>
+		</tr>
 		<tr>
 			<td class='text-end'>Comments</td>
 			<td><textarea class='form-control' id='comments' name='comments' rows='3' cols='33'></textarea></td>
@@ -380,14 +398,83 @@ document.addEventListener('DOMContentLoaded', function() {
 	
 	// Check on page load if there's already a date selected
 	checkRushOrder();
+
+	// ============================================
+	// Automatic Dimension Detection from File Upload
+	// ============================================
+
+	const posterFileInput = document.getElementById('posterFile');
+	const dimensionsRow = document.getElementById('dimensionsRow');
+	const detectedWidthInput = document.getElementById('detectedWidth');
+	const detectedHeightInput = document.getElementById('detectedHeight');
+	const dimensionStatus = document.getElementById('dimensionStatus');
+
+	posterFileInput.addEventListener('change', function() {
+		// Reset dimension fields
+		detectedWidthInput.value = '';
+		detectedHeightInput.value = '';
+		dimensionStatus.textContent = '';
+		dimensionsRow.style.display = 'none';
+
+		// Check if a file was selected
+		if (!posterFileInput.files || posterFileInput.files.length === 0) {
+			return;
+		}
+
+		const file = posterFileInput.files[0];
+		const fileName = file.name.toLowerCase();
+
+		// Check if file type is supported for dimension extraction
+		const supportedExtensions = ['pdf', 'jpg', 'jpeg', 'tif', 'tiff', 'png'];
+		const fileExt = fileName.split('.').pop();
+
+		if (!supportedExtensions.includes(fileExt)) {
+			// Don't show dimensions for unsupported file types (like PPT/PPTX)
+			return;
+		}
+
+		// Show loading status
+		dimensionsRow.style.display = 'table-row';
+		dimensionStatus.textContent = 'Extracting dimensions...';
+		dimensionStatus.style.color = '#666';
+
+		// Create FormData and send to get_dimensions.php
+		const formData = new FormData();
+		formData.append('file', file);
+
+		fetch('get_dimensions.php', {
+			method: 'POST',
+			body: formData
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.success) {
+				detectedWidthInput.value = data.width;
+				detectedHeightInput.value = data.height;
+				dimensionStatus.textContent = 'Dimensions detected automatically';
+				dimensionStatus.style.color = '#28a745'; // Green
+			} else {
+				dimensionStatus.textContent = 'Could not extract dimensions: ' + data.message;
+				dimensionStatus.style.color = '#dc3545'; // Red
+			}
+		})
+		.catch(error => {
+			dimensionStatus.textContent = 'Error detecting dimensions';
+			dimensionStatus.style.color = '#dc3545'; // Red
+			console.error('Dimension extraction error:', error);
+		});
+	});
 });
 
 // Existing jQuery code for form submission
 $( document ).ready(function() {
         $('#step2').on('click', function(event) {
                 disableForm();
-                var width = document.getElementById('width').value;
-                var length = document.getElementById('length').value;
+                // Use detected dimensions if available, otherwise fall back to step1 values
+                var detectedWidth = document.getElementById('detectedWidth').value;
+                var detectedHeight = document.getElementById('detectedHeight').value;
+                var width = detectedWidth ? detectedWidth : document.getElementById('width').value;
+                var length = detectedHeight ? detectedHeight : document.getElementById('length').value;
 		var session = document.getElementById('session').value;
 		var paperTypesId = document.querySelector('input[name="paperTypesId"]:checked').value;
 		var finishOptionsId = document.querySelector('input[name="finishOptionsId"]:checked').value;
