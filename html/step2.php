@@ -485,14 +485,43 @@ document.addEventListener('DOMContentLoaded', function() {
 // Existing jQuery code for form submission
 $( document ).ready(function() {
         $('#step2').on('click', function(event) {
-                // Validate pickup date before proceeding
+                // Collect form values first
                 var pickupDate = document.getElementById('pickupDate').value;
+                var name = document.getElementById('name').value.trim();
+                var email = document.getElementById('email').value.trim();
+                var cfop1 = document.getElementById('cfop1').value.trim();
+                var cfop2 = document.getElementById('cfop2').value.trim();
+                var cfop3 = document.getElementById('cfop3').value.trim();
+                var cfop4 = document.getElementById('cfop4').value.trim();
+                var posterFile = document.getElementById('posterFile');
+                
+                // Validate required fields BEFORE disabling form
+                var errors = [];
+                
                 if (!pickupDate) {
-                        document.getElementById("message").innerHTML = '<div class="alert alert-danger">Please select a pickup date.</div>';
+                        errors.push('Please select a pickup date.');
+                }
+                if (!name) {
+                        errors.push('Please enter your full name.');
+                }
+                if (!email) {
+                        errors.push('Please enter your email address.');
+                }
+                if (!cfop1 || !cfop2 || !cfop3 || !cfop4) {
+                        errors.push('Please enter a complete CFOP number.');
+                }
+                if (!posterFile.files || posterFile.files.length === 0) {
+                        errors.push('Please select a file to upload.');
+                }
+                
+                // If there are errors, show them and don't proceed
+                if (errors.length > 0) {
+                        document.getElementById("message").innerHTML = '<div class="alert alert-danger">' + errors.join('<br>') + '</div>';
                         return false;
                 }
                 
                 disableForm();
+                
                 // Use detected dimensions if available, otherwise fall back to step1 values
                 var detectedWidth = document.getElementById('detectedWidth').value;
                 var detectedHeight = document.getElementById('detectedHeight').value;
@@ -501,19 +530,11 @@ $( document ).ready(function() {
 		var session = document.getElementById('session').value;
 		var paperTypesId = document.querySelector('input[name="paperTypesId"]:checked').value;
 		var finishOptionsId = document.querySelector('input[name="finishOptionsId"]:checked').value;
-		var cfop1 = document.getElementById('cfop1').value;
-		var cfop2 = document.getElementById('cfop2').value;
-		var cfop3 = document.getElementById('cfop3').value;
-		var cfop4 = document.getElementById('cfop4').value;
 		var activityCode = document.getElementById('activityCode').value;
-		var email = document.getElementById('email').value;
 		var additional_emails = document.getElementById('additional_emails').value;
-		var name = document.getElementById('name').value;
 		var comments = document.getElementById('comments').value;
 		var posterTube = document.getElementById('posterTube').checked;
 		var rushOrder = document.getElementById('rushOrder').value;
-		var session = document.getElementById('session').value;
-		var posterFile = document.getElementById('posterFile');
 		var formData = new FormData();
 		formData.append('step2','1');
 		formData.append('width',width);
