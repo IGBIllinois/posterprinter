@@ -19,6 +19,7 @@
 </head>
 
 <body class='d-flex flex-column min-vh-100' style='padding-top: 70px; padding-bottom: 60px;'>
+<div style="position:fixed;top:0;left:0;z-index:9999;background:#ff4444;color:#fff;padding:2px 10px;font-size:12px;font-weight:bold;border-bottom-right-radius:6px;">heel-one</div>
 <?php require_once __DIR__ . '/about.inc.php'; ?>
 <nav class="navbar fixed-top navbar-dark bg-dark">
         <a class='navbar-brand py-0' href='#'><?php echo settings::get_title(); ?> Administration</a>

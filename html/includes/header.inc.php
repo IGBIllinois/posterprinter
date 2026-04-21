@@ -16,6 +16,7 @@
 
 </head>
 <body style='padding-top: 70px;'>
+<div style="position:fixed;top:0;left:0;z-index:9999;background:#ff4444;color:#fff;padding:2px 10px;font-size:12px;font-weight:bold;border-bottom-right-radius:6px;">heel-one</div>
 <nav class="navbar fixed-top navbar-dark bg-dark">
 	<a class='navbar-brand py-0' href='#'><?php echo settings::get_title(); ?></a>
 		<span class='navbar-text py-0'>Version <?php echo settings::get_version(); ?>
