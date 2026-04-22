@@ -56,7 +56,7 @@ $graph_type = "orders_per_month";
 </div>
 <p>
 
-<table class='table table-bordered table-condenesed'>
+<table class='table table-bordered table-sm'>
 
     <tr><td>Yearly Total:</td><td>$<?php echo $stats->pretty_cost(); ?></td></tr>
     <tr><td>Total Orders:</td><td><?php echo $stats->orders(); ?></td></tr>

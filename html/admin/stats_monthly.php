@@ -28,7 +28,7 @@ for ($i=$min_year; $i<=date("Y");$i++) {
 $year_html .= "</select>";
 
 ///////Month///////
-$year_html = "<select class='form-select' name='year'>";
+$month_html = "<select class='form-select' name='month'>";
 for ($i=1;$i<=12;$i++) {
         if ($i == $month) { $month_html .= "<option value='$i' selected='true'>" . $i . " - " . date('F', mktime(0, 0, 0, $i, 10)) . "</option>"; }
         else { $month_html .= "<option value='$i'>" . $i . " - " . date('F', mktime(0, 0, 0, $i, 10)) . "</option>"; }

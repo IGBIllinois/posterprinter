@@ -75,7 +75,7 @@ require_once 'includes/header.inc.php';
 </form>
 <br />
 <table class='table table-bordered table-sm table-striped'>
-	<thead class='thead-light'>
+	<thead class='table-light'>
 	<tr>
 		<th>Order Number</th>
 		<th>Email</th>

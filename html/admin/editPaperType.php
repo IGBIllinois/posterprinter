@@ -79,16 +79,16 @@ else
 <table class='table table-bordered table-sm'>
 	<tr><th colspan='2'>Edit Paper Type</th></tr>
 	<tr>
-		<td class='text-end vcenter'>Name:</td>
-		<td><div class='input-group col-md-6'><input class='form-control' type='text' name='name' value='<?php echo $name; ?>' maxlength='40'></div></td>
+		<td class='text-end align-middle'>Name:</td>
+		<td><div class='input-group'><input class='form-control' type='text' name='name' value='<?php echo $name; ?>' maxlength='40'></div></td>
 	</tr>
 	<tr>
 		<td class='text-end'>Cost per Inch:</td>
-		<td><div class='input-group'><div class='input-group-prepend'><span class='input-group-text'>$</span></div><input class='form-control' type='text' name='cost' value='<?php echo $cost; ?>' / size='6'></div></td>
+		<td><div class='input-group'><span class='input-group-text'>$</span><input class='form-control' type='text' name='cost' value='<?php echo $cost; ?>' size='6'></div></td>
 	</tr>
 	<tr>
 		<td class='text-end'>Width:</td>
-		<td><div class='input-group col-md-3'><input class='form-control' type='text' name='width' value='<?php echo $width; ?>' / maxlength='2' size='3'><div class='input-group-append'><span class='input-group-text'>Inches</span><div></div> </td>
+		<td><div class='input-group'><input class='form-control' type='text' name='width' value='<?php echo $width; ?>' maxlength='2' size='3'><span class='input-group-text'>Inches</span></div></td>
 	</tr>
 	</table>
 	<br><input class='btn btn-primary' type='submit' name='editPaperType' value='Update Paper Type' onClick='return confirmUpdate()'>

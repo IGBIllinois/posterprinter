@@ -85,15 +85,15 @@ else
 	</tr>
 	<tr>
 		<td class='text-end'>Cost:</td>
-		<td><div class='input-group col-xs-3'><div class='input-group-prepend'><span class='input-group-text'>$</span></div><input class='form-control' type='text' name='cost' value='<?php echo $cost; ?>' size='6'></div></td>
+		<td><div class='input-group'><span class='input-group-text'>$</span><input class='form-control' type='text' name='cost' value='<?php echo $cost; ?>' size='6'></div></td>
 	</tr>
 	<tr>
 		<td class='text-end'>Max Width:</td>
-		<td><div class='input-group col-xs-3'><input class='form-control' type='text' name='maxWidth' value='<?php echo $maxWidth; ?>' maxlength='2' size='3'><div clas='input-group-append'><span class='input-group-text'>Inches</span><div></div></td>
+		<td><div class='input-group'><input class='form-control' type='text' name='maxWidth' value='<?php echo $maxWidth; ?>' maxlength='2' size='3'><span class='input-group-text'>Inches</span></div></td>
 	</tr>
 	<tr>
 		<td class='text-end'>Max Length:</td>
-		<td><div class='input-group col-xs-3'><input class='form-control' type='text' name='maxLength' value='<?php echo $maxLength; ?>' maxlength='3' size='3'><div class='input-group-append'><span class='input-group-text'>Inches</span></div></div></td>
+		<td><div class='input-group'><input class='form-control' type='text' name='maxLength' value='<?php echo $maxLength; ?>' maxlength='3' size='3'><span class='input-group-text'>Inches</span></div></td>
 	</tr>
 	</table>
 	

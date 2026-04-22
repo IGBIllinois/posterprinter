@@ -99,9 +99,7 @@ if (isset($_POST['login'])) {
 			<input class='form-control' type='text' autocapitalize='off' tabindex='1' 
 				name='username' tabindex='1' placeholder='Username'
 				value='<?php if (isset($username)) { echo $username; } ?>'>
-			<div class="input-group-append">
-				<span class='input-group-text'> <i class='fa fa-user'></i></span>
-			</div>
+			<span class='input-group-text'> <i class='fa fa-user'></i></span>
 			</div>
 	</div>
 	<div class='mb-3'>
@@ -109,9 +107,7 @@ if (isset($_POST['login'])) {
 			<div class='input-group'>
 			<input class='form-control' type='password' name='password' tabindex='2'
 			placeholder='Password' tabindex='2'>		
-			<div class='input-group-append'>
-				<span class='input-group-text'><i class='fa fa-lock'></i></span>
-			</div>
+			<span class='input-group-text'><i class='fa fa-lock'></i></span>
 			</div>
 
 	</div>
@@ -119,7 +115,7 @@ if (isset($_POST['login'])) {
 		<button type='submit' name='login' class='btn btn-primary'>Login</button>
 		<div class='float-end'>
 			<?php if (settings::get_password_reset_url()) {
-				echo "<a class='pull-right' target='_blank' href='" . settings::get_password_reset_url() . "'>Forgot Password?</a>";
+				echo "<a target='_blank' href='" . settings::get_password_reset_url() . "'>Forgot Password?</a>";
 			}
 			?>
 		</div>
