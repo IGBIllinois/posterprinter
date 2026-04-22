@@ -93,16 +93,8 @@ $graph_form .= "</select>";
 <p>
 <div class='row'>
         <div class='col-sm-12 col-md-12 col-lg-12 col-xl-12'>
-        <a class='btn btn-sm btn-primary' href='<?php echo $url_navigation['back_url']; ?>'>Previous Month</a>
-
-        <?php
-                if ($next_month > $current_month) {
-                        echo "<div class='float-end'><a class='btn btn-sm btn-primary' onclick='return false;'>Next Month</a></div>";
-                }
-                else {
-                        echo "<div class='float-end'><a class='btn btn-sm btn-primary' href='" . $url_navigation['forward_url'] . "'>Next Month</a></div>";
-                }
-        ?>
+                <a class='btn btn-sm btn-primary' href='<?php echo $url_navigation['back_url']; ?>'>Previous Month</a>
+                <a class='btn btn-sm btn-primary' href='<?php echo $url_navigation['forward_url']; ?>'>Next Month</a>
         </div>
 </div>
 <p>

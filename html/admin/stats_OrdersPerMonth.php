@@ -42,16 +42,8 @@ $graph_type = "orders_per_month";
 <p>
 <div class='row'>
         <div class='col-sm-12 col-md-12 col-lg-12 col-xl-12'>
-        <a class='btn btn-sm btn-primary' href='<?php echo $url_navigation['back_url']; ?>'>Previous Year</a>
-
-        <?php
-                if ($next_year > date('Y')) {
-                        echo "<div class='float-end'><a class='btn btn-sm btn-primary' onclick='return false;'>Next Year</a></div>";
-                }
-                else {
-                        echo "<div class='float-end'><a class='btn btn-sm btn-primary' href='" . $url_navigation['forward_url'] . "'>Next Year</a></div>";
-                }
-        ?>
+                <a class='btn btn-sm btn-primary' href='<?php echo $url_navigation['back_url']; ?>'>Previous Year</a>
+                <a class='btn btn-sm btn-primary' href='<?php echo $url_navigation['forward_url']; ?>'>Next Year</a>
         </div>
 </div>
 <p>
