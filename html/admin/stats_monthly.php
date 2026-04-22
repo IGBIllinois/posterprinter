@@ -75,7 +75,7 @@ $graph_form .= "</select>";
 ?>
 
 
-<h3>Yearly Statistics - <?php echo $year; ?></h3>
+<h3>Monthly Statistics - <?php echo $month_name . " " . $year; ?></h3>
 <form class='d-flex align-items-center' action='<?php echo $_SERVER['PHP_SELF']; ?>' method='get'>
 <div class='mb-3'>
         <label for='month'>Month:</label>

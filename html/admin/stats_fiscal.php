@@ -72,7 +72,7 @@ $graph_form .= "</select>";
 ?>
 
 
-<h3>Yearly Statistics - <?php echo $year; ?></h3>
+<h3>Fiscal Year Statistics - <?php echo ($year - 1) . "/" . $year; ?></h3>
 <form class='d-flex align-items-center' action='<?php echo $_SERVER['PHP_SELF']; ?>' method='get'>
 <div class='mb-3'>
         <label for='year'>Year:</label>
@@ -89,7 +89,7 @@ $graph_form .= "</select>";
         <a class='btn btn-sm btn-primary' href='<?php echo $url_navigation['back_url']; ?>'>Previous Year</a>
 
         <?php
-                if ($next_year > $year) {
+                if ($next_year > date('Y') + 1) {
                         echo "<div class='float-end'><a class='btn btn-sm btn-primary' onclick='return false;'>Next Year</a></div>";
                 }
                 else {
