@@ -212,9 +212,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		// Get all finish option radio buttons
 		const finishOptionRadios = document.querySelectorAll('input[name="finishOptionsId"]');
+		console.log('[posterprinter] Found ' + finishOptionRadios.length + ' finish option radios');
 
 		finishOptionRadios.forEach(function(radio) {
 			const finishOptionId = parseInt(radio.value);
+			console.log('[posterprinter] Finish option id=' + finishOptionId + ', checked=' + radio.checked + ', restrict=' + restrictLamination);
 			const row = radio.closest('tr');
 
 			if (restrictLamination && finishOptionId === 2) {
