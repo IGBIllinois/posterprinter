@@ -50,28 +50,29 @@ if (isset($_POST['step1'])) {
 	$finishOptions = functions::getValidFinishOptions($db,$_POST['width'],$_POST['length']);
 	
 	//takes the result and formats it into html into the finishOptionsHTML variable.
+	// Identify lamination by name rather than hardcoded ID
 	$finishOptions_html = "";
 	foreach ($finishOptions as $finishOption) {
+		$isLamination = (stripos($finishOption['name'], 'laminat') !== false);
 		$finishOptions_html .= "<tr>";
 		$finishOptions_html .= "<td class='text-end'>$" . $finishOption['cost'] . "</td>\n";
 		$finishOptions_html .= "<td class='center'>" . $finishOption['name'] . "</td>\n";
-		
-		// If this is lamination (id=2) and a restricted paper type is selected
-		if ($finishOption['id'] == 2 && $restrictLamination) {
+
+		$dataAttr = $isLamination ? " data-is-lamination='true'" : "";
+
+		if ($isLamination && $restrictLamination) {
 			// Disable lamination option and don't check it
-			$finishOptions_html .= "<td class='left'><input type='radio' name='finishOptionsId' value='" . $finishOption['id'] . "' disabled='disabled'></td></tr>\n";
+			$finishOptions_html .= "<td class='left'><input type='radio' name='finishOptionsId' value='" . $finishOption['id'] . "'" . $dataAttr . " disabled='disabled'></td></tr>\n";
 		}
-		// If this is "none" (id=1) and lamination should be restricted
-		elseif ($finishOption['id'] == 1 && $restrictLamination) {
-			// Force "none" to be selected
-			$finishOptions_html .= "<td class='left'><input type='radio' name='finishOptionsId' checked='checked' value='" . $finishOption['id'] . "'></td></tr>\n";
+		elseif (!$isLamination && $restrictLamination && $finishOption['finishOptions_default']) {
+			// Force default non-lamination option to be selected
+			$finishOptions_html .= "<td class='left'><input type='radio' name='finishOptionsId' checked='checked' value='" . $finishOption['id'] . "'" . $dataAttr . "></td></tr>\n";
 		}
-		// Normal handling for other options
 		elseif ($finishOption['finishOptions_default'] && !$restrictLamination) {
-			$finishOptions_html .= "<td class='left'><input type='radio' name='finishOptionsId' checked='checked' value='" . $finishOption['id'] . "'></td></tr>\n";
+			$finishOptions_html .= "<td class='left'><input type='radio' name='finishOptionsId' checked='checked' value='" . $finishOption['id'] . "'" . $dataAttr . "></td></tr>\n";
 		}
 		else {
-			$finishOptions_html .= "<td class='left'><input type='radio' name='finishOptionsId' value='" . $finishOption['id'] . "'></td></tr>\n";
+			$finishOptions_html .= "<td class='left'><input type='radio' name='finishOptionsId' value='" . $finishOption['id'] . "'" . $dataAttr . "></td></tr>\n";
 		}
 	}
 	
@@ -215,11 +216,11 @@ document.addEventListener('DOMContentLoaded', function() {
 		console.log('[posterprinter] Found ' + finishOptionRadios.length + ' finish option radios');
 
 		finishOptionRadios.forEach(function(radio) {
-			const finishOptionId = parseInt(radio.value);
-			console.log('[posterprinter] Finish option id=' + finishOptionId + ', checked=' + radio.checked + ', restrict=' + restrictLamination);
+			const isLamination = (radio.getAttribute('data-is-lamination') === 'true');
+			console.log('[posterprinter] Finish option id=' + radio.value + ', isLamination=' + isLamination + ', restrict=' + restrictLamination);
 			const row = radio.closest('tr');
 
-			if (restrictLamination && finishOptionId === 2) {
+			if (restrictLamination && isLamination) {
 				// Disable lamination
 				radio.disabled = true;
 				radio.checked = false;
@@ -233,8 +234,8 @@ document.addEventListener('DOMContentLoaded', function() {
 					row.style.opacity = '1';
 					row.style.cursor = 'default';
 				}
-				// If restricting, auto-select "None" (id=1)
-				if (restrictLamination && finishOptionId === 1) {
+				// If restricting and this is the default, select it
+				if (restrictLamination && !isLamination) {
 					radio.checked = true;
 				}
 			}
