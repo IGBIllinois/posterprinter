@@ -21,10 +21,24 @@ if ($session->get_var('webpage') != "") {
         $webpage = $session->get_var('webpage');
 }
 
+$throttle = new loginthrottle(7, 900); // 7 attempts, 15 minute lockout
+$client_ip = $_SERVER['REMOTE_ADDR'];
+
+// Periodically clean up old lockout files
+if (rand(1, 50) == 1) {
+	$throttle->cleanup();
+}
 
 //logs in
 if (isset($_POST['login'])) {
-	
+
+	// Check if IP is locked out
+	if ($throttle->is_locked($client_ip)) {
+		$remaining = ceil($throttle->get_remaining_lockout($client_ip) / 60);
+		$log->send_log("Locked out IP " . $client_ip . " attempted login", \IGBIllinois\log::ERROR);
+		$message = functions::alert("Too many failed login attempts. Please try again in " . $remaining . " minutes.", false);
+	}
+	else {
         $username = trim(rtrim($_POST['username']));
         $password = $_POST['password'];
 	$error = false;
@@ -49,6 +63,7 @@ if (isset($_POST['login'])) {
 		}
 		$success = $ldap->authenticate($username,$password,settings::get_ldap_group());
 		if ($success) {
+			$throttle->reset($client_ip);
 			$log->send_log("User " . $username . " logged in");
                         $session_vars = array('login'=>true,
 	                        'username'=>$username,
@@ -60,15 +75,22 @@ if (isset($_POST['login'])) {
 
                         $location = "http://" . $_SERVER['SERVER_NAME'] . $webpage;
                         header("Location: " . $location);
-	
+
 		}
 		else {
-			$log->send_log("User " . $username . " failed logging in",\IGBIllinois\log::ERROR);
-			$message = functions::alert("Invalid Username or Password",false);
-	
+			$attempts = $throttle->record_failure($client_ip);
+			$remaining_attempts = 7 - $attempts;
+			$log->send_log("User " . $username . " failed logging in from " . $client_ip . " (attempt " . $attempts . "/7)", \IGBIllinois\log::ERROR);
+			if ($remaining_attempts > 0) {
+				$message = functions::alert("Invalid Username or Password.",false);
+			}
+			else {
+				$message = functions::alert("Too many failed login attempts. Please try again later.",false);
+			}
 		}
-	
+
 	}
+	} // end lockout check
 }
 ?>
 <!DOCTYPE html>
