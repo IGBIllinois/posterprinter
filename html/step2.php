@@ -194,75 +194,56 @@ require_once 'includes/header.inc.php';
 <script type="application/javascript">
 // Paper Type and Finish Option Dynamic Update
 document.addEventListener('DOMContentLoaded', function() {
+	console.log('[posterprinter] DOMContentLoaded fired, binding paper type handlers');
 	// Get all paper type radio buttons
 	const paperTypeRadios = document.querySelectorAll('input[name="paperTypesId"]');
-	
+	console.log('[posterprinter] Found ' + paperTypeRadios.length + ' paper type radios');
+
 	// Function to update finish options based on selected paper type
 	function updateFinishOptions() {
 		// Get the currently selected paper type
 		const selectedPaperType = document.querySelector('input[name="paperTypesId"]:checked');
-		
+
 		if (!selectedPaperType) return;
-		
-		const paperTypeId = parseInt(selectedPaperType.value);
-		
-		// Check if selected paper type is Graphic Matte Canvas (17, 18) or Fine Art Watercolor (7)
-		const restrictLamination = (paperTypeId === 17 || paperTypeId === 18 || paperTypeId === 7);
-		
+
+		// Read restriction from the data attribute set by PHP — no hardcoded IDs
+		const restrictLamination = (selectedPaperType.getAttribute('data-restrict-lamination') === 'true');
+		console.log('[posterprinter] Paper type ' + selectedPaperType.value + ', restrictLamination=' + restrictLamination);
+
 		// Get all finish option radio buttons
 		const finishOptionRadios = document.querySelectorAll('input[name="finishOptionsId"]');
-		
+
 		finishOptionRadios.forEach(function(radio) {
 			const finishOptionId = parseInt(radio.value);
-			
-			if (restrictLamination) {
-				// If lamination (id=2), disable it
-				if (finishOptionId === 2) {
-					radio.disabled = true;
-					radio.checked = false;
-					// Add visual styling to the row
-					const row = radio.closest('tr');
-					if (row) {
-						row.style.opacity = '0.5';
-						row.style.cursor = 'not-allowed';
-					}
-				}
-				// If none (id=1), select it
-				else if (finishOptionId === 1) {
-					radio.disabled = false;
-					radio.checked = true;
-					const row = radio.closest('tr');
-					if (row) {
-						row.style.opacity = '1';
-						row.style.cursor = 'default';
-					}
-				}
-				// Other options remain enabled but unchecked
-				else {
-					radio.disabled = false;
-					const row = radio.closest('tr');
-					if (row) {
-						row.style.opacity = '1';
-						row.style.cursor = 'default';
-					}
+			const row = radio.closest('tr');
+
+			if (restrictLamination && finishOptionId === 2) {
+				// Disable lamination
+				radio.disabled = true;
+				radio.checked = false;
+				if (row) {
+					row.style.opacity = '0.5';
+					row.style.cursor = 'not-allowed';
 				}
 			} else {
-				// No restrictions - enable all options
 				radio.disabled = false;
-				const row = radio.closest('tr');
 				if (row) {
 					row.style.opacity = '1';
 					row.style.cursor = 'default';
 				}
+				// If restricting, auto-select "None" (id=1)
+				if (restrictLamination && finishOptionId === 1) {
+					radio.checked = true;
+				}
 			}
 		});
 	}
-	
+
 	// Add event listeners to all paper type radio buttons
 	paperTypeRadios.forEach(function(radio) {
 		radio.addEventListener('change', updateFinishOptions);
 	});
-	
+
 	// Run once on page load to set initial state
 	updateFinishOptions();
 });
