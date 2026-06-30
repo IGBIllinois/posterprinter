@@ -26,8 +26,8 @@ if (isset($_POST['step1'])) {
 		}
 	}
 	
-	// Check if selected paper type is Graphic Matte Canvas (1) or Fine Art Watercolor (4)
-	$restrictLamination = in_array($selectedPaperTypeId, [1, 4]);
+	// Check if selected paper type is Graphic Matte Canvas (17, 18) or Fine Art Watercolor (7)
+	$restrictLamination = in_array($selectedPaperTypeId, [17, 18, 7]);
 	
 	//takes the result and formats it into html into the paperTypeHTML variable.
 	$paperTypes_html = "";
@@ -37,7 +37,7 @@ if (isset($_POST['step1'])) {
 		$paperTypes_html .= "<td>" .  $paperType['name'] . "</td>";
 		
 		// Add data attribute to identify special paper types
-		$dataAttr = in_array($paperType['id'], [1, 4]) ? " data-restrict-lamination='true'" : "";
+		$dataAttr = in_array($paperType['id'], [17, 18, 7]) ? " data-restrict-lamination='true'" : "";
 		
 		if ($paperType['paperTypes_default']) {
 			$paperTypes_html .= "<td class='left'><input type='radio' name='paperTypesId' checked='true' value='" . $paperType['id'] . "'" . $dataAttr . "></td></tr>\n";
