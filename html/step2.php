@@ -206,8 +206,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		
 		const paperTypeId = parseInt(selectedPaperType.value);
 		
-		// Check if selected paper type is Graphic Matte Canvas (1) or Fine Art Watercolor (4)
-		const restrictLamination = (paperTypeId === 1 || paperTypeId === 4);
+		// Check if selected paper type is Graphic Matte Canvas (17, 18) or Fine Art Watercolor (7)
+		const restrictLamination = (paperTypeId === 17 || paperTypeId === 18 || paperTypeId === 7);
 		
 		// Get all finish option radio buttons
 		const finishOptionRadios = document.querySelectorAll('input[name="finishOptionsId"]');
