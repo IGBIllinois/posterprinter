@@ -195,10 +195,8 @@ require_once 'includes/header.inc.php';
 <script type="application/javascript">
 // Paper Type and Finish Option Dynamic Update
 document.addEventListener('DOMContentLoaded', function() {
-	console.log('[posterprinter] DOMContentLoaded fired, binding paper type handlers');
 	// Get all paper type radio buttons
 	const paperTypeRadios = document.querySelectorAll('input[name="paperTypesId"]');
-	console.log('[posterprinter] Found ' + paperTypeRadios.length + ' paper type radios');
 
 	// Function to update finish options based on selected paper type
 	function updateFinishOptions() {
@@ -209,15 +207,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		// Read restriction from the data attribute set by PHP — no hardcoded IDs
 		const restrictLamination = (selectedPaperType.getAttribute('data-restrict-lamination') === 'true');
-		console.log('[posterprinter] Paper type ' + selectedPaperType.value + ', restrictLamination=' + restrictLamination);
 
 		// Get all finish option radio buttons
 		const finishOptionRadios = document.querySelectorAll('input[name="finishOptionsId"]');
-		console.log('[posterprinter] Found ' + finishOptionRadios.length + ' finish option radios');
 
 		finishOptionRadios.forEach(function(radio) {
 			const isLamination = (radio.getAttribute('data-is-lamination') === 'true');
-			console.log('[posterprinter] Finish option id=' + radio.value + ', isLamination=' + isLamination + ', restrict=' + restrictLamination);
 			const row = radio.closest('tr');
 
 			if (restrictLamination && isLamination) {
