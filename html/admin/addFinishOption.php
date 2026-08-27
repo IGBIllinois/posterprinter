@@ -25,23 +25,23 @@ require_once 'includes/header.inc.php';
 <table class='table table-bordered'>
 	<tr><th colspan='2'>Add New Finish Option</th></tr>
 	<tr>
-		 <td class='text-right'>Name:</td>
+		 <td class='text-end'>Name:</td>
 		<td><input class='form-control' type='text' name='name' value='<?php if (isset($name)) { echo $name; } ?>' /> </td>
 	</tr>
 	<tr>
-		<td class='text-right'>Cost:</td>
+		<td class='text-end'>Cost:</td>
 		<td><div class='input-group col-xs-3'><div class='input-group-prepend'><span class='input-group-text'>$</span></div><input class='form-control' type='text' name='cost' value='<?php if (isset($cost)) { echo $cost; } ?>' size='6'/></div></td>
 	</tr>
 	<tr>
-		<td class='text-right'>Max Width (Max: <?php echo settings::get_max_width(); ?>):</td>
+		<td class='text-end'>Max Width (Max: <?php echo settings::get_max_width(); ?>):</td>
 		<td><div class='input-group col-xs-3'><input class='form-control' type='text' name='maxWidth' value='<?php if (isset($maxWidth)) {echo $maxWidth; } ?>' maxlength='2' size='3'><div class='input-group-append'><span class='input-group-text'>Inches</span></div></div></td>
 	</tr>
 	<tr>
-		<td class='text-right'>Max Length:</td>
+		<td class='text-end'>Max Length:</td>
 		<td><div class='input-group col-xs-3'><input class='form-control' type='text' name='maxLength' value='<?php if (isset($maxLength)) { echo $maxLength; } ?>' maxlength='3' size='3'><div class='input-group-append'><span class='input-group-text'>Inches</span></div></div></td>
 	</tr>
 	<tr>
-		<td class='text-right'>Make Default:</td>
+		<td class='text-end'>Make Default:</td>
 		<td><input type='checkbox' name='default' value='1' <?php if (isset($default)) { echo "checked=checked"; } ?>/></td>
 	</tr>
 </table>

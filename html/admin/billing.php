@@ -32,7 +32,7 @@ else {
 }
 
 //////Year////////
-$year_html = "<select class='form-control' name='year'>";
+$year_html = "<select class='form-select' name='year'>";
 for ($i=2007; $i<=date("Y");$i++) {
 	if ($i == $year) { $year_html .= "<option value='$i' selected='true'>$i</option>"; }
 	else { $year_html .= "<option value='$i'>$i</option>"; }
@@ -40,7 +40,7 @@ for ($i=2007; $i<=date("Y");$i++) {
 $year_html .= "</select>";
 
 ///////Month///////
-$month_html = "<select class='form-control' name='month'>";
+$month_html = "<select class='form-select' name='month'>";
 for ($i=1;$i<=12;$i++) {
 	if ($i == $month) { $month_html .= "<option value='$i' selected='true'>$i</option>"; }
 	else { $month_html .= "<option value='$i'>$i</option>"; }
@@ -59,17 +59,17 @@ require_once 'includes/header.inc.php';
 
 <h3>Billing Reports</h3>
 <hr>
-<form class='form-inline' action='<?php echo $_SERVER['PHP_SELF']; ?>' method='post'>
-<div class='form-group'>
+<form class='d-flex align-items-center' action='<?php echo $_SERVER['PHP_SELF']; ?>' method='post'>
+<div class='mb-3'>
 	<label for='month'>Month:</label>
 	&nbsp;<?php echo $month_html; ?>
 </div>&nbsp;
-<div class='form-group'>
+<div class='mb-3'>
 	<label for='year'>Year:</label>
 	&nbsp; <?php echo $year_html; ?>
 </div>
 &nbsp;
-<div class='form-group'>
+<div class='mb-3'>
 	<button class='btn btn-primary' type='submit' name='selectedDate'>Get Records</button>
 </div>
 </form>
@@ -96,7 +96,7 @@ require_once 'includes/header.inc.php';
 <div class='col-md-2 col-lg-2 col-xl-2'>
 <input type='hidden' name='month' value='<?php echo $month; ?>' />
 <input type='hidden' name='year' value='<?php echo $year; ?>' />
-<select class='form-control' name='report_type'>
+<select class="form-select" name='report_type'>
 <option value='xlsx'>Excel 2007</option>
 <option value='csv'>CSV</option>
 </select>

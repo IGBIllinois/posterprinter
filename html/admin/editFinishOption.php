@@ -80,19 +80,19 @@ else
 <table class='table table-bordered table-sm'>
 	<tr><th colspan='2'>Edit Finish Option</th></tr>
 	<tr>
-		<td class='text-right'>Name:</td>
+		<td class='text-end'>Name:</td>
 		<td><div class='input-group col-md-6'><input class='form-control' type='text' name='name' value='<?php echo $name; ?>' maxlength='40'/></div></td>
 	</tr>
 	<tr>
-		<td class='text-right'>Cost:</td>
+		<td class='text-end'>Cost:</td>
 		<td><div class='input-group col-xs-3'><div class='input-group-prepend'><span class='input-group-text'>$</span></div><input class='form-control' type='text' name='cost' value='<?php echo $cost; ?>' size='6'></div></td>
 	</tr>
 	<tr>
-		<td class='text-right'>Max Width:</td>
+		<td class='text-end'>Max Width:</td>
 		<td><div class='input-group col-xs-3'><input class='form-control' type='text' name='maxWidth' value='<?php echo $maxWidth; ?>' maxlength='2' size='3'><div clas='input-group-append'><span class='input-group-text'>Inches</span><div></div></td>
 	</tr>
 	<tr>
-		<td class='text-right'>Max Length:</td>
+		<td class='text-end'>Max Length:</td>
 		<td><div class='input-group col-xs-3'><input class='form-control' type='text' name='maxLength' value='<?php echo $maxLength; ?>' maxlength='3' size='3'><div class='input-group-append'><span class='input-group-text'>Inches</span></div></div></td>
 	</tr>
 	</table>

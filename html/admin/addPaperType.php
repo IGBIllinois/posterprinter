@@ -24,23 +24,23 @@ include 'includes/header.inc.php';
 		<th colspan='2'>Add New Paper Type</th>
 	</tr>
 	<tr>
-		<td class='text-right'>Name:</td>
+		<td class='text-end'>Name:</td>
 		<td><input class='form-control' type='text' name='name' maxlength='40' value='<?php if (isset($name)) { echo $name; } ?>' /></td>
 	</tr>
 	<tr>
-		<td class='text-right'>Cost Per Inch:</td>
+		<td class='text-end'>Cost Per Inch:</td>
 		<td><div class='input-group col-xs-3'><div class='input-group-prepend'><span class='input-group-text'>$</span></div><input class='form-control' type='text' name='cost' value='<?php if (isset($cost)) { echo $cost; } ?>' size='6'/></div></td>
 	</tr>
 	<tr>
-		<td class='text-right'>Width (Max: <?php echo settings::get_max_width(); ?>):</td>
+		<td class='text-end'>Width (Max: <?php echo settings::get_max_width(); ?>):</td>
 		<td><div class='input-group col-xs-3'><input class='form-control' type='text' name='width' value='<?php if (isset($width)) { echo $width; } ?>' maxlength='2' size='3'><span class='input-group-append'><span class='input-group-text'>Inches</span></div></div></td>
 	</tr>
 	<tr>
-		<td class='text-right'>Make Default:</td>
+		<td class='text-end'>Make Default:</td>
 		<td><input type='checkbox' name='default' value='1' <?php if (isset($default)) { echo 'checked=checked'; } ?>/></td>
 	</tr>
 	<tr>
-		<td class='text-right'></td>
+		<td class='text-end'></td>
 		<td><input class='btn btn-primary' type='submit' name='addPaperType' value='Add Paper Type'></td>
 	</tr>
 	

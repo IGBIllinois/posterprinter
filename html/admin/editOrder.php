@@ -97,7 +97,7 @@ if (isset($_GET['order_id']) && is_numeric($_GET['order_id'])) {
 	////////////////Paper Types////////////
 	$paperTypes = functions::getValidPaperTypes($db,$order->get_width(),$order->get_length());
 	$paperTypesHTML = "<div class='col-md-6'>";
-	$paperTypesHTML .= "<select class='form-control form-control-sm' name='paperType'>";
+	$paperTypesHTML .= "<select class="form-select form-select-sm" name='paperType'>";
 	foreach ($paperTypes as $paperType) {
 		if ($order->get_paper_type_id() === $paperType["id"]) {
 			$paperTypesHTML .= "<option selected='true' value='" . $paperType["id"] . "'>" . $paperType["name"] . "</option>";
@@ -110,7 +110,7 @@ if (isset($_GET['order_id']) && is_numeric($_GET['order_id'])) {
 	///////////////////Finish Options//////////////
 	$finishOptions = functions::getValidFinishOptions($db,$order->get_width(),$order->get_length());
 	$finishOptionsHTML = "<div class='col-md-6'>";
-	$finishOptionsHTML .= "<select class='form-control form-control-sm' name='finishOption'>";
+	$finishOptionsHTML .= "<select class="form-select form-select-sm" name='finishOption'>";
 	foreach ($finishOptions as $finishOption) {
 		if ($order->get_finish_option_id() == $finishOption["id"]) {
 			$finishOptionsHTML .= "<option selected='true' value='" . $finishOption["id"] . "'>" . $finishOption["name"] . "</option>";
@@ -126,7 +126,7 @@ if (isset($_GET['order_id']) && is_numeric($_GET['order_id'])) {
 	////////////////////Poster Tube////////////////////
 	$posterTube = poster_tube::getPosterTubes($db);
 	$posterTubeHTML = "<div class='col-md-4'>";
-	$posterTubeHTML .= "<select class='form-control form-control-sm' name='posterTube'>";
+	$posterTubeHTML .= "<select class="form-select form-select-sm" name='posterTube'>";
 	for($i=0;$i<count($posterTube);$i++) {
 		$posterTubeId = $posterTube[$i]['posterTube_id'];
 		$posterTubeName = $posterTube[$i]['posterTube_name'];
@@ -147,7 +147,7 @@ if (isset($_GET['order_id']) && is_numeric($_GET['order_id'])) {
 	/////////////////Rush Order//////////////
 	$rushOrder = rush_order::getRushOrders($db);
 	$rushOrderHTML = "<div class='col-md-4'>";
-	$rushOrderHTML .= "<select class='form-control form-control-sm' name='rushOrder'>";
+	$rushOrderHTML .= "<select class="form-select form-select-sm" name='rushOrder'>";
 	for($i=0;$i<count($rushOrder);$i++) {
 		$rushOrderId = $rushOrder[$i]['rushOrder_id'];
 		$rushOrderName = $rushOrder[$i]['rushOrder_name'];
@@ -179,12 +179,12 @@ require_once 'includes/header.inc.php';
 	<thead>
 	<tr><th colspan='2'>Edit Order Information</th></tr>
 	</thead>
-	<tr><td class='text-right'>Order Number</td><td><?php echo $order->get_order_id(); ?></td></tr>
-	<tr><td class='text-right'>Email</td><td><?php echo $order->get_email(); ?></td></tr>
-	<tr><td class='text-right'>Additional Emails </td><td><?php echo $order->get_cc_emails() ?></td></tr>
-	<tr><td class='text-right'>Full Name</td><td><?php echo $order->get_name(); ?></td></tr>
-	<tr><td class='text-right'>File</td><td><?php echo $order->get_filename();  ?></td></tr>
-	<tr><td class='text-right' style='vertical-align:middle;'>CFOP</td>
+	<tr><td class='text-end'>Order Number</td><td><?php echo $order->get_order_id(); ?></td></tr>
+	<tr><td class='text-end'>Email</td><td><?php echo $order->get_email(); ?></td></tr>
+	<tr><td class='text-end'>Additional Emails </td><td><?php echo $order->get_cc_emails() ?></td></tr>
+	<tr><td class='text-end'>Full Name</td><td><?php echo $order->get_name(); ?></td></tr>
+	<tr><td class='text-end'>File</td><td><?php echo $order->get_filename();  ?></td></tr>
+	<tr><td class='text-end' style='vertical-align:middle;'>CFOP</td>
 		<td>
 		<div class='row'>
 		<div class='col-md-1'><input type='text' name='cfop1' id='cfop1' maxlength='1' class='form-control form-control-sm' onKeyUp='cfopAdvance1()' value='<?php echo $order->get_cfop_college(); ?>'></div>- 
@@ -194,18 +194,18 @@ require_once 'includes/header.inc.php';
 		</div>
 		</td>
 	</tr>
-	<tr><td class='text-right'>Activity Code</td>
+	<tr><td class='text-end'>Activity Code</td>
 		<td><div class='col-md-2'><input class='form-control form-control-sm' type='text' name='activityCode' maxlength='6' value='<?php echo $order->get_activity_code(); ?>'></div></td>
 	</tr>
-	<tr><td class='text-right'>Time Created</td><td><?php echo $order->get_time_created(); ?></td></tr>
-	<tr><td class='text-right'>Total Cost</td><td>$<?php echo $order->get_total_cost(); ?></td></tr>
-	<tr><td class='text-right'>Width</td><td><?php echo $order->get_width(); ?>"</td></tr>
-	<tr><td class='text-right'>Length</td><td><?php echo $order->get_length(); ?>"</td></tr>
-	<tr><td class='text-right'>Paper Type</td><td><?php echo $paperTypesHTML; ?></td></tr>
-	<tr><td class='text-right'>Finish Option</td><td><?php echo $finishOptionsHTML;  ?></td></tr>
-	<tr><td class='text-right'>Poster Tube</td><td><?php echo $posterTubeHTML; ?></td></tr>
-	<tr><td class='text-right'>Rush Order</td><td><?php echo $rushOrderHTML; ?></td></tr>
-	<tr><td class='text-right'>Comments</td><td><?php echo $order->get_wordwrap_comments(); ?></td></tr>
+	<tr><td class='text-end'>Time Created</td><td><?php echo $order->get_time_created(); ?></td></tr>
+	<tr><td class='text-end'>Total Cost</td><td>$<?php echo $order->get_total_cost(); ?></td></tr>
+	<tr><td class='text-end'>Width</td><td><?php echo $order->get_width(); ?>"</td></tr>
+	<tr><td class='text-end'>Length</td><td><?php echo $order->get_length(); ?>"</td></tr>
+	<tr><td class='text-end'>Paper Type</td><td><?php echo $paperTypesHTML; ?></td></tr>
+	<tr><td class='text-end'>Finish Option</td><td><?php echo $finishOptionsHTML;  ?></td></tr>
+	<tr><td class='text-end'>Poster Tube</td><td><?php echo $posterTubeHTML; ?></td></tr>
+	<tr><td class='text-end'>Rush Order</td><td><?php echo $rushOrderHTML; ?></td></tr>
+	<tr><td class='text-end'>Comments</td><td><?php echo $order->get_wordwrap_comments(); ?></td></tr>
 </table>
 </div>
 </div>

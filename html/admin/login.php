@@ -93,7 +93,7 @@ if (isset($_POST['login'])) {
 
 <div class='col-sm-6 col-md-6 col-lg-6 col-xl-6 offset-md-3 offset-lg-3 offset-xl-3'>
 <form class='form' role='form'  action='<?php echo $_SERVER['PHP_SELF']; ?>' method='post' name='login'>
-	<div class='form-group'>
+	<div class='mb-3'>
 		<label for='username' class='col-form-label'>Username</label>
 			<div class='input-group'> 
 			<input class='form-control' type='text' autocapitalize='off' tabindex='1' 
@@ -104,7 +104,7 @@ if (isset($_POST['login'])) {
 			</div>
 			</div>
 	</div>
-	<div class='form-group'>
+	<div class='mb-3'>
 		<label for='password' class='col-form-label'>Password</label>
 			<div class='input-group'>
 			<input class='form-control' type='password' name='password' tabindex='2'
@@ -115,9 +115,9 @@ if (isset($_POST['login'])) {
 			</div>
 
 	</div>
-	<div class='form-group'>
+	<div class='mb-3'>
 		<button type='submit' name='login' class='btn btn-primary'>Login</button>
-		<div class='float-right'>
+		<div class='float-end'>
 			<?php if (settings::get_password_reset_url()) {
 				echo "<a class='pull-right' target='_blank' href='" . settings::get_password_reset_url() . "'>Forgot Password?</a>";
 			}

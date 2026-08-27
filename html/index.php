@@ -68,7 +68,7 @@ foreach ($finishOptions as $finishOption) {
 
 <div class='container'>
         <div class='col-sm-12 col-md-12 col-lg-12 col-xl-12'>
-<div class='jumbotron'>
+<div class='bg-light mb-4 rounded-2 py-5 px-3'>
 	<h1 class='display-3'><img src='images/imark_bw.gif' alt='University of Illinois at Urbana-Champaign'>&nbspIGB Poster Order Form</h1>
 	<p class='lead'>Welcome to the IGB Poster Order Form
 	<br>Carl R. Woese Institute for Genomic Biology

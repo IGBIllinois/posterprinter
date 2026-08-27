@@ -41,27 +41,27 @@ else
 <hr>
 <form class='form' method='post' action='<?php echo $_SERVER['PHP_SELF']; ?>'>
 <h4>Poster Tube</h4>
-<div class='form-group row'>
+<div class='mb-3 row'>
 	<label class='col-form-label' for='posterTubeCost'>Price</label>
         <div class="input-group col-md-4 col-lg-4 col-xl-4">	
                 <div class='input-group-prepend'><span class="input-group-text">$</span></div>
 		<input class='form-control' type='text' name='posterTubeCost' id='posterTubeCost' value='<?php echo $posterTubeCost; ?>'>
 	</div>
 </div>
-<div class='form-group row'>
+<div class='mb-3 row'>
 	<input class='btn btn-primary btn-sm' type='submit' name='updatePosterTube' value='Update Price' onClick='return confirmUpdate()'/>
 
 </div>
 <hr>
 <h4>Rush Order</h4>
-<div class='form-group row'>
+<div class='mb-3 row'>
 	<label class='col-form-label' for='rushOrderCost'>Price</label>
 	<div class="input-group col-md-4 col-lg-4 col-xl-4">
 		<div class='input-group-prepend'><span class="input-group-text">$</span></div>
 		<input class='form-control' type='text' id='rushOrderCost' name='rushOrderCost' value='<?php echo $rushOrderCost; ?>'>
 	</div>
 </div>
-<div class='form-group row'>
+<div class='mb-3 row'>
 	<input class='btn btn-primary btn-sm' type='submit' name='updateRushOrder' value='Update Price' onClick='return confirmUpdate()'/>
 </div>
 </form>

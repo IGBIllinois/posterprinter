@@ -15,35 +15,67 @@ if (isset($_POST['cancel'])) {
 
 if (isset($_POST['step1'])) {
 
-
 	$paperTypes = functions::getValidPaperTypes($db,$_POST['width'],$_POST['length']);
+	
+	// Determine which paper type is selected
+	$selectedPaperTypeId = null;
+	foreach ($paperTypes as $paperType) {
+		if ($paperType['paperTypes_default']) {
+			$selectedPaperTypeId = $paperType['id'];
+			break;
+		}
+	}
+	
+	// Check if selected paper type is Graphic Matte Canvas (17, 18) or Fine Art Watercolor (7)
+	$restrictLamination = in_array($selectedPaperTypeId, [17, 18, 7]);
+	
 	//takes the result and formats it into html into the paperTypeHTML variable.
 	$paperTypes_html = "";
 	foreach ($paperTypes as $paperType) {
 		$paperTypes_html .= "<tr>";
-		$paperTypes_html .= "<td class='text-right'>$" . $paperType['cost'] . "</td>";
+		$paperTypes_html .= "<td class='text-end'>$" . $paperType['cost'] . "</td>";
 		$paperTypes_html .= "<td>" .  $paperType['name'] . "</td>";
+		
+		// Add data attribute to identify special paper types
+		$dataAttr = in_array($paperType['id'], [17, 18, 7]) ? " data-restrict-lamination='true'" : "";
+		
 		if ($paperType['paperTypes_default']) {
-			$paperTypes_html .= "<td class='left'><input type='radio' name='paperTypesId' checked='true' value='" . $paperType['id'] . "'></td></tr>\n";
+			$paperTypes_html .= "<td class='left'><input type='radio' name='paperTypesId' checked='true' value='" . $paperType['id'] . "'" . $dataAttr . "></td></tr>\n";
 		}
 		else {
-			$paperTypes_html .= "<td class='left'><input type='radio' name='paperTypesId' value='" . $paperType['id'] . "'></td></tr>\n";
+			$paperTypes_html .= "<td class='left'><input type='radio' name='paperTypesId' value='" . $paperType['id'] . "'" . $dataAttr . "></td></tr>\n";
 		}
 	}
+	
 	$finishOptions = functions::getValidFinishOptions($db,$_POST['width'],$_POST['length']);
+	
 	//takes the result and formats it into html into the finishOptionsHTML variable.
+	// Identify lamination by name rather than hardcoded ID
 	$finishOptions_html = "";
 	foreach ($finishOptions as $finishOption) {
+		$isLamination = (stripos($finishOption['name'], 'laminat') !== false);
 		$finishOptions_html .= "<tr>";
-		$finishOptions_html .= "<td class='text-right'>$" . $finishOption['cost'] . "</td>\n";
+		$finishOptions_html .= "<td class='text-end'>$" . $finishOption['cost'] . "</td>\n";
 		$finishOptions_html .= "<td class='center'>" . $finishOption['name'] . "</td>\n";
-		if ($finishOption['finishOptions_default']) {
-			$finishOptions_html .= "<td class='left'> <input type='radio' name='finishOptionsId' checked='checked' value='" . $finishOption['id'] . "'></td></tr>\n";
+
+		$dataAttr = $isLamination ? " data-is-lamination='true'" : "";
+
+		if ($isLamination && $restrictLamination) {
+			// Disable lamination option and don't check it
+			$finishOptions_html .= "<td class='left'><input type='radio' name='finishOptionsId' value='" . $finishOption['id'] . "'" . $dataAttr . " disabled='disabled'></td></tr>\n";
+		}
+		elseif (!$isLamination && $restrictLamination && $finishOption['finishOptions_default']) {
+			// Force default non-lamination option to be selected
+			$finishOptions_html .= "<td class='left'><input type='radio' name='finishOptionsId' checked='checked' value='" . $finishOption['id'] . "'" . $dataAttr . "></td></tr>\n";
+		}
+		elseif ($finishOption['finishOptions_default'] && !$restrictLamination) {
+			$finishOptions_html .= "<td class='left'><input type='radio' name='finishOptionsId' checked='checked' value='" . $finishOption['id'] . "'" . $dataAttr . "></td></tr>\n";
 		}
 		else {
-			$finishOptions_html .= "<td class='left'> <input type='radio' name='finishOptionsId' value='" . $finishOption['id'] . "'></td></tr>\n";
+			$finishOptions_html .= "<td class='left'><input type='radio' name='finishOptionsId' value='" . $finishOption['id'] . "'" . $dataAttr . "></td></tr>\n";
 		}
 	}
+	
 	$posterTube_html = "<tr><td class='right'>Poster Tube</td><td class='right'>$" . poster_tube::getPosterTubeCost($db) . "</td>\n";
 	$posterTube_html .= "<td class='left'><input type='checkbox' id='posterTube' name='posterTube' value='1'></td></tr>\n";
 	$rushOrder_html = "<tr><td class='right'>Rush Order</td><td class='right'>$" .rush_order:: getRushOrderCost($db) ."</td>\n";
@@ -99,19 +131,19 @@ require_once 'includes/header.inc.php';
 		<tr><td colspan='3'><em>Please fill in the following information.</em></td></tr>
 		</thead>
 		<tr>
-			<td class='text-right' style='vertical-align:middle;'>Full Name</td>
+			<td class='text-end' style='vertical-align:middle;'>Full Name</td>
 			<td><input class='form-control' type='text' size='29' name='name' id='name'></td>
 		</tr>
 		<tr>
-			<td class='text-right' style='vertical-align:middle;'>Email</td>
+			<td class='text-end' style='vertical-align:middle;'>Email</td>
 			<td><input class='form-control' type='text' size='29' name='email' id='email'></td>
 		</tr>
 		<tr>
-			<td class='text-right' style='vertical-align:middle;'>Additional Emails</td>
+			<td class='text-end' style='vertical-align:middle;'>Additional Emails</td>
 			<td><input class='form-control' type='text' name='additional_emails' id='additional_emails'></td>
 		</tr>
 		<tr>
-			<td class='text-right' style='vertical-align:middle;'>CFOP Number</td>
+			<td class='text-end' style='vertical-align:middle;'>CFOP Number</td>
 			<td>
 				<div class='row'>
 				<div class='col-md-2'><input type='text' name='cfop1' id='cfop1' maxlength='1' class='form-control' onKeyUp='cfopAdvance1()'></div> - 
@@ -122,18 +154,18 @@ require_once 'includes/header.inc.php';
 			</td>
 		</tr>
 		<tr>
-			<td class='text-right' style='vertical-align:middle;'>Activity Code (optional)</td>
+			<td class='text-end' style='vertical-align:middle;'>Activity Code (optional)</td>
 			<td><div class='row'><div class='col-md-3'><input type='text' class='form-control' name='activityCode' id='activityCode' maxlength='6'></div></div></td>
 		</tr>
 		<tr>
-			<td class='text-right' style='vertical-align:middle;'>File (Max <?php echo ini_get('post_max_size'); ?>)</td>
-			<td><div class='custom-file'><input class='custom-file-input' type='file' name='posterFile' id='posterFile' onChange='update_posterfile_name()'>
-			<label class="custom-file-label" id='posterfile-label' for="posterFile">Choose File...</label>
+			<td class='text-end' style='vertical-align:middle;'>File (Max <?php echo ini_get('post_max_size'); ?>)</td>
+			<td><div class='custom-file'><input class='form-control' type='file' name='posterFile' id='posterFile' onChange='update_posterfile_name()'>
+			<label class="form-label" id='posterfile-label' for="posterFile">Choose File...</label>
 			</div>
 			</td>
 		</tr>
 		<tr>
-			<td class='text-right'>Comments</td>
+			<td class='text-end'>Comments</td>
 			<td><textarea class='form-control' id='comments' name='comments' rows='3' cols='33'></textarea></td>
 		</tr>
 	</table>
@@ -161,6 +193,60 @@ require_once 'includes/header.inc.php';
 <?php require_once 'includes/footer.inc.php'; ?>
 
 <script type="application/javascript">
+// Paper Type and Finish Option Dynamic Update
+document.addEventListener('DOMContentLoaded', function() {
+	// Get all paper type radio buttons
+	const paperTypeRadios = document.querySelectorAll('input[name="paperTypesId"]');
+
+	// Function to update finish options based on selected paper type
+	function updateFinishOptions() {
+		// Get the currently selected paper type
+		const selectedPaperType = document.querySelector('input[name="paperTypesId"]:checked');
+
+		if (!selectedPaperType) return;
+
+		// Read restriction from the data attribute set by PHP — no hardcoded IDs
+		const restrictLamination = (selectedPaperType.getAttribute('data-restrict-lamination') === 'true');
+
+		// Get all finish option radio buttons
+		const finishOptionRadios = document.querySelectorAll('input[name="finishOptionsId"]');
+
+		finishOptionRadios.forEach(function(radio) {
+			const isLamination = (radio.getAttribute('data-is-lamination') === 'true');
+			const row = radio.closest('tr');
+
+			if (restrictLamination && isLamination) {
+				// Disable lamination
+				radio.disabled = true;
+				radio.checked = false;
+				if (row) {
+					row.style.opacity = '0.5';
+					row.style.cursor = 'not-allowed';
+				}
+			} else {
+				radio.disabled = false;
+				if (row) {
+					row.style.opacity = '1';
+					row.style.cursor = 'default';
+				}
+				// If restricting and this is the default, select it
+				if (restrictLamination && !isLamination) {
+					radio.checked = true;
+				}
+			}
+		});
+	}
+
+	// Add event listeners to all paper type radio buttons
+	paperTypeRadios.forEach(function(radio) {
+		radio.addEventListener('change', updateFinishOptions);
+	});
+
+	// Run once on page load to set initial state
+	updateFinishOptions();
+});
+
+// Existing jQuery code for form submission
 $( document ).ready(function() {
         $('#step2').on('click', function(event) {
                 disableForm();
@@ -262,5 +348,3 @@ $( document ).ready(function() {
         });
 });
 </script>
-
-
