@@ -1,44 +1,42 @@
 <?php
 //////////////////////////////////////////////////////
 //
-//	Poster Printer Order Submission
-//	index.php
-//
-//	Page to allow the user to submit poster files
-//
-//	David Slater
-//	April 2007
+//  Poster Printer - index.php
+//  Landing page. Changes vs. original: Start Order
+//  links point to order.php (step1 is gone), stray
+//  quote in bottom link fixed.
 //
 //////////////////////////////////////////////////////
 
-//include files for the script to run
 require_once 'includes/main.inc.php';
 
 $session = new \IGBIllinois\session(settings::get_session_name());
-$session_vars = array('timeout'=>time(),
-	'ipaddress'=>$_SERVER['REMOTE_ADDR']
+$session_vars = array(
+    'timeout'   => time(),
+    'ipaddress' => $_SERVER['REMOTE_ADDR'],
 );
 $session->set_session($session_vars);
+
 $paperTypes = functions::getPaperTypes($db);
 $paperTypes_html = "";
 foreach ($paperTypes as $paperType) {
-        $paperTypes_html .= "<tr>";
-        $paperTypes_html .= "<td class='right'>$" . $paperType['cost'] . "</td>";
-        $paperTypes_html .= "<td class='right'>" .  $paperType['name'] . "</td>";
-        $paperTypes_html .= "<td class='left'>" . $paperType['width'] . "''</td>";
-        $paperTypes_html .= "</tr>";
+    $paperTypes_html .= "<tr>";
+    $paperTypes_html .= "<td class='right'>$" . $paperType['cost'] . "</td>";
+    $paperTypes_html .= "<td class='right'>" . $paperType['name'] . "</td>";
+    $paperTypes_html .= "<td class='left'>" . $paperType['width'] . "''</td>";
+    $paperTypes_html .= "</tr>";
 }
 
 $finishOptions = functions::getFinishOptions($db);
 $finishOptions_html = "";
 foreach ($finishOptions as $finishOption) {
-	$finishOptions_html .= "<tr>";
-	$finishOptions_html .= "<td class='right'>$" . $finishOption['cost'] . "</td>\n";
-	$finishOptions_html .= "<td class='center'>" . $finishOption['name'] . "</td>\n";
-	$finishOptions_html .= "</tr>";
+    $finishOptions_html .= "<tr>";
+    $finishOptions_html .= "<td class='right'>$" . $finishOption['cost'] . "</td>\n";
+    $finishOptions_html .= "<td class='center'>" . $finishOption['name'] . "</td>\n";
+    $finishOptions_html .= "</tr>";
 }
 
-
+$start_url = 'order.php?session=' . urlencode($session->get_session_id());
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -61,30 +59,30 @@ foreach ($finishOptions as $finishOption) {
 </head>
 <body style='padding-top: 70px;'>
 <nav class="navbar fixed-top navbar-dark bg-dark">
-        <a class='navbar-brand py-0' href='#'><?php echo settings::get_title(); ?></a>
-                <span class='navbar-text py-0'>Version <?php echo settings::get_version(); ?>&nbsp;
-                <a class='btn btn-danger btn-sm' role='button' href='admin/'><i class='fas fa-lock'></i> Admin</a></span>
+	<a class='navbar-brand py-0' href='#'><?php echo settings::get_title(); ?></a>
+		<span class='navbar-text py-0'>Version <?php echo settings::get_version(); ?>&nbsp;
+		<a class='btn btn-danger btn-sm' role='button' href='admin/'><i class='fas fa-lock'></i> Admin</a></span>
 </nav>
 
 <div class='container'>
-        <div class='col-sm-12 col-md-12 col-lg-12 col-xl-12'>
+	<div class='col-sm-12 col-md-12 col-lg-12 col-xl-12'>
 <div class='bg-light mb-4 rounded-2 py-5 px-3'>
-	<h1 class='display-3'><img src='images/imark_bw.gif' alt='University of Illinois at Urbana-Champaign'>&nbspIGB Poster Order Form</h1>
+	<h1 class='display-3'><img src='images/imark_bw.gif' alt='University of Illinois at Urbana-Champaign'>&nbsp;IGB Poster Order Form</h1>
 	<p class='lead'>Welcome to the IGB Poster Order Form
 	<br>Carl R. Woese Institute for Genomic Biology
 	<br>University of Illinois at Urbana-Champaign</p>
-	<p class='lead'><a class='btn btn-primary btn-lg' href='step1.php?session=<?php echo $session->get_session_id(); ?>' role='button'>Start Order</a></p>
+	<p class='lead'><a class='btn btn-primary btn-lg' href='<?php echo $start_url; ?>' role='button'>Start Order</a></p>
 </div>
 <div class='row'>
 	<div class='col-md-6 col-lg-6 col-xl-6'>
 		<h2>Contact Us</h2>
-		<p>If you have any questions about our poster printing service, please email us at 
+		<p>If you have any questions about our poster printing service, please email us at
 		<a href='mailto:<?php echo settings::get_admin_email(); ?>'><?php echo settings::get_admin_email(); ?></a></p>
 	</div>
-        <div class='col-md-6 col-lg-6 col-xl-6'>
-		<h2>Fequently Asked Questions</h2>
+	<div class='col-md-6 col-lg-6 col-xl-6'>
+		<h2>Frequently Asked Questions</h2>
 		<p>Check out the <a target='_blank' href='<?php echo settings::get_faq_url(); ?>'>Frequently Asked Questions</a> for answers to common questions</p>
-        </div>
+	</div>
 </div>
 
 <hr>
@@ -132,7 +130,7 @@ foreach ($finishOptions as $finishOption) {
 </div>
 <hr>
 <div class='row justify-content-center'>
-<a class='btn btn-primary' href='step1.php?session=<?php echo $session->get_session_id(); ?>'' role='button'>Start Order</a>
+<a class='btn btn-primary' href='<?php echo $start_url; ?>' role='button'>Start Order</a>
 </div>
 
 <?php require_once 'includes/footer.inc.php'; ?>

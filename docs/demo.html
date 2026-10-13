@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IGB Poster Printer &mdash; Refactor Demo</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+	body { padding-top: 70px; }
+	.demo-badge {
+		position: fixed; top: 0; left: 0; z-index: 9999;
+		background: #2e7d32; color: #fff; padding: 2px 10px;
+		font-size: 12px; font-weight: bold; border-bottom-right-radius: 6px;
+	}
+	.dim-input-detected { background-color: #fff3cd; }
+	.dim-input-confirmed { background-color: #d4edda !important; }
+	.row-disabled { opacity: 0.5; cursor: not-allowed; }
+	#mockLog {
+		font-family: monospace; font-size: 11px; max-height: 140px; overflow-y: auto;
+		background: #212529; color: #8be98b; padding: 6px 10px; border-radius: 4px;
+	}
+	table input[type=radio], table input[type=checkbox] { transform: scale(1.2); }
+</style>
+</head>
+<body>
+<div class="demo-badge">demo-mode &mdash; no server, mock DB</div>
+<nav class="navbar fixed-top navbar-dark bg-dark px-3">
+	<a class="navbar-brand py-0" href="#" onclick="showView('index');return false;">IGB Poster Printer</a>
+	<span class="navbar-text py-0">Version 3.0-refactor-poc&nbsp;
+	<a class="btn btn-danger btn-sm" role="button" href="#" onclick="alert('Admin panel not part of this demo');return false;">&#128274; Admin</a></span>
+</nav>
+
+<div class="container" style="max-width: 900px;">
+
+<!-- ================= VIEW: INDEX ================= -->
+<div id="view-index">
+	<div class="bg-light mb-4 rounded-2 py-5 px-3">
+		<h1 class="display-5">IGB Poster Order Form</h1>
+		<p class="lead">Welcome to the IGB Poster Order Form<br>
+		Carl R. Woese Institute for Genomic Biology<br>
+		University of Illinois at Urbana-Champaign</p>
+		<p class="lead"><button class="btn btn-primary btn-lg" onclick="startOrder()">Start Order</button></p>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<table class="table table-bordered table-sm">
+				<thead><tr><th colspan="3">Available Paper Types</th></tr>
+				<tr><td colspan="3"><em>Cost is per inch of length.</em></td></tr></thead>
+				<tbody id="indexPaperTypes"></tbody>
+			</table>
+		</div>
+		<div class="col-md-6">
+			<table class="table table-bordered table-sm">
+				<thead><tr><th colspan="2">Available Finish Options</th></tr>
+				<tr><td colspan="2"><em>Flat fee.</em></td></tr></thead>
+				<tbody id="indexFinishOptions"></tbody>
+			</table>
+			<table class="table table-bordered table-sm">
+				<thead><tr><th colspan="2">Other Options</th></tr></thead>
+				<tbody id="indexOtherOptions"></tbody>
+			</table>
+		</div>
+	</div>
+	<div class="alert alert-secondary">
+		<strong>What this demo proves:</strong> the refactored 3-page flow (order &rarr; review &rarr; status)
+		with real client-side dimension detection, the confirm checkbox gate, server-side-style
+		option validation, the lamination restriction, business-hours rush calculation,
+		correct tube/rush billing, and the one-time confirm token. The "server" is the mock
+		API log at the bottom of the order page &mdash; every call mirrors <code>api.php</code>'s
+		real JSON contract.
+	</div>
+</div>
+
+<!-- ================= VIEW: ORDER ================= -->
+<div id="view-order" style="display:none;">
+	<table class="table table-bordered table-sm">
+		<thead class="table-dark"><tr><th colspan="2">Poster File</th></tr>
+		<tr><td colspan="2"><em>Upload your poster file. Dimensions will be detected automatically when possible.
+		Detection is live for PDF, JPG, PNG, and PPTX (slide size). Dimensions are never hand-entered: files whose dimensions cannot be read are rejected &mdash; export as PDF instead.</em></td></tr></thead>
+		<tbody>
+		<tr>
+			<td class="text-end align-middle" style="width:25%;">File</td>
+			<td>
+				<input class="form-control" type="file" id="posterFile">
+				<div class="mt-1"><span id="currentFile" class="form-text"></span>
+				<button type="button" class="btn btn-outline-secondary btn-sm ms-2" id="replaceFile" style="display:none;"
+					onclick="document.getElementById('posterFile').click()">Replace File</button></div>
+				<div class="progress mt-2" style="height:24px; display:none;" id="uploadProgressWrap">
+					<div id="uploadProgress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width:0%"></div>
+				</div>
+			</td>
+		</tr>
+		<tr id="dimensionsRow" style="display:none;">
+			<td class="text-end align-middle">Dimensions</td>
+			<td>
+				<div class="row align-items-end g-2">
+					<div class="col-md-3">
+						<label for="width" class="form-label mb-0">Width (in)</label>
+						<input type="text" class="form-control" id="width" maxlength="6" readonly style="background-color:#f0f0f0;">
+					</div>
+					<div class="col-md-3">
+						<label for="length" class="form-label mb-0">Length (in)</label>
+						<input type="text" class="form-control" id="length" maxlength="6" readonly style="background-color:#f0f0f0;">
+					</div>
+					<div class="col-md-6">
+						<span id="dimensionStatus" class="fst-italic text-secondary"></span>
+					</div>
+				</div>
+				<div class="form-check mt-2">
+					<input class="form-check-input" type="checkbox" id="dimensionsConfirmed">
+					<label class="form-check-label" for="dimensionsConfirmed">
+						<strong>I confirm these dimensions are correct for my poster.</strong>
+					</label>
+				</div>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+
+	<div id="optionsSection" style="display:none;">
+		<table class="table table-bordered table-sm table-hover">
+			<thead class="table-dark"><tr><th colspan="4">Paper Types</th></tr>
+			<tr><td colspan="4"><em>Please choose a paper type for your poster. The cost is per an inch.
+			Papers narrower than your
+			poster's smaller dimension are filtered out (even rotated, it can't fit the roll).</em></td></tr>
+			<tr><th class="text-end">$ / inch</th><th>Paper Type</th><th>Max Width</th><th></th></tr></thead>
+			<tbody id="paperTypesBody"></tbody>
+		</table>
+		<table class="table table-bordered table-sm table-hover">
+			<thead class="table-dark"><tr><th colspan="3">Finish Options</th></tr>
+			<tr><td colspan="3"><em>Please choose a finish option for your poster. The cost is a flat rate.
+			<strong>Select Graphic Matte Canvas or Fine Art Watercolor above to see the lamination restriction.</strong></em></td></tr></thead>
+			<tbody id="finishOptionsBody"></tbody>
+		</table>
+		<table class="table table-bordered table-sm">
+			<thead class="table-dark"><tr><th colspan="3">Other Options</th></tr>
+			<tr><td colspan="3"><em>Rush order fee applies if pickup is needed within 24 business hours
+			(Mon 8am &ndash; Fri 4:30pm, excluding weekends and holidays). The rush decision is made by the
+			"server", not the browser. Same-day pickup cannot be ordered online &mdash; for same-day requests email <a href="mailto:help@igb.illinois.edu">help@igb.illinois.edu</a> and we will try to accommodate.</em></td></tr></thead>
+			<tbody>
+			<tr>
+				<td class="text-end">Poster Tube</td>
+				<td class="text-end" id="posterTubeCost"></td>
+				<td><input type="checkbox" id="posterTube"></td>
+			</tr>
+			<tr>
+				<td class="text-end align-middle">Pick Up Date</td>
+				<td class="text-end"><input type="date" class="form-control" id="pickupDate"></td>
+				<td></td>
+			</tr>
+			<tr id="rushOrderRow" style="display:none; background-color:#ffcccc;">
+				<td class="text-end">Rush Order Fee</td>
+				<td class="text-end" id="rushOrderCost"></td>
+				<td><span class="text-danger fw-bold">APPLIED</span></td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<table class="table table-bordered table-sm">
+		<thead class="table-dark"><tr><th colspan="2">Required Information</th></tr></thead>
+		<tbody>
+		<tr><td class="text-end align-middle" style="width:25%;">Full Name</td>
+			<td><input class="form-control" type="text" id="name" placeholder="Try: Dan O'Brien &mdash; apostrophes survive now"></td></tr>
+		<tr><td class="text-end align-middle">Email</td>
+			<td><input class="form-control" type="text" id="email"></td></tr>
+		<tr><td class="text-end align-middle">Additional Emails</td>
+			<td><input class="form-control" type="text" id="additional_emails"></td></tr>
+		<tr><td class="text-end align-middle">CFOP Number</td>
+			<td><div class="row g-1">
+				<div class="col-2"><input type="text" id="cfop1" maxlength="1" class="form-control cfop"></div>
+				<div class="col-3"><input type="text" id="cfop2" maxlength="6" class="form-control cfop"></div>
+				<div class="col-3"><input type="text" id="cfop3" maxlength="6" class="form-control cfop"></div>
+				<div class="col-3"><input type="text" id="cfop4" maxlength="6" class="form-control cfop"></div>
+			</div></td></tr>
+		<tr><td class="text-end align-middle">Activity Code (optional)</td>
+			<td><div class="row"><div class="col-3"><input type="text" class="form-control" id="activityCode" maxlength="6"></div></div></td></tr>
+		<tr><td class="text-end">Comments</td>
+			<td><textarea class="form-control" id="comments" rows="3" placeholder="Try: <b>bold</b> &amp; 'quotes' &mdash; escaped on output now"></textarea></td></tr>
+		</tbody>
+	</table>
+
+	<div class="d-flex justify-content-center gap-2 mb-3">
+		<button class="btn btn-warning" onclick="cancelOrder()">Cancel Order</button>
+		<button class="btn btn-primary" id="submitOrder" onclick="submitOrder()">Next</button>
+	</div>
+	<div id="message"></div>
+	<div class="mb-2"><strong style="font-size:12px;">MOCK API LOG (what api.php would see/return):</strong></div>
+	<div id="mockLog"></div>
+	<p></p>
+</div>
+
+<!-- ================= VIEW: REVIEW ================= -->
+<div id="view-review" style="display:none;">
+	<div id="reviewError"></div>
+	<table class="table table-bordered table-sm">
+		<thead class="table-dark"><tr><th colspan="2">Review Your Order</th></tr>
+		<tr><td colspan="2"><em>Please review your order below, then click "Submit Order" to send your order.
+		Everything in this table came from the server-side session &mdash; the browser never sent the price.</em></td></tr></thead>
+		<tbody id="reviewBody"></tbody>
+	</table>
+	<div class="d-flex justify-content-center gap-2 mb-3">
+		<button class="btn btn-secondary" onclick="showView('order')">&laquo; Previous Page</button>
+		<button class="btn btn-warning" onclick="cancelOrder()">Cancel Order</button>
+		<button class="btn btn-primary" id="confirmBtn" onclick="confirmOrder()">Submit Order</button>
+		<button class="btn btn-outline-secondary" onclick="confirmOrder()" title="Try to double-submit">Click again (token test)</button>
+	</div>
+</div>
+
+<!-- ================= VIEW: STATUS ================= -->
+<div id="view-status" style="display:none;">
+	<div class="alert alert-success">
+		<strong>Thank you for your order.</strong>
+		Your order will be completed within <strong>48 business hours</strong>.
+		If it is a rush order, it will be completed within <strong>24 business hours</strong>.
+		An email has been sent to you at <span id="statusEmail"></span> with this information.
+	</div>
+	<h2>Order Status</h2>
+	<table class="table table-bordered table-sm"><tbody id="statusBody"></tbody></table>
+	<div id="statusRotated"></div>
+	<div class="d-flex justify-content-center gap-2">
+		<button class="btn btn-primary" onclick="showView('index')">Main Page</button>
+		<button class="btn btn-outline-secondary" onclick="simulateRefresh()" title="PRG means refresh cannot double-submit">Simulate page refresh (F5)</button>
+	</div>
+	<p></p>
+	<div class="alert alert-secondary mt-3">
+		<strong>Orders in mock DB this session: <span id="orderCount">0</span></strong> &mdash;
+		refresh the status page or click Submit twice and watch this number <em>not</em> go up.
+	</div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+'use strict';
+
+// =====================================================================
+// MOCK DATABASE - stands in for MariaDB. IDs mirror your real tables.
+// =====================================================================
+const DB = {
+	paperTypes: [
+		{ id: 1, name: 'Graphic Matte Canvas',  cost: 4.00, width: 42, isDefault: false, restrictLamination: true  },
+		{ id: 2, name: 'Satin Photo Paper',      cost: 2.50, width: 42, isDefault: true,  restrictLamination: false },
+		{ id: 3, name: 'Glossy Photo Paper',     cost: 2.75, width: 42, isDefault: false, restrictLamination: false },
+		{ id: 4, name: 'Fine Art Watercolor',    cost: 4.50, width: 44, isDefault: false, restrictLamination: true  },
+	],
+	finishOptions: [
+		{ id: 1, name: 'None',       cost: 0,  isDefault: true,  isNone: true,  isLamination: false },
+		{ id: 2, name: 'Lamination', cost: 25, isDefault: false, isNone: false, isLamination: true  },
+	],
+	posterTubeCost: 8,
+	rushOrderCost: 20,
+	maxWidth: 44,
+	maxLength: 300,
+	holidays: [],  // 'YYYY-MM-DD'
+	orders: [],
+};
+
+// =====================================================================
+// MOCK SERVER-SIDE SESSION - this object is "the server". The order
+// page never reads from it; only api-mock functions touch it.
+// =====================================================================
+const SERVER_SESSION = { poster_upload: null, poster_order: null, confirm_token: null };
+
+const log = (msg) => {
+	const el = document.getElementById('mockLog');
+	el.innerHTML += msg + '<br>';
+	el.scrollTop = el.scrollHeight;
+};
+const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;')
+	.replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+const delay = (ms) => new Promise(r => setTimeout(r, ms));
+
+// =====================================================================
+// Business-hours rush logic - direct port of api.php's PHP functions
+// =====================================================================
+function isBusinessDay(d) {
+	const day = d.getDay();
+	if (day === 0 || day === 6) return false;
+	const iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+	return !DB.holidays.includes(iso);
+}
+function addBusinessHours(start, hours) {
+	let d = new Date(start);
+	let minutesNeeded = hours * 60;
+	for (let guard = 0; guard < 60 && minutesNeeded > 0; guard++) {
+		if (!isBusinessDay(d)) { d.setDate(d.getDate() + 1); d.setHours(8, 0, 0, 0); continue; }
+		const open = new Date(d); open.setHours(8, 0, 0, 0);
+		const close = new Date(d); close.setHours(16, 30, 0, 0);
+		if (d < open) d = open;
+		if (d >= close) { d.setDate(d.getDate() + 1); d.setHours(8, 0, 0, 0); continue; }
+		const minutesLeft = (close - d) / 60000;
+		if (minutesNeeded <= minutesLeft) { d = new Date(d.getTime() + minutesNeeded * 60000); return d; }
+		minutesNeeded -= minutesLeft;
+		d.setDate(d.getDate() + 1); d.setHours(8, 0, 0, 0);
+	}
+	return d;
+}
+function pickupIsRush(pickupDate) {
+	const deadline = addBusinessHours(new Date(), 24);
+	const pickup = new Date(pickupDate + 'T00:00:00');
+	return pickup <= deadline;
+}
+function pickupDateError(pickupDate) {
+	if (!/^\d{4}-\d{2}-\d{2}$/.test(pickupDate)) return 'Please select a valid pickup date.';
+	const d = new Date(pickupDate + 'T00:00:00');
+	const today = new Date(); today.setHours(0, 0, 0, 0);
+	if (d < today) return 'Pickup date cannot be in the past.';
+	if (d.getTime() === today.getTime()) return 'Same-day pickup cannot be ordered online. Please choose the next business day or later - or email help@igb.illinois.edu and we will try to accommodate a same-day request.';
+	if (!isBusinessDay(d)) return 'Please select a business day (Monday-Friday, excluding holidays).';
+	return null;
+}
+
+// =====================================================================
+// REAL client-side dimension detection
+// =====================================================================
+function detectImageDimensions(file) {
+	return new Promise((resolve) => {
+		const url = URL.createObjectURL(file);
+		const img = new Image();
+		img.onload = () => {
+			// Browsers don't expose embedded DPI; assume 96 like most exports.
+			// This is exactly why the confirm checkbox + editable fields exist.
+			resolve({ width: Math.round(img.naturalWidth / 96), height: Math.round(img.naturalHeight / 96), thumb: url });
+		};
+		img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+		img.src = url;
+	});
+}
+async function detectPdfDimensions(file) {
+	// Parse the first /MediaBox from the raw bytes. Points / 72 = inches.
+	// Fails gracefully on compressed object streams -> manual entry.
+	try {
+		const bytes = new Uint8Array(await file.slice(0, 2 * 1024 * 1024).arrayBuffer());
+		let text = '';
+		for (let i = 0; i < bytes.length; i++) text += String.fromCharCode(bytes[i]);
+		const m = text.match(/\/MediaBox\s*\[\s*([\d.-]+)\s+([\d.-]+)\s+([\d.-]+)\s+([\d.-]+)/);
+		if (!m) return null;
+		const w = Math.round((parseFloat(m[3]) - parseFloat(m[1])) / 72);
+		const h = Math.round((parseFloat(m[4]) - parseFloat(m[2])) / 72);
+		return (w > 0 && h > 0) ? { width: w, height: h, thumb: null } : null;
+	} catch { return null; }
+}
+async function detectPptxDimensions(file) {
+	// .pptx is a zip; slide size is in ppt/presentation.xml (EMUs, 914400 = 1 inch).
+	// Off-slide content is ignored - only the slide canvas prints.
+	try {
+		const zip = await JSZip.loadAsync(file);
+		const xml = await zip.file('ppt/presentation.xml').async('string');
+		const tag = xml.match(/<p:sldSz\b[^>]*>/);
+		if (!tag) return null;
+		const cx = tag[0].match(/\bcx="(\d+)"/), cy = tag[0].match(/\bcy="(\d+)"/);
+		if (!cx || !cy) return null;
+		const w = Math.round(cx[1] / 914400), h = Math.round(cy[1] / 914400);
+		return (w > 0 && h > 0) ? { width: w, height: h, thumb: null } : null;
+	} catch { return null; }
+}
+
+// =====================================================================
+// MOCK API - same actions + same JSON contract as api.php
+// =====================================================================
+async function mockApi(action, data) {
+	await delay(250 + Math.random() * 350); // simulate network + PHP
+	log('&raquo; POST api.php action=' + action);
+
+	switch (action) {
+	case 'upload': {
+		const file = data.file;
+		const ext = file.name.toLowerCase().split('.').pop();
+		const valid = ['pdf', 'jpg', 'jpeg', 'png', 'tif', 'tiff', 'ppt', 'pptx'];
+		if (!valid.includes(ext)) {
+			return { success: false, message: alertHtml('Please upload a valid filetype. Valid filetypes are .' + valid.join(', .') + '.') };
+		}
+		let dims = null;
+		if (['jpg', 'jpeg', 'png'].includes(ext)) dims = await detectImageDimensions(file);
+		else if (ext === 'pdf') dims = await detectPdfDimensions(file);
+		else if (ext === 'pptx') dims = await detectPptxDimensions(file);
+		// tif/tiff: production Imagick reads these; browsers can't decode them (demo limitation).
+		if (dims === null) {
+			SERVER_SESSION.poster_upload = null;
+			log('&laquo; {success:false} (undetectable - rejected, no manual entry)');
+			return { success: false, message: alertHtml('We could not determine the print dimensions of this file, and dimensions cannot be entered manually. Please export your poster as a PDF (preferred) or a properly sized .pptx and upload again. Need help? Email <a href="mailto:help@igb.illinois.edu">help@igb.illinois.edu</a>. <em>(Demo note: TIF works in production via Imagick; browsers cannot decode it.)</em>') };
+		}
+		SERVER_SESSION.poster_upload = { origName: file.name, size: file.size, tmpName: 'tmp_' + Date.now(),
+			thumb: dims.thumb || null, width: dims.width, height: dims.height };
+		log('&laquo; {success:true, width:' + dims.width + ', height:' + dims.height + '}');
+		return { success: true, detected: true, width: dims.width, height: dims.height };
+	}
+	case 'options': {
+		const w = parseFloat(data.width), l = parseFloat(data.length);
+		const maxDim = Math.max(w, l), minDim = Math.min(w, l);
+		if (minDim > DB.maxWidth || maxDim > DB.maxLength) {
+			log('&laquo; {success:false} (verify_dimensions failed)');
+			return { success: false, message: alertHtml('Poster dimensions exceed the maximum printable size. Max width: ' + DB.maxWidth + '", max length: ' + DB.maxLength + '".') };
+		}
+		const paperTypes = DB.paperTypes.filter(p => p.width >= minDim);
+		log('&laquo; {success:true, paperTypes:[' + paperTypes.length + '], finishOptions:[' + DB.finishOptions.length + ']}');
+		return { success: true, paperTypes, finishOptions: DB.finishOptions, posterTubeCost: DB.posterTubeCost, rushOrderCost: DB.rushOrderCost };
+	}
+	case 'rushcheck': {
+		const pdErr = pickupDateError(data.pickupDate);
+		if (pdErr) {
+			log('&laquo; {success:false} (pickup date rejected)');
+			return { success: false, message: alertHtml(pdErr) };
+		}
+		const rush = pickupIsRush(data.pickupDate);
+		log('&laquo; {success:true, rush:' + rush + '} (deadline: ' + addBusinessHours(new Date(), 24).toLocaleString() + ')');
+		return { success: true, rush, cost: DB.rushOrderCost };
+	}
+	case 'submit': {
+		const errors = [];
+		if (!SERVER_SESSION.poster_upload) errors.push('Your uploaded file has expired. Please upload it again.');
+		if (!data.name || data.name.trim().split(/\s+/).length < 2) errors.push('Please enter your first and last name');
+		if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email || '')) errors.push('Please enter a valid email');
+		if (!/^\d-\d{6}-\d{6}-\d{6}$/.test(data.cfop || '')) errors.push('Please enter a valid CFOP (1-6-6-6 digits)');
+		// Dimensions come exclusively from server-side detection at upload.
+		const upSess = SERVER_SESSION.poster_upload;
+		let w = upSess ? upSess.width : 0, l = upSess ? upSess.height : 0;
+		if (!(w > 0) || !(l > 0)) errors.push('Could not determine poster dimensions.');
+		if (data.dimensionsConfirmed !== '1') errors.push('Please confirm the poster dimensions are correct');
+		const pdErr = pickupDateError(data.pickupDate); if (pdErr) errors.push(pdErr);
+
+		const paper = DB.paperTypes.find(p => p.id === parseInt(data.paperTypesId));
+		const finish = DB.finishOptions.find(f => f.id === parseInt(data.finishOptionsId));
+		if (!paper || paper.width < Math.min(w, l)) errors.push('Please select a valid paper type');
+		if (!finish) errors.push('Please select a valid finish option');
+		// Lamination restriction enforced SERVER-SIDE
+		if (paper && finish && paper.restrictLamination && finish.isLamination) {
+			errors.push('Lamination is not available for canvas or fine art media - the laminate does not bond to these materials');
+		}
+		if (errors.length) {
+			log('&laquo; {success:false, errors:' + errors.length + '}');
+			return { success: false, message: errors.map(e => alertHtml(e)).join('') };
+		}
+
+		// ---- server-computed from here; client input stops mattering ----
+		const tube = data.posterTube === '1' ? 1 : 0;
+		const rush = pickupIsRush(data.pickupDate) ? 1 : 0;
+		let rotated = 0;
+		if (w > paper.width && l <= paper.width) { [w, l] = [l, w]; rotated = 1; }
+		const totalCost = (l * paper.cost) + finish.cost + (tube * DB.posterTubeCost) + (rush * DB.rushOrderCost);
+
+		SERVER_SESSION.poster_order = {
+			width: w, length: l, rotated,
+			paperTypeName: paper.name, finishOptionName: finish.name,
+			posterTube: tube, posterTubeName: tube ? 'Poster Tube' : 'None',
+			rushOrder: rush, rushOrderName: rush ? 'Rush Order' : 'None',
+			pickupDate: data.pickupDate,
+			cfop: data.cfop, activityCode: data.activityCode,
+			email: data.email, additional_emails: data.additional_emails,
+			name: data.name, comments: data.comments,
+			posterFileName: SERVER_SESSION.poster_upload.origName,
+			posterFileSize: (SERVER_SESSION.poster_upload.size / 1048576).toFixed(2),
+			thumb: SERVER_SESSION.poster_upload.thumb,
+			totalCost: totalCost.toFixed(2),
+		};
+		SERVER_SESSION.confirm_token = 'tok_' + Math.random().toString(36).slice(2);
+		log('&laquo; {success:true, redirect:"review.php"} cost=$' + totalCost.toFixed(2) + ' rush=' + rush + ' tube=' + tube + ' rotated=' + rotated);
+		return { success: true, redirect: 'review' };
+	}
+	}
+}
+
+// Mock review.php confirm (server side)
+function mockConfirm(token) {
+	if (!SERVER_SESSION.confirm_token || token !== SERVER_SESSION.confirm_token) {
+		return { success: false, message: 'Token already used or invalid - duplicate submission blocked. (In production: redirect to index.php)' };
+	}
+	SERVER_SESSION.confirm_token = null; // burn it
+	const o = SERVER_SESSION.poster_order;
+	const orderId = 1000 + DB.orders.length + 1;
+	DB.orders.push({ id: orderId, key: Math.random().toString(36).slice(2), ...o, status: 'Submitted', created: new Date().toLocaleString() });
+	SERVER_SESSION.poster_order = null;
+	SERVER_SESSION.poster_upload = null;
+	return { success: true, orderId };
+}
+
+// =====================================================================
+// UI / view plumbing (this half mirrors order.php's front-end JS)
+// =====================================================================
+const $id = (i) => document.getElementById(i);
+const alertHtml = (t, cls) => "<div class='alert alert-" + (cls || 'danger') + "'>" + t + "</div>";
+const showMessage = (h) => { $id('message').innerHTML = h; };
+
+function showView(name) {
+	['index', 'order', 'review', 'status'].forEach(v => $id('view-' + v).style.display = v === name ? 'block' : 'none');
+	window.scrollTo(0, 0);
+}
+
+function startOrder() {
+	// reset form state
+	$id('posterFile').value = '';
+	$id('dimensionsRow').style.display = 'none';
+	$id('optionsSection').style.display = 'none';
+	$id('dimensionsConfirmed').checked = false;
+	['width', 'length', 'name', 'email', 'additional_emails', 'cfop1', 'cfop2', 'cfop3', 'cfop4', 'activityCode', 'comments', 'pickupDate'].forEach(i => $id(i).value = '');
+	$id('posterTube').checked = false;
+	$id('currentFile').textContent = '';
+	$id('replaceFile').style.display = 'none';
+	$id('rushOrderRow').style.display = 'none';
+	showMessage('');
+	fileUploaded = false; optionsLoadedFor = '';
+	SERVER_SESSION.poster_upload = null; SERVER_SESSION.poster_order = null;
+	log('--- new session started ---');
+	showView('order');
+}
+function cancelOrder() {
+	SERVER_SESSION.poster_upload = null; SERVER_SESSION.poster_order = null; SERVER_SESSION.confirm_token = null;
+	log('--- session destroyed (cancel) ---');
+	showView('index');
+}
+
+let fileUploaded = false;
+let optionsLoadedFor = '';
+
+$id('posterFile').addEventListener('change', async function () {
+	fileUploaded = false; optionsLoadedFor = '';
+	$id('dimensionsRow').style.display = 'none';
+	$id('optionsSection').style.display = 'none';
+	$id('dimensionsConfirmed').checked = false;
+	showMessage('');
+	if (!this.files || !this.files.length) return;
+
+	const wrap = $id('uploadProgressWrap'), bar = $id('uploadProgress');
+	wrap.style.display = 'flex';
+	for (let p = 0; p <= 100; p += 20) { bar.style.width = p + '%'; bar.textContent = 'Uploading: ' + p + '%'; await delay(60); }
+
+	const r = await mockApi('upload', { file: this.files[0] });
+	wrap.style.display = 'none';
+	if (!r.success) { this.value = ''; fileUploaded = false; $id('currentFile').textContent = ''; $id('replaceFile').style.display = 'none'; showMessage(r.message); return; }
+
+	fileUploaded = true;
+	$id('currentFile').textContent = 'Current file: ' + this.files[0].name;
+	$id('replaceFile').style.display = 'inline-block';
+	$id('dimensionsRow').style.display = 'table-row';
+	$id('width').value = r.width;
+	$id('length').value = r.height;
+	$id('dimensionStatus').textContent = 'Detected from your file. If these are wrong, fix the file and click Replace File.';
+	maybeLoadOptions();
+});
+
+async function maybeLoadOptions() {
+	const w = parseFloat($id('width').value), l = parseFloat($id('length').value);
+	if (!fileUploaded || !(w > 0) || !(l > 0)) return;
+	const key = w + 'x' + l;
+	if (key === optionsLoadedFor) return;
+	const r = await mockApi('options', { width: w, length: l });
+	if (!r.success) { $id('optionsSection').style.display = 'none'; optionsLoadedFor = ''; showMessage(r.message); return; }
+	showMessage('');
+	renderPaperTypes(r.paperTypes);
+	renderFinishOptions(r.finishOptions);
+	$id('posterTubeCost').textContent = '$' + r.posterTubeCost;
+	$id('rushOrderCost').textContent = '$' + r.rushOrderCost;
+	$id('optionsSection').style.display = 'block';
+	optionsLoadedFor = key;
+	applyLaminationRule();
+}
+
+function renderPaperTypes(list) {
+	const body = $id('paperTypesBody'); body.innerHTML = '';
+	list.forEach(p => {
+		const tr = document.createElement('tr');
+		tr.innerHTML = "<td class='text-end' style='width:15%'>$" + p.cost.toFixed(2) + "</td><td></td><td style='width:15%'>" + p.width + "''</td><td style='width:10%'></td>";
+		tr.children[1].textContent = p.name + (p.restrictLamination ? ' \u2014 (laminate does not bond to this material)' : '');
+		const radio = document.createElement('input');
+		radio.type = 'radio'; radio.name = 'paperTypesId'; radio.value = p.id; radio.checked = p.isDefault;
+		radio.dataset.restrictLamination = p.restrictLamination ? '1' : '0';
+		radio.addEventListener('change', applyLaminationRule);
+		tr.children[3].appendChild(radio);
+		body.appendChild(tr);
+	});
+}
+function renderFinishOptions(list) {
+	const body = $id('finishOptionsBody'); body.innerHTML = '';
+	list.forEach(f => {
+		const tr = document.createElement('tr');
+		tr.innerHTML = "<td class='text-end' style='width:15%'>$" + f.cost.toFixed(2) + "</td><td></td><td style='width:10%'></td>";
+		tr.children[1].textContent = f.name;
+		const radio = document.createElement('input');
+		radio.type = 'radio'; radio.name = 'finishOptionsId'; radio.value = f.id; radio.checked = f.isDefault;
+		radio.dataset.isLamination = f.isLamination ? '1' : '0';
+		radio.dataset.isNone = f.isNone ? '1' : '0';
+		tr.children[2].appendChild(radio);
+		body.appendChild(tr);
+	});
+}
+function applyLaminationRule() {
+	const paper = document.querySelector("input[name='paperTypesId']:checked");
+	const restrict = paper && paper.dataset.restrictLamination === '1';
+	document.querySelectorAll("input[name='finishOptionsId']").forEach(radio => {
+		const row = radio.closest('tr');
+		if (restrict && radio.dataset.isLamination === '1') {
+			if (radio.checked) radio.checked = false;
+			radio.disabled = true; row.classList.add('row-disabled');
+		} else {
+			radio.disabled = false; row.classList.remove('row-disabled');
+		}
+	});
+	if (restrict && !document.querySelector("input[name='finishOptionsId']:checked")) {
+		const none = document.querySelector("input[name='finishOptionsId'][data-is-none='1']");
+		if (none) none.checked = true;
+	}
+}
+
+(function initPickupMin() {
+	// Earliest self-service pickup: next business day. No same-day online.
+	const d = new Date(); d.setDate(d.getDate() + 1);
+	while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1);
+	$id('pickupDate').setAttribute('min', d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'));
+})();
+$id('pickupDate').addEventListener('change', async function () {
+	$id('rushOrderRow').style.display = 'none';
+	if (!this.value) return;
+	const r = await mockApi('rushcheck', { pickupDate: this.value });
+	if (!r.success) { this.value = ''; showMessage(r.message); return; }
+	showMessage('');
+	$id('rushOrderRow').style.display = r.rush ? 'table-row' : 'none';
+});
+
+[['cfop1', 'cfop2'], ['cfop2', 'cfop3'], ['cfop3', 'cfop4']].forEach(([a, b]) => {
+	$id(a).addEventListener('input', function () { if (this.value.length >= this.maxLength) $id(b).focus(); });
+});
+
+let submitting = false;
+async function submitOrder() {
+	if (submitting) return;
+	const errors = [];
+	if (!fileUploaded) errors.push('Please select a file to upload.');
+	const w = parseFloat($id('width').value), l = parseFloat($id('length').value);
+	if (!(w > 0) || !(l > 0)) errors.push('Please provide poster dimensions.');
+	if (!$id('dimensionsConfirmed').checked) errors.push('Please confirm the poster dimensions are correct.');
+	if (!$id('pickupDate').value) errors.push('Please select a pickup date.');
+	if (!$id('name').value.trim()) errors.push('Please enter your full name.');
+	if (!$id('email').value.trim()) errors.push('Please enter your email address.');
+	if (!$id('cfop1').value || !$id('cfop2').value || !$id('cfop3').value || !$id('cfop4').value) errors.push('Please enter a complete CFOP number.');
+	const paper = document.querySelector("input[name='paperTypesId']:checked");
+	const finish = document.querySelector("input[name='finishOptionsId']:checked");
+	if (!paper) errors.push('Please select a paper type.');
+	if (!finish) errors.push('Please select a finish option.');
+	if (errors.length) { showMessage(alertHtml(errors.join('<br>'))); return; }
+
+	submitting = true;
+	$id('submitOrder').disabled = true; $id('submitOrder').textContent = 'Processing...';
+	const r = await mockApi('submit', {
+		width: w, length: l, dimensionsConfirmed: '1',
+		paperTypesId: paper.value, finishOptionsId: finish.value,
+		posterTube: $id('posterTube').checked ? '1' : '0',
+		pickupDate: $id('pickupDate').value,
+		name: $id('name').value, email: $id('email').value,
+		additional_emails: $id('additional_emails').value,
+		cfop: [$id('cfop1').value, $id('cfop2').value, $id('cfop3').value, $id('cfop4').value].join('-'),
+		activityCode: $id('activityCode').value, comments: $id('comments').value,
+	});
+	submitting = false;
+	$id('submitOrder').disabled = false; $id('submitOrder').textContent = 'Next';
+	if (!r.success) { showMessage(r.message); return; }
+	renderReview();
+	showView('review');
+}
+
+function renderReview() {
+	const o = SERVER_SESSION.poster_order;
+	$id('reviewError').innerHTML = '';
+	const rows = [];
+	if (o.rotated) rows.push(["<em>Your width and length have been flipped to save paper and money. This won't affect the size of your poster.</em>", null]);
+	rows.push(['Poster File', o.posterFileName], ['Poster Filesize', o.posterFileSize + 'MB'],
+		['Width', o.width + ' inches'], ['Length', o.length + ' inches'],
+		['Paper Type', o.paperTypeName], ['Finish Option', o.finishOptionName],
+		['Poster Tube', o.posterTubeName], ['Rush Order', o.rushOrderName],
+		['Pick Up Date', o.pickupDate], ['Total Cost', '$' + o.totalCost],
+		['CFOP', o.cfop], ['Activity Code', o.activityCode],
+		['Email', o.email], ['Additional Emails', o.additional_emails],
+		['Full Name', o.name], ['Comments', o.comments]);
+	$id('reviewBody').innerHTML = rows.map(([k, v]) =>
+		v === null ? "<tr><td colspan='2'>" + k + "</td></tr>"
+		: "<tr><td style='width:30%'>" + k + "</td><td>" + esc(v) + "</td></tr>").join('')
+		+ (o.thumb ? "<tr><td colspan='2'><img class='img-thumbnail mx-auto d-block' style='max-height:250px' src='" + o.thumb + "'></td></tr>"
+		: "<tr><td colspan='2'>No Preview</td></tr>");
+}
+
+function confirmOrder() {
+	const r = mockConfirm(SERVER_SESSION.confirm_token_client ?? SERVER_SESSION.confirm_token);
+	if (!r.success) {
+		$id('reviewError').innerHTML = alertHtml(r.message, 'warning');
+		return;
+	}
+	renderStatus(r.orderId);
+	showView('status');
+}
+
+let lastOrderId = null;
+function renderStatus(orderId) {
+	lastOrderId = orderId;
+	const o = DB.orders.find(x => x.id === orderId);
+	$id('statusEmail').textContent = o.email;
+	const rows = [['Order Number', o.id], ['Submission Time', o.created],
+		['Full Name', o.name], ['Email', o.email], ['Additional Emails', o.additional_emails],
+		['File', o.posterFileName], ['Length', o.length], ['Width', o.width],
+		['Paper Type', o.paperTypeName], ['Finish Option', o.finishOptionName],
+		['Poster Tube', o.posterTubeName], ['Rush Order', o.rushOrderName],
+		['Pick Up Date', o.pickupDate], ['CFOP', o.cfop], ['Activity Code', o.activityCode],
+		['Comments', o.comments], ['Total Cost', '$' + o.totalCost], ['Status', o.status]];
+	$id('statusBody').innerHTML = rows.map(([k, v]) =>
+		"<tr><td style='width:30%'>" + k + "</td><td>" + esc(v) + "</td></tr>").join('');
+	$id('statusRotated').innerHTML = o.rotated
+		? "<div class='alert alert-success'>Note: Your width and length have been flipped to save paper and money.</div>" : '';
+	$id('orderCount').textContent = DB.orders.length;
+}
+function simulateRefresh() {
+	// PRG: status.php is a GET with order_id + key. Re-fetch, re-render. No POST replays.
+	renderStatus(lastOrderId);
+	$id('orderCount').textContent = DB.orders.length;
+	const el = $id('orderCount').parentElement.parentElement;
+	el.classList.remove('alert-secondary'); el.classList.add('alert-success');
+	setTimeout(() => { el.classList.add('alert-secondary'); el.classList.remove('alert-success'); }, 800);
+}
+
+// ---- landing-page tables from mock DB ----
+$id('indexPaperTypes').innerHTML = DB.paperTypes.map(p =>
+	"<tr><td class='text-end'>$" + p.cost.toFixed(2) + "</td><td>" + p.name + "</td><td>" + p.width + "''</td></tr>").join('');
+$id('indexFinishOptions').innerHTML = DB.finishOptions.map(f =>
+	"<tr><td class='text-end'>$" + f.cost.toFixed(2) + "</td><td>" + f.name + "</td></tr>").join('');
+$id('indexOtherOptions').innerHTML =
+	"<tr><td>Rush Order</td><td>$" + DB.rushOrderCost + "</td></tr><tr><td>Poster Tube</td><td>$" + DB.posterTubeCost + "</td></tr>";
+</script>
+</body>
+</html>
