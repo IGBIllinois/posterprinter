@@ -11,10 +11,24 @@ if ((isset($_GET['order_id'])) && is_numeric($_GET['order_id'])) {
 else {
 	exit;
 }
+// Where to go after an order is closed (Completed/Cancel): back to the page
+// the admin came from. Only known pages are allowed (no open redirect).
+$from = $_GET['from'] ?? '';
+if ($from === 'billing') {
+	$return_url = 'billing.php?month=' . (int) ($_GET['month'] ?? date('m')) . '&year=' . (int) ($_GET['year'] ?? date('Y'));
+	$self_query = 'order_id=' . (int) $order_id . '&from=billing&month=' . (int) ($_GET['month'] ?? date('m')) . '&year=' . (int) ($_GET['year'] ?? date('Y'));
+} else {
+	$return_url = 'index.php';
+	$self_query = 'order_id=' . (int) $order_id;
+}
+
 if (isset($_POST['changeStatus'])) {
 	
 	//updates the order to the new status
+	$old_status = $order->get_status();
 	$result = $order->set_status($_POST['status']);
+	$log->send_log("Order " . (int) $order_id . " status changed from '" . $old_status . "' to '" . $_POST['status']
+		. "' by " . $session->get_var('username'));
 	
 	$message = "<div class='alert alert-success' role='alert'>" . $result['MESSAGE'] . "</div>";
 	//if status is set to "Complete", then it will email the user saying to come pick up the poster
@@ -25,12 +39,13 @@ if (isset($_POST['changeStatus'])) {
 			$order->mailUserOrderComplete();
 		} catch (\Throwable $mailError) {
 			error_log('poster admin/order.php: COMPLETED email failed for order ' . $order_id . ': ' . $mailError->getMessage());
+			$log->send_log("Order " . (int) $order_id . ": 'poster completed' email failed: " . $mailError->getMessage(), \IGBIllinois\log::ERROR);
 		}
-		header("Location: index.php");
+		header("Location: " . $return_url);
 		exit;
 	}
 	//else if status is set to "Cancel"
-	elseif ($_POST['status'] == order::STATUS['CANCEL']) { header("Location: index.php"); exit; }
+	elseif ($_POST['status'] == order::STATUS['CANCEL']) { header("Location: " . $return_url); exit; }
 	
 }
 //get last day of previous month
@@ -52,8 +67,8 @@ else {
 	$status_html .= "<button type='button' class='btn btn-primary btn-sm' onclick=\"document.getElementById('statusDialog').showModal()\">Change</button>";
 	$status_html .= "</div>";
 
-	$status_dialog_html  = "<dialog id='statusDialog' class='border rounded shadow p-0' style='width: 460px; max-width: 95vw; font-size: 1.15rem;'>";
-	$status_dialog_html .= "<form class='p-4' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?order_id=" . (int) $order_id . "' method='post'>";
+	$status_dialog_html  = "<dialog id='statusDialog' class='border rounded shadow p-0' style='width: 540px; max-width: 95vw; font-size: 1.25rem;'>";
+	$status_dialog_html .= "<form class='p-4' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?" . htmlspecialchars($self_query, ENT_QUOTES) . "' method='post'>";
 	$status_dialog_html .= "<h5 class='mb-4'>Change status of order #" . (int) $order_id . "</h5>";
 	foreach (order::get_all_statuses() as $possible_status) {
 		$safe   = htmlspecialchars($possible_status, ENT_QUOTES);
@@ -64,10 +79,10 @@ else {
 		$status_dialog_html .= "<label class='form-check-label' for='" . $id . "'>" . $safe . "</label>";
 		$status_dialog_html .= "</div>";
 	}
-	// Cancel and Save share the row equally (flex-fill gives each the same width).
-	$status_dialog_html .= "<div class='d-flex gap-3 mt-4'>";
-	$status_dialog_html .= "<button type='button' class='btn btn-secondary flex-fill' onclick=\"this.closest('dialog').close()\">Cancel</button>";
-	$status_dialog_html .= "<input type='submit' class='btn btn-primary flex-fill' name='changeStatus' value='Save'>";
+	// Cancel and Save: equal width, with open space between them.
+	$status_dialog_html .= "<div class='d-flex justify-content-around mt-4'>";
+	$status_dialog_html .= "<button type='button' class='btn btn-secondary' style='width: 38%;' onclick=\"this.closest('dialog').close()\">Cancel</button>";
+	$status_dialog_html .= "<input type='submit' class='btn btn-primary' style='width: 38%;' name='changeStatus' value='Save'>";
 	$status_dialog_html .= "</div></form></dialog>";
 
 	$edit_order_html = "<form method='get' action='editOrder.php'>";
@@ -83,7 +98,7 @@ require_once 'includes/header.inc.php';
 ?>
 <div class='row'>
 <div class='col-lg-7'>
-<table class='table table-bordered table-striped table-sm'>
+<table class='table table-bordered table-striped table-sm detail-table'>
 <thead>
 <tr><th colspan='2'>Order Information</th></tr>
 </thead>
@@ -132,6 +147,12 @@ require_once 'includes/header.inc.php';
 </div>
 <?php echo $status_dialog_html; ?>
 <style>
+	/* Details tables: fixed layout so long unbroken text (e.g. a pasted URL
+	   or "qqqq...") wraps inside its cell instead of widening the table
+	   underneath the preview column. */
+	.detail-table { table-layout: fixed; width: 100%; }
+	.detail-table td { overflow-wrap: anywhere; word-break: break-word; }
+	.detail-table td:first-child { width: 9.5rem; }
 	dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
 </style>
 <script>

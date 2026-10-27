@@ -259,7 +259,7 @@ function pickup_date_error(string $pickupDate): ?string
 // column at all otherwise, and staff need it.
 // ---------------------------------------------------------------
 const OPTIONAL_FIELD_MAX = 100;
-const COMMENTS_MAX       = 500;
+const COMMENTS_MAX       = 300;
 
 // Character count that works whether or not the mbstring extension is installed.
 function text_length(string $s): int
@@ -419,6 +419,17 @@ case 'submit':
         if (isset($_POST[$field]) && is_string($_POST[$field])) {
             $_POST[$field] = preg_replace('/\s+/u', ' ', $_POST[$field]);
         }
+    }
+
+    // Comments: normalize whitespace. Spaces/tabs collapse to one space,
+    // each line is trimmed, and any run of blank lines becomes a single
+    // blank line. One blank line between paragraphs is kept on purpose.
+    if (isset($_POST['comments']) && is_string($_POST['comments'])) {
+        $c = str_replace(["\r\n", "\r"], "\n", $_POST['comments']);
+        $c = preg_replace('/[ \t]+/u', ' ', $c);
+        $c = implode("\n", array_map('trim', explode("\n", $c)));
+        $c = preg_replace('/\n{3,}/', "\n\n", $c);
+        $_POST['comments'] = trim($c);
     }
 
     // Length caps. Name/email/additional emails match the orders table

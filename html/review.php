@@ -66,6 +66,7 @@ if (isset($_POST['confirm'])) {
             }
 
             $order = new order($db, $orderId);
+            $log->send_log("Order " . (int) $orderId . " submitted by " . $order->get_email());
             // Email failure must not break the order: the order is already
             // saved and its file moved. The mail functions throw on failure,
             // so each send is caught and logged separately. Admin and user
@@ -74,6 +75,7 @@ if (isset($_POST['confirm'])) {
                 $order->mailAdminsNewOrder();
             } catch (\Throwable $mailError) {
                 error_log('poster review.php: ADMIN email failed for order ' . $orderId . ': ' . $mailError->getMessage());
+                $log->send_log("Order " . (int) $orderId . ": admin notification email failed: " . $mailError->getMessage(), \IGBIllinois\log::ERROR);
             }
             $confirmationSent = true;
             try {
@@ -81,6 +83,7 @@ if (isset($_POST['confirm'])) {
             } catch (\Throwable $mailError) {
                 $confirmationSent = false;
                 error_log('poster review.php: CONFIRMATION email failed for order ' . $orderId . ': ' . $mailError->getMessage());
+                $log->send_log("Order " . (int) $orderId . ": confirmation email to customer failed: " . $mailError->getMessage(), \IGBIllinois\log::ERROR);
             }
 
             $session->destroy_session();
@@ -105,7 +108,7 @@ require_once 'includes/header.inc.php';
 <?php if (!empty($error)) { echo "<div class='alert alert-danger'>" . $e($error) . "</div>"; } ?>
 <div class='row'>
 <div class='col-lg-7'>
-<table class='table table-bordered table-sm'>
+<table class='table table-bordered table-sm detail-table'>
 <thead class='thead-dark'>
 <tr><th colspan='2'>Review Your Order</th></tr>
 <tr><td colspan='2'><em>Please review your order below, then click "Submit Order" to send your order.</em></td></tr>
@@ -157,7 +160,15 @@ if (!empty($o['posterThumbFileTmpName']) && file_exists($thumbPath)) {
 ?>
 </div>
 </div>
-<style>dialog::backdrop { background: rgba(0, 0, 0, 0.6); }</style>
+<style>
+	/* Details tables: fixed layout so long unbroken text (e.g. a pasted URL
+	   or "qqqq...") wraps inside its cell instead of widening the table
+	   underneath the preview column. */
+	.detail-table { table-layout: fixed; width: 100%; }
+	.detail-table td { overflow-wrap: anywhere; word-break: break-word; }
+	.detail-table td:first-child { width: 9.5rem; }
+	dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+</style>
 <script>
 document.querySelectorAll('dialog').forEach(function (d) {
 	d.addEventListener('click', function (e) { if (e.target === d) { d.close(); } });

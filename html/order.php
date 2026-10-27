@@ -204,8 +204,8 @@ require_once 'includes/header.inc.php';
 		</tr>
 		<tr>
 			<td class='text-end'>Comments</td>
-			<td><textarea class='form-control' id='comments' name='comments' rows='3' maxlength='500'></textarea>
-			<div class='form-text text-end'><span id='commentsCount'>0</span> / 500</div></td>
+			<td><textarea class='form-control' id='comments' name='comments' rows='3' maxlength='300'></textarea>
+			<div class='form-text text-end'><span id='commentsCount'>0</span> / 300</div></td>
 		</tr>
 	</table>
 </div>

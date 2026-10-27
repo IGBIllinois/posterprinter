@@ -7,6 +7,11 @@ if (isset($_POST['selectedDate'])) {
 	$month = $_POST['month'];
 	
 }
+elseif (isset($_GET['month'], $_GET['year'])) {
+	// Returning from an order page: keep the month that was being viewed.
+	$year = (int) $_GET['year'];
+	$month = (int) $_GET['month'];
+}
 else {
 	$year = date("Y");
 	$month = date("m");
@@ -25,7 +30,7 @@ else {
 		// count only 'Completed' orders. Gray them out so that is visible.
 		$is_cancelled = ($order["orders_status"] == 'Cancel');
 		$orders_html .= $is_cancelled ? "<tr class='table-secondary text-muted'>" : "<tr>";
-		$orders_html .= "<td><a href='order.php?order_id=" . $order["orders_id"] . "'>" . $order["orders_id"] . "</a></td>";
+		$orders_html .= "<td><a href='order.php?order_id=" . (int) $order["orders_id"] . "&from=billing&month=" . (int) $month . "&year=" . (int) $year . "'>" . (int) $order["orders_id"] . "</a></td>";
 		$orders_html .= "<td>" . $order["orders_email"] . "</td>";
 		$orders_html .= "<td>$" . $order["orders_totalCost"] . "</td>";
 		$orders_html .= "<td><a href='download.php?orderId=" . $order["orders_id"] . "'>" . $order["orders_fileName"] . "</a></td>";
