@@ -43,9 +43,9 @@ if (strtotime($order->get_time_created()) < $previous_date) {
 }
 else {
 	//gets the different possible status options
-	$status_html = "<form class='d-flex align-items-center' action='" . $_SERVER['PHP_SELF'] . "?order_id=" . $order_id . "' method='post'>";
-	$status_html .= "<div class='mb-3'><div class='col-md-4'>";
-	$status_html .= "<select class='form-select' name='status'>";
+	// Dropdown and Change button on one line (d-flex + gap, select sized to content).
+	$status_html = "<form class='d-flex align-items-center gap-2 mb-0' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?order_id=" . (int) $order_id . "' method='post'>";
+	$status_html .= "<select class='form-select form-select-sm w-auto' name='status'>";
 
 	foreach (order::get_all_statuses() as $possible_status) {
 		
@@ -58,10 +58,9 @@ else {
 		
 	}
 	$status_html .= "</select>";
-	$status_html .= "</div>";
-	$status_html .= "&nbsp;<input class='btn btn-primary btn-sm' type='submit' value='Change' name='changeStatus'>";
-	$status_html .= "</div></form>";
-	
+	$status_html .= "<input class='btn btn-primary btn-sm' type='submit' value='Change' name='changeStatus'>";
+	$status_html .= "</form>";
+
 	$edit_order_html = "<form method='get' action='editOrder.php'>";
 	$edit_order_html .= "<input type='hidden' name='order_id' value='" . $order->get_order_id() . "'>";
 	$edit_order_html .= "<button class='btn btn-primary' type='submit'>Edit Order</button>";
@@ -73,7 +72,8 @@ $file_link = "<a href='download.php?orderId=" . $order->get_order_id() . "'>" . 
 require_once 'includes/header.inc.php';
 
 ?>
-<div class='col-sm-8 col-md-8 col-lg-8 col-xl-8'>
+<div class='row'>
+<div class='col-lg-7'>
 <table class='table table-bordered table-striped table-sm'>
 <thead>
 <tr><th colspan='2'>Order Information</th></tr>
@@ -97,18 +97,22 @@ require_once 'includes/header.inc.php';
 <tr><td class='text-end'>Comments</td><td><?php echo $order->get_wordwrap_comments(); ?></td></tr>
 <tr><td class='text-end' style='vertical-align:middle;'>Status</td><td><?php echo $status_html; ?></td></tr>
 
+</table>
+<?php echo $edit_order_html; ?>
+</div>
+<div class='col-lg-5'>
 <?php if (file_exists($order->get_thumbnail())) {
-        echo "<tr><td colspan='2'>";
-        echo "<a href='image.php?image_path=" . $order->get_fullsize() . "'><img class='img-thumbnail mx-auto d-block' src='image.php?image_path=" . $order->get_thumbnail() . "'></a>";
-
-        echo "</td></tr>";
+	// Thumbnail beside the details on wide screens; stacks below on narrow ones.
+	echo "<div class='position-sticky' style='top: 80px;'>";
+	echo "<a href='image.php?image_path=" . urlencode($order->get_fullsize()) . "'>";
+	echo "<img class='img-thumbnail d-block w-100' src='image.php?image_path=" . urlencode($order->get_thumbnail()) . "' alt='Poster preview'></a>";
+	echo "<div class='form-text text-center'>Click to view full size</div>";
+	echo "</div>";
+} else {
+	echo "<div class='text-muted'>No preview available</div>";
 }
 ?>
-</table>
 </div>
-<div class='col-md-12'>
-<br>		
-<?php echo $edit_order_html; ?>
 </div>
 <br>
 <?php if (isset($message)) { echo $message; } ?>
