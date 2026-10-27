@@ -34,21 +34,27 @@
 <div class='container-fluid'>
 	<div class="row">
 	<div class="col-md-2 col-lg-2 col-xl-2">
-		<div class='sidebar-nav'>	
-		<ul class='nav flex-column'>
-			<li class='nav-item'><a class='nav-link' href='index.php'>Current Orders</a></li>
-			<li class='nav-item'><a class='nav-link' href='billing.php'>Billing</a></li>
-			<li class='nav-item'><a class='nav-link' href='paperTypes.php'>Paper Types</a></li>
-			<li class='nav-item'><a class='nav-link' href='finishOptions.php'>Finish Options</a></li>
-			<li class='nav-item'><a class='nav-link' href='otherOptions.php'>Other Options</a></li>
-			<li class='nav-item'><a class='nav-link' href='stats_monthly.php'>Monthly Statistics</a></li>
-			<li class='nav-item'><a class='nav-link' href='stats_yearly.php'>Yearly Statistics</a></li>
-			<li class='nav-item'><a class='nav-link' href='stats_fiscal.php'>Fiscal Statistics</a></li>
-			<li class='nav-item'><a class='nav-link' href='stats_OrdersPerMonth.php'>Orders Per Month</a></li>
-			<li class='nav-item'><a class='nav-link' href='stats_avg.php'>Monthly Averages</a></li>
-			<li class='nav-item'><a class='nav-link' href='log.php'>View Log</a></li>
-			
-		</ul>
+		<?php
+		// Side menu as a stacked list of buttons; the current page is highlighted.
+		$admin_menu = [
+			'index.php'                => 'Current Orders',
+			'billing.php'              => 'Billing',
+			'paperTypes.php'           => 'Paper Types',
+			'finishOptions.php'        => 'Finish Options',
+			'otherOptions.php'         => 'Other Options',
+			'stats_monthly.php'        => 'Monthly Statistics',
+			'stats_yearly.php'         => 'Yearly Statistics',
+			'stats_fiscal.php'         => 'Fiscal Statistics',
+			'stats_OrdersPerMonth.php' => 'Orders Per Month',
+			'stats_avg.php'            => 'Monthly Averages',
+			'log.php'                  => 'View Log',
+		];
+		$current_page = basename($_SERVER['PHP_SELF']);
+		?>
+		<div class='list-group sidebar-nav mb-3'>
+		<?php foreach ($admin_menu as $page => $label) { ?>
+			<a class='list-group-item list-group-item-action<?php echo ($page === $current_page) ? " active" : ""; ?>' href='<?php echo $page; ?>'><?php echo $label; ?></a>
+		<?php } ?>
 		</div>
 	</div>
-	<div class="col-md-8 col-lg-8 col-xl-8">
+	<div class="col-md-10 col-lg-10 col-xl-10">

@@ -106,8 +106,9 @@ $e     = fn($v) => htmlspecialchars((string) $v, ENT_QUOTES); // escape-once hel
 require_once 'includes/header.inc.php';
 ?>
 <?php if (!empty($error)) { echo "<div class='alert alert-danger'>" . $e($error) . "</div>"; } ?>
-<div class='row'>
-<div class='col-lg-7'>
+<!-- Full-window two-panel layout (breaks out of the narrow page container). -->
+<div class='split-layout review-breakout'>
+<div class='split-details'>
 <table class='table table-bordered table-sm detail-table'>
 <thead class='thead-dark'>
 <tr><th colspan='2'>Review Your Order</th></tr>
@@ -133,10 +134,13 @@ require_once 'includes/header.inc.php';
 <tr><td>Full Name</td><td><?php echo $e($o['name']); ?></td></tr>
 <tr><td>PI</td><td><?php echo $e($o['pi'] ?? ''); ?></td></tr>
 <tr><td>Event</td><td><?php echo $e($o['event'] ?? ''); ?></td></tr>
-<tr><td>Comments</td><td><?php echo nl2br($e($o['userComments'] ?? '')); ?></td></tr>
+<tr><td>Comments</td><td><?php if (($o['userComments'] ?? '') !== '') { ?>
+	<details class='comments'><summary>Show comments</summary>
+	<div class='mt-2'><?php echo nl2br($e($o['userComments'])); ?></div></details>
+<?php } ?></td></tr>
 </table>
 </div>
-<div class='col-lg-5'>
+<div class='split-preview'>
 <?php
 // Same layout as the admin order page: thumbnail beside the details, click
 // for the full-size image in an in-page viewer (click outside / Esc closes).
@@ -146,14 +150,12 @@ if (!empty($o['posterThumbFileTmpName']) && file_exists($thumbPath)) {
     $fullUrl = file_exists($fullsizePath)
         ? 'image.php?image_path=' . urlencode($fullsizePath)
         : 'image.php?image_path=' . urlencode($thumbPath);
-    echo "<div class='position-sticky' style='top: 80px;'>";
-    echo "<a href='" . $fullUrl . "' onclick=\"event.preventDefault(); document.getElementById('imageDialog').showModal();\">";
-    echo "<img class='img-thumbnail d-block w-100' src='image.php?image_path=" . urlencode($thumbPath) . "' alt='Poster preview'></a>";
-    echo "<div class='form-text text-center'>Click to view full size</div>";
-    echo "</div>";
-    echo "<dialog id='imageDialog' class='p-0 border-0 bg-transparent' style='max-width: 95vw; max-height: 95vh;'>";
-    echo "<img src='" . $fullUrl . "' alt='Full size poster' style='display:block; max-width: 95vw; max-height: 95vh; object-fit: contain;'>";
-    echo "</dialog>";
+	echo "<a href='" . $fullUrl . "' onclick=\"event.preventDefault(); document.getElementById('imageDialog').showModal();\">";
+	echo "<img class='img-thumbnail preview-thumb' src='" . 'image.php?image_path=' . urlencode($thumbPath) . "' alt='Poster preview'></a>";
+	echo "<div class='form-text'>Click to view full size</div>";
+	echo "<dialog id='imageDialog' class='p-0 border-0 bg-transparent' style='max-width: 95vw; max-height: 95vh;'>";
+	echo "<img src='" . $fullUrl . "' alt='Full size poster' style='display:block; max-width: 95vw; max-height: 95vh; object-fit: contain;'>";
+	echo "</dialog>";
 } else {
     echo "<div class='text-muted'>No preview available</div>";
 }
@@ -161,19 +163,32 @@ if (!empty($o['posterThumbFileTmpName']) && file_exists($thumbPath)) {
 </div>
 </div>
 <style>
+	/* Two-panel layout: order details | poster preview.
+	   Each panel gets half the width (flex: 1 1 0). The details panel has a
+	   minimum width; if the space can't fit both minimums, the preview wraps
+	   below the details instead of squeezing them. */
+	.split-layout { display: flex; flex-wrap: wrap; gap: 2rem; align-items: flex-start; }
+	.split-details { flex: 1 1 0; min-width: min(520px, 100%); }
+	.split-preview { flex: 1 1 0; min-width: min(300px, 100%); text-align: center; position: sticky; top: 80px; }
+	.split-preview img.preview-thumb { max-width: 100%; max-height: 80vh; width: auto; display: inline-block; }
 	/* Details tables: fixed layout so long unbroken text (e.g. a pasted URL
-	   or "qqqq...") wraps inside its cell instead of widening the table
-	   underneath the preview column. */
+	   or "qqqq...") wraps inside its cell instead of widening the table. */
 	.detail-table { table-layout: fixed; width: 100%; }
 	.detail-table td { overflow-wrap: anywhere; word-break: break-word; }
 	.detail-table td:first-child { width: 9.5rem; }
+	details.comments summary { cursor: pointer; color: var(--bs-link-color, #0d6efd); }
 	dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+	/* Use the whole window width with a comfortable left margin. */
+	.review-breakout { width: 100vw; margin-left: calc(50% - 50vw); padding: 0 2.5rem; }
+	body { overflow-x: hidden; }
 </style>
 <script>
+// Close any dialog when clicking outside its content (on the dimmed backdrop).
 document.querySelectorAll('dialog').forEach(function (d) {
 	d.addEventListener('click', function (e) { if (e.target === d) { d.close(); } });
 });
 </script>
+
 <p></p>
 <div class='row'>
 	<div class='mx-auto btn-toolbar'>

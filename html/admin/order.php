@@ -96,8 +96,8 @@ $file_link = "<a href='download.php?orderId=" . $order->get_order_id() . "'>" . 
 require_once 'includes/header.inc.php';
 
 ?>
-<div class='row'>
-<div class='col-lg-7'>
+<div class='split-layout'>
+<div class='split-details'>
 <table class='table table-bordered table-striped table-sm detail-table'>
 <thead>
 <tr><th colspan='2'>Order Information</th></tr>
@@ -118,24 +118,40 @@ require_once 'includes/header.inc.php';
 <tr><td class='text-end'>Finish Option</td><td><?php echo $order->get_finish_option_name(); ?></td></tr>
 <tr><td class='text-end'>Poster Tube</td><td><?php echo $order->get_poster_tube_name(); ?></td></tr>
 <tr><td class='text-end'>Rush Order</td><td><?php echo $order->get_rush_order_name(); ?></td></tr>
-<tr><td class='text-end'>Comments</td><td><?php echo $order->get_wordwrap_comments(); ?></td></tr>
+<?php
+// PI, Event and Requested pickup are stored as labeled lines at the top of
+// the comments (no DB columns yet). Pull each out into its own row so staff
+// always see them, even with the comments collapsed. Display only; the
+// stored comments are not changed. Older orders without these lines show blank.
+$labeled = ['PI' => '', 'Event' => '', 'Requested pickup' => ''];
+foreach (array_keys($labeled) as $label) {
+	if (preg_match('/^' . preg_quote($label, '/') . ': (.+)$/m', (string) $order->get_comments(), $m)) {
+		$labeled[$label] = trim($m[1]);
+	}
+}
+?>
+<tr><td class='text-end'>PI</td><td><?php echo htmlspecialchars($labeled['PI'], ENT_QUOTES); ?></td></tr>
+<tr><td class='text-end'>Event</td><td><?php echo htmlspecialchars($labeled['Event'], ENT_QUOTES); ?></td></tr>
+<tr><td class='text-end'>Requested Pickup</td><td><?php echo htmlspecialchars($labeled['Requested pickup'], ENT_QUOTES); ?></td></tr>
+<tr><td class='text-end'>Comments</td><td><?php if (trim((string) $order->get_comments()) !== '') { ?>
+	<details class='comments'><summary>Show comments</summary>
+	<div class='mt-2'><?php echo $order->get_wordwrap_comments(); ?></div></details>
+<?php } ?></td></tr>
 <tr><td class='text-end' style='vertical-align:middle;'>Status</td><td><?php echo $status_html; ?></td></tr>
 
 </table>
 <?php echo $edit_order_html; ?>
 </div>
-<div class='col-lg-5'>
+<div class='split-preview'>
 <?php if (file_exists($order->get_thumbnail())) {
 	// Thumbnail beside the details on wide screens; stacks below on narrow ones.
 	// Clicking opens the full-size image in an in-page viewer (closes on a
 	// click outside the image or Esc). The link still works for middle-click
 	// / open in new tab.
 	$fullsize_url = "image.php?image_path=" . urlencode($order->get_fullsize());
-	echo "<div class='position-sticky' style='top: 80px;'>";
 	echo "<a href='" . $fullsize_url . "' onclick=\"event.preventDefault(); document.getElementById('imageDialog').showModal();\">";
-	echo "<img class='img-thumbnail d-block w-100' src='image.php?image_path=" . urlencode($order->get_thumbnail()) . "' alt='Poster preview'></a>";
-	echo "<div class='form-text text-center'>Click to view full size</div>";
-	echo "</div>";
+	echo "<img class='img-thumbnail preview-thumb' src='" . 'image.php?image_path=' . urlencode($order->get_thumbnail()) . "' alt='Poster preview'></a>";
+	echo "<div class='form-text'>Click to view full size</div>";
 	echo "<dialog id='imageDialog' class='p-0 border-0 bg-transparent' style='max-width: 95vw; max-height: 95vh;'>";
 	echo "<img src='" . $fullsize_url . "' alt='Full size poster' style='display:block; max-width: 95vw; max-height: 95vh; object-fit: contain;'>";
 	echo "</dialog>";
@@ -147,21 +163,26 @@ require_once 'includes/header.inc.php';
 </div>
 <?php echo $status_dialog_html; ?>
 <style>
+	/* Two-panel layout: order details | poster preview.
+	   Each panel gets half the width (flex: 1 1 0). The details panel has a
+	   minimum width; if the space can't fit both minimums, the preview wraps
+	   below the details instead of squeezing them. */
+	.split-layout { display: flex; flex-wrap: wrap; gap: 2rem; align-items: flex-start; }
+	.split-details { flex: 1 1 0; min-width: min(420px, 100%); }
+	.split-preview { flex: 1 1 0; min-width: min(300px, 100%); text-align: center; position: sticky; top: 80px; }
+	.split-preview img.preview-thumb { max-width: 100%; max-height: 80vh; width: auto; display: inline-block; }
 	/* Details tables: fixed layout so long unbroken text (e.g. a pasted URL
-	   or "qqqq...") wraps inside its cell instead of widening the table
-	   underneath the preview column. */
+	   or "qqqq...") wraps inside its cell instead of widening the table. */
 	.detail-table { table-layout: fixed; width: 100%; }
 	.detail-table td { overflow-wrap: anywhere; word-break: break-word; }
 	.detail-table td:first-child { width: 9.5rem; }
+	details.comments summary { cursor: pointer; color: var(--bs-link-color, #0d6efd); }
 	dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
 </style>
 <script>
 // Close any dialog when clicking outside its content (on the dimmed backdrop).
-// A click on the backdrop reports the <dialog> element itself as the target.
 document.querySelectorAll('dialog').forEach(function (d) {
-	d.addEventListener('click', function (e) {
-		if (e.target === d) { d.close(); }
-	});
+	d.addEventListener('click', function (e) { if (e.target === d) { d.close(); } });
 });
 </script>
 <br>

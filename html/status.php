@@ -81,7 +81,14 @@ require_once 'includes/header.inc.php';
 <tr><td>Status</td><td><?php echo $e($order->get_status()); ?></td></tr>
 <?php if (file_exists($order->get_thumbnail())) {
     echo "<tr><td colspan='2'>";
-    echo "<a href='image.php?image_path=" . urlencode($order->get_fullsize()) . "'><img class='img-thumbnail mx-auto d-block' src='image.php?image_path=" . urlencode($order->get_thumbnail()) . "'></a>";
+    // Click opens the full-size image on this page; click outside or Esc closes.
+    $fullsize_url = "image.php?image_path=" . urlencode($order->get_fullsize());
+    echo "<a href='" . $fullsize_url . "' onclick=\"event.preventDefault(); document.getElementById('imageDialog').showModal();\">";
+    echo "<img class='img-thumbnail mx-auto d-block' src='image.php?image_path=" . urlencode($order->get_thumbnail()) . "' alt='Poster preview'></a>";
+    echo "<div class='form-text text-center'>Click to view full size</div>";
+    echo "<dialog id='imageDialog' class='p-0 border-0 bg-transparent' style='max-width: 95vw; max-height: 95vh;'>";
+    echo "<img src='" . $fullsize_url . "' alt='Full size poster' style='display:block; max-width: 95vw; max-height: 95vh; object-fit: contain;'>";
+    echo "</dialog>";
     echo "</td></tr>";
 }
 ?>
@@ -97,4 +104,10 @@ if ($order->get_rotated()) {
 	<a class='btn btn-primary' href='index.php'>Main Page</a>
 	</div>
 </div>
+<style>dialog::backdrop { background: rgba(0, 0, 0, 0.6); }</style>
+<script>
+document.querySelectorAll('dialog').forEach(function (d) {
+	d.addEventListener('click', function (e) { if (e.target === d) { d.close(); } });
+});
+</script>
 <?php require_once 'includes/footer.inc.php'; ?>
