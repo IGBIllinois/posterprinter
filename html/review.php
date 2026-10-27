@@ -113,7 +113,9 @@ require_once 'includes/header.inc.php';
 <tr><td>Email</td><td><?php echo $e($o['email']); ?></td></tr>
 <tr><td>Additional Emails</td><td><?php echo $e($o['additional_emails']); ?></td></tr>
 <tr><td>Full Name</td><td><?php echo $e($o['name']); ?></td></tr>
-<tr><td>Comments</td><td><?php echo $e($o['comments']); ?></td></tr>
+<tr><td>PI</td><td><?php echo $e($o['pi'] ?? ''); ?></td></tr>
+<tr><td>Event</td><td><?php echo $e($o['event'] ?? ''); ?></td></tr>
+<tr><td>Comments</td><td><?php echo nl2br($e($o['userComments'] ?? '')); ?></td></tr>
 <?php
 $thumbPath = poster::get_tmp_path() . '/' . basename($o['posterThumbFileTmpName'] ?? '');
 if (!empty($o['posterThumbFileTmpName']) && file_exists($thumbPath)) {

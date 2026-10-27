@@ -49,7 +49,9 @@ if ($staged && $upload && !empty($upload['width'])) {
         'email'             => $staged['email'],
         'additional_emails' => $staged['additional_emails'],
         'activityCode'      => $staged['activityCode'],
-        'comments'          => $staged['comments'],
+        'comments'          => $staged['userComments'] ?? '',
+        'pi'                => $staged['pi'] ?? '',
+        'event'             => $staged['event'] ?? '',
         'cfop'              => explode('-', $staged['cfop']),
     ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?: 'null';
 }
@@ -193,6 +195,14 @@ require_once 'includes/header.inc.php';
 			<td><div class='row'><div class='col-md-3'><input type='text' class='form-control' name='activityCode' id='activityCode' maxlength='6'></div></div></td>
 		</tr>
 		<tr>
+			<td class='text-end' style='vertical-align:middle;'>PI (optional)</td>
+			<td><input class='form-control' type='text' name='pi' id='pi' maxlength='100' placeholder='Principal investigator, for our records'></td>
+		</tr>
+		<tr>
+			<td class='text-end' style='vertical-align:middle;'>Event (optional)</td>
+			<td><input class='form-control' type='text' name='event' id='event' maxlength='100' placeholder='Conference or event this poster is for'></td>
+		</tr>
+		<tr>
 			<td class='text-end'>Comments</td>
 			<td><textarea class='form-control' id='comments' name='comments' rows='3'></textarea></td>
 		</tr>
@@ -207,7 +217,7 @@ require_once 'includes/header.inc.php';
 </div>
 </fieldset>
 </form>
-<p></p>
+<p class='text-center text-muted mt-3'>Have questions? Reach out to <a href='mailto:help@igb.illinois.edu'>help@igb.illinois.edu</a></p>
 <div id='message'></div>
 <?php require_once 'includes/footer.inc.php'; ?>
 
@@ -501,6 +511,8 @@ require_once 'includes/header.inc.php';
 		fd.append('cfop4', $id('cfop4').value);
 		fd.append('activityCode', $id('activityCode').value);
 		fd.append('comments', $id('comments').value);
+		fd.append('pi', $id('pi').value);
+		fd.append('event', $id('event').value);
 
 		try {
 			var r = await api('submit', fd);
@@ -537,7 +549,7 @@ require_once 'includes/header.inc.php';
 		if (finish && !finish.disabled) { finish.checked = true; }
 
 		$id('posterTube').checked = PREFILL.posterTube == 1;
-		['name', 'email', 'additional_emails', 'activityCode', 'comments'].forEach(function (k) {
+		['name', 'email', 'additional_emails', 'activityCode', 'comments', 'pi', 'event'].forEach(function (k) {
 			$id(k).value = PREFILL[k] != null ? PREFILL[k] : '';
 		});
 		['cfop1', 'cfop2', 'cfop3', 'cfop4'].forEach(function (id, i) {

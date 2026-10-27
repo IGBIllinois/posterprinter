@@ -113,7 +113,10 @@ class order {
 	public function get_rotated() { return $this->rotated; }
 	public function get_key() { return $this->key; }
 	public function get_wordwrap_comments() { 
-		return wordwrap($this->comments,self::LINE_WIDTH,"<br>");
+		// Escape first (comments are user input), then keep the user's line
+		// breaks (PI / Event / pickup lines) and wrap long lines.
+		$safe = htmlspecialchars((string) $this->comments, ENT_QUOTES);
+		return nl2br(wordwrap($safe, self::LINE_WIDTH, "\n", true));
 
 	}
 	public function get_status() { return $this->status; }

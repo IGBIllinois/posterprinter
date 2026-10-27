@@ -228,6 +228,34 @@ function pickup_date_error(string $pickupDate): ?string
 }
 
 // ---------------------------------------------------------------
+// Comments composition. orders_comments is the only free-text column,
+// so PI, event and requested pickup date ride along in it as labeled
+// lines until schema changes are approved. Requested pickup has no
+// column at all otherwise, and staff need it.
+// ---------------------------------------------------------------
+const OPTIONAL_FIELD_MAX = 100;
+
+// Character count that works whether or not the mbstring extension is installed.
+function text_length(string $s): int
+{
+    return function_exists('mb_strlen') ? mb_strlen($s) : strlen($s);
+}
+
+function build_order_comments(string $pi, string $event, string $pickupDate, string $userComments): string
+{
+    $lines = [];
+    if ($pi !== '')         { $lines[] = 'PI: ' . $pi; }
+    if ($event !== '')      { $lines[] = 'Event: ' . $event; }
+    if ($pickupDate !== '') { $lines[] = 'Requested pickup: ' . $pickupDate; }
+    $userComments = trim($userComments);
+    if ($userComments !== '') {
+        $lines[] = '';
+        $lines[] = $userComments;
+    }
+    return implode("\n", $lines);
+}
+
+// ---------------------------------------------------------------
 // Router
 // ---------------------------------------------------------------
 
@@ -405,6 +433,13 @@ case 'submit':
         $errors[] = $pd_error;
     }
 
+    // Optional record-keeping fields. Text only; nothing depends on them.
+    // Stored as labeled lines at the top of orders_comments (no schema change).
+    $pi    = trim($_POST['pi'] ?? '');
+    $event = trim($_POST['event'] ?? '');
+    if (text_length($pi) > OPTIONAL_FIELD_MAX)    { $errors[] = 'PI name must be ' . OPTIONAL_FIELD_MAX . ' characters or fewer'; }
+    if (text_length($event) > OPTIONAL_FIELD_MAX) { $errors[] = 'Event name must be ' . OPTIONAL_FIELD_MAX . ' characters or fewer'; }
+
     // Validate selections against what's actually valid for these dimensions.
     $paperTypesId    = (int) ($_POST['paperTypesId'] ?? 0);
     $finishOptionsId = (int) ($_POST['finishOptionsId'] ?? 0);
@@ -477,7 +512,12 @@ case 'submit':
         'email'                  => $_POST['email'],
         'additional_emails'      => $_POST['additional_emails'] ?? '',
         'name'                   => $_POST['name'],
-        'comments'               => $_POST['comments'] ?? '',
+        // 'comments' is what create_order() writes to orders_comments.
+        'comments'               => build_order_comments($pi, $event, $pickup, $_POST['comments'] ?? ''),
+        // Kept separately for review.php and the Previous Page prefill:
+        'userComments'           => $_POST['comments'] ?? '',
+        'pi'                     => $pi,
+        'event'                  => $event,
         'posterTube'             => $tube,
         'rushOrder'              => $rush,
         'pickupDate'             => $pickup,
