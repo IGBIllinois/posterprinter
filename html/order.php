@@ -196,7 +196,7 @@ require_once 'includes/header.inc.php';
 		</tr>
 		<tr>
 			<td class='text-end' style='vertical-align:middle;'>PI (optional)</td>
-			<td><input class='form-control' type='text' name='pi' id='pi' maxlength='100' placeholder='Principal investigator, for our records'></td>
+			<td><input class='form-control' type='text' name='pi' id='pi' maxlength='100'></td>
 		</tr>
 		<tr>
 			<td class='text-end' style='vertical-align:middle;'>Event (optional)</td>
