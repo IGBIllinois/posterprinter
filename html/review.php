@@ -148,7 +148,7 @@ $rv_is_rush  = (($o['rushOrderName'] ?? '') === 'Yes');
 
 <tbody>
 <tr class='section-head'><th colspan='2'>Dates &amp; Details</th></tr>
-<tr><td>Pick Up Date</td><td><?php echo $e($o['pickupDate']); ?></td></tr>
+<tr><td>Pick Up</td><td><?php echo $e($o['pickupDate']); ?> <?php echo $e($o['pickupSlot'] ?? ''); ?></td></tr>
 <tr><td>Event</td><td><?php echo $e($o['event'] ?? ''); ?></td></tr>
 <tr><td>Comments</td><td><?php if ($rv_comments !== '') { ?>
 	<div class='comment-toggle'>

@@ -45,6 +45,13 @@ const HOLIDAYS                      = [
     // 'YYYY-MM-DD'
 ];
 const SAME_DAY_CONTACT              = 'help@igb.illinois.edu';
+const CALENDAR_DAYS_AHEAD           = 120;    // how far ahead pickup dates can be chosen
+// Pickup slots. Rush is judged per slot: a slot is rush if its start time
+// is at or before the 24-business-hour deadline. Judgment call (Oct 2026),
+// may change: morning = from 8:00 AM, afternoon = from 1:00 PM (after the
+// 12-1 lunch closure). The lunch hour still counts as a business hour when
+// measuring the 24 hours; only the afternoon pickup start moves to 1:00.
+const PICKUP_SLOTS                  = ['morning' => '08:00', 'afternoon' => '13:00'];
 const DIMENSION_DETECTABLE_EXTS     = ['pdf', 'jpg', 'jpeg', 'png', 'tif', 'tiff', 'pptx'];
 
 // ---------------------------------------------------------------
@@ -189,11 +196,22 @@ function add_business_hours(\DateTimeImmutable $start, float $hours): \DateTimeI
     return $d;
 }
 
-function pickup_is_rush(string $pickupDate): bool
+function rush_deadline(): \DateTimeImmutable
 {
-    $deadline = add_business_hours(new \DateTimeImmutable('now'), RUSH_BUSINESS_HOURS);
-    $pickup   = new \DateTimeImmutable($pickupDate . ' 00:00:00');
+    return add_business_hours(new \DateTimeImmutable('now'), RUSH_BUSINESS_HOURS);
+}
+
+// Rush if the slot starts at or before the deadline (24 business hours from now).
+function pickup_is_rush(string $pickupDate, string $slot, ?\DateTimeImmutable $deadline = null): bool
+{
+    $deadline = $deadline ?? rush_deadline();
+    $pickup   = new \DateTimeImmutable($pickupDate . ' ' . PICKUP_SLOTS[$slot]);
     return $pickup <= $deadline;
+}
+
+function valid_slot(string $slot): bool
+{
+    return isset(PICKUP_SLOTS[$slot]);
 }
 
 function pickup_date_error(string $pickupDate): ?string
@@ -361,15 +379,56 @@ case 'options':
     ]);
 
 // ----------------------------------------------------------
+case 'calendar':
+// ----------------------------------------------------------
+    // Every date a customer may pick (business days from tomorrow on,
+    // excluding holidays) and, per slot, whether it is rush. Uses exactly
+    // the same functions as rushcheck/submit, so the calendar can never
+    // disagree with what is charged. earliestStandard is the first slot
+    // that is NOT rush - what the "Standard" button picks.
+    $deadline = rush_deadline();          // one deadline for the whole list
+    $days = [];
+    $earliestStandard = null;
+    $d = new \DateTimeImmutable('tomorrow');
+    for ($i = 0; $i < CALENDAR_DAYS_AHEAD; $i++, $d = $d->modify('+1 day')) {
+        $iso = $d->format('Y-m-d');
+        if (pickup_date_error($iso) !== null) {
+            continue;   // weekend, holiday, or otherwise not selectable
+        }
+        foreach (array_keys(PICKUP_SLOTS) as $slot) {
+            $rush = pickup_is_rush($iso, $slot, $deadline);
+            $days[$iso][$slot] = $rush;
+            if (!$rush && $earliestStandard === null) {
+                $earliestStandard = ['date' => $iso, 'slot' => $slot];
+            }
+        }
+    }
+    respond([
+        'success'          => true,
+        'days'             => $days,              // 'YYYY-MM-DD' => ['morning' => rush?, 'afternoon' => rush?]
+        'earliestStandard' => $earliestStandard,  // ['date' => ..., 'slot' => ...] or null
+        'lastDate'         => $d->modify('-1 day')->format('Y-m-d'),
+    ]);
+
+// ----------------------------------------------------------
 case 'rushcheck':
 // ----------------------------------------------------------
+    // Returns rush status for both slots of the date, and for the chosen
+    // slot if one was sent.
     $pickup = $_POST['pickupDate'] ?? '';
+    $slot   = $_POST['pickupSlot'] ?? '';
     if (($pd_error = pickup_date_error($pickup)) !== null) {
         respond(['success' => false, 'message' => functions::alert($pd_error, 0)]);
     }
+    $deadline = rush_deadline();
+    $slots = [];
+    foreach (array_keys(PICKUP_SLOTS) as $s_name) {
+        $slots[$s_name] = pickup_is_rush($pickup, $s_name, $deadline);
+    }
     respond([
         'success' => true,
-        'rush'    => pickup_is_rush($pickup),
+        'slots'   => $slots,
+        'rush'    => valid_slot($slot) ? $slots[$slot] : null,
         'cost'    => rush_order::getRushOrderCost($db),
     ]);
 
@@ -454,9 +513,13 @@ case 'submit':
         $errors[] = 'Please confirm the poster dimensions are correct';
     }
 
-    $pickup = $_POST['pickupDate'] ?? '';
+    $pickup     = $_POST['pickupDate'] ?? '';
+    $pickupSlot = $_POST['pickupSlot'] ?? '';
     if (($pd_error = pickup_date_error($pickup)) !== null) {
         $errors[] = $pd_error;
+    }
+    if (!valid_slot($pickupSlot)) {
+        $errors[] = 'Please choose a morning or afternoon pickup';
     }
 
     // Optional record-keeping fields. Text only; nothing depends on them.
@@ -496,7 +559,7 @@ case 'submit':
     // ---- Everything below is server-computed. Client input stops mattering here. ----
 
     $tube = (($_POST['posterTube'] ?? '0') === '1') ? 1 : 0;
-    $rush = pickup_is_rush($pickup) ? 1 : 0;
+    $rush = pickup_is_rush($pickup, $pickupSlot) ? 1 : 0;
 
     $papertype    = new papertype($db, $paperTypesId);
     $finishoption = new finishoption($db, $finishOptionsId);
@@ -543,7 +606,7 @@ case 'submit':
         'additional_emails'      => $_POST['additional_emails'] ?? '',
         'name'                   => $_POST['name'],
         // 'comments' is what create_order() writes to orders_comments.
-        'comments'               => build_order_comments($pi, $event, $pickup, $_POST['comments'] ?? ''),
+        'comments'               => build_order_comments($pi, $event, $pickup . ' ' . $pickupSlot, $_POST['comments'] ?? ''),
         // Kept separately for review.php and the Previous Page prefill:
         'userComments'           => $_POST['comments'] ?? '',
         'pi'                     => $pi,
@@ -551,6 +614,7 @@ case 'submit':
         'posterTube'             => $tube,
         'rushOrder'              => $rush,
         'pickupDate'             => $pickup,
+        'pickupSlot'             => $pickupSlot,
         'posterFileName'         => $up['origName'],
         'posterFileTmpName'      => $up['tmpName'],
         'posterFileSize'         => $up['size'],

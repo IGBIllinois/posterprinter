@@ -45,6 +45,7 @@ if ($staged && $upload && !empty($upload['width'])) {
         'finishOptionsId'   => $staged['finishOptionsId'],
         'posterTube'        => $staged['posterTube'],
         'pickupDate'        => $staged['pickupDate'],
+        'pickupSlot'        => $staged['pickupSlot'] ?? '',
         'name'              => $staged['name'],
         'email'             => $staged['email'],
         'additional_emails' => $staged['additional_emails'],
@@ -134,27 +135,37 @@ require_once 'includes/header.inc.php';
 	<table class='table table-bordered table-sm'>
 		<thead class='thead-dark'>
 		<tr><th colspan='3'>Other Options</th></tr>
-		<tr><td colspan='3'><em>Please select your desired pick up date (next business day at the earliest).
-		Rush order fee applies if pickup is needed within 24 business hours
-		(Mon 8am - Fri 4:30pm, excluding weekends and holidays).
+		<tr><td colspan='3'><em>Please select your pick up date and a morning or afternoon pickup. Standard orders are ready in about 3 business days;
+		<strong>Standard</strong> picks the earliest standard pickup. Earlier pickups (shown in red) are rush orders
+		and a rush fee applies (rush = pickup within 24 business hours, Mon 8am - Fri 4:30pm, excluding weekends and holidays).
 		Same-day pickup cannot be ordered online &mdash; for same-day requests email
 		<a href='mailto:help@igb.illinois.edu'>help@igb.illinois.edu</a> and we will try to accommodate.</em></td></tr>
 		</thead>
 		<tbody>
 		<tr>
-			<td class='text-end'>Poster Tube</td>
-			<td class='text-end' id='posterTubeCost'></td>
-			<td><input type='checkbox' id='posterTube' name='posterTube' value='1'></td>
+			<td class='text-end align-middle'>Poster Tube</td>
+			<td class='align-middle' id='posterTubeCost' style='width: 20rem;'></td>
+			<td class='text-center align-middle' style='width: 8rem;'><input type='checkbox' class='form-check-input' id='posterTube' name='posterTube' value='1'></td>
 		</tr>
 		<tr>
-			<td class='text-end' style='vertical-align:middle;'>Pick Up Date</td>
-			<td class='text-end'><input type='date' class='form-control' id='pickupDate' name='pickupDate'></td>
-			<td></td>
+			<td class='text-end align-middle'>Pick Up Date</td>
+			<td class='align-middle'>
+				<div class='d-flex align-items-center gap-2'>
+				<input type='text' class='form-control form-control-sm' id='pickupDate' name='pickupDate'
+					readonly placeholder='Choose a date' style='width: 8.5rem; background-color: #fff; cursor: pointer;'>
+				<div class='btn-group btn-group-sm' role='group' aria-label='Pickup time'>
+					<button type='button' class='btn btn-outline-secondary slot-btn' data-slot='morning' disabled>Morning</button>
+					<button type='button' class='btn btn-outline-secondary slot-btn' data-slot='afternoon' disabled>Afternoon</button>
+				</div>
+				</div>
+			</td>
+			<td class='text-center align-middle'><button type='button' class='btn btn-outline-primary btn-sm' id='standardDate'
+				title='Pick the earliest date that is not a rush order'>Standard</button></td>
 		</tr>
-		<tr id='rushOrderRow' style='display:none; background-color:#ffcccc;'>
+		<tr id='rushOrderRow' style='display:none; background-color:#f8d7da;'>
 			<td class='text-end'>Rush Order Fee</td>
-			<td class='text-end' id='rushOrderCost'></td>
-			<td><span style='color:red; font-weight:bold;'>APPLIED</span></td>
+			<td id='rushOrderCost'></td>
+			<td class='text-center'><span style='color:#b02a37; font-weight:bold;'>APPLIED</span></td>
 		</tr>
 		</tbody>
 	</table>
@@ -220,6 +231,17 @@ require_once 'includes/header.inc.php';
 </form>
 <p class='text-center text-muted mt-3'>Have questions? Reach out to <a href='mailto:help@igb.illinois.edu'>help@igb.illinois.edu</a></p>
 <div id='message'></div>
+<style>
+	/* Pickup calendar: rush days shaded red, plus a note under the calendar. */
+	.ui-datepicker td.rush-day a { background: #f8d7da !important; border-color: #f1aeb5 !important; color: #58151c !important; }
+	.ui-datepicker td.rush-day a.ui-state-active { background: #dc3545 !important; color: #fff !important; }
+	.ui-datepicker td.rush-am a { background: linear-gradient(to right, #f8d7da 50%, #f6f6f6 50%) !important; }
+	.slot-btn.slot-rush { background: #f8d7da; border-color: #f1aeb5; color: #58151c; }
+	.slot-btn.slot-rush.active { background: #dc3545; border-color: #dc3545; color: #fff; }
+	.ui-datepicker .rush-note { font-size: 0.8rem; padding: 0.35rem 0.25rem 0.15rem; color: #495057; }
+	.ui-datepicker .rush-swatch { display: inline-block; width: 0.8rem; height: 0.8rem; background: #f8d7da;
+		border: 1px solid #f1aeb5; margin-right: 0.35rem; vertical-align: -1px; }
+</style>
 <?php require_once 'includes/footer.inc.php'; ?>
 
 <script type="application/javascript">
@@ -439,33 +461,102 @@ require_once 'includes/header.inc.php';
 		}
 	}
 
-	// ---- pickup date / rush (server decides) ----------------------------
-	(function () {
-		// Earliest self-service pickup: next business day. No same-day online.
-		var d = new Date();
-		d.setDate(d.getDate() + 1);
-		while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1);
-		var iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-		$id('pickupDate').setAttribute('min', iso);
-	})();
+	// ---- pickup date + slot / rush (server decides) ---------------------
+	// The server sends every selectable date with a rush flag per slot
+	// (api.php action=calendar). The calendar only allows those dates
+	// (weekends, holidays, today and past days are not clickable): a day is
+	// red when both slots are rush, half red when only the morning is.
+	// After a date is picked, Morning/Afternoon become available, each
+	// shaded red if it is rush. Nothing is pre-selected; Standard picks the
+	// earliest non-rush slot. The server re-checks rush on every pick and
+	// again at submit, so a page left open overnight cannot get a stale price.
+	var calendarDays = {};          // 'YYYY-MM-DD' => {morning: rush?, afternoon: rush?}
+	var earliestStandard = null;    // {date, slot}
+	var pickupSlot = '';
 
-	$id('pickupDate').addEventListener('change', async function () {
-		var val = $id('pickupDate').value;
+	async function loadCalendar() {
+		var r = await api('calendar', new FormData());
+		if (!r.success) throw new Error('Could not load pickup dates.');
+		calendarDays = r.days;
+		earliestStandard = r.earliestStandard;
+		$('#pickupDate').datepicker('option', 'maxDate', r.lastDate);
+		return r;
+	}
+
+	function addRushNote() {
+		var dp = $('#ui-datepicker-div');
+		if (!dp.find('.rush-note').length) {
+			dp.append("<div class='rush-note'><span class='rush-swatch'></span>Red = rush order (fee applies). Half red = morning is rush, afternoon is not.</div>");
+		}
+	}
+
+	$('#pickupDate').datepicker({
+		dateFormat: 'yy-mm-dd',
+		minDate: 1,                         // tomorrow; same-day is not offered online
+		beforeShowDay: function (date) {
+			var iso = $.datepicker.formatDate('yy-mm-dd', date);
+			var day = calendarDays[iso];
+			if (!day) return [false, '', ''];
+			if (day.morning && day.afternoon) return [true, 'rush-day', 'Rush order'];
+			if (day.morning) return [true, 'rush-am', 'Morning is rush; afternoon is standard'];
+			return [true, '', 'Standard'];
+		},
+		beforeShow: function () { setTimeout(addRushNote, 0); },
+		onChangeMonthYear: function () { setTimeout(addRushNote, 0); },
+		onSelect: function () { pickupSlot = ''; refreshPickup(); }
+	});
+
+	// Shows rush shading on the two slot buttons and the rush fee row.
+	function paintSlots(slots) {
+		document.querySelectorAll('.slot-btn').forEach(function (b) {
+			var name = b.dataset.slot;
+			b.disabled = !slots;
+			b.classList.toggle('slot-rush', !!(slots && slots[name]));
+			b.classList.toggle('active', name === pickupSlot);
+		});
+	}
+
+	// Asks the server about the chosen date (and slot, if any).
+	async function refreshPickup() {
+		var date = $id('pickupDate').value;
 		$id('rushOrderRow').style.display = 'none';
-		if (!val) return;
+		if (!date) { paintSlots(null); return; }
 		try {
 			var fd = new FormData();
-			fd.append('pickupDate', val);
+			fd.append('pickupDate', date);
+			fd.append('pickupSlot', pickupSlot);
 			var r = await api('rushcheck', fd);
 			if (!r.success) {
 				$id('pickupDate').value = '';
+				pickupSlot = '';
+				paintSlots(null);
 				showMessage(r.message);
 				return;
 			}
 			showMessage('');
-			$id('rushOrderRow').style.display = r.rush ? 'table-row' : 'none';
+			paintSlots(r.slots);
+			$id('rushOrderRow').style.display = (r.rush === true) ? 'table-row' : 'none';
+		} catch (err) { showMessage(alertBox(err.message)); }
+	}
+
+	document.querySelectorAll('.slot-btn').forEach(function (b) {
+		b.addEventListener('click', function () { pickupSlot = b.dataset.slot; refreshPickup(); });
+	});
+
+	$id('standardDate').addEventListener('click', async function () {
+		try {
+			await loadCalendar();               // fresh: the earliest standard slot moves as time passes
+			if (earliestStandard) {
+				$id('pickupDate').value = earliestStandard.date;
+				pickupSlot = earliestStandard.slot;
+				refreshPickup();
+			}
+			else { showMessage(alertBox('No standard pickup is available online right now. Please email help@igb.illinois.edu.')); }
 		} catch (err) { showMessage(alertBox(err.message)); }
 	});
+
+	// Load selectable dates. No date is pre-selected: the choice is deliberate.
+	loadCalendar().catch(function (err) { showMessage(alertBox(err.message)); });
 
 	// ---- CFOP auto-advance ----------------------------------------------
 	[['cfop1', 'cfop2'], ['cfop2', 'cfop3'], ['cfop3', 'cfop4']].forEach(function (pair) {
@@ -483,6 +574,7 @@ require_once 'includes/header.inc.php';
 		if (!fileUploaded) errors.push('Please select a file to upload.');
 		if (!$id('dimensionsConfirmed').checked) errors.push('Please confirm the poster dimensions are correct.');
 		if (!$id('pickupDate').value) errors.push('Please select a pickup date.');
+		else if (!pickupSlot) errors.push('Please choose a morning or afternoon pickup.');
 		if (!$id('name').value.trim()) errors.push('Please enter your full name.');
 		if (!$id('email').value.trim()) errors.push('Please enter your email address.');
 		if (!$id('cfop1').value.trim() || !$id('cfop2').value.trim() || !$id('cfop3').value.trim() || !$id('cfop4').value.trim()) {
@@ -508,6 +600,7 @@ require_once 'includes/header.inc.php';
 		fd.append('finishOptionsId', finish.value);
 		fd.append('posterTube', $id('posterTube').checked ? '1' : '0');
 		fd.append('pickupDate', $id('pickupDate').value);
+		fd.append('pickupSlot', pickupSlot);
 		fd.append('name', $id('name').value);
 		fd.append('email', $id('email').value);
 		fd.append('additional_emails', $id('additional_emails').value);
@@ -563,8 +656,9 @@ require_once 'includes/header.inc.php';
 		});
 		updateCommentsCount();
 		$id('pickupDate').value = PREFILL.pickupDate || '';
+		pickupSlot = PREFILL.pickupSlot || '';
 		if (PREFILL.pickupDate) {
-			$id('pickupDate').dispatchEvent(new Event('change'));
+			refreshPickup();
 		}
 	})();
 })();
