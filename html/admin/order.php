@@ -64,9 +64,10 @@ else {
 		$status_dialog_html .= "<label class='form-check-label' for='" . $id . "'>" . $safe . "</label>";
 		$status_dialog_html .= "</div>";
 	}
-	$status_dialog_html .= "<div class='d-flex justify-content-end gap-2 mt-3'>";
-	$status_dialog_html .= "<button type='button' class='btn btn-secondary btn-sm' onclick=\"this.closest('dialog').close()\">Cancel</button>";
-	$status_dialog_html .= "<input type='submit' class='btn btn-primary btn-sm' name='changeStatus' value='Save'>";
+	// Cancel and Save share the row equally (flex-fill gives each the same width).
+	$status_dialog_html .= "<div class='d-flex gap-2 mt-3'>";
+	$status_dialog_html .= "<button type='button' class='btn btn-secondary btn-sm flex-fill' onclick=\"this.closest('dialog').close()\">Cancel</button>";
+	$status_dialog_html .= "<input type='submit' class='btn btn-primary btn-sm flex-fill' name='changeStatus' value='Save'>";
 	$status_dialog_html .= "</div></form></dialog>";
 
 	$edit_order_html = "<form method='get' action='editOrder.php'>";
