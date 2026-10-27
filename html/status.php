@@ -25,7 +25,8 @@ if (isset($_GET['order_id']) && is_numeric($_GET['order_id']) && isset($_GET['ke
     exit;
 }
 
-$isNew  = isset($_GET['new']);
+$isNew      = isset($_GET['new']);
+$mailFailed = (($_GET['mail'] ?? '') === 'failed');
 // Rush is identified by the rushOrder row name 'Yes', the same way the
 // rest of the app (rush_order class) identifies it.
 $isRush = ($order->get_rush_order_name() === 'Yes');
@@ -41,9 +42,21 @@ require_once 'includes/header.inc.php';
 	<?php } else { ?>
 	Your order will be completed within <strong><?php echo $e(settings::get_order_timeframe()); ?> business hours</strong>.
 	<?php } ?>
+	<?php if (!$mailFailed) { ?>
 	An email has been sent to you at <?php echo $e($order->get_email()); ?> with this information.
+	<?php } ?>
 	We will email you when the poster is completed printing.
 	You can bookmark this page to check your order status.
+</div>
+<?php } ?>
+<?php if ($isNew && $mailFailed) {
+    $helpSubject = 'Order #' . (int) $order->get_order_id() . ' - confirmation email not received';
+?>
+<div class='alert alert-danger'>
+	<strong>Your order was received, but we could not send your confirmation email.</strong>
+	Please email <a href='mailto:help@igb.illinois.edu?subject=<?php echo rawurlencode($helpSubject); ?>'>help@igb.illinois.edu</a>
+	with the subject <strong><?php echo $e($helpSubject); ?></strong> so we can confirm your order and fix the problem.
+	You can bookmark this page to check your order status in the meantime.
 </div>
 <?php } ?>
 <h2>Order Status</h2>

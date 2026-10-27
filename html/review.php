@@ -67,18 +67,27 @@ if (isset($_POST['confirm'])) {
 
             $order = new order($db, $orderId);
             // Email failure must not break the order: the order is already
-            // saved and its file moved. mailNewOrder() returns nothing and
-            // throws on failure, so catch and log instead of checking a result.
+            // saved and its file moved. The mail functions throw on failure,
+            // so each send is caught and logged separately. Admin and user
+            // emails are sent independently so one failing doesn't skip the other.
             try {
-                $order->mailNewOrder();
+                $order->mailAdminsNewOrder();
             } catch (\Throwable $mailError) {
-                error_log('poster review.php: email failed for order ' . $orderId . ': ' . $mailError->getMessage());
+                error_log('poster review.php: ADMIN email failed for order ' . $orderId . ': ' . $mailError->getMessage());
+            }
+            $confirmationSent = true;
+            try {
+                $order->mailUserNewOrder();
+            } catch (\Throwable $mailError) {
+                $confirmationSent = false;
+                error_log('poster review.php: CONFIRMATION email failed for order ' . $orderId . ': ' . $mailError->getMessage());
             }
 
             $session->destroy_session();
 
             // PRG: status.php is now the confirmation page. Refresh-safe.
-            header('Location: status.php?order_id=' . (int) $orderId . '&key=' . urlencode($order->get_key()) . '&new=1');
+            header('Location: status.php?order_id=' . (int) $orderId . '&key=' . urlencode($order->get_key()) . '&new=1'
+                . ($confirmationSent ? '' : '&mail=failed'));
             exit;
         }
     }

@@ -20,11 +20,17 @@ if (isset($_POST['changeStatus'])) {
 	//if status is set to "Complete", then it will email the user saying to come pick up the poster
 	if ($_POST['status'] == order::STATUS['COMPLETED']) {
 					
-		$order->mailUserOrderComplete();
+		// A mail failure must not hide the status change (already saved).
+		try {
+			$order->mailUserOrderComplete();
+		} catch (\Throwable $mailError) {
+			error_log('poster admin/order.php: COMPLETED email failed for order ' . $order_id . ': ' . $mailError->getMessage());
+		}
 		header("Location: index.php");
+		exit;
 	}
 	//else if status is set to "Cancel"
-	elseif ($_POST['status'] == order::STATUS['CANCEL']) { header("Location: index.php"); }
+	elseif ($_POST['status'] == order::STATUS['CANCEL']) { header("Location: index.php"); exit; }
 	
 }
 //get last day of previous month
@@ -38,8 +44,8 @@ if (strtotime($order->get_time_created()) < $previous_date) {
 else {
 	//gets the different possible status options
 	$status_html = "<form class='d-flex align-items-center' action='" . $_SERVER['PHP_SELF'] . "?order_id=" . $order_id . "' method='post'>";
-	$status_html . "<div class='mb-3'><div class='col-md-4'>";
-	$status_html .= "<select class="form-select" name='status'>";
+	$status_html .= "<div class='mb-3'><div class='col-md-4'>";
+	$status_html .= "<select class='form-select' name='status'>";
 
 	foreach (order::get_all_statuses() as $possible_status) {
 		
