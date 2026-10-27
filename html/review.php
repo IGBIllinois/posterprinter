@@ -66,8 +66,13 @@ if (isset($_POST['confirm'])) {
             }
 
             $order = new order($db, $orderId);
-            if (!$order->mailNewOrder()) {
-                error_log('poster review.php: mailNewOrder failed for order ' . $orderId);
+            // Email failure must not break the order: the order is already
+            // saved and its file moved. mailNewOrder() returns nothing and
+            // throws on failure, so catch and log instead of checking a result.
+            try {
+                $order->mailNewOrder();
+            } catch (\Throwable $mailError) {
+                error_log('poster review.php: email failed for order ' . $orderId . ': ' . $mailError->getMessage());
             }
 
             $session->destroy_session();
