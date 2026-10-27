@@ -38,28 +38,36 @@ $startDate = date('Y/m',strtotime('-1 month')) . "/01";
 $previous_date = strtotime('-1 second', strtotime($startDate));
 
 if (strtotime($order->get_time_created()) < $previous_date) {
-	$status_html = $order->get_status();
+	$status_html = htmlspecialchars($order->get_status(), ENT_QUOTES);
+	$status_dialog_html = "";
 	$edit_order_html = "";
 }
 else {
-	//gets the different possible status options
-	// Dropdown and Change button on one line (d-flex + gap, select sized to content).
-	$status_html = "<form class='d-flex align-items-center gap-2 mb-0' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?order_id=" . (int) $order_id . "' method='post'>";
-	$status_html .= "<select class='form-select form-select-sm w-auto' name='status'>";
+	// Status shows as plain text with a Change button on the right.
+	// The button opens a small dialog listing the statuses; picking one and
+	// saving posts the same 'status' + 'changeStatus' fields as before.
+	$current_status = $order->get_status();
+	$status_html  = "<div class='d-flex align-items-center justify-content-between'>";
+	$status_html .= "<span>" . htmlspecialchars($current_status, ENT_QUOTES) . "</span>";
+	$status_html .= "<button type='button' class='btn btn-primary btn-sm' onclick=\"document.getElementById('statusDialog').showModal()\">Change</button>";
+	$status_html .= "</div>";
 
+	$status_dialog_html  = "<dialog id='statusDialog' class='border rounded shadow p-0' style='min-width: 280px;'>";
+	$status_dialog_html .= "<form class='p-3' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?order_id=" . (int) $order_id . "' method='post'>";
+	$status_dialog_html .= "<h6 class='mb-3'>Change status of order #" . (int) $order_id . "</h6>";
 	foreach (order::get_all_statuses() as $possible_status) {
-		
-		//used to have the current status of the order be the one selected in the drop down box
-		$status_html .= "<option value='" . $possible_status . "'";
-		if ($possible_status == $order->get_status()) {
-			$status_html .= " selected='selected'";
-		}
-		$status_html .= ">" . $possible_status . "</option>";
-		
+		$safe   = htmlspecialchars($possible_status, ENT_QUOTES);
+		$id     = 'status_' . preg_replace('/[^a-z0-9]/i', '', $possible_status);
+		$status_dialog_html .= "<div class='form-check'>";
+		$status_dialog_html .= "<input class='form-check-input' type='radio' name='status' id='" . $id . "' value='" . $safe . "'"
+		                     . ($possible_status == $current_status ? " checked" : "") . ">";
+		$status_dialog_html .= "<label class='form-check-label' for='" . $id . "'>" . $safe . "</label>";
+		$status_dialog_html .= "</div>";
 	}
-	$status_html .= "</select>";
-	$status_html .= "<input class='btn btn-primary btn-sm' type='submit' value='Change' name='changeStatus'>";
-	$status_html .= "</form>";
+	$status_dialog_html .= "<div class='d-flex justify-content-end gap-2 mt-3'>";
+	$status_dialog_html .= "<button type='button' class='btn btn-secondary btn-sm' onclick=\"this.closest('dialog').close()\">Cancel</button>";
+	$status_dialog_html .= "<input type='submit' class='btn btn-primary btn-sm' name='changeStatus' value='Save'>";
+	$status_dialog_html .= "</div></form></dialog>";
 
 	$edit_order_html = "<form method='get' action='editOrder.php'>";
 	$edit_order_html .= "<input type='hidden' name='order_id' value='" . $order->get_order_id() . "'>";
@@ -103,17 +111,37 @@ require_once 'includes/header.inc.php';
 <div class='col-lg-5'>
 <?php if (file_exists($order->get_thumbnail())) {
 	// Thumbnail beside the details on wide screens; stacks below on narrow ones.
+	// Clicking opens the full-size image in an in-page viewer (closes on a
+	// click outside the image or Esc). The link still works for middle-click
+	// / open in new tab.
+	$fullsize_url = "image.php?image_path=" . urlencode($order->get_fullsize());
 	echo "<div class='position-sticky' style='top: 80px;'>";
-	echo "<a href='image.php?image_path=" . urlencode($order->get_fullsize()) . "'>";
+	echo "<a href='" . $fullsize_url . "' onclick=\"event.preventDefault(); document.getElementById('imageDialog').showModal();\">";
 	echo "<img class='img-thumbnail d-block w-100' src='image.php?image_path=" . urlencode($order->get_thumbnail()) . "' alt='Poster preview'></a>";
 	echo "<div class='form-text text-center'>Click to view full size</div>";
 	echo "</div>";
+	echo "<dialog id='imageDialog' class='p-0 border-0 bg-transparent' style='max-width: 95vw; max-height: 95vh;'>";
+	echo "<img src='" . $fullsize_url . "' alt='Full size poster' style='display:block; max-width: 95vw; max-height: 95vh; object-fit: contain;'>";
+	echo "</dialog>";
 } else {
 	echo "<div class='text-muted'>No preview available</div>";
 }
 ?>
 </div>
 </div>
+<?php echo $status_dialog_html; ?>
+<style>
+	dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+</style>
+<script>
+// Close any dialog when clicking outside its content (on the dimmed backdrop).
+// A click on the backdrop reports the <dialog> element itself as the target.
+document.querySelectorAll('dialog').forEach(function (d) {
+	d.addEventListener('click', function (e) {
+		if (e.target === d) { d.close(); }
+	});
+});
+</script>
 <br>
 <?php if (isset($message)) { echo $message; } ?>
 <?php require_once '../includes/footer.inc.php'; ?>
