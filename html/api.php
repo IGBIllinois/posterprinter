@@ -259,6 +259,7 @@ function pickup_date_error(string $pickupDate): ?string
 // column at all otherwise, and staff need it.
 // ---------------------------------------------------------------
 const OPTIONAL_FIELD_MAX = 100;
+const COMMENTS_MAX       = 500;
 
 // Character count that works whether or not the mbstring extension is installed.
 function text_length(string $s): int
@@ -329,9 +330,8 @@ case 'upload':
     if ($dims === null) {
         @unlink(poster::get_tmp_path() . '/' . $tmpName);
         $session->set_session(['poster_upload' => null]);
-        fail('We could not determine the print dimensions of this file, and dimensions cannot be entered '
-           . 'manually. Please export your poster as a PDF (preferred) or a properly sized .pptx and upload '
-           . 'again. If you need help, email ' . SAME_DAY_CONTACT . '.');
+        fail('We could not automatically detect the dimensions of this file. Please export your poster '
+           . 'as a PDF and browse for it again. If you need assistance, email ' . SAME_DAY_CONTACT . '.');
     }
 
     $session->set_session(['poster_upload' => [
@@ -413,12 +413,37 @@ case 'submit':
 // ----------------------------------------------------------
     $_POST = array_map(fn($v) => is_string($v) ? trim($v) : $v, $_POST);
 
+    // Single-line fields: collapse runs of whitespace (double spaces, tabs,
+    // pasted line breaks) to one space. Comments keep their line breaks.
+    foreach (['name', 'email', 'additional_emails', 'pi', 'event', 'activityCode'] as $field) {
+        if (isset($_POST[$field]) && is_string($_POST[$field])) {
+            $_POST[$field] = preg_replace('/\s+/u', ' ', $_POST[$field]);
+        }
+    }
+
+    // Length caps. Name/email/additional emails match the orders table
+    // column sizes (orders_name VARCHAR(50), orders_email VARCHAR(30),
+    // orders_cc_emails VARCHAR(255)); longer values would be cut off by the
+    // database. Comments cap is a sanity limit (a few sentences).
+    $field_limits = [
+        'name'              => ['Full name', 50],
+        'email'             => ['Email', 30],
+        'additional_emails' => ['Additional emails', 255],
+        'comments'          => ['Comments', COMMENTS_MAX],
+    ];
+
     $up = $session->get_var('poster_upload');
     if (!$up || !file_exists(poster::get_tmp_path() . '/' . basename($up['tmpName']))) {
         fail('Your uploaded file has expired. Please upload it again.');
     }
 
     $errors = [];
+
+    foreach ($field_limits as $field => [$label, $max]) {
+        if (text_length($_POST[$field] ?? '') > $max) {
+            $errors[] = $label . ' must be ' . $max . ' characters or fewer';
+        }
+    }
 
     if (!verify::verify_name($_POST['name'] ?? '')) {
         $errors[] = 'Please enter your first and last name';

@@ -52,22 +52,22 @@ else {
 	$status_html .= "<button type='button' class='btn btn-primary btn-sm' onclick=\"document.getElementById('statusDialog').showModal()\">Change</button>";
 	$status_html .= "</div>";
 
-	$status_dialog_html  = "<dialog id='statusDialog' class='border rounded shadow p-0' style='min-width: 280px;'>";
-	$status_dialog_html .= "<form class='p-3' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?order_id=" . (int) $order_id . "' method='post'>";
-	$status_dialog_html .= "<h6 class='mb-3'>Change status of order #" . (int) $order_id . "</h6>";
+	$status_dialog_html  = "<dialog id='statusDialog' class='border rounded shadow p-0' style='width: 460px; max-width: 95vw; font-size: 1.15rem;'>";
+	$status_dialog_html .= "<form class='p-4' action='" . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES) . "?order_id=" . (int) $order_id . "' method='post'>";
+	$status_dialog_html .= "<h5 class='mb-4'>Change status of order #" . (int) $order_id . "</h5>";
 	foreach (order::get_all_statuses() as $possible_status) {
 		$safe   = htmlspecialchars($possible_status, ENT_QUOTES);
 		$id     = 'status_' . preg_replace('/[^a-z0-9]/i', '', $possible_status);
-		$status_dialog_html .= "<div class='form-check'>";
+		$status_dialog_html .= "<div class='form-check mb-2'>";
 		$status_dialog_html .= "<input class='form-check-input' type='radio' name='status' id='" . $id . "' value='" . $safe . "'"
 		                     . ($possible_status == $current_status ? " checked" : "") . ">";
 		$status_dialog_html .= "<label class='form-check-label' for='" . $id . "'>" . $safe . "</label>";
 		$status_dialog_html .= "</div>";
 	}
 	// Cancel and Save share the row equally (flex-fill gives each the same width).
-	$status_dialog_html .= "<div class='d-flex gap-2 mt-3'>";
-	$status_dialog_html .= "<button type='button' class='btn btn-secondary btn-sm flex-fill' onclick=\"this.closest('dialog').close()\">Cancel</button>";
-	$status_dialog_html .= "<input type='submit' class='btn btn-primary btn-sm flex-fill' name='changeStatus' value='Save'>";
+	$status_dialog_html .= "<div class='d-flex gap-3 mt-4'>";
+	$status_dialog_html .= "<button type='button' class='btn btn-secondary flex-fill' onclick=\"this.closest('dialog').close()\">Cancel</button>";
+	$status_dialog_html .= "<input type='submit' class='btn btn-primary flex-fill' name='changeStatus' value='Save'>";
 	$status_dialog_html .= "</div></form></dialog>";
 
 	$edit_order_html = "<form method='get' action='editOrder.php'>";

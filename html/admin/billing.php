@@ -20,12 +20,18 @@ $orders_html = "";
 if (count($orders) == 0) { $orders_html = "<tr><td colspan='5'>No Orders</td></tr>"; }
 else {
 	foreach ($orders as $order) {
-		$orders_html .= "<tr>"; 
+		// Cancelled orders are listed for the record but are NOT billed:
+		// the monthly total, both report exports and the statistics all
+		// count only 'Completed' orders. Gray them out so that is visible.
+		$is_cancelled = ($order["orders_status"] == 'Cancel');
+		$orders_html .= $is_cancelled ? "<tr class='table-secondary text-muted'>" : "<tr>";
 		$orders_html .= "<td><a href='order.php?order_id=" . $order["orders_id"] . "'>" . $order["orders_id"] . "</a></td>";
 		$orders_html .= "<td>" . $order["orders_email"] . "</td>";
 		$orders_html .= "<td>$" . $order["orders_totalCost"] . "</td>";
 		$orders_html .= "<td><a href='download.php?orderId=" . $order["orders_id"] . "'>" . $order["orders_fileName"] . "</a></td>";
-		$orders_html .= "<td>" . $order["orders_status"]  . "</td>";
+		$orders_html .= $is_cancelled
+			? "<td><em>Cancelled (not billed)</em></td>"
+			: "<td>" . htmlspecialchars($order["orders_status"], ENT_QUOTES) . "</td>";
 		$orders_html .= "</tr>";
 	
 	}

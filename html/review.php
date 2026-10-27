@@ -104,6 +104,7 @@ require_once 'includes/header.inc.php';
 ?>
 <?php if (!empty($error)) { echo "<div class='alert alert-danger'>" . $e($error) . "</div>"; } ?>
 <div class='row'>
+<div class='col-lg-7'>
 <table class='table table-bordered table-sm'>
 <thead class='thead-dark'>
 <tr><th colspan='2'>Review Your Order</th></tr>
@@ -130,16 +131,38 @@ require_once 'includes/header.inc.php';
 <tr><td>PI</td><td><?php echo $e($o['pi'] ?? ''); ?></td></tr>
 <tr><td>Event</td><td><?php echo $e($o['event'] ?? ''); ?></td></tr>
 <tr><td>Comments</td><td><?php echo nl2br($e($o['userComments'] ?? '')); ?></td></tr>
-<?php
-$thumbPath = poster::get_tmp_path() . '/' . basename($o['posterThumbFileTmpName'] ?? '');
-if (!empty($o['posterThumbFileTmpName']) && file_exists($thumbPath)) {
-    echo "<tr><td colspan='2'><img class='img-thumbnail mx-auto d-block' src='image.php?image_path=" . urlencode($thumbPath) . "'></td></tr>";
-} else {
-    echo "<tr><td colspan='2'>No Preview</td></tr>";
-}
-?>
 </table>
 </div>
+<div class='col-lg-5'>
+<?php
+// Same layout as the admin order page: thumbnail beside the details, click
+// for the full-size image in an in-page viewer (click outside / Esc closes).
+$thumbPath    = poster::get_tmp_path() . '/' . basename($o['posterThumbFileTmpName'] ?? '');
+$fullsizePath = poster::get_tmp_path() . '/fullsize_' . pathinfo(basename($o['posterFileTmpName']), PATHINFO_FILENAME) . '.jpg';
+if (!empty($o['posterThumbFileTmpName']) && file_exists($thumbPath)) {
+    $fullUrl = file_exists($fullsizePath)
+        ? 'image.php?image_path=' . urlencode($fullsizePath)
+        : 'image.php?image_path=' . urlencode($thumbPath);
+    echo "<div class='position-sticky' style='top: 80px;'>";
+    echo "<a href='" . $fullUrl . "' onclick=\"event.preventDefault(); document.getElementById('imageDialog').showModal();\">";
+    echo "<img class='img-thumbnail d-block w-100' src='image.php?image_path=" . urlencode($thumbPath) . "' alt='Poster preview'></a>";
+    echo "<div class='form-text text-center'>Click to view full size</div>";
+    echo "</div>";
+    echo "<dialog id='imageDialog' class='p-0 border-0 bg-transparent' style='max-width: 95vw; max-height: 95vh;'>";
+    echo "<img src='" . $fullUrl . "' alt='Full size poster' style='display:block; max-width: 95vw; max-height: 95vh; object-fit: contain;'>";
+    echo "</dialog>";
+} else {
+    echo "<div class='text-muted'>No preview available</div>";
+}
+?>
+</div>
+</div>
+<style>dialog::backdrop { background: rgba(0, 0, 0, 0.6); }</style>
+<script>
+document.querySelectorAll('dialog').forEach(function (d) {
+	d.addEventListener('click', function (e) { if (e.target === d) { d.close(); } });
+});
+</script>
 <p></p>
 <div class='row'>
 	<div class='mx-auto btn-toolbar'>

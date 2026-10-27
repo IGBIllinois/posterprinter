@@ -65,16 +65,16 @@ require_once 'includes/header.inc.php';
 		<thead class='thead-dark'>
 		<tr><th colspan='2'>Poster File</th></tr>
 		<tr><td colspan='2'><em>Upload your poster file (Max <?php echo ini_get('post_max_size'); ?>).
-		Dimensions are detected automatically from the file and cannot be entered by hand.
-		If the detected size is wrong, correct your file and use "Replace File".</em></td></tr>
+		Dimensions are detected automatically from the file.</em></td></tr>
 		</thead>
 		<tr>
 			<td class='text-end' style='vertical-align:middle; width:25%;'>File</td>
 			<td>
-				<input class='form-control' type='file' name='posterFile' id='posterFile'>
-				<div class='mt-1'>
-					<span id='currentFile' class='form-text'></span>
-					<button type='button' class='btn btn-outline-secondary btn-sm ms-2' id='replaceFile' style='display:none;'>Replace File</button>
+				<!-- The native file input is hidden; the Browse button opens it. -->
+				<input class='d-none' type='file' name='posterFile' id='posterFile'>
+				<div class='d-flex align-items-center justify-content-between'>
+					<span id='currentFile' class='text-muted'>No file selected</span>
+					<button type='button' class='btn btn-outline-secondary btn-sm' id='browseFile'>Browse...</button>
 				</div>
 				<div class='progress mt-2' style='height: 24px; display:none;' id='uploadProgressWrap'>
 					<div id='uploadProgress' class='progress-bar progress-bar-striped progress-bar-animated'
@@ -169,15 +169,15 @@ require_once 'includes/header.inc.php';
 		</thead>
 		<tr>
 			<td class='text-end' style='vertical-align:middle; width:25%;'>Full Name</td>
-			<td><input class='form-control' type='text' name='name' id='name'></td>
+			<td><input class='form-control' type='text' name='name' id='name' maxlength='50'></td>
 		</tr>
 		<tr>
 			<td class='text-end' style='vertical-align:middle;'>Email</td>
-			<td><input class='form-control' type='text' name='email' id='email'></td>
+			<td><input class='form-control' type='text' name='email' id='email' maxlength='30'></td>
 		</tr>
 		<tr>
 			<td class='text-end' style='vertical-align:middle;'>Additional Emails</td>
-			<td><input class='form-control' type='text' name='additional_emails' id='additional_emails'></td>
+			<td><input class='form-control' type='text' name='additional_emails' id='additional_emails' maxlength='255'></td>
 		</tr>
 		<tr>
 			<td class='text-end' style='vertical-align:middle;'>CFOP Number</td>
@@ -204,7 +204,8 @@ require_once 'includes/header.inc.php';
 		</tr>
 		<tr>
 			<td class='text-end'>Comments</td>
-			<td><textarea class='form-control' id='comments' name='comments' rows='3'></textarea></td>
+			<td><textarea class='form-control' id='comments' name='comments' rows='3' maxlength='500'></textarea>
+			<div class='form-text text-end'><span id='commentsCount'>0</span> / 500</div></td>
 		</tr>
 	</table>
 </div>
@@ -226,6 +227,7 @@ require_once 'includes/header.inc.php';
 	'use strict';
 
 	var SESSION_ID = '<?php echo $session_id; ?>';
+	var DIMENSIONS_DETECTED_TEXT = 'Dimensions detected automatically. To change them, edit your file and browse for it again.';
 	var PREFILL = <?php echo $prefill; ?>;
 
 	// ---- tiny helpers -------------------------------------------------
@@ -263,20 +265,25 @@ require_once 'includes/header.inc.php';
 		});
 	}
 
+	// Live character count under Comments.
+	function updateCommentsCount() { $id('commentsCount').textContent = $id('comments').value.length; }
+	$id('comments').addEventListener('input', updateCommentsCount);
+
 	// ---- state --------------------------------------------------------
 	var fileUploaded = false;
 	var optionsLoadedFor = '';
 
 	function setUploadedFileUI(fileName) {
-		$id('currentFile').textContent = 'Current file: ' + fileName;
-		$id('replaceFile').style.display = 'inline-block';
+		$id('currentFile').textContent = fileName;
+		$id('currentFile').classList.remove('text-muted');
 	}
 	function clearUploadedFileUI() {
-		$id('currentFile').textContent = '';
-		$id('replaceFile').style.display = 'none';
+		$id('currentFile').textContent = 'No file selected';
+		$id('currentFile').classList.add('text-muted');
 	}
 
-	$id('replaceFile').addEventListener('click', function () {
+	// Browse opens the hidden file input; choosing again replaces the file.
+	$id('browseFile').addEventListener('click', function () {
 		$id('posterFile').click();
 	});
 
@@ -319,8 +326,7 @@ require_once 'includes/header.inc.php';
 			$id('dimensionsRow').style.display = 'table-row';
 			$id('width').value = r.width;
 			$id('length').value = r.height;
-			$id('dimensionStatus').textContent =
-				'Detected from your file. If these are wrong, correct the file and use "Replace File".';
+			$id('dimensionStatus').textContent = DIMENSIONS_DETECTED_TEXT;
 			loadOptions();
 		} catch (err) {
 			wrap.style.display = 'none';
@@ -538,7 +544,7 @@ require_once 'includes/header.inc.php';
 		$id('width').value = PREFILL.width;
 		$id('length').value = PREFILL.length;
 		$id('dimensionsConfirmed').checked = true; // was confirmed before review
-		$id('dimensionStatus').textContent = 'Detected from your file.';
+		$id('dimensionStatus').textContent = DIMENSIONS_DETECTED_TEXT;
 
 		if (!(await loadOptions())) return;
 
@@ -555,6 +561,7 @@ require_once 'includes/header.inc.php';
 		['cfop1', 'cfop2', 'cfop3', 'cfop4'].forEach(function (id, i) {
 			$id(id).value = (PREFILL.cfop && PREFILL.cfop[i] != null) ? PREFILL.cfop[i] : '';
 		});
+		updateCommentsCount();
 		$id('pickupDate').value = PREFILL.pickupDate || '';
 		if (PREFILL.pickupDate) {
 			$id('pickupDate').dispatchEvent(new Event('change'));
