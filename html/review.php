@@ -109,35 +109,55 @@ require_once 'includes/header.inc.php';
 <!-- Full-window two-panel layout (breaks out of the narrow page container). -->
 <div class='split-layout review-breakout'>
 <div class='split-details'>
-<table class='table table-bordered table-sm detail-table'>
+<?php
+$rv_comments = (string) ($o['userComments'] ?? '');
+$rv_flat     = trim(preg_replace('/\s+/u', ' ', $rv_comments));
+$rv_preview  = function_exists('mb_substr') ? mb_substr($rv_flat, 0, 20) : substr($rv_flat, 0, 20);
+$rv_is_rush  = (($o['rushOrderName'] ?? '') === 'Yes');
+?>
+<table class='table table-bordered table-sm detail-table order-sections'>
 <thead class='thead-dark'>
 <tr><th colspan='2'>Review Your Order</th></tr>
 <tr><td colspan='2'><em>Please review your order below, then click "Submit Order" to send your order.</em></td></tr>
-</thead>
 <?php if ($o['rotated']) { ?>
 <tr><td colspan='2'><em>Your width and length have been flipped to save paper and money.  This won't affect the size of your poster.</em></td></tr>
 <?php } ?>
+</thead>
+
+<tbody>
+<tr class='section-head'><th colspan='2'>Customer &amp; Billing</th></tr>
+<tr><td>Full Name</td><td><?php echo $e($o['name']); ?></td></tr>
+<tr><td>Email</td><td><?php echo $e($o['email']); ?></td></tr>
+<tr><td>Additional Emails</td><td><?php echo $e($o['additional_emails']); ?></td></tr>
+<tr><td>PI</td><td><?php echo $e($o['pi'] ?? ''); ?></td></tr>
+<tr><td>CFOP</td><td><?php echo $e($o['cfop']); ?></td></tr>
+<tr><td>Activity Code</td><td><?php echo $e($o['activityCode']); ?></td></tr>
+<tr><td>Total Cost</td><td>$<?php echo $e($o['totalCost']); ?></td></tr>
+</tbody>
+
+<tbody>
+<tr class='section-head'><th colspan='2'>Poster &amp; Print</th></tr>
+<tr<?php echo $rv_is_rush ? " class='rush-row'" : ""; ?>><td>Rush Order</td><td><?php echo $rv_is_rush ? "<strong>Yes</strong>" : $e($o['rushOrderName']); ?></td></tr>
 <tr><td>Poster File</td><td><?php echo $e($o['posterFileName']); ?></td></tr>
-<tr><td>Poster Filesize</td><td><?php echo $e(functions::convert_bytes_to_megabytes($o['posterFileSize'])); ?>MB</td></tr>
-<tr><td>Width</td><td><?php echo $e($o['width']); ?> inches</td></tr>
-<tr><td>Length</td><td><?php echo $e($o['length']); ?> inches</td></tr>
+<tr><td>File Size</td><td><?php echo $e(functions::convert_bytes_to_megabytes($o['posterFileSize'])); ?>MB</td></tr>
+<tr><td>Size</td><td><?php echo $e($o['width']); ?>'' &times; <?php echo $e($o['length']); ?>'' <span class='text-muted'>(width &times; length)</span></td></tr>
 <tr><td>Paper Type</td><td><?php echo $e($o['paperTypeName']); ?></td></tr>
 <tr><td>Finish Option</td><td><?php echo $e($o['finishOptionName']); ?></td></tr>
 <tr><td>Poster Tube</td><td><?php echo $e($o['posterTubeName']); ?></td></tr>
-<tr><td>Rush Order</td><td><?php echo $e($o['rushOrderName']); ?></td></tr>
+</tbody>
+
+<tbody>
+<tr class='section-head'><th colspan='2'>Dates &amp; Details</th></tr>
 <tr><td>Pick Up Date</td><td><?php echo $e($o['pickupDate']); ?></td></tr>
-<tr><td>Total Cost</td><td>$<?php echo $e($o['totalCost']); ?></td></tr>
-<tr><td>CFOP</td><td><?php echo $e($o['cfop']); ?></td></tr>
-<tr><td>Activity Code</td><td><?php echo $e($o['activityCode']); ?></td></tr>
-<tr><td>Email</td><td><?php echo $e($o['email']); ?></td></tr>
-<tr><td>Additional Emails</td><td><?php echo $e($o['additional_emails']); ?></td></tr>
-<tr><td>Full Name</td><td><?php echo $e($o['name']); ?></td></tr>
-<tr><td>PI</td><td><?php echo $e($o['pi'] ?? ''); ?></td></tr>
 <tr><td>Event</td><td><?php echo $e($o['event'] ?? ''); ?></td></tr>
-<tr><td>Comments</td><td><?php if (($o['userComments'] ?? '') !== '') { ?>
-	<details class='comments'><summary>Show comments</summary>
-	<div class='mt-2'><?php echo nl2br($e($o['userComments'])); ?></div></details>
+<tr><td>Comments</td><td><?php if ($rv_comments !== '') { ?>
+	<div class='comment-toggle'>
+		<button type='button' class='toggle-box' aria-expanded='false' aria-label='Show full comments'>&#9656;</button>
+		<span class='comment-preview'><?php echo $e($rv_preview); ?>...</span>
+		<span class='comment-full' hidden><?php echo nl2br($e($rv_comments)); ?></span>
+	</div>
 <?php } ?></td></tr>
+</tbody>
 </table>
 </div>
 <div class='split-preview'>
@@ -151,7 +171,7 @@ if (!empty($o['posterThumbFileTmpName']) && file_exists($thumbPath)) {
         ? 'image.php?image_path=' . urlencode($fullsizePath)
         : 'image.php?image_path=' . urlencode($thumbPath);
 	echo "<a href='" . $fullUrl . "' onclick=\"event.preventDefault(); document.getElementById('imageDialog').showModal();\">";
-	echo "<img class='img-thumbnail preview-thumb' src='" . 'image.php?image_path=' . urlencode($thumbPath) . "' alt='Poster preview'></a>";
+	echo "<img class='preview-image border rounded' src='" . $fullUrl . "' alt='Poster preview'></a>";
 	echo "<div class='form-text'>Click to view full size</div>";
 	echo "<dialog id='imageDialog' class='p-0 border-0 bg-transparent' style='max-width: 95vw; max-height: 95vh;'>";
 	echo "<img src='" . $fullUrl . "' alt='Full size poster' style='display:block; max-width: 95vw; max-height: 95vh; object-fit: contain;'>";
@@ -176,7 +196,20 @@ if (!empty($o['posterThumbFileTmpName']) && file_exists($thumbPath)) {
 	.detail-table { table-layout: fixed; width: 100%; }
 	.detail-table td { overflow-wrap: anywhere; word-break: break-word; }
 	.detail-table td:first-child { width: 9.5rem; }
-	details.comments summary { cursor: pointer; color: var(--bs-link-color, #0d6efd); }
+	/* Comments: a small boxed arrow plus a 20-character preview. Clicking the
+	   arrow (or the preview) swaps the preview for the full text in place;
+	   the arrow stays put so it can be clicked again to collapse. */
+	.comment-toggle { display: flex; align-items: flex-start; gap: 0.4rem; }
+	.comment-toggle .toggle-box { flex: none; border: 1px solid #adb5bd; border-radius: 3px; background: #f8f9fa;
+		font-size: 0.7rem; line-height: 1; padding: 3px 5px; margin-top: 0.25rem; cursor: pointer; color: #212529; }
+	.comment-toggle .toggle-box:hover { background: #e9ecef; }
+	.comment-toggle .comment-preview { cursor: pointer; }
+	/* Preview image: use the large rendering and let it fill its panel. */
+	.split-preview img.preview-image { width: 100%; height: auto; max-height: 85vh; object-fit: contain; display: block; }
+	.order-sections tbody + tbody { border-top: 3px solid #adb5bd; }
+	.order-sections tr.section-head th { background: #e9ecef; font-size: 0.85rem;
+		text-transform: uppercase; letter-spacing: 0.04em; color: #495057; padding-top: 0.4rem; }
+	.order-sections tr.rush-row td { background: #f8d7da; }
 	dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
 	/* Use the whole window width with a comfortable left margin. */
 	.review-breakout { width: 100vw; margin-left: calc(50% - 50vw); padding: 0 2.5rem; }
@@ -186,6 +219,20 @@ if (!empty($o['posterThumbFileTmpName']) && file_exists($thumbPath)) {
 // Close any dialog when clicking outside its content (on the dimmed backdrop).
 document.querySelectorAll('dialog').forEach(function (d) {
 	d.addEventListener('click', function (e) { if (e.target === d) { d.close(); } });
+});
+</script>
+<script>
+document.querySelectorAll('.comment-toggle').forEach(function (t) {
+	var box = t.querySelector('.toggle-box'), preview = t.querySelector('.comment-preview'), full = t.querySelector('.comment-full');
+	function toggle() {
+		var opening = full.hidden;
+		full.hidden = !opening;
+		preview.hidden = opening;
+		box.textContent = opening ? '\u25BE' : '\u25B8';
+		box.setAttribute('aria-expanded', opening ? 'true' : 'false');
+	}
+	box.addEventListener('click', toggle);
+	preview.addEventListener('click', toggle);
 });
 </script>
 

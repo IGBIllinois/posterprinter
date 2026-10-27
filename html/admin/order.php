@@ -64,7 +64,7 @@ else {
 	$current_status = $order->get_status();
 	$status_html  = "<div class='d-flex align-items-center justify-content-between'>";
 	$status_html .= "<span>" . htmlspecialchars($current_status, ENT_QUOTES) . "</span>";
-	$status_html .= "<button type='button' class='btn btn-primary btn-sm' onclick=\"document.getElementById('statusDialog').showModal()\">Change</button>";
+	$status_html .= "<button type='button' class='btn btn-primary btn-sm header-btn' onclick=\"document.getElementById('statusDialog').showModal()\">Change</button>";
 	$status_html .= "</div>";
 
 	$status_dialog_html  = "<dialog id='statusDialog' class='border rounded shadow p-0' style='width: 540px; max-width: 95vw; font-size: 1.25rem;'>";
@@ -86,7 +86,7 @@ else {
 	$status_dialog_html .= "</div></form></dialog>";
 
 	// Small button that sits in the table header (right side).
-	$edit_order_html = "<a class='btn btn-primary btn-sm' href='editOrder.php?order_id=" . (int) $order->get_order_id() . "'>Edit Order</a>";
+	$edit_order_html = "<a class='btn btn-primary btn-sm header-btn' href='editOrder.php?order_id=" . (int) $order->get_order_id() . "'>Edit Order</a>";
 }
 
 $file_link = "<a href='download.php?orderId=" . $order->get_order_id() . "'>" . $order->get_filename() . "</a>";
@@ -137,7 +137,7 @@ $is_rush = ($order->get_rush_order_name() === 'Yes');
 
 <tbody>
 <tr class='section-head'><th colspan='2'>Poster &amp; Print</th></tr>
-<tr><td class='text-end'>Rush Order</td><td><?php echo $is_rush ? "<strong class='text-danger'>Yes</strong>" : $h($order->get_rush_order_name()); ?></td></tr>
+<tr<?php echo $is_rush ? " class='rush-row'" : ""; ?>><td class='text-end'>Rush Order</td><td><?php echo $is_rush ? "<strong>Yes</strong>" : $h($order->get_rush_order_name()); ?></td></tr>
 <tr><td class='text-end'>File</td><td><?php echo $file_link; ?></td></tr>
 <tr><td class='text-end'>File Size</td><td><?php echo $h($order->get_filesize()); ?>MB</td></tr>
 <tr><td class='text-end'>Size</td><td><?php echo $h($order->get_width()); ?>'' &times; <?php echo $h($order->get_length()); ?>'' <span class='text-muted'>(width &times; length)</span></td></tr>
@@ -162,8 +162,11 @@ $customer_comments = trim(preg_replace('/^(PI|Event|Requested pickup): .*$\R?/m'
 	$preview = function_exists('mb_substr') ? mb_substr($flat, 0, 20) : substr($flat, 0, 20);
 	$full    = nl2br(wordwrap(htmlspecialchars($customer_comments, ENT_QUOTES), 80, "\n", true));
 ?>
-	<details class='comments'><summary><?php echo htmlspecialchars($preview, ENT_QUOTES); ?>...</summary>
-	<div class='mt-2'><?php echo $full; ?></div></details>
+	<div class='comment-toggle'>
+		<button type='button' class='toggle-box' aria-expanded='false' aria-label='Show full comments'>&#9656;</button>
+		<span class='comment-preview'><?php echo htmlspecialchars($preview, ENT_QUOTES); ?>...</span>
+		<span class='comment-full' hidden><?php echo $full; ?></span>
+	</div>
 <?php } ?></td></tr>
 </tbody>
 </table>
@@ -176,7 +179,8 @@ $customer_comments = trim(preg_replace('/^(PI|Event|Requested pickup): .*$\R?/m'
 	// / open in new tab.
 	$fullsize_url = "image.php?image_path=" . urlencode($order->get_fullsize());
 	echo "<a href='" . $fullsize_url . "' onclick=\"event.preventDefault(); document.getElementById('imageDialog').showModal();\">";
-	echo "<img class='img-thumbnail preview-thumb' src='" . 'image.php?image_path=' . urlencode($order->get_thumbnail()) . "' alt='Poster preview'></a>";
+	$panel_src = file_exists($order->get_fullsize()) ? $fullsize_url : 'image.php?image_path=' . urlencode($order->get_thumbnail());
+	echo "<img class='preview-image border rounded' src='" . $panel_src . "' alt='Poster preview'></a>";
 	echo "<div class='form-text'>Click to view full size</div>";
 	echo "<dialog id='imageDialog' class='p-0 border-0 bg-transparent' style='max-width: 95vw; max-height: 95vh;'>";
 	echo "<img src='" . $fullsize_url . "' alt='Full size poster' style='display:block; max-width: 95vw; max-height: 95vh; object-fit: contain;'>";
@@ -188,6 +192,20 @@ $customer_comments = trim(preg_replace('/^(PI|Event|Requested pickup): .*$\R?/m'
 </div>
 </div>
 <?php echo $status_dialog_html; ?>
+<script>
+document.querySelectorAll('.comment-toggle').forEach(function (t) {
+	var box = t.querySelector('.toggle-box'), preview = t.querySelector('.comment-preview'), full = t.querySelector('.comment-full');
+	function toggle() {
+		var opening = full.hidden;
+		full.hidden = !opening;
+		preview.hidden = opening;
+		box.textContent = opening ? '\u25BE' : '\u25B8';
+		box.setAttribute('aria-expanded', opening ? 'true' : 'false');
+	}
+	box.addEventListener('click', toggle);
+	preview.addEventListener('click', toggle);
+});
+</script>
 <style>
 	/* Two-panel layout: order details | poster preview.
 	   Each panel gets half the width (flex: 1 1 0). The details panel has a
@@ -202,13 +220,26 @@ $customer_comments = trim(preg_replace('/^(PI|Event|Requested pickup): .*$\R?/m'
 	.detail-table { table-layout: fixed; width: 100%; }
 	.detail-table td { overflow-wrap: anywhere; word-break: break-word; }
 	.detail-table td:first-child { width: 9.5rem; }
-	details.comments summary { cursor: pointer; color: var(--bs-link-color, #0d6efd); }
 	dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
 	/* Sections: a shaded heading row per group and a heavier line between groups. */
 	.order-sections tbody + tbody { border-top: 3px solid #adb5bd; }
 	.order-sections tr.section-head th { background: #e9ecef; font-size: 0.85rem;
 		text-transform: uppercase; letter-spacing: 0.04em; color: #495057; padding-top: 0.4rem; }
 	.order-sections tr.status-row td { background: #f8f9fa; font-weight: 500; }
+	/* Header/status buttons: same size, normal (not uppercase) text. */
+	.header-btn { width: 6.5rem; text-transform: none; letter-spacing: normal; font-size: 0.875rem; }
+	.order-sections tr.rush-row td { background: #f8d7da; }
+	/* Comments: a small boxed arrow plus a 20-character preview. Clicking the
+	   arrow (or the preview) swaps the preview for the full text in place;
+	   the arrow stays put so it can be clicked again to collapse. */
+	.comment-toggle { display: flex; align-items: flex-start; gap: 0.4rem; }
+	.comment-toggle .toggle-box { flex: none; border: 1px solid #adb5bd; border-radius: 3px; background: #f8f9fa;
+		font-size: 0.7rem; line-height: 1; padding: 3px 5px; margin-top: 0.25rem; cursor: pointer; color: #212529; }
+	.comment-toggle .toggle-box:hover { background: #e9ecef; }
+	.comment-toggle .comment-preview { cursor: pointer; }
+	/* Preview image: use the large rendering and let it fill its panel. */
+	.split-preview img.preview-image { width: 100%; height: auto; max-height: 85vh; object-fit: contain; display: block; }
+
 </style>
 <script>
 // Close any dialog when clicking outside its content (on the dimmed backdrop).

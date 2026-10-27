@@ -81,12 +81,14 @@ if (isset($_POST['editOrder'])) {
 	}
 }
 
-// Builds a <select>; $options is id => label.
-function select_html(string $name, array $options, $selected): string {
-	$html = "<select class='form-select form-select-sm' name='" . $name . "'>";
+// Builds a <select>; $options is id => label. $attrs (optional) returns
+// extra attributes for an option id, used to tag laminate-related rows.
+function select_html(string $name, array $options, $selected, ?callable $attrs = null): string {
+	$html = "<select class='form-select form-select-sm' name='" . $name . "' id='" . $name . "'>";
 	foreach ($options as $id => $label) {
-		$sel = ((string) $id === (string) $selected) ? " selected" : "";
-		$html .= "<option value='" . (int) $id . "'" . $sel . ">" . htmlspecialchars((string) $label, ENT_QUOTES) . "</option>";
+		$sel   = ((string) $id === (string) $selected) ? " selected" : "";
+		$extra = $attrs ? $attrs((int) $id) : "";
+		$html .= "<option value='" . (int) $id . "'" . $sel . $extra . ">" . htmlspecialchars((string) $label, ENT_QUOTES) . "</option>";
 	}
 	return $html . "</select>";
 }
@@ -129,8 +131,10 @@ require_once 'includes/header.inc.php';
 	</div>
 </td></tr>
 <tr><td class='text-end align-middle'>Activity Code</td><td><input class='form-control form-control-sm' style='width: 8rem;' type='text' name='activityCode' maxlength='6' value='<?php echo $h($cur['activityCode']); ?>'></td></tr>
-<tr><td class='text-end align-middle'>Paper Type</td><td><?php echo select_html('paperType', $validPapers, $cur['paperType']); ?></td></tr>
-<tr><td class='text-end align-middle'>Finish Option</td><td><?php echo select_html('finishOption', $validFinishes, $cur['finishOption']); ?></td></tr>
+<tr><td class='text-end align-middle'>Paper Type</td><td><?php echo select_html('paperType', $validPapers, $cur['paperType'],
+	fn($id) => rules::paper_rejects_laminate($id) ? " data-no-laminate='1'" : ""); ?></td></tr>
+<tr><td class='text-end align-middle'>Finish Option</td><td><?php echo select_html('finishOption', $validFinishes, $cur['finishOption'],
+	fn($id) => (rules::finish_is_laminate($id) ? " data-laminate='1'" : "") . (rules::finish_is_none($id) ? " data-none='1'" : "")); ?></td></tr>
 <tr><td class='text-end align-middle'>Poster Tube</td><td><?php echo select_html('posterTube', array_column($posterTubes, 'posterTube_name', 'posterTube_id'), $cur['posterTube']); ?></td></tr>
 <tr><td class='text-end align-middle'>Rush Order</td><td><?php echo select_html('rushOrder', array_column($rushOrders, 'rushOrder_name', 'rushOrder_id'), $cur['rushOrder']); ?></td></tr>
 </tbody>
@@ -141,6 +145,26 @@ require_once 'includes/header.inc.php';
 
 <style>.edit-table td:first-child { width: 10rem; }</style>
 <script>
+// Canvas / fine art selected: hide every laminate finish, and if one was
+// selected, switch to None. (The server enforces the same rule on save.)
+(function () {
+	var paper = document.getElementById('paperType'), finish = document.getElementById('finishOption');
+	function applyRule() {
+		var opt = paper.options[paper.selectedIndex];
+		var restrict = opt && opt.dataset.noLaminate === '1';
+		Array.prototype.forEach.call(finish.options, function (o) {
+			if (o.dataset.laminate === '1') { o.disabled = restrict; o.hidden = restrict; }
+		});
+		var cur = finish.options[finish.selectedIndex];
+		if (restrict && cur && cur.dataset.laminate === '1') {
+			var none = finish.querySelector("option[data-none='1']");
+			if (none) { none.selected = true; }
+		}
+	}
+	paper.addEventListener('change', applyRule);
+	applyRule();
+})();
+
 // CFOP boxes: jump to the next box when one is full.
 document.querySelectorAll('input.cfop').forEach(function (box, i, all) {
 	box.addEventListener('input', function () {
