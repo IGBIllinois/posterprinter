@@ -85,10 +85,8 @@ else {
 	$status_dialog_html .= "<input type='submit' class='btn btn-primary' style='width: 38%;' name='changeStatus' value='Save'>";
 	$status_dialog_html .= "</div></form></dialog>";
 
-	$edit_order_html = "<form method='get' action='editOrder.php'>";
-	$edit_order_html .= "<input type='hidden' name='order_id' value='" . $order->get_order_id() . "'>";
-	$edit_order_html .= "<button class='btn btn-primary' type='submit'>Edit Order</button>";
-	$edit_order_html .= "</form>";
+	// Small button that sits in the table header (right side).
+	$edit_order_html = "<a class='btn btn-primary btn-sm' href='editOrder.php?order_id=" . (int) $order->get_order_id() . "'>Edit Order</a>";
 }
 
 $file_link = "<a href='download.php?orderId=" . $order->get_order_id() . "'>" . $order->get_filename() . "</a>";
@@ -98,26 +96,6 @@ require_once 'includes/header.inc.php';
 ?>
 <div class='split-layout'>
 <div class='split-details'>
-<table class='table table-bordered table-striped table-sm detail-table'>
-<thead>
-<tr><th colspan='2'>Order Information</th></tr>
-</thead>
-<tr><td class='text-end'>Order Number</td><td><?php echo $order->get_order_id(); ?></td></tr>
-<tr><td class='text-end'>Email </td><td><?php echo $order->get_email() ?></td></tr>
-<tr><td class='text-end'>Additional Emails </td><td><?php echo $order->get_cc_emails() ?></td></tr>
-<tr><td class='text-end'>Full Name </td><td><?php echo $order->get_name() ?></td></tr>
-<tr><td class='text-end'>File</td><td><?php echo $file_link; ?></td></tr>
-<tr><td class='text-end'>File Size</td><td><?php echo $order->get_filesize(); ?>MB</td></tr>
-<tr><td class='text-end'>CFOP</td><td><?php echo $order->get_cfop(); ?></td></tr>
-<tr><td class='text-end'>Activity Code</td><td><?php echo $order->get_activity_code(); ?></td></tr>
-<tr><td class='text-end'>Time Created</td><td><?php echo $order->get_time_created(); ?></td></tr>
-<tr><td class='text-end'>Total Cost</td><td>$<?php echo $order->get_total_cost(); ?></td></tr>
-<tr><td class='text-end'>Width</td><td><?php echo $order->get_width(); ?>''</td></tr>
-<tr><td class='text-end'>Length</td><td><?php echo $order->get_length(); ?>''</td></tr>
-<tr><td class='text-end'>Paper Type</td><td><?php echo$order->get_paper_type_name(); ?></td></tr>
-<tr><td class='text-end'>Finish Option</td><td><?php echo $order->get_finish_option_name(); ?></td></tr>
-<tr><td class='text-end'>Poster Tube</td><td><?php echo $order->get_poster_tube_name(); ?></td></tr>
-<tr><td class='text-end'>Rush Order</td><td><?php echo $order->get_rush_order_name(); ?></td></tr>
 <?php
 // PI, Event and Requested pickup are stored as labeled lines at the top of
 // the comments (no DB columns yet). Pull each out into its own row so staff
@@ -129,18 +107,56 @@ foreach (array_keys($labeled) as $label) {
 		$labeled[$label] = trim($m[1]);
 	}
 }
+$h = fn($v) => htmlspecialchars((string) $v, ENT_QUOTES);
+$is_rush = ($order->get_rush_order_name() === 'Yes');
 ?>
-<tr><td class='text-end'>PI</td><td><?php echo htmlspecialchars($labeled['PI'], ENT_QUOTES); ?></td></tr>
-<tr><td class='text-end'>Event</td><td><?php echo htmlspecialchars($labeled['Event'], ENT_QUOTES); ?></td></tr>
-<tr><td class='text-end'>Requested Pickup</td><td><?php echo htmlspecialchars($labeled['Requested pickup'], ENT_QUOTES); ?></td></tr>
+<table class='table table-bordered table-sm detail-table order-sections'>
+<thead>
+<tr><th colspan='2'>
+	<div class='d-flex align-items-center justify-content-between'>
+		<span>Order #<?php echo (int) $order->get_order_id(); ?></span>
+		<?php echo $edit_order_html; ?>
+	</div>
+</th></tr>
+</thead>
+
+<tbody>
+<tr class='status-row'><td class='text-end'>Status</td><td><?php echo $status_html; ?></td></tr>
+</tbody>
+
+<tbody>
+<tr class='section-head'><th colspan='2'>Customer &amp; Billing</th></tr>
+<tr><td class='text-end'>Full Name</td><td><?php echo $h($order->get_name()); ?></td></tr>
+<tr><td class='text-end'>Email</td><td><?php echo $h($order->get_email()); ?></td></tr>
+<tr><td class='text-end'>Additional Emails</td><td><?php echo $h($order->get_cc_emails()); ?></td></tr>
+<tr><td class='text-end'>PI</td><td><?php echo $h($labeled['PI']); ?></td></tr>
+<tr><td class='text-end'>CFOP</td><td><?php echo $h($order->get_cfop()); ?></td></tr>
+<tr><td class='text-end'>Activity Code</td><td><?php echo $h($order->get_activity_code()); ?></td></tr>
+<tr><td class='text-end'>Total Cost</td><td>$<?php echo $h($order->get_total_cost()); ?></td></tr>
+</tbody>
+
+<tbody>
+<tr class='section-head'><th colspan='2'>Poster &amp; Print</th></tr>
+<tr><td class='text-end'>Rush Order</td><td><?php echo $is_rush ? "<strong class='text-danger'>Yes</strong>" : $h($order->get_rush_order_name()); ?></td></tr>
+<tr><td class='text-end'>File</td><td><?php echo $file_link; ?></td></tr>
+<tr><td class='text-end'>File Size</td><td><?php echo $h($order->get_filesize()); ?>MB</td></tr>
+<tr><td class='text-end'>Size</td><td><?php echo $h($order->get_width()); ?>'' &times; <?php echo $h($order->get_length()); ?>'' <span class='text-muted'>(width &times; length)</span></td></tr>
+<tr><td class='text-end'>Paper Type</td><td><?php echo $h($order->get_paper_type_name()); ?></td></tr>
+<tr><td class='text-end'>Finish Option</td><td><?php echo $h($order->get_finish_option_name()); ?></td></tr>
+<tr><td class='text-end'>Poster Tube</td><td><?php echo $h($order->get_poster_tube_name()); ?></td></tr>
+</tbody>
+
+<tbody>
+<tr class='section-head'><th colspan='2'>Dates &amp; Details</th></tr>
+<tr><td class='text-end'>Submitted</td><td><?php echo $h($order->get_time_created()); ?></td></tr>
+<tr><td class='text-end'>Requested Pickup</td><td><?php echo $h($labeled['Requested pickup']); ?></td></tr>
+<tr><td class='text-end'>Event</td><td><?php echo $h($labeled['Event']); ?></td></tr>
 <tr><td class='text-end'>Comments</td><td><?php if (trim((string) $order->get_comments()) !== '') { ?>
 	<details class='comments'><summary>Show comments</summary>
 	<div class='mt-2'><?php echo $order->get_wordwrap_comments(); ?></div></details>
 <?php } ?></td></tr>
-<tr><td class='text-end' style='vertical-align:middle;'>Status</td><td><?php echo $status_html; ?></td></tr>
-
+</tbody>
 </table>
-<?php echo $edit_order_html; ?>
 </div>
 <div class='split-preview'>
 <?php if (file_exists($order->get_thumbnail())) {
@@ -178,6 +194,11 @@ foreach (array_keys($labeled) as $label) {
 	.detail-table td:first-child { width: 9.5rem; }
 	details.comments summary { cursor: pointer; color: var(--bs-link-color, #0d6efd); }
 	dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+	/* Sections: a shaded heading row per group and a heavier line between groups. */
+	.order-sections tbody + tbody { border-top: 3px solid #adb5bd; }
+	.order-sections tr.section-head th { background: #e9ecef; font-size: 0.85rem;
+		text-transform: uppercase; letter-spacing: 0.04em; color: #495057; padding-top: 0.4rem; }
+	.order-sections tr.status-row td { background: #f8f9fa; font-weight: 500; }
 </style>
 <script>
 // Close any dialog when clicking outside its content (on the dimmed backdrop).
