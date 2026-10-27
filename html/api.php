@@ -34,19 +34,44 @@ $session->set_session(['timeout' => time()]); // reset timeout, matching session
 
 // ---------------------------------------------------------------
 // Business rules - single source of truth. Change them here only.
-// TODO: move the lamination restriction into a DB column
-// (e.g. paperTypes.no_lamination TINYINT) and drop these constants.
 // ---------------------------------------------------------------
-// !! VERIFY ALL THREE IDs BEFORE DEPLOYING !!  The DB was reseeded at some
-// point and IDs changed (this is what broke lamination graying before).
-//   SELECT paperTypes_id, paperTypes_name FROM paperTypes;      -- adjust column names to your schema
-//   SELECT finishOptions_id, finishOptions_name FROM finishOptions;
-const LAMINATION_FINISH_ID          = 2;      // VERIFY: finishOptions id for Lamination
-const NO_FINISH_ID                  = 1;      // VERIFY: finishOptions id for None
 // Laminate only bonds to satin/glossy photo media. It does NOT adhere to
-// canvas or fine art (textured/absorbent) stock - this is a material
-// property, not a size or policy rule.
-const LAMINATION_RESTRICTED_PAPERS  = [18, 7]; // VERIFY: Graphic Matte Canvas, Fine Art Watercolor (radio values seen live in June 2026)
+// canvas or fine art (textured/absorbent) stock - a material property.
+//
+// TEMPORARY: matched by database ID. IDs differ between servers and the
+// tables contain duplicate rows, so CHECK THESE AGAINST THE DATABASE ON
+// EVERY SERVER this is deployed to:
+//   SELECT paperTypes_id, paperTypes_name FROM paperTypes;
+//   SELECT finishOptions_id, finishOptions_name FROM finishOptions;
+// This whole block will be removed once DB changes are approved, replaced
+// by available finish options stored per paper type in the database.
+// ---------------------------------------------------------------
+// Papers laminate does not bond to: Graphic Matte Canvas (1),
+// Fine Art Watercolor (7), Graphic Matte Canvas (Fabric) (17, 18).
+const NO_LAMINATE_PAPER_IDS = [1, 7, 17, 18];
+// Every finish row that involves laminate (plain Laminating, foam core
+// and gator board variants), available or not, as of igb-mac-box Oct 2026.
+// Listed broadly on purpose: which rows are active in production is
+// unknown, and this list is temporary.
+const LAMINATE_FINISH_IDS   = [2, 3, 4, 6, 7, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 22];
+// "None" finish rows, used to fall back when lamination gets disabled.
+const NO_FINISH_IDS         = [1, 8];
+
+function paper_rejects_laminate(int $paperId): bool
+{
+    return in_array($paperId, NO_LAMINATE_PAPER_IDS, true);
+}
+
+function finish_is_laminate(int $finishId): bool
+{
+    return in_array($finishId, LAMINATE_FINISH_IDS, true);
+}
+
+function finish_is_none(int $finishId): bool
+{
+    return in_array($finishId, NO_FINISH_IDS, true);
+}
+
 const RUSH_BUSINESS_HOURS           = 24;
 const BUSINESS_START_HOUR           = 8;      // 8:00 am
 const BUSINESS_END_HOUR             = 16;     // ...
@@ -346,7 +371,7 @@ case 'options':
             'cost'               => $p['cost'],
             'maxWidth'           => $p['width'] ?? null,
             'isDefault'          => (bool) $p['paperTypes_default'],
-            'restrictLamination' => in_array((int) $p['id'], LAMINATION_RESTRICTED_PAPERS, true),
+            'restrictLamination' => paper_rejects_laminate((int) $p['id']),
         ];
     }
 
@@ -357,8 +382,8 @@ case 'options':
             'name'         => $f['name'],
             'cost'         => $f['cost'],
             'isDefault'    => (bool) $f['finishOptions_default'],
-            'isLamination' => (int) $f['id'] === LAMINATION_FINISH_ID,
-            'isNone'       => (int) $f['id'] === NO_FINISH_ID,
+            'isLamination' => finish_is_laminate((int) $f['id']),
+            'isNone'       => finish_is_none((int) $f['id']),
         ];
     }
 
@@ -444,18 +469,22 @@ case 'submit':
     $paperTypesId    = (int) ($_POST['paperTypesId'] ?? 0);
     $finishOptionsId = (int) ($_POST['finishOptionsId'] ?? 0);
 
-    $validPaperIds  = array_map(fn($p) => (int) $p['id'], functions::getValidPaperTypes($db, $w, $l));
-    $validFinishIds = array_map(fn($f) => (int) $f['id'], functions::getValidFinishOptions($db, $w, $l));
+    // id => name for every option valid at these dimensions.
+    $validPapers   = array_column(functions::getValidPaperTypes($db, $w, $l), 'name', 'id');
+    $validFinishes = array_column(functions::getValidFinishOptions($db, $w, $l), 'name', 'id');
 
-    if (!in_array($paperTypesId, $validPaperIds, true)) {
+    if (!isset($validPapers[$paperTypesId])) {
         $errors[] = 'Please select a valid paper type';
     }
-    if (!in_array($finishOptionsId, $validFinishIds, true)) {
+    if (!isset($validFinishes[$finishOptionsId])) {
         $errors[] = 'Please select a valid finish option';
     }
 
-    // Lamination restriction enforced SERVER-SIDE (was client-only before).
-    if (in_array($paperTypesId, LAMINATION_RESTRICTED_PAPERS, true) && $finishOptionsId === LAMINATION_FINISH_ID) {
+    // Lamination restriction enforced SERVER-SIDE, so it holds even if the
+    // page's JavaScript is stale or bypassed.
+    if (isset($validPapers[$paperTypesId], $validFinishes[$finishOptionsId])
+        && paper_rejects_laminate($paperTypesId)
+        && finish_is_laminate($finishOptionsId)) {
         $errors[] = 'Lamination is not available for canvas or fine art media - the laminate does not bond to these materials';
     }
 
