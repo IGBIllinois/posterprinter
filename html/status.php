@@ -25,7 +25,10 @@ if (isset($_GET['order_id']) && is_numeric($_GET['order_id']) && isset($_GET['ke
     exit;
 }
 
-$isNew = isset($_GET['new']);
+$isNew  = isset($_GET['new']);
+// Rush is identified by the rushOrder row name 'Yes', the same way the
+// rest of the app (rush_order class) identifies it.
+$isRush = ($order->get_rush_order_name() === 'Yes');
 $e = fn($v) => htmlspecialchars((string) $v, ENT_QUOTES);
 
 require_once 'includes/header.inc.php';
@@ -33,8 +36,11 @@ require_once 'includes/header.inc.php';
 <?php if ($isNew) { ?>
 <div class='alert alert-success'>
 	<strong>Thank you for your order.</strong>
+	<?php if ($isRush) { ?>
+	This is a <strong>rush order</strong> and will be completed within <strong><?php echo $e(settings::get_rush_order_timeframe()); ?> business hours</strong>.
+	<?php } else { ?>
 	Your order will be completed within <strong><?php echo $e(settings::get_order_timeframe()); ?> business hours</strong>.
-	If it is a rush order, it will be completed within <strong><?php echo $e(settings::get_rush_order_timeframe()); ?> business hours</strong>.
+	<?php } ?>
 	An email has been sent to you at <?php echo $e($order->get_email()); ?> with this information.
 	We will email you when the poster is completed printing.
 	You can bookmark this page to check your order status.
@@ -57,7 +63,7 @@ require_once 'includes/header.inc.php';
 <tr><td>Rush Order</td><td><?php echo $e($order->get_rush_order_name()); ?></td></tr>
 <tr><td>CFOP</td><td><?php echo $e($order->get_cfop()); ?></td></tr>
 <tr><td>Activity Code</td><td><?php echo $e($order->get_activity_code()); ?></td></tr>
-<tr><td>Comments</td><td><?php echo $e($order->get_comments()); ?></td></tr>
+<tr><td>Comments</td><td><?php echo $order->get_wordwrap_comments(); /* escaped inside, keeps line breaks */ ?></td></tr>
 <tr><td>Total Cost</td><td>$<?php echo $e($order->get_total_cost()); ?></td></tr>
 <tr><td>Status</td><td><?php echo $e($order->get_status()); ?></td></tr>
 <?php if (file_exists($order->get_thumbnail())) {
