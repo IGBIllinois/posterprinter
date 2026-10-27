@@ -1,237 +1,151 @@
 <?php
+//////////////////////////////////////////////////////
+//
+//  admin/editOrder.php
+//  Edit an order's CFOP, activity code, paper, finish, tube and rush.
+//  Recalculates the total from current database prices.
+//
+//  Rewritten Oct 2026: the old version could not run (quote syntax errors,
+//  calls to functions that do not exist, an undefined order id) and never
+//  checked its input. All output is escaped; all input is validated.
+//
+//////////////////////////////////////////////////////
 require_once 'includes/main.inc.php';
 require_once 'includes/session.inc.php';
 
-$message = "";
+$h = fn($v) => htmlspecialchars((string) $v, ENT_QUOTES);
+
+if (!isset($_GET['order_id']) || !is_numeric($_GET['order_id'])) {
+	header("Location: index.php");
+	exit;
+}
+$order_id = (int) $_GET['order_id'];
+$order    = new order($db, $order_id);
+
+// Valid choices for this order's dimensions (same lists the order form uses).
+$validPapers   = array_column(functions::getValidPaperTypes($db, $order->get_width(), $order->get_length()), 'name', 'id');
+$validFinishes = array_column(functions::getValidFinishOptions($db, $order->get_width(), $order->get_length()), 'name', 'id');
+$posterTubes   = poster_tube::getPosterTubes($db);
+$rushOrders    = rush_order::getRushOrders($db);
+
+$errors = [];
+
 if (isset($_POST['editOrder'])) {
+	$cfop = trim($_POST['cfop1'] ?? '') . '-' . trim($_POST['cfop2'] ?? '') . '-'
+	      . trim($_POST['cfop3'] ?? '') . '-' . trim($_POST['cfop4'] ?? '');
+	$activityCode    = strtoupper(trim($_POST['activityCode'] ?? ''));
+	$paperTypeId     = (int) ($_POST['paperType'] ?? 0);
+	$finishOptionId  = (int) ($_POST['finishOption'] ?? 0);
+	$posterTubeId    = (int) ($_POST['posterTube'] ?? 0);
+	$rushOrderId     = (int) ($_POST['rushOrder'] ?? 0);
 
-	$cfop1 = $_POST['cfop1'];
-	$cfop2 = $_POST['cfop2'];
-	$cfop3 = $_POST['cfop3'];
-	$cfop4 = $_POST['cfop4'];
-	$activityCode = $_POST['activityCode'];
-	$finishOptionId = $_POST['finishOption'];
-	$paperTypeId = $_POST['paperType'];
-	$posterTubeId = $_POST['posterTube'];
-	$rushOrderId = $_POST['rushOrder'];
-	$orderId = $_POST['orderId'];
-	$posterWidth = $_POST['posterWidth'];
-	$posterLength = $_POST['posterLength'];
-	$cfop = $cfop1 . "-" . $cfop2 . "-" . $cfop3 . "-" . $cfop4;
-	//trims activity code and upper cases the letter
-	$activityCode = strtoupper(trim(rtrim($activityCode)));
-	
-	$error = false;
-	if (!\IGBIllinois\cfop::verify_format($cfop,$activityCode)) {
-                $errors = true;
-                $message = functions::alert("Please enter a valid CFOP",0);
-        }
-
-        try {
-                $cfop_obj =  new \IGBIllinois\cfop(settings::get_cfop_api_key(),settings::get_debug());
-                $cfop_obj->validate_cfop($cfop,$activityCode);
-
-        }
-        catch (\Exception $e) {
-                $error = true;
-                $message = functions::alert($e->getMessage(),0);
-        }
-
-	if ($error == false) {
-		
-	
-		//Gets Finish Options Information
-		$finishOption = getFinishOption($db,$finishOptionId);
-		$finishOptionCost = $finishOption[0]['finishOptions_cost'];
-	
-		//Gets Paper Type Information
-		$paperType = getPaperType($db,$paperTypeId);
-		$paperTypeCost = $paperType[0]['paperTypes_cost'];
-		$paperTypeWidth = $paperType[0]['paperTypes_width'];
-		$widthSwitched;
-	
-		//Gets Power Tube Information
-		$posterTubeResult = getPosterTube($db,$posterTubeId);
-		$posterTubeCost =  $posterTubeResult[0]["posterTube_cost"];
-		
-		//Gets Rush Order Information
-		$rushOrderResult = getRushOrder($db,$rushOrderId);
-		$rushOrderCost = $rushOrderResult[0]["rushOrder_cost"];
-		
-		//Switches around the poster width and length to make the length the shortest possible to save money.
-		if (($posterWidth <= $paperTypeWidth) && ($posterLength <= $paperTypeWidth) && ($posterWidth < $posterLength)) {
-			$tempPosterWidth = $posterWidth;
-			$posterWidth = $posterLength;
-			$posterLength = $tempPosterWidth;
-			$widthSwitched = 1;
+	if (!\IGBIllinois\cfop::verify_format($cfop, $activityCode)) {
+		$errors[] = 'Please enter a valid CFOP and activity code.';
+	}
+	elseif (settings::get_cfop_api_key()) {
+		// Check against the university CFOP service only when an API key is
+		// configured (production). Without a key this step is skipped.
+		try {
+			$cfop_obj = new \IGBIllinois\cfop(settings::get_cfop_api_key(), settings::get_debug());
+			$cfop_obj->validate_cfop($cfop, $activityCode);
+		} catch (\Exception $e) {
+			$errors[] = 'CFOP check failed: ' . $e->getMessage();
 		}
-		elseif (($posterWidth > $paperTypeWidth) && ($posterLength <= $paperTypeWidth)) {
-			$tempPosterWidth = $posterWidth;
-			$posterWidth = $posterLength;
-			$posterLength = $tempPosterWidth;
-			$widthSwitched = 1;
-		}
-		else {
-			$widthSwitched = 0;
-		}
-	
-		//Calculates Total Cost
-		$totalCost = ($posterLength * $paperTypeCost) + $finishOptionCost + $posterTubeCost + $rushOrderCost;
-		$order = new order($db,$order_id);
+	}
+
+	if (!isset($validPapers[$paperTypeId]))      { $errors[] = 'Please choose a valid paper type.'; }
+	if (!isset($validFinishes[$finishOptionId])) { $errors[] = 'Please choose a valid finish option.'; }
+	if (rules::paper_rejects_laminate($paperTypeId) && rules::finish_is_laminate($finishOptionId)) {
+		$errors[] = 'Lamination is not available for canvas or fine art media - the laminate does not bond to these materials.';
+	}
+
+	$tube = poster_tube::getPosterTube($db, $posterTubeId);
+	$rush = rush_order::getRushOrder($db, $rushOrderId);
+	if (!$tube) { $errors[] = 'Please choose a valid poster tube option.'; }
+	if (!$rush) { $errors[] = 'Please choose a valid rush option.'; }
+
+	if (!$errors) {
+		$papertype    = new papertype($db, $paperTypeId);
+		$finishoption = new finishoption($db, $finishOptionId);
+		$length       = rules::billed_length((float) $order->get_width(), (float) $order->get_length(), (float) $papertype->get_width());
+		$totalCost    = ($length * $papertype->get_cost())
+		              + $finishoption->get_cost()
+		              + $tube[0]['posterTube_cost']
+		              + $rush[0]['rushOrder_cost'];
+
 		$order->edit($cfop, $activityCode, $finishOptionId, $paperTypeId, $posterTubeId, $rushOrderId, $totalCost);
+		$log->send_log("Order " . $order_id . " edited by " . $session->get_var('username')
+			. " (new total $" . number_format($totalCost, 2) . ")");
 		header("Location: order.php?order_id=" . $order_id);
+		exit;
 	}
-
-	
 }
 
-
-if (isset($_GET['order_id']) && is_numeric($_GET['order_id'])) {
-
-	
-	//gets order id
-	$order_id = $_GET['order_id'];
-	
-	$order = new order($db,$order_id);
-		
-	////////////////Paper Types////////////
-	$paperTypes = functions::getValidPaperTypes($db,$order->get_width(),$order->get_length());
-	$paperTypesHTML = "<div class='col-md-6'>";
-	$paperTypesHTML .= "<select class="form-select form-select-sm" name='paperType'>";
-	foreach ($paperTypes as $paperType) {
-		if ($order->get_paper_type_id() === $paperType["id"]) {
-			$paperTypesHTML .= "<option selected='true' value='" . $paperType["id"] . "'>" . $paperType["name"] . "</option>";
-		}
-		else { $paperTypesHTML .= "<option value='" . $paperType["id"] . "'>" . $paperType["name"]. "</option>"; }
+// Builds a <select>; $options is id => label.
+function select_html(string $name, array $options, $selected): string {
+	$html = "<select class='form-select form-select-sm' name='" . $name . "'>";
+	foreach ($options as $id => $label) {
+		$sel = ((string) $id === (string) $selected) ? " selected" : "";
+		$html .= "<option value='" . (int) $id . "'" . $sel . ">" . htmlspecialchars((string) $label, ENT_QUOTES) . "</option>";
 	}
-	$paperTypesHTML .= "</select>";
-	$paperTypesHTML .= "</div>";
-	
-	///////////////////Finish Options//////////////
-	$finishOptions = functions::getValidFinishOptions($db,$order->get_width(),$order->get_length());
-	$finishOptionsHTML = "<div class='col-md-6'>";
-	$finishOptionsHTML .= "<select class="form-select form-select-sm" name='finishOption'>";
-	foreach ($finishOptions as $finishOption) {
-		if ($order->get_finish_option_id() == $finishOption["id"]) {
-			$finishOptionsHTML .= "<option selected='true' value='" . $finishOption["id"] . "'>" . $finishOption["name"] . "</option>";
-		
-		}
-		else {
-			$finishOptionsHTML .= "<option value='" . $finishOption["id"] . "'>" . $finishOption["name"] . "</option>";
-		}
-	}
-	$finishOptionsHTML .= "</select>";
-	$finishOptionsHTML .= "</div>";
-	
-	////////////////////Poster Tube////////////////////
-	$posterTube = poster_tube::getPosterTubes($db);
-	$posterTubeHTML = "<div class='col-md-4'>";
-	$posterTubeHTML .= "<select class="form-select form-select-sm" name='posterTube'>";
-	for($i=0;$i<count($posterTube);$i++) {
-		$posterTubeId = $posterTube[$i]['posterTube_id'];
-		$posterTubeName = $posterTube[$i]['posterTube_name'];
-		
-		if ($posterTubeId == $order->get_poster_tube_id()) {
-			$posterTubeHTML .= "<option selected='true' value='" . $posterTubeId . "'>" . $posterTubeName . "</option>";
-		}
-		else {
-			$posterTubeHTML .= "<option value='" . $posterTubeId . "'>" . $posterTubeName . "</option>";
-		}
-		
-	
-	}
-	$posterTubeHTML .= "</select>";
-	$posterTubeHTML .= "</div>";
-	
-	
-	/////////////////Rush Order//////////////
-	$rushOrder = rush_order::getRushOrders($db);
-	$rushOrderHTML = "<div class='col-md-4'>";
-	$rushOrderHTML .= "<select class="form-select form-select-sm" name='rushOrder'>";
-	for($i=0;$i<count($rushOrder);$i++) {
-		$rushOrderId = $rushOrder[$i]['rushOrder_id'];
-		$rushOrderName = $rushOrder[$i]['rushOrder_name'];
-		
-		if ($rushOrderId == $order->get_rush_order_id()) {
-			$rushOrderHTML .= "<option selected value='" . $rushOrderId . "'>" . $rushOrderName . "</option>";
-		}
-		else {
-			$rushOrderHTML .= "<option value='" . $rushOrderId . "'>" . $rushOrderName . "</option>";
-		}
-		
-	
-	}
-	$rushOrderHTML .= "</select>";
-	$rushOrderHTML .= "</div>";
-	
-				
+	return $html . "</select>";
 }
+
+// On a failed save, keep what the admin chose; otherwise show the order's values.
+$cur = [
+	'paperType'    => $_POST['paperType']    ?? $order->get_paper_type_id(),
+	'finishOption' => $_POST['finishOption'] ?? $order->get_finish_option_id(),
+	'posterTube'   => $_POST['posterTube']   ?? $order->get_poster_tube_id(),
+	'rushOrder'    => $_POST['rushOrder']    ?? $order->get_rush_order_id(),
+	'cfop1'        => $_POST['cfop1']        ?? $order->get_cfop_college(),
+	'cfop2'        => $_POST['cfop2']        ?? $order->get_cfop_fund(),
+	'cfop3'        => $_POST['cfop3']        ?? $order->get_cfop_organization(),
+	'cfop4'        => $_POST['cfop4']        ?? $order->get_cfop_program(),
+	'activityCode' => $_POST['activityCode'] ?? $order->get_activity_code(),
+];
 
 require_once 'includes/header.inc.php';
-
 ?>
 
-<form method='post' action='<?php echo $_SERVER['PHP_SELF']; ?>?order_id=<?php echo $order_id; ?>'>
-<div class='row'>
-<div class='col-sm-8 col-md-8 col-lg-8 col-xl-8'>
+<?php if ($errors) { ?>
+<div class='alert alert-danger'><?php echo implode('<br>', array_map($h, $errors)); ?></div>
+<?php } ?>
 
-<table class='table table-bordered table-sm table-striped'>
-	<thead>
-	<tr><th colspan='2'>Edit Order Information</th></tr>
-	</thead>
-	<tr><td class='text-end'>Order Number</td><td><?php echo $order->get_order_id(); ?></td></tr>
-	<tr><td class='text-end'>Email</td><td><?php echo $order->get_email(); ?></td></tr>
-	<tr><td class='text-end'>Additional Emails </td><td><?php echo $order->get_cc_emails() ?></td></tr>
-	<tr><td class='text-end'>Full Name</td><td><?php echo $order->get_name(); ?></td></tr>
-	<tr><td class='text-end'>File</td><td><?php echo $order->get_filename();  ?></td></tr>
-	<tr><td class='text-end' style='vertical-align:middle;'>CFOP</td>
-		<td>
-		<div class='row'>
-		<div class='col-md-1'><input type='text' name='cfop1' id='cfop1' maxlength='1' class='form-control form-control-sm' onKeyUp='cfopAdvance1()' value='<?php echo $order->get_cfop_college(); ?>'></div>- 
-		<div class='col-md-2'><input type='text' name='cfop2' id='cfop2' maxlength='6' class='form-control form-control-sm' onKeyUp='cfopAdvance2()' value='<?php echo $order->get_cfop_fund(); ?>'></div>-
-		<div class='col-md-2'><input type='text' name='cfop3' id='cfop3' maxlength='6' class='form-control form-control-sm' onKeyUp='cfopAdvance3()' value='<?php echo $order->get_cfop_organization(); ?>'></div>-
-		<div class='col-md-2'><input type='text' name='cfop4' id='cfop4' maxlength='6' class='form-control form-control-sm' value='<?php echo $order->get_cfop_program(); ?>'></div>
-		</div>
-		</td>
-	</tr>
-	<tr><td class='text-end'>Activity Code</td>
-		<td><div class='col-md-2'><input class='form-control form-control-sm' type='text' name='activityCode' maxlength='6' value='<?php echo $order->get_activity_code(); ?>'></div></td>
-	</tr>
-	<tr><td class='text-end'>Time Created</td><td><?php echo $order->get_time_created(); ?></td></tr>
-	<tr><td class='text-end'>Total Cost</td><td>$<?php echo $order->get_total_cost(); ?></td></tr>
-	<tr><td class='text-end'>Width</td><td><?php echo $order->get_width(); ?>"</td></tr>
-	<tr><td class='text-end'>Length</td><td><?php echo $order->get_length(); ?>"</td></tr>
-	<tr><td class='text-end'>Paper Type</td><td><?php echo $paperTypesHTML; ?></td></tr>
-	<tr><td class='text-end'>Finish Option</td><td><?php echo $finishOptionsHTML;  ?></td></tr>
-	<tr><td class='text-end'>Poster Tube</td><td><?php echo $posterTubeHTML; ?></td></tr>
-	<tr><td class='text-end'>Rush Order</td><td><?php echo $rushOrderHTML; ?></td></tr>
-	<tr><td class='text-end'>Comments</td><td><?php echo $order->get_wordwrap_comments(); ?></td></tr>
+<form method='post' action='editOrder.php?order_id=<?php echo $order_id; ?>' onsubmit="return confirm('Save these changes? The total will be recalculated from current prices.');">
+<table class='table table-bordered table-sm edit-table' style='max-width: 900px;'>
+<thead><tr><th colspan='2'>Edit Order #<?php echo $order_id; ?></th></tr></thead>
+<tbody>
+<tr><td class='text-end'>Full Name</td><td><?php echo $h($order->get_name()); ?></td></tr>
+<tr><td class='text-end'>Email</td><td><?php echo $h($order->get_email()); ?></td></tr>
+<tr><td class='text-end'>File</td><td><?php echo $h($order->get_filename()); ?></td></tr>
+<tr><td class='text-end'>Size</td><td><?php echo $h($order->get_width()); ?>'' &times; <?php echo $h($order->get_length()); ?>''</td></tr>
+<tr><td class='text-end'>Current Total</td><td>$<?php echo $h($order->get_total_cost()); ?></td></tr>
+<tr><td class='text-end align-middle'>CFOP</td><td>
+	<div class='d-flex align-items-center gap-1'>
+	<input type='text' name='cfop1' maxlength='1' class='form-control form-control-sm cfop' style='width: 3rem;' value='<?php echo $h($cur['cfop1']); ?>'> -
+	<input type='text' name='cfop2' maxlength='6' class='form-control form-control-sm cfop' style='width: 6rem;' value='<?php echo $h($cur['cfop2']); ?>'> -
+	<input type='text' name='cfop3' maxlength='6' class='form-control form-control-sm cfop' style='width: 6rem;' value='<?php echo $h($cur['cfop3']); ?>'> -
+	<input type='text' name='cfop4' maxlength='6' class='form-control form-control-sm cfop' style='width: 6rem;' value='<?php echo $h($cur['cfop4']); ?>'>
+	</div>
+</td></tr>
+<tr><td class='text-end align-middle'>Activity Code</td><td><input class='form-control form-control-sm' style='width: 8rem;' type='text' name='activityCode' maxlength='6' value='<?php echo $h($cur['activityCode']); ?>'></td></tr>
+<tr><td class='text-end align-middle'>Paper Type</td><td><?php echo select_html('paperType', $validPapers, $cur['paperType']); ?></td></tr>
+<tr><td class='text-end align-middle'>Finish Option</td><td><?php echo select_html('finishOption', $validFinishes, $cur['finishOption']); ?></td></tr>
+<tr><td class='text-end align-middle'>Poster Tube</td><td><?php echo select_html('posterTube', array_column($posterTubes, 'posterTube_name', 'posterTube_id'), $cur['posterTube']); ?></td></tr>
+<tr><td class='text-end align-middle'>Rush Order</td><td><?php echo select_html('rushOrder', array_column($rushOrders, 'rushOrder_name', 'rushOrder_id'), $cur['rushOrder']); ?></td></tr>
+</tbody>
 </table>
-</div>
-</div>
-<br>
-<input type='hidden' name='orderId' value='<?php echo $order->get_order_id(); ?>'>
-<input type='hidden' name='posterWidth' value='<?php echo $order->get_width(); ?>'>
-<input type='hidden' name='posterLength' value='<?php echo $order->get_length(); ?>'>
-<div class='row'>
-<div class='col-sm-8 col-md-8 col-lg-8 col-xl-8'>
-<a class='btn btn-warning' href='order.php?order_id=<?php echo $order->get_order_id(); ?>'>Cancel</a>
-<button class='btn btn-primary' type='submit' name='editOrder' onClick='return confirmUpdate()'>Edit Order</button>
-</div>
-</div>
+<a class='btn btn-secondary' href='order.php?order_id=<?php echo $order_id; ?>'>Cancel</a>
+<button class='btn btn-primary' type='submit' name='editOrder'>Save Changes</button>
 </form>
-<br>
-<?php if (isset($message)){echo $message; } ?>
-<?php require_once '../includes/footer.inc.php'; ?>
 
+<style>.edit-table td:first-child { width: 10rem; }</style>
 <script>
-function confirmUpdate()
-{
-var agree=confirm("Are you sure you wish to update?");
-if (agree)
-        return true ;
-else
-        return false ;
-}
+// CFOP boxes: jump to the next box when one is full.
+document.querySelectorAll('input.cfop').forEach(function (box, i, all) {
+	box.addEventListener('input', function () {
+		if (box.value.length >= box.maxLength && all[i + 1]) { all[i + 1].focus(); }
+	});
+});
 </script>
-
+<?php require_once '../includes/footer.inc.php'; ?>

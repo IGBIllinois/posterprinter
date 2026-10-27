@@ -112,7 +112,7 @@ $is_rush = ($order->get_rush_order_name() === 'Yes');
 ?>
 <table class='table table-bordered table-sm detail-table order-sections'>
 <thead>
-<tr><th colspan='2'>
+<tr class='section-head'><th colspan='2'>
 	<div class='d-flex align-items-center justify-content-between'>
 		<span>Order #<?php echo (int) $order->get_order_id(); ?></span>
 		<?php echo $edit_order_html; ?>
@@ -151,9 +151,19 @@ $is_rush = ($order->get_rush_order_name() === 'Yes');
 <tr><td class='text-end'>Submitted</td><td><?php echo $h($order->get_time_created()); ?></td></tr>
 <tr><td class='text-end'>Requested Pickup</td><td><?php echo $h($labeled['Requested pickup']); ?></td></tr>
 <tr><td class='text-end'>Event</td><td><?php echo $h($labeled['Event']); ?></td></tr>
-<tr><td class='text-end'>Comments</td><td><?php if (trim((string) $order->get_comments()) !== '') { ?>
-	<details class='comments'><summary>Show comments</summary>
-	<div class='mt-2'><?php echo $order->get_wordwrap_comments(); ?></div></details>
+<?php
+// The customer's own comments: everything except the PI / Event /
+// Requested pickup lines, which already have their own rows above.
+$customer_comments = trim(preg_replace('/^(PI|Event|Requested pickup): .*$\R?/m', '', (string) $order->get_comments()));
+?>
+<tr><td class='text-end'>Comments</td><td><?php if ($customer_comments !== '') {
+	// Preview: first 20 characters, then "...". Click to expand the full text.
+	$flat    = trim(preg_replace('/\s+/u', ' ', $customer_comments));
+	$preview = function_exists('mb_substr') ? mb_substr($flat, 0, 20) : substr($flat, 0, 20);
+	$full    = nl2br(wordwrap(htmlspecialchars($customer_comments, ENT_QUOTES), 80, "\n", true));
+?>
+	<details class='comments'><summary><?php echo htmlspecialchars($preview, ENT_QUOTES); ?>...</summary>
+	<div class='mt-2'><?php echo $full; ?></div></details>
 <?php } ?></td></tr>
 </tbody>
 </table>

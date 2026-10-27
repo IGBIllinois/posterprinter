@@ -24,7 +24,7 @@ class rush_order {
 		$parameters = array(
 			':rushorder_id'=>$rushOrderId
 		);
-		return $db->query($sql.$parameters);
+		return $db->query($sql,$parameters);
 
 	}
 
