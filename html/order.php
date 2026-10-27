@@ -145,19 +145,21 @@ require_once 'includes/header.inc.php';
 		<tr>
 			<td class='text-end align-middle' style='width: 9rem;'>Poster Tube</td>
 			<td class='align-middle' id='posterTubeCost'></td>
-			<td class='text-center align-middle' style='width: 8rem;'><input type='checkbox' class='form-check-input' id='posterTube' name='posterTube' value='1'
-				style='float: none; margin: 0; vertical-align: middle;'></td>
+			<td class='text-center align-middle' style='width: 8rem;'><input type='checkbox' id='posterTube' name='posterTube' value='1'
+				style='margin: 0; vertical-align: middle; width: 1.1rem; height: 1.1rem; cursor: pointer;'></td>
 		</tr>
 		<tr>
 			<td class='text-end align-middle'>Pick Up Date</td>
 			<td class='align-middle'>
-				<div class='d-flex align-items-center gap-2'>
+				<div class='d-flex align-items-center flex-wrap' style='gap: 0.5rem 1rem;'>
 				<input type='text' class='form-control form-control-sm' id='pickupDate' name='pickupDate'
 					readonly placeholder='Choose a date' style='width: 8.5rem; background-color: #fff; cursor: pointer;'>
+				<div class='d-flex align-items-center' style='gap: 0.5rem;'>
 				<span id='slotPrompt' class='small text-muted'>Choose time:</span>
 				<div class='btn-group btn-group-sm' role='group' aria-label='Pickup time'>
 					<button type='button' class='btn btn-outline-secondary slot-btn' data-slot='morning' disabled>Morning</button>
 					<button type='button' class='btn btn-outline-secondary slot-btn' data-slot='afternoon' disabled>Afternoon</button>
+				</div>
 				</div>
 				</div>
 			</td>
